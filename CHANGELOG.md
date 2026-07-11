@@ -11,6 +11,11 @@ this file directly.
 
 ### Added
 
+- `specjedi-tokencheck` 🎒 — mechanizes Principle VIII: proactively checks
+  whether `rtk` and `graphify` are installed, explains what's missing and
+  its expected token savings, and offers an install walkthrough; never
+  installs anything without explicit confirmation. Self-invoked by
+  `specjedi-onboard`'s first-run flow, also runs standalone (feature 012).
 - `specjedi-skill-review` 🎓 — strictly read-only audit of an existing
   `specjedi-*` skill's `SKILL.md` against the Skill Authoring & Prompt
   Engineering Standard, distinguishing missing from weak sections and

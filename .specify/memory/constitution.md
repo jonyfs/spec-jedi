@@ -1,28 +1,21 @@
 <!--
 Sync Impact Report
-- Version change: 1.5.0 → 1.6.0
-- Modified principles: none redefined; all twelve v1.5.0 principles
-  retained
-- Added sections:
-  - Core Principle XIII (Cross-Platform Support: Linux, macOS, Windows)
-- Amended sections: none
+- Version change: 1.6.0 → 1.7.0
+- Modified principles: Principle XII expanded (not redefined) — adds a
+  documented "Emoji Icon Language" requirement (standard Unicode emoji
+  only, mapped to recurring saga situations) and an explicit caveat
+  against non-Unicode "Star Wars emoji packs" of uncertain license/
+  copyright status, reinforcing the existing non-affiliation clause
+- Added sections: none (amendment to existing Principle XII)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - scripts/validate.ps1, scripts/suggest-release.ps1 ⚠ pending — created
-    in the same change set as this amendment, mirroring the bash scripts
-    (same pattern already used by the vendored
-    .specify/extensions/agent-context/scripts/{bash,powershell}/)
-  - .github/workflows/validate.yml ⚠ pending — lint battery matrixed
-    across ubuntu-latest/macos-latest/windows-latest plus a
-    windows-native PowerShell leg, all required by `ci-gate`
-  - .gitattributes ⚠ pending — pins LF line endings for shell scripts so
-    a Windows checkout can't silently break them
-  - README.md ⚠ pending — explicit per-OS installation steps (Linux,
-    macOS, Windows via native PowerShell and via WSL/Git Bash)
+  - references/star-wars-lexicon.md ⚠ pending — adds a canonical "Emoji
+    Icon Language" table (situation → standard Unicode emoji) in the same
+    change set as this amendment
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
@@ -322,6 +315,36 @@ This voice is deliberately scoped:
   Lucasfilm/Disney, and MUST NOT reproduce official logos or
   copyrighted artwork — text references only.
 
+**Emoji Icon Language**: the project MUST maintain a documented, consistent
+mapping from recurring SDD situations (spec ambiguity, CI green/red,
+release, blocked PR, first contribution, sign-off, and similar) to
+specific emoji, so the same situation reads the same way everywhere
+instead of an author picking emoji ad hoc each time. This mapping lives in
+`references/star-wars-lexicon.md` and MUST be extended there, not invented
+inline per skill.
+
+- Icons used for this MUST be **standard Unicode emoji** — universally
+  free, license-free, and rendered natively by virtually every terminal,
+  browser, and screen reader, with no attribution or licensing question at
+  all. This is the default and the safe path.
+- "Free Star Wars emoji/icon packs" found online are NOT automatically
+  usable just because they're publicly downloadable: fan-made character
+  likenesses are typically still under Lucasfilm/Disney copyright
+  regardless of a pack's own "free" label, and any officially-branded
+  emoji set is licensed IP, not free. Before any non-Unicode icon asset is
+  added to this project, it MUST be verified as either original artwork or
+  under a permissive open license that explicitly allows redistribution —
+  "I found it free online" is not sufficient verification. When in doubt,
+  use a standard Unicode emoji instead; it always satisfies both this rule
+  and the non-affiliation rule above.
+
+**Rationale**: Directly requested: a consistent icon language, built from
+emoji that need no license or attribution, gives the project's voice a
+recognizable visual signature without reopening the trademark risk the
+non-affiliation clause above already exists to manage — "free-sounding"
+Star Wars icon packs are exactly the kind of thing that looks safe but
+usually isn't.
+
 **Rationale**: Directly requested: the project should be a "Jedi Master" of
 its own theme, not a shallow reskin — genuine breadth and depth across the
 whole saga (not just the original trilogy) is what makes the identity feel
@@ -478,4 +501,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.6.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.7.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

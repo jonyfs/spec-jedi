@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.10 → 1.15.11
+- Version change: 1.15.11 → 1.15.12
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   consistent with prior skill-shipment amendments
 - Added sections: none
@@ -10,24 +10,21 @@ Sync Impact Report
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
   `specjedi-migrate` shipped at v1.15.7, `specjedi-diagram` at v1.15.8,
-  `specjedi-status` at v1.15.9, `specjedi-retro` at v1.15.10 (see prior
-  history). This amendment adds a new one:
-  - `specjedi-security` shipped (feature 007-specjedi-security,
-    2026-07-11) — the sixth `references/skill-roadmap.md` backlog item
-    beyond the core pipeline. A lightweight, proactive threat-modeling
-    prompt — explicitly never a full security audit — surfacing targeted
-    "did we think about X" questions grounded in a new maintained
-    taxonomy, `references/security-question-bank.md`. Resolved a real
-    redundancy question against this project's own `specjedi-checklist`
-    (not just external competitors) before designing anything: the two
-    differ in trigger model (proactive here vs. request-only) and output
-    shape (targeted questions vs. a comprehensive checklist) — they
-    compose, this skill recommends the other for full coverage.
-    `specjedi-plan/SKILL.md` was edited to add a real, literal
-    self-invoke instruction (verified against the actual pattern already
-    used for `specjedi-find-skills` in that file, not an assumed implicit
-    contract) — the first time a roadmap-item ship has modified an
-    existing pipeline skill's file rather than only adding a new one.
+  `specjedi-status` at v1.15.9, `specjedi-retro` at v1.15.10,
+  `specjedi-security` at v1.15.11 (see prior history). This amendment
+  adds a new one:
+  - `specjedi-docs` shipped (feature 008-specjedi-docs, 2026-07-11) —
+    the seventh and **final** item in `references/skill-roadmap.md`'s
+    original backlog. Drafts a README skill-table row, a Quickstart
+    step, and a `CHANGELOG.md` entry from a shipped feature's spec/plan,
+    grounded in actual content, always confirmed before writing — never
+    open-ended doc generation. This shipment created this repo's first
+    `CHANGELOG.md`, populated using the skill's own drafting logic
+    (dogfooded for real, not just described), and the skill's own worked
+    example documents itself. `references/skill-roadmap.md`'s "Proposed,
+    not yet built" section is now empty — every item from the original
+    list (features 002-008) has shipped; future proposals start a new
+    list rather than reopening this one.
 -->
 
 # Spec Jedi Constitution
@@ -821,4 +818,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.11 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.12 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

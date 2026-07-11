@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
+[![Roadmap](https://img.shields.io/badge/roadmap_backlog-7%2F7_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
@@ -62,6 +63,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
 | `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
 | `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
+| `specjedi-docs` 📚 | Drafts a README skill-table row, Quickstart step, and `CHANGELOG.md` entry from a shipped feature's spec/plan — grounded in actual content, always shown for confirmation before writing |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -249,7 +251,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Seventeen product skills ship today ([What you get today](#what-you-get-today))
+Eighteen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -326,6 +328,10 @@ before? Start with step 0.
     shipped against what `plan.md` said, grounds any deviation's cause in
     real git history — never invents one — and logs a durable entry so
     the signal survives past this conversation.
+17. Shipped something and need it documented? `specjedi-docs` 📚 drafts
+    the README row, Quickstart step, and `CHANGELOG.md` entry for you —
+    grounded in your actual spec/plan, always shown for confirmation
+    before anything is written.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

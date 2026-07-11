@@ -1,0 +1,20 @@
+name: release-suggestion
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  suggest:
+    name: suggest-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Suggest next semantic version (informational only)
+        run: ./scripts/suggest-release.sh | tee -a "$GITHUB_STEP_SUMMARY"

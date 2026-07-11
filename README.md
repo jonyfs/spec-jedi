@@ -1,16 +1,21 @@
-# Spec Jedi
+# 🗡️ Spec Jedi
+
+> *"Spec first. Code second. That is the way."* — a wise Master, probably.
 
 Spec Jedi is a set of Spec-Driven Development (SDD) skills you install into your
 coding agent of choice. Instead of writing code first and documenting it later, you
-write a **constitution** (your project's non-negotiable rules), a **specification**
-(what you're building and why), a **plan** (how, technically), and a **task list**
-(the ordered steps) — and your agent implements against those artifacts instead of
-guessing.
+write a **constitution** 📜 (your project's non-negotiable rules), a
+**specification** 🎯 (what you're building and why), a **plan** 🛠️ (how,
+technically), and a **task list** ✅ (the ordered steps) — and your agent implements
+against those artifacts instead of improvising like a Padawan who skipped training.
 
 This repository is itself built with the same discipline it ships: its own
 [constitution](.specify/memory/constitution.md) is the authoritative source for how
 the project behaves, including how releases are versioned and how pull requests are
-validated and merged.
+validated and merged. No shortcuts to the Dark Side of vibe-coding here. 🚫🖤
+
+*(Unofficial fan-flavored branding — Spec Jedi is not affiliated with, endorsed by,
+or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌)*
 
 ## Who this is for
 
@@ -133,3 +138,7 @@ changes to be made.
 Not yet chosen. An OSI-approved license is required by this project's own
 constitution (Distribution & Ecosystem Standards) and is tracked as an open item
 until the maintainer selects one.
+
+---
+
+🌌 *This is the way.*

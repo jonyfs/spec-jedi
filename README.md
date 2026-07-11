@@ -1,5 +1,10 @@
 # 🗡️ Spec Jedi
 
+[![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Constitution](https://img.shields.io/badge/constitution-v1.8.0-7c3aed)](.specify/memory/constitution.md)
+[![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
+
 > *"Spec first. Code second. That is the way."* — a wise Master, probably.
 
 Spec Jedi is a set of Spec-Driven Development (SDD) skills you install into your
@@ -108,7 +113,26 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-The SDD workflow this project ships runs in this order:
+The SDD workflow this project ships runs in this order (Principle XVI: process
+explanations here use Mermaid first, prose as backup for surfaces that don't render
+it):
+
+```mermaid
+flowchart TD
+    A["/speckit-constitution 📜<br/>establish or amend the project's rules"] --> B["/speckit-specify 🎯<br/>feature idea → spec.md"]
+    B --> C{"/speckit-clarify 🌀<br/>ambiguity to resolve?"}
+    C -->|yes| C2["resolve, encode answers into spec.md"] --> D
+    C -->|no| D["/speckit-plan 🛠️<br/>spec.md → plan.md"]
+    D --> E["/speckit-tasks ✅<br/>plan.md → tasks.md"]
+    E --> F["/speckit-implement 🤖<br/>execute tasks.md"]
+    F --> G{"/speckit-analyze 🔍<br/>spec/plan/tasks consistent?"}
+    G -->|gaps found| H["/speckit-converge<br/>queue remaining work"] --> F
+    G -->|clean| I(["🚀 shipped"])
+    F -.->|need a checklist mid-flight| J["/speckit-checklist"]
+    F -.->|prefer issue tracking| K["/speckit-taskstoissues"]
+```
+
+Plain-text equivalent, if Mermaid isn't rendering for you:
 
 ```text
 /speckit-constitution   → establish or amend the project's non-negotiable rules
@@ -124,7 +148,9 @@ The SDD workflow this project ships runs in this order:
 ```
 
 Start every new project or repository with `/speckit-constitution` — every other
-skill checks its output against whatever the constitution says.
+skill checks its output against whatever the constitution says. And per Principle
+XIV: whatever you just ran, your agent should tell you what to run next — you
+shouldn't have to come back to this table to figure it out.
 
 ## Recommended companions
 
@@ -194,9 +220,17 @@ this project expects changes to be made.
 
 ## License
 
-Not yet chosen. An OSI-approved license is required by this project's own
-constitution (Distribution & Ecosystem Standards) and is tracked as an open item
-until the maintainer selects one.
+[MIT](LICENSE) — chosen and required by this project's own constitution
+(Distribution & Ecosystem Standards). In plain language, MIT means you can:
+
+- **Use** this project, commercially or otherwise, no restrictions.
+- **Modify** it however you want.
+- **Redistribute** it, including as part of something you sell.
+
+The only real conditions: keep the original copyright notice and license text
+somewhere in your copy, and don't expect a warranty — the software is provided
+"as is," with no liability if something breaks. That's the whole deal; see
+[`LICENSE`](LICENSE) for the exact legal text.
 
 ---
 

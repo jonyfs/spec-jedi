@@ -379,14 +379,18 @@ maintainer-driven step.
 
 ## Contributing
 
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the full contribution process —
+competitive research requirements for new skills, the Skill Authoring
+Standard checklist, and validation steps to run before opening a PR.
+
 Every change ships through a pull request validated by this project's own CI battery
 and auto-merged only once every check is green (see
 [Principle IX and X](.specify/memory/constitution.md)). That battery runs on Linux,
 macOS, and Windows on every PR (Principle XIII) — if you add or change a script under
-`scripts/`, both the `.sh` and `.ps1` versions must exist and pass on all three. A
-full `CONTRIBUTING.md` with the step-by-step contribution process is on the roadmap;
-until it lands, read the constitution first — it's the definitive statement of how
-this project expects changes to be made.
+`scripts/`, both the `.sh` and `.ps1` versions must exist and pass on all three.
+Issue and PR templates (`.github/ISSUE_TEMPLATE/`,
+`.github/PULL_REQUEST_TEMPLATE.md`) walk contributors through confirming they
+performed the research and validation steps above before requesting review.
 
 ## License
 

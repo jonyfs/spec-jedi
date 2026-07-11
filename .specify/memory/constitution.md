@@ -1,14 +1,21 @@
 <!--
 Sync Impact Report
-- Version change: 1.14.7 → 1.15.0
-- Modified principles: none (no MUST-level rule changed)
-- Added sections: none — MINOR bump reflects a new shipped skill
-  (`specjedi-onboard`) extending the product surface beyond the core P1-P9
-  pipeline for the first time, not a new constitutional rule
+- Version change: 1.15.0 → 1.15.1
+- Modified principles: none (governance/tooling debt closed — no MUST-level
+  rule changed)
+- Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
+  - TODO(LICENSE_CONTRIBUTING): **RESOLVED**. `LICENSE` (MIT) already
+    existed with correct text; added `CONTRIBUTING.md` (research/spec/
+    clarify/plan/tasks/implement walkthrough, validation steps, Skill
+    Authoring Standard checklist, voice/naming rules), plus
+    `.github/ISSUE_TEMPLATE/{new-skill-proposal,bug-report}.md` and
+    `.github/PULL_REQUEST_TEMPLATE.md` requiring contributors to confirm
+    research/validation steps before requesting review. README's
+    Contributing section now points at the real file instead of "on the
+    roadmap."
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
@@ -18,14 +25,6 @@ Sync Impact Report
     construction but haven't been explicitly re-reviewed against XX's
     checklist yet. `specjedi-find-skills` remains the closest reference
     implementation.
-  - `specjedi-onboard` shipped (feature 002-specjedi-onboard, 2026-07-11)
-    — the first `references/skill-roadmap.md` backlog item built beyond
-    the core pipeline (TODO(SPECJEDI_PIPELINE), resolved at v1.14.7).
-    Orchestrates `specjedi-constitution`/`specjedi-specify` rather than
-    duplicating their logic; its own first-run detection gate is Step 1 of
-    every run, before any narration or other file access, mirroring how
-    `specjedi-implement`'s branch-check gate (v1.14.4) made a behavioral
-    constraint structural rather than just documented.
 -->
 
 # Spec Jedi Constitution
@@ -819,4 +818,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -256,3 +256,71 @@ directories needed.
 - **Proactive gap-check**: same pattern as the other pipeline stages —
   self-invoke `specjedi-find-skills` if a task clearly needs expertise
   nothing installed covers.
+
+## Design: `specjedi-implement`
+
+- **Persona**: a disciplined executor — the kind of engineer who commits
+  to a feature branch out of habit, not because someone's watching.
+  Nothing about this skill's own competence is optional just because no
+  human is in the loop for a given task.
+- **Task**: given `tasks.md`, execute tasks in dependency order — test
+  first where the plan calls for code (Principle VI) — committing every
+  change through a feature branch and pull request, never directly to
+  `main` or whatever branch the target repo protects (Principle X, FR-006).
+- **The hard behavioral constraint, made real, not just documented**: per
+  spec.md FR-006, `specjedi-implement` MUST commit only through a feature
+  branch + PR; it does not and cannot control the target repo's own branch
+  protection or merge behavior (that's the repo's CI, per Principle X) —
+  but *initiating* a direct commit to the trunk is entirely within this
+  skill's own control, so that's exactly where the constraint gets
+  enforced. Concretely, this is a **pre-flight gate baked into Step 1 of
+  every run, not a guideline mentioned once**:
+  1. Before touching any file, run `git branch --show-current` (or the
+     harness's equivalent state check) and compare it against the
+     repository's known trunk (`main`, or whatever `plan.md`'s Technical
+     Context recorded if non-default).
+  2. If already on trunk, create and check out a short-lived feature
+     branch **before the first edit** — never after. Branch naming
+     follows the repo's own observed convention (this repo uses
+     `feat/<skill-name>`; a target project may differ — detect, don't
+     assume).
+  3. Every subsequent commit in the run is verified against the same
+     check immediately before it fires — a long-running implement session
+     that somehow ends up back on trunk (e.g., a prior step force-checked
+     out `main`) MUST re-branch before committing, not commit and fix it
+     after.
+  4. Opening the PR and requesting merge (`gh pr merge --auto` where
+     available) is the skill's own responsibility; whether that merge
+     actually happens is the target repo's CI/branch-protection decision,
+     entirely outside this skill's control or claim.
+  - This turns Principle X from something the skill's prose merely
+    *describes* into something the skill's own step sequence makes
+    structurally difficult to violate — the first write action of any run
+    is the branch check, not the edit.
+- **Format**: no new document format — the "output" is the code/config
+  changes `tasks.md` specifies, plus `tasks.md` itself updated in place
+  (`[ ]` → `[x]` per completed task, matching the existing convention
+  already used across every shipped `tasks.md` in this repo) and a PR
+  whose description names which tasks it completes.
+- **Chain-of-thought**: task execution order follows `tasks.md`'s own
+  Dependencies section literally — a task is only started once every task
+  that blocks it is both complete and verified (tests passing, not just
+  marked done); `[P]`-marked tasks within a ready phase may run in any
+  order or concurrently, but the skill still reasons explicitly about
+  whether a `[P]` marking still holds true against the *actual* current
+  state of the codebase before trusting it, since `tasks.md` was written
+  before any code existed.
+- **Test-first in practice** (Principle VI): for every task pair where
+  `tasks.md` sequences a test task before its implementation task, the
+  test MUST be run and observed failing before the implementation task
+  starts, and run again and observed passing before that task is marked
+  `[x]` — a test written but never actually executed satisfies nothing.
+- **Audience calibration**: same exemption as `plan.md`/`tasks.md` —
+  calibration applies only to the skill's own narration of progress and
+  any error explanation, never to code, commit messages, or task-file
+  content itself.
+- **Proactive gap-check**: if a task requires implementation expertise
+  nothing installed covers (e.g., a task needs a language-specific linter
+  or framework this environment has no skill for), self-invoke
+  `specjedi-find-skills` before attempting that task rather than guessing
+  at unfamiliar conventions.

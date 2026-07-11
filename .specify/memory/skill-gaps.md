@@ -19,14 +19,33 @@ across sessions is a signal Spec Jedi itself should eventually cover it
   found this pass.
 - 2026-07-11 — **CI/CD authoring depth** (maintaining/extending
   `.github/workflows/validate.yml` as Principle IX's validation battery
-  grows to include unit/integration/Playwright jobs). Named as a
-  candidate domain, not yet searched.
+  grows to include unit/integration/Playwright jobs). Searched: web
+  search + `gh api` verification. One candidate found
+  (`steeef/claude-skill-github-actions`) — declined: 1 GitHub star, no
+  other signal. No stronger GitHub-Actions-specific candidate found this
+  pass (`harness/harness-skills` exists but targets the Harness CI/CD
+  platform, not GitHub Actions, so not directly relevant here).
 - 2026-07-11 — **Accessibility (a11y) guidance depth** for target
   projects' UI work — Principle VII promises "full-stack technical depth
-  on demand" including accessibility, but no installed skill goes deep on
-  it specifically. Named as a candidate domain, not yet searched.
+  on demand" including accessibility. Searched: web search + `gh api`
+  verification. **Verified candidate found**:
+  `Community-Access/accessibility-agents` (github.com/Community-Access/
+  accessibility-agents) — 356 GitHub stars, MIT license, updated
+  2026-06-29, eleven specialist agents enforcing WCAG 2.2 AA compliance
+  for Claude Code/GitHub Copilot/Claude Desktop. Clears this skill's own
+  verification bar. **Installed** (`npx skills add
+  Community-Access/accessibility-agents -g -y`, explicit user
+  confirmation given) — 18 accessibility skills now globally available.
 - 2026-07-11 — **Security review depth beyond `specjedi-security`**
   (which is deliberately lightweight, a "did we think about X" prompt,
-  not a full audit) — for target projects with real security surface that
-  would benefit from a more thorough scanning skill. Named as a candidate
-  domain, not yet searched.
+  not a full audit). Searched: web search + `gh api` verification.
+  **Verified candidate found**: `trailofbits/skills`
+  (github.com/trailofbits/skills) — 6,069 GitHub stars, CC-BY-SA-4.0
+  license, updated 2026-07-07 (four days before this entry), from Trail
+  of Bits, a widely-recognized security research firm. Clears this
+  skill's own verification bar comfortably on both install-count and
+  source-reputation signals. **Installed** (`npx skills add
+  trailofbits/skills -g -y`, explicit user confirmation given) — the bulk
+  of Trail of Bits' skill set is now globally available (a handful of
+  entries failed with a "PromptScript does not support global skill
+  installation" error unrelated to Claude Code compatibility).

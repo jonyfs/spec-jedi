@@ -51,18 +51,19 @@ no single feature for "the whole project," so this file lives at
       is now stated explicitly in `references/principle-traceability.md`'s
       Principle IX row; an automated trigger/owner mechanism still doesn't
       exist.
-- [ ] CHK005 - Is there a per-PR governance checklist artifact a reviewer
+- [x] CHK005 - Is there a per-PR governance checklist artifact a reviewer
       (human or automated) can mechanically check against all 20 Core
       Principles, or does "Code and content review MUST explicitly check
       compliance with every Core Principle" (Development Workflow section)
       rely on unaided manual judgment each time? `specjedi-skill-review`
       covers the Principle XIX authoring-standard subset only, not
       project-wide governance principles like I, III, X, XI. [Gap,
-      Constitution "Development Workflow"] — **Partial progress**:
-      `references/principle-traceability.md` gives a reviewer a fast
-      per-principle status lookup, but is a reference index, not itself a
-      per-PR mechanical checklist skill — that remains a real gap, and a
-      plausible future `specjedi-*` skill candidate.
+      Constitution "Development Workflow"] — **Resolved**:
+      `specjedi-govcheck` (feature 013) ships a strictly read-only,
+      three-state per-principle governance checklist against all 20
+      principles plus the two cross-cutting sections, proactively
+      self-invoked by `specjedi-implement` before every PR-open, and also
+      runnable standalone against any branch or named PR.
 
 ## Requirement Clarity
 

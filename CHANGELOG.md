@@ -11,6 +11,16 @@ this file directly.
 
 ### Added
 
+- `specjedi-govcheck` ⚖️ — strictly read-only per-PR/per-branch governance
+  compliance checklist against all 20 constitution principles plus the
+  Distribution & Ecosystem Standards and Development Workflow sections —
+  three-state report (N/A / Compliant / Non-Compliant), any conflict
+  CRITICAL. Self-invoked by `specjedi-implement` before opening a PR
+  (never blocks it); also runs standalone (feature 013).
+- `.specify/memory/skill-gaps.md` — first entries logged by
+  `specjedi-find-skills`, surveying candidate domains this project's own
+  skill set doesn't cover well (localization/i18n workflow, CI/CD
+  authoring depth, accessibility depth, security-review depth).
 - `references/principle-traceability.md` — canonical index mapping every
   constitution principle to its implementing skill/script/CI mechanism or
   explicit tracked gap; closes `checklists/project-completeness.md`

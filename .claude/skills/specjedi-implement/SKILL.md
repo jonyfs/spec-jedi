@@ -1,7 +1,7 @@
 ---
 name: specjedi-implement
 description: Executes tasks.md in dependency order, test-first where the plan calls for code, committing only through a feature branch and pull request — never directly to the trunk. Triggers after specjedi-tasks finishes, or on an explicit request to start building.
-compatibility: No external dependencies beyond `git`. Reads the target feature's tasks.md and plan.md; writes code/config per each task, updates tasks.md's checkboxes in place, and opens a PR.
+compatibility: No external dependencies beyond `git`. Reads the target feature's tasks.md and plan.md; writes code/config per each task, updates tasks.md's checkboxes in place, self-invokes specjedi-govcheck before opening a PR, and opens the PR.
 ---
 
 # 🔨 Spec Jedi Implement
@@ -49,6 +49,12 @@ whatever branch the target repo protects (Principle X).
 6. **Mark each completed task `[x]` in `tasks.md`** as it finishes,
    matching the checkbox convention already used across this repo's own
    shipped `tasks.md` files.
+6.5. **Self-invoke `specjedi-govcheck` against the current branch's diff**
+   (Development Workflow section) — surface any CRITICAL finding
+   prominently in the PR-opening narration below, but never let a finding
+   block the PR from opening: PR-opening stays autonomous per this
+   skill's own Autonomous vs. confirm-first section, and the CI battery
+   remains the actual merge-blocking mechanism (Principle X).
 7. **Open the PR once a story's task group is done.** Request merge via
    the repo's own supported mechanism (e.g. `gh pr merge --auto`) where
    available — whether that merge actually happens is the target repo's

@@ -42,7 +42,7 @@ record) — it's a fast lookup index derived from it.
 | Section | Status | Implementing mechanism |
 |---|---|---|
 | Distribution & Ecosystem Standards (badges, README, LICENSE, CONTRIBUTING) | 🟡 Partial | README/LICENSE/CONTRIBUTING structure in place; the "review the badge row before every PR" requirement has not been consistently documented as performed in recent PR descriptions — see CHK011. |
-| Development Workflow (the SDD pipeline itself) | ✅ Mechanized | Every feature in `specs/001-*` through `specs/012-*` was built via the literal `research → speckit-specify → speckit-clarify → speckit-plan → speckit-tasks → speckit-implement → PR → CI → merge` sequence (features 009+ via literal `/speckit-*` invocation; 001-008 via hand-authored artifacts matching the same shape). |
+| Development Workflow (the SDD pipeline itself) | ✅ Mechanized | Every feature in `specs/001-*` through `specs/013-*` was built via the literal `research → speckit-specify → speckit-clarify → speckit-plan → speckit-tasks → speckit-implement → PR → CI → merge` sequence (features 009+ via literal `/speckit-*` invocation; 001-008 via hand-authored artifacts matching the same shape). The "review MUST explicitly check compliance with every Core Principle" requirement is now mechanized by `specjedi-govcheck` (feature 013), self-invoked by `specjedi-implement` before every PR-open. |
 
 ## Legend
 

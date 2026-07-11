@@ -160,6 +160,24 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   suggested either tool), and nothing gave it a real product surface. See
   [specs/012-specjedi-tokencheck/](../specs/012-specjedi-tokencheck/) for
   the full research/spec/plan.
+- **`specjedi-govcheck`** ⚖️ (feature 013, shipped 2026-07-11) —
+  strictly read-only per-PR/per-branch governance compliance checklist
+  against all 20 Core Principles plus the Distribution & Ecosystem
+  Standards and Development Workflow sections. Three-state per-principle
+  report (Not Applicable / Compliant / Non-Compliant) rather than a
+  binary pass/fail, with any confirmed constitution conflict marked
+  CRITICAL unconditionally. Mechanizes the Development Workflow section's
+  own "review MUST explicitly check compliance with every Core Principle"
+  requirement — closing `checklists/project-completeness.md` CHK005, the
+  gap neither `specjedi-analyze` (spec/plan/tasks consistency for one
+  feature) nor `specjedi-skill-review` (one skill's authoring standard)
+  covers. Proactively self-invoked by `specjedi-implement` right before
+  opening a PR, surfacing CRITICAL findings without blocking PR-opening
+  itself — the CI battery remains the actual merge-blocking mechanism.
+  Reads `references/principle-traceability.md` for per-principle
+  mechanism context rather than re-deriving it. See
+  [specs/013-specjedi-govcheck/](../specs/013-specjedi-govcheck/) for the
+  full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 

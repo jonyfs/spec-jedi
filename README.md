@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
-[![Skills](https://img.shields.io/badge/specjedi_skills-22_shipped-success)](#what-you-get-today)
-[![Roadmap](https://img.shields.io/badge/roadmap_backlog-11%2F11_shipped-success)](references/skill-roadmap.md)
+[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#what-you-get-today)
+[![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
@@ -69,6 +69,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
 | `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
 | `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
+| `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 20 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -207,7 +208,7 @@ skills themselves work identically either way.
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   all 22 `specjedi-*` product skills and the `speckit-*` commands (this repo's
+   all 23 `specjedi-*` product skills and the `speckit-*` commands (this repo's
    own internal bootstrap tooling — see [What you get today](#what-you-get-today))
    listed together, since Claude Code discovers every skill under
    `.claude/skills/` without distinguishing the two.
@@ -280,7 +281,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Twenty-two product skills ship today ([What you get today](#what-you-get-today))
+Twenty-three product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -380,6 +381,12 @@ before? Start with step 0.
     and `graphify` are installed, explains what's missing and its expected
     token savings, and offers to walk through installing it; never
     installs anything without your explicit yes.
+22. `specjedi-implement` already runs this before opening every PR, but
+    `specjedi-govcheck` ⚖️ works standalone too — a per-branch (or
+    per-PR) checklist against all 20 constitution principles, reporting
+    each as not applicable, compliant, or non-compliant, with any real
+    conflict marked CRITICAL; strictly read-only, never edits anything,
+    never blocks a PR from opening on its own.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

@@ -3,7 +3,7 @@
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
 > [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) ·
-> [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md)
+> [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
 # 🗡️ Spec Jedi
 
@@ -14,6 +14,7 @@
 [![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#lo-que-obtienes-hoy)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#instalación)
+[![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](../../../.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
 

@@ -63,6 +63,16 @@ language-specific linter or framework with no matching skill here),
 self-invoke `specjedi-find-skills` before attempting that task rather than
 guessing at unfamiliar conventions (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Writing code, committing to a feature branch, and opening the PR are all
+autonomous once `tasks.md` is ready — that's this skill's whole purpose,
+and Principle X's branch+PR discipline is the safety mechanism, not a
+reason to pause and ask before every commit. What's never autonomous, and
+never claimed: the PR actually merging. This skill requests merge (`gh pr
+merge --auto` or equivalent); whether it happens is the target repo's own
+CI/branch-protection decision, reported honestly, never asserted.
+
 ## Format
 
 No new document format. The "output" is the code/config changes `tasks.md`

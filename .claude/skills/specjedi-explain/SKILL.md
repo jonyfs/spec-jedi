@@ -43,6 +43,12 @@ need, and always leave them knowing what to do next.
    commands, self-invoke `specjedi-find-skills` rather than improvising an
    answer outside this project's domain (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Fully autonomous, trivially: this skill never writes to any file, so there
+is nothing to confirm before saving — every answer is produced and
+delivered in one step.
+
 ## Example (input → output, same concept, two audiences)
 
 **Beginner asks:** *"what even is a 'spec' and why can't I just start

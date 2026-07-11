@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.3 → 1.15.4
+- Version change: 1.15.4 → 1.15.5
 - Modified principles: none (governance/tooling debt closed — no MUST-level
   rule changed)
 - Added sections: none
@@ -8,24 +8,25 @@ Sync Impact Report
 - Templates requiring updates: none
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
-  - TODO(VOICE_PASS): **RESOLVED**. Audited all 12 shipped skills for
-    Principle XII's actual voice requirement, not just the emoji-header
-    part — found `references/star-wars-lexicon.md` was comprehensive but
-    genuinely unused: zero skills, including the flagship
-    `specjedi-constitution`, had a single saga reference anywhere in their
-    body text; the voice existed only as a documented intention, not as
-    implemented behavior. Added a distinct "Agent's chat narration"
-    example to all 12 skills' worked Example sections, each explicitly
-    separated from the generated-artifact content it decorates (per the
-    exemption — spec.md/plan.md/tasks.md/constitution.md field content
-    stays plain), rotating across 11 different lexicon references spanning
-    OT, prequel, sequel, Clone Wars, Mandalorian, and Rogue One material —
-    no single quote repeated more than twice across the full set. Every
-    added line pairs the reference with a plain-language equivalent per
-    the translation-safety rule.
+  - TODO(VOICE_PASS): RESOLVED at v1.15.4.
   - TODO(NEXT_STEP_PASS): RESOLVED at v1.15.2.
   - TODO(INSTALLER): still open from v1.8.0.
-  - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
+  - TODO(PROMPT_ENG_PASS): **RESOLVED**. Audited all 12 shipped skills
+    against Principle XIX's non-negotiables. Token budgets (~1,100-1,700
+    tokens each) comfortably clear the 5,000 hard cap — the "targets under
+    500" language is aspirational, not violated. Ruthless literalness: no
+    unmeasurable claims found outside intentional "Not this" negative
+    examples. The real finding: **only 2 of 12 skills
+    (`specjedi-constitution`, `specjedi-specify`) had the required
+    explicit "which actions are autonomous vs. need confirmation"
+    statement** — the other 10 left this implicit or unstated entirely,
+    despite Principle XIX requiring it plainly for every skill. Added an
+    `## Autonomous vs. confirm-first` section to all 10, each stating the
+    skill's actual boundary rather than a copy-pasted template —
+    `specjedi-implement`'s is the highest-stakes case (code/commit/PR all
+    autonomous once tasks.md is ready; merging is never claimed, only
+    requested) and `specjedi-analyze`/`specjedi-explain`'s are trivial
+    (no writes at all, nothing to confirm).
   - TODO(GROUNDING_PASS): **RESOLVED**. Re-reviewed all 11 shipped skills
     against Principle XX's three pillars:
     - *Best-practice AI usage* (persona/task/chain-of-thought actually
@@ -842,4 +843,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.4 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

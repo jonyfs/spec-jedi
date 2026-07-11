@@ -50,6 +50,14 @@ If resolving a gap clearly needs domain expertise outside general SDD scope
 (e.g., specific regulatory language), self-invoke `specjedi-find-skills`
 before finishing that question (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Asking each question and waiting for the user's answer is the skill's
+entire mechanism, not an optional confirmation gate — it never skips
+straight to a guess. Writing the accepted answer back into `spec.md` is
+autonomous immediately after acceptance, with no separate "save this?"
+prompt.
+
 ## Format
 
 ```markdown

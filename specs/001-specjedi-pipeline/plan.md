@@ -188,3 +188,41 @@ directories needed.
   domain expertise outside general SDD scope (e.g., specific regulatory
   language), self-invoke `specjedi-find-skills` before finishing that
   question.
+
+## Design: `specjedi-plan`
+
+- **Persona**: a technical architect who front-loads everything —
+  research.md decision #9 adopts PRP's "golden rule" explicitly for this
+  skill: "if you would need to search the codebase during implementation,
+  capture that knowledge now in the plan." The plan is the last checkpoint
+  before code moves; nothing convenient gets deferred to "figure out
+  later."
+- **Task**: given a clarified `spec.md`, produce `plan.md` (plus
+  `research.md`/`data-model.md` as the feature actually needs them) precise
+  enough that `specjedi-implement` never has to stop and search the
+  codebase for a missing convention.
+- **Format**: mirrors `.specify/templates/plan-template.md`'s structure —
+  Summary, Technical Context, Constitution Check (a real gate, not a
+  formality), Project Structure, Complexity Tracking (only if a gate
+  fails and the violation is justified, never left empty-but-present).
+- **The golden rule in practice**: before writing Technical Context, scan
+  the actual target codebase for existing naming conventions, error-
+  handling patterns, test structure, and directory layout, and write those
+  down explicitly — not "follow existing conventions" as a vague
+  instruction to the implementer, but the conventions themselves, named.
+- **Chain-of-thought**: the Constitution Check is a judgment call, not a
+  formality — for each principle, reason explicitly about whether the plan
+  complies, and if it doesn't, whether the violation is justified enough to
+  record in Complexity Tracking or whether the plan should just be
+  simplified instead (Principle X's own governance: "the plan MUST be
+  simplified until it complies" is the default, not the exception).
+- **Audience calibration**: `plan.md`'s own field content stays precise and
+  jargon-appropriate for implementation (Principle XII/V exempt generated
+  artifact fields from voice/tone adaptation) — calibration applies to the
+  skill's own narration *around* the plan (explaining a Constitution Check
+  failure to a beginner vs. an advanced user), never to the plan's
+  technical content itself.
+- **Proactive gap-check**: if the plan requires expertise the installed
+  skill set doesn't have (e.g., planning a mobile app with no mobile-
+  specific skill present), self-invoke `specjedi-find-skills` before the
+  plan is considered complete.

@@ -404,3 +404,40 @@ directories needed.
   checklist requiring regulatory knowledge), self-invoke
   `specjedi-find-skills` before generating items that would otherwise be
   guessed rather than grounded.
+
+## Design: `specjedi-converge`
+
+- **Persona**: a reality-reconciler — once code exists, it's ground
+  truth; `tasks.md` catches up to the codebase, never the other way
+  around. This is the pipeline's final stage precisely because it closes
+  the loop back to the start.
+- **Task**: given the current codebase and `tasks.md` (plus `spec.md`/
+  `plan.md` for context), detect functionality that exists in code but has
+  no corresponding task, and append new tasks describing that gap to
+  `tasks.md` — never silently ignoring drift, never deleting or rewriting
+  what's already there.
+- **The one place in the pipeline that writes without being strictly
+  read-only, scoped narrowly**: unlike `specjedi-analyze` (report only,
+  zero writes), `specjedi-converge`'s entire write surface is *appending*
+  new task entries to `tasks.md`. It MUST NOT edit `spec.md`, `plan.md`,
+  the constitution, or any existing line already in `tasks.md` — drift
+  discovered in code that contradicts an existing requirement is a
+  CRITICAL finding to surface via `specjedi-analyze`-style reporting, not
+  something this skill silently reconciles by rewriting the spec.
+- **Format**: new tasks appended under a `## Phase N: Converged Work
+  (detected drift, <date>)` section at the end of `tasks.md`, following
+  the exact same `[ID] [P?] [Story]` numbering convention already used
+  throughout the file — `[Story]` marked `[Drift]` when the functionality
+  doesn't map cleanly to an existing user story.
+- **Chain-of-thought**: the hard judgment call is distinguishing genuine
+  functional drift (a capability that exists in code with no task
+  covering it) from incidental implementation detail (a helper function,
+  a refactor) — reason explicitly about whether a user-observable
+  capability changed, not whether any file changed at all; converging on
+  every diff would flood `tasks.md` with noise.
+- **Audience calibration**: appended task text stays precise, same
+  exemption as every other pipeline artifact; calibration applies only to
+  the skill's own narration summarizing what drift was found.
+- **Proactive gap-check**: if reconciling a piece of drifted functionality
+  needs domain expertise nothing installed covers, self-invoke
+  `specjedi-find-skills` before guessing at how to describe it.

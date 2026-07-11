@@ -6,11 +6,12 @@ description: "Task list for the specjedi-* SDD pipeline (Feature 001)"
 
 **Input**: `specs/001-specjedi-pipeline/{spec.md, plan.md, research.md}`
 
-**Scope**: P1-P7 (`specjedi-constitution`, `specjedi-specify`,
+**Scope**: P1-P8 (`specjedi-constitution`, `specjedi-specify`,
 `specjedi-clarify`, `specjedi-plan`, `specjedi-tasks`, `specjedi-implement`,
-`specjedi-analyze`) have shipped; P8 (`specjedi-checklist`) is this cycle's
-target, each its own cycle per spec.md's Assumptions (prove the pattern
-incrementally). P9 remains a scoped backlog.
+`specjedi-analyze`, `specjedi-checklist`) have shipped; P9
+(`specjedi-converge`) is this cycle's target — the final pipeline stage,
+each its own cycle per spec.md's Assumptions (prove the pattern
+incrementally).
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -346,14 +347,60 @@ review on demand, layered on an already-working core pipeline.
 - [x] T118 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
 
-## Backlog (future cycle): User Story 9
+## Phase 14: User Story 9 — `specjedi-converge` (P9)
 
-Not detailed task-by-task this cycle (spec.md Assumptions: prove the pattern
-incrementally rather than all at once). Becomes its own `[Story]`-tagged
-task group later, following the exact shape of Phase 2-6/8/10/12 above:
+**Goal**: A user can run `specjedi-converge` after manual code changes to
+detect any gap between the codebase and spec/plan/tasks, appending
+remaining work back into `tasks.md` — the pipeline's final stage, closing
+the loop back to `specjedi-implement`.
 
-- **US9** `specjedi-converge` (P9) — final pipeline stage: reconciles
-  codebase drift back into `tasks.md`.
+**Independent test**: See spec.md User Story 9 → Independent Test.
+
+- [x] T120 [P] [US9] Create `.claude/skills/specjedi-converge/SKILL.md`
+  per plan.md's Design section: persona, task, the narrowly-scoped write
+  surface (append-only to `tasks.md`, never edits spec.md/plan.md/
+  constitution.md or existing tasks.md lines), the `## Phase N: Converged
+  Work` append format matching existing `[ID] [P?] [Story]` conventions,
+  chain-of-thought for distinguishing genuine functional drift from
+  incidental implementation detail, `--auto` behavior, proactive
+  gap-check hook.
+- [x] T121 [US9] Add a full input → output worked example: a codebase with
+  a manually-added capability not reflected in `tasks.md` in, the appended
+  `## Phase N: Converged Work` section with a new `[Drift]`-tagged task
+  out.
+- [x] T122 [US9] Add Always/Never guardrails and verifiable success
+  criteria per the Skill Authoring Standard checklist — explicitly
+  including "Never edit spec.md/plan.md/constitution.md or an existing
+  tasks.md line" and "Never silently ignore detected drift" as Never/
+  Always guardrails.
+- [x] T123 [US9] Run `scripts/validate.sh` (and `.ps1` on Windows) —
+  structural lint must pass.
+- [x] T124 [US9] Manual scenario dry run: exercise against a codebase with
+  a manually-added feature not reflected in `tasks.md` and confirm the gap
+  is appended as a new task rather than silently ignored; confirm existing
+  `tasks.md` content is byte-for-byte unchanged except for the appended
+  section.
+- [x] T125 [US9] Review `specjedi-converge/SKILL.md` against the full
+  Skill Authoring Standard checklist in
+  `references/skill-authoring-standard.md` before marking this story done.
+
+**Checkpoint**: the full `specjedi-*` pipeline (P1-P9) is now complete —
+constitution through convergence, entirely through feature branches and
+pull requests.
+
+## Phase 15: Documentation & Ship (P9)
+
+- [x] T126 Update README.md's "What you get today" table: move
+  `specjedi-converge` from the roadmap table to the "ships today" table
+  (the roadmap table is now empty — note the full pipeline is complete);
+  update the roadmap Mermaid diagram's live/roadmap markers to match, all
+  ✅ (Principle XVI). Review the badge row per Principle X's pre-PR
+  requirement.
+- [x] T127 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
+  note to reflect P1-P9 shipped — full pipeline complete — and resolve/
+  close the TODO.
+- [x] T128 Validate full repo (`scripts/validate.sh`), commit on this
+  feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
 
 ## Dependencies
 
@@ -379,4 +426,9 @@ task group later, following the exact shape of Phase 2-6/8/10/12 above:
   `plan.md`, which must already exist (it does not require `tasks.md` or
   implementation).
 - Phase 13 (Documentation & Ship) depends on Phase 12 being complete.
-- US9 (backlog) depends on US1-US8 as each stage requires.
+- Phase 14 (US9) depends on Phase 6 (US5) — converge reads/appends to a
+  `tasks.md` that must already exist; it's designed to run after
+  `specjedi-implement` in practice (spec.md's own framing), though nothing
+  structurally blocks running it earlier against manually-added code.
+- Phase 15 (Documentation & Ship) depends on Phase 14 being complete — the
+  final phase of the full `specjedi-*` pipeline (feature 001).

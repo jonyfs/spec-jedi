@@ -3,6 +3,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
+[![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
 
@@ -32,10 +33,12 @@ context every session.
 
 ## What you get today
 
-Spec Jedi is being built as a genuine **competitor** to
-[spec-kit](https://github.com/github/spec-kit), not a themed wrapper around it
-([Principle XV](.specify/memory/constitution.md)) — so it's worth being upfront
-about what's actually shipped versus what's still roadmap.
+Spec Jedi is a genuine **competitor** to [spec-kit](https://github.com/github/spec-kit),
+not a themed wrapper around it ([Principle XV](.specify/memory/constitution.md)).
+The full `specjedi-*` SDD pipeline — constitution through convergence — is
+**complete and shipped**: all 9 stages, built one rigorous story at a time
+per [research.md](specs/001-specjedi-pipeline/research.md)'s competitive
+research discipline (Principle II), never rushed.
 
 **Ships today, install and use now:**
 
@@ -43,36 +46,20 @@ about what's actually shipped versus what's still roadmap.
 |---|---|
 | `specjedi-constitution` 📜 | Establishes or amends a project's non-negotiable rules — the foundation every other `specjedi-*` skill checks against. See [spec](specs/001-specjedi-pipeline/spec.md) |
 | `specjedi-specify` 🎯 | Turns a feature idea — one sentence is enough — into a prioritized, independently-testable `spec.md`, marking real ambiguity instead of guessing |
-| `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
-| `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 | `specjedi-clarify` 🌀 | Scans a spec for real ambiguity and asks up to 5 prioritized questions — each with a Recommended answer so a beginner gets guidance and an expert can reply in one word — before you plan against a guess |
 | `specjedi-plan` 🛠️ | Turns a clarified spec into a technical `plan.md` — scans the actual codebase for existing conventions first, so implementation never has to stop and search for one |
 | `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
 | `specjedi-implement` 🔨 | Executes `tasks.md` in dependency order, test-first where the plan calls for code — commits only through a feature branch and pull request, never directly to `main` |
 | `specjedi-analyze` 🔍 | Strictly read-only cross-check of `spec.md`/`plan.md`/`tasks.md` (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file |
 | `specjedi-checklist` ☑️ | Generates a custom checklist for a named focus area (security, accessibility, performance...) grounded entirely in this feature's own `spec.md`/`plan.md` — never generic boilerplate |
+| `specjedi-converge` 🔁 | Detects drift between the actual codebase and `tasks.md` after manual changes, appending any gap as a new task instead of silently ignoring it — closes the loop back to `specjedi-implement` |
+| `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
+| `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
-and more) — a backlog, not a promise; each still needs its own research pass
-before it gets built.
-
-**Roadmap — the rest of the `specjedi-*` SDD pipeline** (each will mirror, and
-eventually replace for end users, spec-kit's own command surface, with Spec Jedi's
-own added principles — guided next steps, prompt-engineering discipline, Star Wars
-voice, and the rest — already baked into the skills shipped above):
-
-| Planned skill | Will replace |
-|---|---|
-| `specjedi-converge` | `speckit-converge` |
-
-The shipped skills prove the pattern, one story at a time; building the rest is
-real, competitive-research-gated work (Principle II) — tracked in
-[research.md](specs/001-specjedi-pipeline/research.md), not rushed. Until they
-land, this repository's own development still uses spec-kit's `speckit-*`
-commands as internal bootstrap tooling (see below) for anything past
-constitution/spec/clarify — that's this project dogfooding the incumbent to
-build its replacement, not the product you'd install elsewhere.
+and more) — a backlog of *additional* skills, not core-pipeline gaps; each
+still needs its own research pass before it gets built.
 
 ## How Spec Jedi builds *itself*, in comic form
 
@@ -244,8 +231,9 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Ten product skills ship today ([What you get today](#what-you-get-today)).
-Never used an SDD tool before? Start with step 0.
+Eleven product skills ship today ([What you get today](#what-you-get-today)) —
+the full `specjedi-*` pipeline is complete. Never used an SDD tool before?
+Start with step 0.
 
 0. **Not sure what any of this means?** Just ask — "what is a spec and why
    would I need one," "what does this project actually do." `specjedi-explain`
@@ -284,7 +272,12 @@ Never used an SDD tool before? Start with step 0.
    for a named focus area — security, accessibility, performance, whatever
    you name — grounded entirely in this feature's own spec/plan, never
    generic boilerplate.
-10. Stuck on something outside this set? Just describe it — "how do I do X,"
+10. Changed code by hand since your last `tasks.md`? `specjedi-converge`
+    🔁 scans the actual codebase, detects any capability with no
+    corresponding task, and appends it as new work instead of letting it
+    silently drift out of sync — the pipeline's final stage, closing the
+    loop back to `specjedi-implement`.
+11. Stuck on something outside this set? Just describe it — "how do I do X,"
     "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
     automatically, searches the open agent-skills ecosystem, and suggests a
     specific, verified skill. Never installs anything without asking first
@@ -292,17 +285,15 @@ Never used an SDD tool before? Start with step 0.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
-list to figure it out. Today that chain runs `specjedi-constitution` →
+list to figure it out. The full chain runs `specjedi-constitution` →
 `specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks`
-→ `specjedi-implement` → `specjedi-analyze` → `specjedi-checklist`; the
-step after that (`specjedi-converge`) is still roadmap.
+→ `specjedi-implement` → `specjedi-analyze` → `specjedi-checklist` →
+`specjedi-converge`, looping back to `specjedi-implement` whenever
+`specjedi-converge` finds drift to work through.
 
-### The vision (roadmap — converge isn't real yet)
+### The pipeline, end to end
 
-Constitution, specify, clarify, plan, tasks, implement, analyze, and
-checklist (steps 2-9 above) are live. The rest of the pipeline below is
-shown now so contributors and early adopters know what "done" looks like,
-not because you can run all of it yet:
+Constitution through convergence — every stage below is live:
 
 ```mermaid
 flowchart TD
@@ -313,13 +304,13 @@ flowchart TD
     D --> E["✅ specjedi-tasks ✅<br/>plan.md → tasks.md"]
     E --> F["✅ specjedi-implement 🔨<br/>execute tasks.md"]
     F --> G{"✅ specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
-    G -->|gaps found| H["📋 specjedi-converge<br/>queue remaining work"] --> F
+    G -->|gaps found| H["✅ specjedi-converge 🔁<br/>append drift as new tasks"] --> F
     G -->|clean| I(["🚀 shipped"])
     F -.->|need a checklist mid-flight| J["✅ specjedi-checklist ☑️<br/>ships today"]
     F -.->|stuck outside this pipeline| K["✅ specjedi-find-skills 🔍<br/>ships today"]
 ```
 
-✅ = ships today · 📋 = roadmap
+✅ = ships today — the full 9-stage `specjedi-*` pipeline is complete.
 
 ## Recommended companions
 

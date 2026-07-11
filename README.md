@@ -61,6 +61,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
 | `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
 | `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
+| `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -248,7 +249,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Sixteen product skills ship today ([What you get today](#what-you-get-today))
+Seventeen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -278,7 +279,11 @@ before? Start with step 0.
 6. Ready to design the "how"? `specjedi-plan` 🛠️ scans your actual codebase
    for existing conventions first, then turns the clarified spec into a
    technical `plan.md` — so implementation never has to stop and search
-   for a pattern that already exists elsewhere in your project.
+   for a pattern that already exists elsewhere in your project. If your
+   spec touches auth, external input, secrets, or data handling,
+   `specjedi-security` 🛡️ triggers automatically with a few targeted
+   "did we think about X" questions — a lightweight prompt, never a full
+   security review.
 7. Ready to break it into work? `specjedi-tasks` ✅ turns the plan into an
    ordered, dependency-aware `tasks.md` grouped by user story — a failing
    test task sequenced before its implementation task wherever the plan

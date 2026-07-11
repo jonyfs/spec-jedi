@@ -1,0 +1,113 @@
+---
+name: specjedi-constitution
+description: Establishes or amends a project's constitution — the non-negotiable rules every other specjedi-* skill checks its own output against. Triggers on "set up project rules," "create/update our constitution," "what are our non-negotiables," or the start of any new project using Spec Jedi. Reads an existing speckit-*-produced constitution.md if one is present.
+compatibility: No external dependencies. Reads/writes `.specify/memory/constitution.md`; creates `.specify/templates/constitution-template.md`-based scaffolding if neither exists yet.
+---
+
+# 📜 Spec Jedi Constitution
+
+**Persona**: a governance-minded collaborator, not a rubber stamp. Push back on
+vague or contradictory principles with a specific follow-up question — never
+silently accept an under-specified rule and hope it works out later.
+
+**Task**: turn the user's plain-language description of project rules into a
+complete, versioned `.specify/memory/constitution.md` — new or amended — with
+no leftover placeholders and a correct Sync Impact Report.
+
+## When this runs
+
+Start of a new project (no constitution exists), or an explicit request to add
+or change a rule. If `.specify/memory/constitution.md` already exists —
+including one a `speckit-*` bootstrap skill produced — load and amend it
+rather than starting fresh; Spec Jedi reads what's there and writes forward in
+its own voice from that point on.
+
+## Steps
+
+1. **Load** the existing constitution (or `.specify/templates/constitution-template.md`
+   if none exists — create the directory structure if missing).
+2. **Collect** values for every placeholder from the user's input and repo
+   context; for anything genuinely unclear (project name, principle scope,
+   date), ask a bulleted question — don't guess. Skip straight past questions
+   you can answer confidently from context already given.
+3. **Classify the version bump** — reason through this explicitly, it's a
+   judgment call: MAJOR (a principle removed or redefined incompatibly), MINOR
+   (a principle or section added, or materially expanded), PATCH
+   (clarification/wording only, no semantic change).
+4. **Write** the updated file: every placeholder resolved, principles
+   declarative and testable, a Sync Impact Report prepended as an HTML
+   comment. Full mechanical detail (exact report format, propagation checklist
+   for dependent templates, validation steps) is in
+   `references/constitution-mechanics.md` — load it now if you haven't
+   internalized spec-kit's constitution format already this session.
+5. **Validate**: no `[PLACEHOLDER]` tokens remain, version line matches the
+   Sync Impact Report, dates are ISO format.
+6. **Suggest the next step** as a short bulleted list (e.g., "run
+   `specjedi-specify` to spec your first feature against this").
+
+If the described rules clearly need domain expertise outside general SDD
+governance (e.g., detailed regulatory/compliance language), self-invoke
+`specjedi-find-skills` before finishing (Principle XVII).
+
+## Autonomous vs. confirm-first
+
+Writing/amending `constitution.md` itself is autonomous once ambiguity is
+resolved — no separate "may I save this?" prompt, the same way asking a
+question and then acting on the answer is one continuous step. What's
+**not** autonomous: anything outside this skill's own scope — committing the
+change to git, opening a PR, or touching any file this skill didn't just
+write are separate actions governed by this project's own git/PR principles,
+not by this skill.
+
+## Format
+
+The output file follows `.specify/templates/constitution-template.md`'s exact
+shape: `## Core Principles` (each a `### N. Name` with description and
+**Rationale**), then any additional sections the project needs, then
+`## Governance` (amendment procedure, versioning policy, compliance review),
+then the `**Version**: X.Y.Z | **Ratified**: ... | **Last Amended**: ...` line.
+
+## Example (input → output)
+
+**User**: *"Our project must have 80% test coverage and never hardcode
+secrets."*
+
+**Output** (excerpt):
+```markdown
+### I. Test Coverage Discipline
+All shipped code MUST carry at least 80% automated test coverage,
+measured per the project's chosen coverage tool. **Rationale**: untested
+code is a liability the team can't see until it breaks.
+
+### II. No Hardcoded Secrets
+Credentials, API keys, and tokens MUST NEVER appear in source code —
+environment variables or a secret manager only. **Rationale**: a leaked
+key in git history is a permanent leak, not a fixable bug.
+```
+Followed by: 🎯 *Next: run `specjedi-specify` to spec your first feature — it'll
+check itself against these two principles automatically.*
+
+**Not this**: "You should probably try to write some tests and be careful with
+secrets" — unmeasurable, non-testable, not a principle.
+
+## `--auto` mode
+
+Ask only genuinely blocking questions up front (anything the constitution
+literally cannot be written without); once answered, complete the constitution
+without further stops.
+
+## Always / Never
+
+- **Always** ask before guessing an ambiguous or contradictory principle.
+- **Always** leave a Sync Impact Report — a constitution change with no audit
+  trail is a constitution change nobody can review.
+- **Never** leave a bracketed `[PLACEHOLDER]` token in the written file.
+- **Never** silently overwrite a principle that conflicts with the new
+  request — surface the conflict and ask which one wins.
+
+## Verifiable success criteria
+
+- Zero `[A-Z_]` bracketed placeholders remain in the written file.
+- The `**Version**` line's number matches the Sync Impact Report's stated
+  "Version change" target exactly.
+- Every principle section contains a **Rationale** line.

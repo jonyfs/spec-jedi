@@ -1,33 +1,24 @@
 <!--
 Sync Impact Report
-- Version change: 1.9.1 → 1.10.0
-- Modified principles: Principle XVII materially expanded — the
-  gap-filling skill must now (a) operate proactively, self-invoking
-  whenever another specjedi-* skill's task touches a domain the installed
-  skill set doesn't cover, not just when the user explicitly asks; (b)
-  reason across whatever discovery mechanism fits the user's actual
-  harness (Principle III), not just one npm-centric registry; (c) be
-  written in Spec Jedi's own original voice rather than lightly-adapted
-  source wording; (d) track recurring gaps as a product-roadmap signal.
-- Added sections: none (amendment to existing Principle XVII)
+- Version change: 1.10.0 → 1.10.1
+- Modified principles: none (governance bookkeeping only — no MUST-level
+  rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, per this
+  amendment procedure's own requirement to keep follow-up TODOs current)
+- Added sections: none
 - Removed sections: none
-- Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ compatible as-is
-  - .specify/templates/spec-template.md ✅ compatible as-is
-  - .specify/templates/tasks-template.md ✅ compatible as-is
-  - .specify/templates/checklist-template.md ✅ compatible as-is
-  - .claude/skills/specjedi-find-skills/SKILL.md ⚠ pending — full rewrite
-    to this expanded spec, in the same change set
+- Templates requiring updates: none
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): still open from v1.9.1 — this amendment
-    documents the proactive-invocation *contract* other future
-    specjedi-* skills must call into; it can't be exercised end-to-end
-    until those skills exist.
+  - TODO(SPECJEDI_PIPELINE): **P1 (`specjedi-constitution`) and P2
+    (`specjedi-specify`) shipped** (feature 001-specjedi-pipeline,
+    2026-07-11) — the proactive-invocation contract documented in
+    Principle XVII is now exercised for real by both. P3-P9
+    (`specjedi-clarify` through `specjedi-converge`) remain open, tracked
+    in `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
 -->
 
 # Spec Jedi Constitution
@@ -708,4 +699,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.10.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.10.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

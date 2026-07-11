@@ -9,8 +9,13 @@ cd "$repo_root"
 fail=0
 
 echo "== Constitution: no leftover placeholder tokens =="
-if grep -nE '\[[A-Z_]+\]' .specify/memory/constitution.md; then
-  echo "FAIL: unresolved [PLACEHOLDER] tokens found in constitution.md"
+# Skip the leading Sync Impact Report HTML comment: it's a historical audit
+# log and may legitimately mention a literal token like "[TEMPLATE]" when
+# describing a version transition (e.g. "Version change: [TEMPLATE] -> 1.0.0"
+# on a project's first-ever ratification) without that being an unresolved
+# placeholder in the constitution body itself.
+if awk '/-->/{f=1;next} f' .specify/memory/constitution.md | grep -nE '\[[A-Z_]+\]'; then
+  echo "FAIL: unresolved [PLACEHOLDER] tokens found in constitution.md body"
   fail=1
 else
   echo "OK"

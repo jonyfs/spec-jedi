@@ -3,7 +3,44 @@
 **Feature**: 001-specjedi-pipeline
 **Constitution gate**: [Principle II](../../.specify/memory/constitution.md) — no new skill ships without
 benchmarking against spec-kit plus at least ten other publicly available SDD
-tools, with an explicit adopt/adapt/reject decision per mechanism.
+tools, with an explicit adopt/adapt/reject decision per mechanism, **and** at
+least one genuine contribution beyond what any researched competitor offers
+(added to Principle II in v1.11.0 — retrofitted here since this doc predates
+that amendment).
+
+## Genuine contributions beyond the researched field
+
+Not present, as a formalized mechanism, in spec-kit or any of the ten other
+tools researched below:
+
+1. **Constitution-enforced auto-merge CI governance.** Every one of the ten
+   competitors treats "constitution"/"rules" as a document agents *read*.
+   None of them tie it to an actual CI gate that blocks merge until every
+   platform's validation battery passes, with self-approval structurally
+   impossible (GitHub itself blocks it) rather than merely discouraged. This
+   repository's own `ci-gate` + branch protection setup (Principles IX, X)
+   is a working implementation, not a proposal.
+2. **A proactive, cross-skill gap-scout contract.** The seed skill
+   (`find-skills`) and every competitor's equivalent are reactive only — a
+   human has to ask. Principle XVII requires every `specjedi-*` skill to
+   self-invoke the gap-check mid-task, unprompted. No researched tool
+   formalizes "skills watch each other's blind spots" as a standing
+   contract.
+3. **AI Discipline as a versioned constitutional principle, not implicit
+   practice.** Every tool researched *implies* good prompting, efficient
+   token use, and factual grounding through example quality. None of them
+   *codify* it as an enforceable, versioned principle with a checklist
+   (Principle XX) that every new skill is reviewed against before shipping.
+4. **A documented, extensible voice/identity layer.** Purely a
+   differentiation choice, not a technical one — no competitor ships a
+   maintained reference lexicon (`references/star-wars-lexicon.md`) mapping
+   product situations to a consistent voice and icon language. Cosmetic, but
+   genuinely unique positioning in a field of similarly-toned developer
+   tools.
+
+These are what Principle II's "genuine addition" requirement (v1.11.0) points
+to for this feature; future `specjedi-*` skills (P3-P9) must each identify
+their own before shipping, not inherit this list by default.
 
 ## Baseline: GitHub spec-kit
 

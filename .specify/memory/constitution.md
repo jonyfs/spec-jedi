@@ -1,24 +1,41 @@
 <!--
 Sync Impact Report
-- Version change: 1.10.0 → 1.10.1
-- Modified principles: none (governance bookkeeping only — no MUST-level
-  rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, per this
-  amendment procedure's own requirement to keep follow-up TODOs current)
-- Added sections: none
+- Version change: 1.10.1 → 1.11.0
+- Modified principles: Principle II strengthened — competitive research
+  MUST end in genuine innovation, not just an adopt/adapt/reject synthesis
+  of what competitors already do (directly requested: "não é uma copia de
+  speckit... contribuir com novas features... além das encontradas")
+- Added sections:
+  - Core Principle XX (AI Discipline: Grounded, Efficient, Honest Output)
+    — bundles three explicitly requested pillars: best-practice AI usage
+    (cross-referencing Principle XIX), operating token-efficiently by
+    default (not just suggesting external tools per Principle VIII), and
+    actively resisting hallucination (never presenting an unverified guess
+    as fact)
 - Removed sections: none
-- Templates requiring updates: none
+- Templates requiring updates:
+  - .specify/templates/plan-template.md ✅ compatible as-is
+  - .specify/templates/spec-template.md ✅ compatible as-is
+  - .specify/templates/tasks-template.md ✅ compatible as-is
+  - .specify/templates/checklist-template.md ✅ compatible as-is
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): **P1 (`specjedi-constitution`) and P2
-    (`specjedi-specify`) shipped** (feature 001-specjedi-pipeline,
-    2026-07-11) — the proactive-invocation contract documented in
-    Principle XVII is now exercised for real by both. P3-P9
-    (`specjedi-clarify` through `specjedi-converge`) remain open, tracked
-    in `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
+  - TODO(SPECJEDI_PIPELINE): P1+P2 shipped (see v1.10.1 note); P3-P9 still
+    open. New Principle XX and the strengthened Principle II now apply to
+    all of them going forward — P3-P9 design work MUST name a genuine
+    innovation, not just replicate speckit-*'s equivalent command.
+  - TODO(GROUNDING_PASS): the two shipped specjedi-* skills
+    (`specjedi-constitution`, `specjedi-specify`) predate Principle XX;
+    they already avoid fabrication by construction (they generate
+    structured docs from user input, not factual claims about the world)
+    but haven't been explicitly re-reviewed against XX's checklist yet.
+    `specjedi-find-skills` already grounds every claim in a real, checked
+    install-count/source signal — closest thing to a reference
+    implementation of Principle XX today.
 -->
 
 # Spec Jedi Constitution
@@ -64,9 +81,21 @@ why.
 Reinventing a mechanism that a well-regarded prior art already solved is a
 constitution violation unless the research doc justifies the divergence.
 
+Research MUST NOT stop at synthesis. Spec Jedi is a **competitor** to
+spec-kit, not a themed reskin of it (Principle XV) — adopting the best parts
+of ten other tools produces, at best, a well-assembled average of the field.
+`research.md` MUST therefore also name at least one capability the resulting
+design offers that **no** researched competitor has — something Spec Jedi
+contributes back to the field, not just absorbs from it. If no genuine
+addition is identified for a given skill, that is itself a signal to keep
+researching or reconsider the skill's scope, not to ship a same-as-everyone
+design anyway.
+
 **Rationale**: The project's stated ambition is to be "the best SDD tool in
 the world." That claim is only defensible if every design decision can point
-to a documented comparison against existing practice, not intuition alone.
+to a documented comparison against existing practice, not intuition alone —
+and "best" requires genuinely exceeding the field on at least one axis per
+skill, not just matching its median.
 
 ### III. Universal LLM & Harness Compatibility
 
@@ -589,6 +618,43 @@ luck — the same "documented, reproducible mechanism" ethos Principle IX
 already applies to validation, now applied to how skills themselves get
 written and to the prompt craft inside them.
 
+### XX. AI Discipline: Grounded, Efficient, Honest Output
+
+Three explicitly required pillars govern how every `specjedi-*` skill
+actually uses AI at runtime, not just how it's authored (Principle XIX
+covers authoring; this covers behavior):
+
+- **Best-practice AI usage**: every skill applies Principle XIX's prompt
+  engineering discipline in practice, not just in its own source — persona,
+  explicit task framing, and chain-of-thought reasoning for judgment calls
+  MUST actually shape the skill's real output, not just appear as headers in
+  the file that get ignored at runtime.
+- **Token economy by default**: skills MUST operate efficiently themselves,
+  not only suggest external token-saving tools (Principle VIII). Concretely:
+  prefer targeted lookups over dumping whole files, reuse context already
+  established in the conversation instead of re-deriving it, and follow
+  Principle XIX's progressive-disclosure pattern (core file lean, detail
+  loaded on demand) so a skill's own footprint stays small. When a
+  token-economy tool the user has installed (e.g., a knowledge-graph query
+  mechanism) offers a cheaper path to the same information a skill would
+  otherwise get by brute-force reading, the skill MUST prefer it.
+- **Hallucination resistance**: a skill MUST NEVER present an unverified
+  guess as fact. Concretely: don't state an install count, API behavior, or
+  file's contents without having actually checked it in this session; when
+  something is genuinely unknown, say so explicitly rather than filling the
+  gap with a plausible-sounding fabrication; ground factual claims in a
+  cited source (a fetched doc, a file actually read, a command actually
+  run) the same way Principle II already requires research claims to be
+  grounded, not asserted from memory alone.
+
+**Rationale**: Directly requested as three explicit, named pillars — best
+AI practice, token economy, and avoiding AI "delírios" (hallucinations) —
+treated here as one coherent runtime-discipline principle because they're
+the same underlying commitment: an AI-first tool (Principle VI) has to be
+trustworthy about what it actually knows versus what it's inventing, and
+economical about the resources it spends finding out, or the "AI-first"
+positioning becomes a liability instead of the project's advantage.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -699,4 +765,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.10.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.11.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

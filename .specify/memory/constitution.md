@@ -1,31 +1,29 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.12 → 1.15.13
-- Modified principles: none (no MUST-level rule changed) — PATCH bump
+- Version change: 1.15.13 → 1.15.14
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  governance bookkeeping only
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs: all six historical governance TODOs remain resolved
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
-  `specjedi-migrate` through `specjedi-docs` shipped v1.15.7-v1.15.12 (see
-  prior history — the full original roadmap backlog is complete). This
-  amendment is a small consistency pass, not a new skill:
-  - Post-shipment audit of the six most recently shipped skills
-    (`migrate`, `diagram`, `status`, `retro`, `security`, `docs`) against
-    the same four checks the earlier TODO passes established (bulleted
-    next-step format, explicit autonomous/confirm-first section, explicit
-    chain-of-thought framing for real judgment calls, genuine Star Wars
-    voice). Five of six were already fully compliant — built with the
-    lessons from the earlier passes already applied. Found one real gap:
-    `specjedi-docs`'s drafting step named a real judgment call in its own
-    `plan.md` (avoid generic/inflated wording) but never carried that
-    "reason through it explicitly" framing into the actual `SKILL.md`
-    step text — fixed. Confirms the standing lesson from the original
-    GROUNDING_PASS: a documented design intention and the shipped
-    instruction text can still drift apart even one file removed from
-    each other, worth spot-checking periodically rather than assuming
-    once-fixed stays fixed forever.
+  `specjedi-migrate` through `specjedi-docs` shipped v1.15.7-v1.15.12; the
+  6-skill consistency audit landed at v1.15.13 (see prior history). This
+  amendment adds a new one, discovered while surveying for further work:
+  - TODO(LOCALIZATION): Principle I requires README, CONTRIBUTING, and
+    installation guides maintained in the ten most-spoken world
+    languages, kept in sync with the English source. Zero localized docs
+    exist as of this amendment — only `README.md` in English. This is a
+    genuine, non-negotiable constitutional gap, not a "nice to have"
+    roadmap item; flagged here rather than left silently undiscovered.
+    Needs a maintainer decision on translation approach (which languages
+    first, machine-translation-with-review vs. community-contributed, how
+    drift-detection is enforced per Principle I's own "flag if one minor
+    release behind" requirement) before execution — quality and cultural
+    accuracy matter for a doc surface meant to reach "thousands of
+    people," so this isn't a blind-autonomous-execution task.
 -->
 
 # Spec Jedi Constitution
@@ -819,4 +817,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.13 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.14 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

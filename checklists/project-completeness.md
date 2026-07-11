@@ -35,12 +35,18 @@ no single feature for "the whole project," so this file lives at
       fabricated capability claims per Principle XX); a deeper matrix with
       actual per-harness capability notes still doesn't exist and would
       require testing each harness, out of scope for a same-session fix.
-- [ ] CHK003 - Is there a stated, reproducible mechanism for detecting when
+- [x] CHK003 - Is there a stated, reproducible mechanism for detecting when
       a localized doc has "drifted more than one minor release behind" the
       English source, as Principle I requires ("MUST be flagged... rather
       than silently served as current")? No localized docs exist yet
       (`TODO(LOCALIZATION)`), so this detection mechanism is also
-      undesigned. [Gap, Constitution §I]
+      undesigned. [Gap, Constitution §I] — **Resolved**: localized docs
+      now exist under `docs/i18n/<lang>/`, each carrying an `i18n-sync:
+      source=<file>@<commit>` marker; `scripts/validate.sh`/`.ps1` flag
+      (non-blocking) any file whose recorded commit has fallen behind the
+      English source's actual latest commit. Real dry run confirmed both
+      the clean-state and drifted-state paths on `bash` and `pwsh`, and
+      caught a real bug (incorrect sync-commit hashes) before shipping.
 - [x] CHK004 - Does Principle IX's validation battery growth requirement
       ("the moment any skill produces unit-testable logic, integration
       behavior, or a web UI, the corresponding tests join the battery")
@@ -71,12 +77,17 @@ no single feature for "the whole project," so this file lives at
 
 ## Requirement Clarity
 
-- [ ] CHK006 - Principle I requires localizing docs into "the ten
+- [x] CHK006 - Principle I requires localizing docs into "the ten
       most-spoken languages in the world (by total speakers, per the most
       recent authoritative linguistic survey at time of writing)" — is that
       actual list of ten languages pinned down anywhere as a concrete,
       dated decision, or does every future reader have to re-derive it from
-      the open-ended phrase? [Clarity, Ambiguity, Constitution §I]
+      the open-ended phrase? [Clarity, Ambiguity, Constitution §I] —
+      **Resolved**: Principle I amended (v1.17.0) to name six concrete
+      languages (Mandarin Chinese, Hindi, Spanish, French, Arabic,
+      Bengali) as a deliberate, maintainer-decided scope, replacing the
+      open-ended "ten most-spoken" phrase entirely — no re-derivation
+      needed.
 - [ ] CHK007 - Principle VI requires plans to "state the explicit reason"
       when test-first delivery doesn't apply — do shipped feature `plan.md`
       files actually cite this reasoning explicitly (e.g., "Principle VI

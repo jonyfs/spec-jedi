@@ -11,6 +11,16 @@ this file directly.
 
 ### Added
 
+- Localized documentation (`docs/i18n/<lang>/README.md` and
+  `CONTRIBUTING.md`) in six languages — Mandarin Chinese, Hindi, Spanish,
+  French, Arabic, and Bengali — AI-assisted translations, English
+  canonical. `scripts/validate.sh`/`.ps1` gained an automated,
+  non-blocking sync-drift check flagging any localized doc whose recorded
+  source commit has fallen behind the English file's actual latest
+  commit. Closes `TODO(LOCALIZATION)` (open since constitution v1.15.14)
+  and `checklists/project-completeness.md` CHK003/CHK006 — Principle I
+  amended (v1.17.0) to name the six languages concretely instead of a
+  re-derivable "ten most-spoken."
 - `scripts/validate.sh`/`.ps1` — automated, non-blocking Principle IX
   validation-battery-growth-trigger check: warns the moment the repo
   gains a test-pattern file, a language runtime manifest, or a web UI

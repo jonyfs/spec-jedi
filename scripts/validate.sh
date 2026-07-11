@@ -85,6 +85,37 @@ else
 fi
 
 echo
+echo "== Constitution Principle I: localized docs sync check =="
+# Informational only (never fails the build): each translated file under
+# docs/i18n/<lang>/ records "i18n-sync: source=<file>@<hash>" naming the
+# English source commit it was translated from. Warn when the English
+# source has moved since — Principle I requires drift to be flagged
+# ("MUST be flagged... rather than silently served as current"), not
+# silently ignored.
+if [ -d docs/i18n ]; then
+  while IFS= read -r -d '' translated_file; do
+    marker_line=$(grep -m1 'i18n-sync: source=' "$translated_file" 2>/dev/null || true)
+    if [ -z "$marker_line" ]; then
+      echo "WARN: $translated_file has no i18n-sync marker — drift cannot be checked."
+      continue
+    fi
+    source_rel=$(echo "$marker_line" | sed -E 's/.*source=([^@]+)@([0-9a-f]+).*/\1/')
+    synced_hash=$(echo "$marker_line" | sed -E 's/.*source=([^@]+)@([0-9a-f]+).*/\2/')
+    if [ ! -f "$source_rel" ]; then
+      echo "WARN: $translated_file references missing source $source_rel"
+      continue
+    fi
+    current_hash=$(git log -1 --format=%h -- "$source_rel" 2>/dev/null || true)
+    if [ -n "$current_hash" ] && [ "$current_hash" != "$synced_hash" ]; then
+      echo "WARN: $translated_file is out of sync — $source_rel changed since commit $synced_hash (now at $current_hash)."
+    fi
+  done < <(find docs/i18n -name '*.md' -print0)
+  echo "OK: localized docs sync check complete (see WARN lines above, if any)."
+else
+  echo "OK: no docs/i18n/ directory yet."
+fi
+
+echo
 if [ "$fail" -ne 0 ]; then
   echo "validate.sh: FAILED"
   exit 1

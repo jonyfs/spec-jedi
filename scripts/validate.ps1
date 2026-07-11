@@ -112,6 +112,42 @@ if ($batterySignal) {
 }
 
 Write-Host ""
+Write-Host "== Constitution Principle I: localized docs sync check =="
+# Informational only (never fails the build): each translated file under
+# docs/i18n/<lang>/ records "i18n-sync: source=<file>@<hash>" naming the
+# English source commit it was translated from. Warn when the English
+# source has moved since - Principle I requires drift to be flagged
+# ("MUST be flagged... rather than silently served as current"), not
+# silently ignored.
+$i18nDir = Join-Path $repoRoot 'docs/i18n'
+if (Test-Path $i18nDir) {
+    $translatedFiles = Get-ChildItem -Path $i18nDir -Recurse -Filter '*.md' -File
+    foreach ($translatedFile in $translatedFiles) {
+        $markerLine = (Get-Content -Path $translatedFile.FullName) | Select-String -Pattern 'i18n-sync: source=' | Select-Object -First 1
+        if (-not $markerLine) {
+            Write-Host "WARN: $($translatedFile.FullName) has no i18n-sync marker - drift cannot be checked."
+            continue
+        }
+        if ($markerLine.Line -match 'source=([^@]+)@([0-9a-f]+)') {
+            $sourceRel = $matches[1]
+            $syncedHash = $matches[2]
+            $sourcePath = Join-Path $repoRoot $sourceRel
+            if (-not (Test-Path $sourcePath)) {
+                Write-Host "WARN: $($translatedFile.FullName) references missing source $sourceRel"
+                continue
+            }
+            $currentHash = (git log -1 --format=%h -- $sourceRel 2>$null)
+            if ($currentHash -and ($currentHash -ne $syncedHash)) {
+                Write-Host "WARN: $($translatedFile.FullName) is out of sync - $sourceRel changed since commit $syncedHash (now at $currentHash)."
+            }
+        }
+    }
+    Write-Host "OK: localized docs sync check complete (see WARN lines above, if any)."
+} else {
+    Write-Host "OK: no docs/i18n/ directory yet."
+}
+
+Write-Host ""
 if ($fail) {
     Write-Host "validate.ps1: FAILED"
     exit 1

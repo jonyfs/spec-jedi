@@ -1,22 +1,28 @@
 <!--
 Sync Impact Report
-- Version change: 1.11.0 → 1.12.0
-- Modified principles: Principle X materially expanded — auto-merge on
-  checks-alone is now scoped to the repository owner's own PRs only;
-  any other contributor's PR MUST receive an explicit approving review
-  from the owner before it can merge, automated or not (directly
-  requested: "só irá aceitar automerge do owner... outros devem ter
-  seus pulls requests aprovados pelo owner"). Repository & CI
-  Configuration Prerequisites updated to match — the prior text
-  incorrectly stated approving reviews were optional for all automated
-  PRs; that was only ever true for the owner's own.
-- Added sections: none (amendment to existing Principle X)
+- Version change: 1.12.0 → 1.12.1
+- Modified principles: Principle X's mechanism description corrected
+  (PATCH — the underlying rule from v1.12.0 is unchanged: owner's PRs
+  checks-only auto-merge, everyone else's needs the owner's approval).
+  v1.12.0, as merged, documented a GitHub-native ruleset
+  (`bypass_actors`) as the implementation. That was tested live
+  immediately after merging and confirmed NOT to work: the bypass only
+  unlocks a manual admin-override merge, it does not make
+  `gh pr merge --auto` treat the PR as satisfied — so it would have
+  silently broken the owner's own auto-merge, not granted a working
+  exception. The ruleset has been deleted from the live repository.
+  Replaced with a custom `owner-gate` CI battery job (Principle IX) that
+  checks PR authorship directly and, for non-owner PRs, checks for a real
+  `APPROVED` GitHub review from the owner via the API.
+- Added sections: none
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
+  - .github/workflows/validate.yml ✅ updated in the same change set —
+    adds the `owner-gate` job, listed in `ci-gate`'s `needs`
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
@@ -734,18 +740,20 @@ a maintainer rather than silently assumed:
   check (Principle X) to pass before merging — not individual sub-checks,
   so the required-checks list in GitHub never needs to change as the
   battery grows. This applies to every PR regardless of author.
-- **Owner-approval ruleset**: a GitHub repository ruleset (not classic
-  branch protection's `bypass_pull_request_allowances`, which is
-  org-repositories-only and rejects personal accounts) requiring 1
-  approving review on `main`, with a bypass actor of
-  `actor_type: "RepositoryRole"`, `actor_id: 5` (the "Repository admin"
-  role — verify this value against current GitHub docs before reusing, as
-  well-known actor IDs are not exhaustively documented and could change).
-  This lets the owner's own PRs merge on `ci-gate` alone while every other
-  contributor's PR waits on an explicit owner approval, implementing the
-  owner/non-owner split above. Configured via
-  `POST /repos/{owner}/{repo}/rulesets`, not the classic
-  `PUT .../branches/{branch}/protection` endpoint.
+- **Owner-approval CI gate**: implemented as a battery job
+  (`owner-gate`, part of what `ci-gate` requires — Principle IX), not as a
+  GitHub branch-protection/ruleset review requirement. GitHub's native
+  ruleset `bypass_actors` mechanism was tried first and verified live to
+  *not* satisfy this need: a bypass actor can only force-merge via an
+  explicit admin-override action, which does not feed into
+  `gh pr merge --auto`'s automatic evaluation — the owner's own PRs would
+  stop auto-merging entirely, not just gain a legitimate exception.
+  `owner-gate` instead checks the PR author directly: authored by the
+  owner → passes immediately; authored by anyone else → passes only once
+  the owner has left an `APPROVED` review on that PR (checked via the
+  GitHub API, keyed to the owner's username), which the workflow also
+  listens for (`pull_request_review: submitted`) so approving doesn't
+  require pushing a new commit to re-trigger CI.
 - **Repository setting "Allow auto-merge"**: MUST be enabled so a PR can
   be marked `gh pr merge --auto` (or equivalent) immediately on open and
   complete automatically once checks go green.
@@ -791,4 +799,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.12.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.12.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

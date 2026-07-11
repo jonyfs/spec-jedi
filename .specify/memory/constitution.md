@@ -1,30 +1,31 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.11 → 1.15.12
-- Modified principles: none (no MUST-level rule changed) — PATCH bump,
-  consistent with prior skill-shipment amendments
+- Version change: 1.15.12 → 1.15.13
+- Modified principles: none (no MUST-level rule changed) — PATCH bump
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs: all six historical governance TODOs remain resolved
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
-  `specjedi-migrate` shipped at v1.15.7, `specjedi-diagram` at v1.15.8,
-  `specjedi-status` at v1.15.9, `specjedi-retro` at v1.15.10,
-  `specjedi-security` at v1.15.11 (see prior history). This amendment
-  adds a new one:
-  - `specjedi-docs` shipped (feature 008-specjedi-docs, 2026-07-11) —
-    the seventh and **final** item in `references/skill-roadmap.md`'s
-    original backlog. Drafts a README skill-table row, a Quickstart
-    step, and a `CHANGELOG.md` entry from a shipped feature's spec/plan,
-    grounded in actual content, always confirmed before writing — never
-    open-ended doc generation. This shipment created this repo's first
-    `CHANGELOG.md`, populated using the skill's own drafting logic
-    (dogfooded for real, not just described), and the skill's own worked
-    example documents itself. `references/skill-roadmap.md`'s "Proposed,
-    not yet built" section is now empty — every item from the original
-    list (features 002-008) has shipped; future proposals start a new
-    list rather than reopening this one.
+  `specjedi-migrate` through `specjedi-docs` shipped v1.15.7-v1.15.12 (see
+  prior history — the full original roadmap backlog is complete). This
+  amendment is a small consistency pass, not a new skill:
+  - Post-shipment audit of the six most recently shipped skills
+    (`migrate`, `diagram`, `status`, `retro`, `security`, `docs`) against
+    the same four checks the earlier TODO passes established (bulleted
+    next-step format, explicit autonomous/confirm-first section, explicit
+    chain-of-thought framing for real judgment calls, genuine Star Wars
+    voice). Five of six were already fully compliant — built with the
+    lessons from the earlier passes already applied. Found one real gap:
+    `specjedi-docs`'s drafting step named a real judgment call in its own
+    `plan.md` (avoid generic/inflated wording) but never carried that
+    "reason through it explicitly" framing into the actual `SKILL.md`
+    step text — fixed. Confirms the standing lesson from the original
+    GROUNDING_PASS: a documented design intention and the shipped
+    instruction text can still drift apart even one file removed from
+    each other, worth spot-checking periodically rather than assuming
+    once-fixed stays fixed forever.
 -->
 
 # Spec Jedi Constitution
@@ -818,4 +819,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.12 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.13 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

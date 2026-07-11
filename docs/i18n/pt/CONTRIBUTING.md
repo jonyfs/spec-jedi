@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=pt -->
+<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:

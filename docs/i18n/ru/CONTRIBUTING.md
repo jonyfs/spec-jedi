@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=ru -->
+<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=ru -->
 > 🌐 Этот документ переведён с помощью ИИ. **Английский является
 > каноническим источником**
 > ([Principle I](../../../.specify/memory/constitution.md)); в случае

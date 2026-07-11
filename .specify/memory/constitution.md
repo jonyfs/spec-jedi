@@ -1,5 +1,44 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.4 → 1.16.5
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  a compliance/documentation fix, not new guidance
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: TODO(LOCALIZATION) remains open (opened v1.15.14). This
+  amendment closes several concrete findings from a project-wide
+  requirements-completeness checklist run via `/speckit-checklist`
+  (`checklists/project-completeness.md`, 19 items across 7 categories,
+  auditing the constitution's own 20 principles for completeness/clarity/
+  consistency/traceability rather than any single feature):
+  - `references/principle-traceability.md` created — the first canonical
+    document mapping every principle to its implementing mechanism or an
+    explicit tracked gap (CHK001), previously scattered across
+    `skill-roadmap.md` prose and Sync Impact Report history.
+  - README's stale "12 `specjedi-*` product skills" Installation-section
+    reference corrected to 22 (CHK008); the `Roadmap` badge corrected from
+    stale `7/7 shipped` to accurate `11/11 shipped`, and a new `Skills`
+    badge (`22 shipped`) added (CHK009/CHK010) — the constitution's own
+    Distribution & Ecosystem Standards section names a stale hardcoded
+    fact-bearing badge "a constitution violation, not a stylistic choice."
+  - README's "Supported harnesses" table expanded from ~8 named tools
+    collapsed into one open-ended "and others" row to all 20 harnesses
+    named individually per Principle III's explicit "at least twenty"
+    mandate — status only (✅/📋), no fabricated per-harness capability
+    claims, consistent with Principle XX's hallucination-resistance
+    discipline (CHK002 partial — a deeper capability matrix still doesn't
+    exist and would require actually testing each harness).
+  - Several remaining checklist items (CHK002 deep matrix, CHK003
+    localization drift-detection, CHK004 validation-battery growth
+    trigger, CHK005 per-PR governance checklist skill, CHK011 retroactive
+    PR badge-review) remain open, tracked in the checklist file itself —
+    each either genuinely blocked (localization) or reasonably scoped as
+    its own future feature cycle rather than a same-session fix.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.3 → 1.16.4
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   consistent with how routine skill shipments are versioned after the
@@ -919,4 +958,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.4 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

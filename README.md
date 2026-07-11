@@ -4,7 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
-[![Roadmap](https://img.shields.io/badge/roadmap_backlog-7%2F7_shipped-success)](references/skill-roadmap.md)
+[![Skills](https://img.shields.io/badge/specjedi_skills-22_shipped-success)](#what-you-get-today)
+[![Roadmap](https://img.shields.io/badge/roadmap_backlog-11%2F11_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
@@ -206,7 +207,7 @@ skills themselves work identically either way.
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   all 12 `specjedi-*` product skills and the `speckit-*` commands (this repo's
+   all 22 `specjedi-*` product skills and the `speckit-*` commands (this repo's
    own internal bootstrap tooling — see [What you get today](#what-you-get-today))
    listed together, since Claude Code discovers every skill under
    `.claude/skills/` without distinguishing the two.
@@ -246,7 +247,31 @@ built, tested, and documented end to end.
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Supported — see steps above |
-| Cursor, Windsurf, GitHub Copilot, Codex CLI, Gemini CLI/Antigravity, Cline, Continue, Aider, and others | 📋 Planned — tracked as future work, not yet installable |
+| Cursor | 📋 Planned — not yet installable |
+| GitHub Copilot (Chat/Workspace) | 📋 Planned — not yet installable |
+| Codex CLI (OpenAI) | 📋 Planned — not yet installable |
+| Gemini CLI | 📋 Planned — not yet installable |
+| Antigravity (Google) | 📋 Planned — not yet installable |
+| Windsurf (Codeium) | 📋 Planned — not yet installable |
+| Cline | 📋 Planned — not yet installable |
+| Continue | 📋 Planned — not yet installable |
+| Aider | 📋 Planned — not yet installable |
+| Amazon Q Developer | 📋 Planned — not yet installable |
+| JetBrains AI Assistant | 📋 Planned — not yet installable |
+| Zed | 📋 Planned — not yet installable |
+| OpenCode | 📋 Planned — not yet installable |
+| Warp (Agent Mode) | 📋 Planned — not yet installable |
+| Replit Agent | 📋 Planned — not yet installable |
+| Devin (Cognition) | 📋 Planned — not yet installable |
+| Tabnine | 📋 Planned — not yet installable |
+| Sourcegraph Cody | 📋 Planned — not yet installable |
+| Trae | 📋 Planned — not yet installable |
+
+Twenty harnesses named individually per Principle III's "at least twenty"
+mandate — status only (✅ supported / 📋 planned), no capability claims for
+any harness this project hasn't actually built and tested against, per
+Principle XX's hallucination-resistance discipline. "Planned" is a status,
+not a promised roadmap date.
 
 If your harness isn't listed as supported yet, the `SKILL.md` files are plain
 Markdown with YAML frontmatter — many harnesses that support custom

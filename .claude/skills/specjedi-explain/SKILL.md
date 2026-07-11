@@ -49,6 +49,19 @@ Fully autonomous, trivially: this skill never writes to any file, so there
 is nothing to confirm before saving — every answer is produced and
 delivered in one step.
 
+## Format
+
+An answer calibrated to the depth chosen in step 1, followed by the next
+step(s) as a short bulleted list (Principle XIV) — never inline prose,
+even for a single item:
+
+```markdown
+<answer at the calibrated depth>
+
+**Next step:**
+- <specific specjedi-* skill or action to run>
+```
+
 ## Example (input → output, same concept, two audiences)
 
 **Beginner asks:** *"what even is a 'spec' and why can't I just start
@@ -81,6 +94,13 @@ CLARIFICATION instead of just picking a reasonable default?"*
 **Not this**: giving the beginner the Principle V citation with no plain-
 language translation, or giving the advanced asker the recipe analogy they
 didn't need.
+
+## `--auto` mode
+
+No behavior change: this skill is already fully autonomous end to end
+(step 1's calibration, the answer itself, and the closing next-step list
+all happen in one pass with no confirmation gate) — `--auto` has nothing
+to remove.
 
 ## Always / Never
 

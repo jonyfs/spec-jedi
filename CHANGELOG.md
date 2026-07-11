@@ -58,6 +58,11 @@ this file directly.
 
 ### Changed
 
+- `specjedi-explain` and `specjedi-find-skills` brought into full
+  compliance with the Skill Authoring Standard (`specjedi-explain` was
+  missing its `Format` and `` `--auto` mode `` sections; `specjedi-
+  find-skills` was missing its `` `--auto` mode `` section) — found by
+  `specjedi-skill-review`'s own first real dry run.
 - All 12 shipped pipeline/roadmap skills brought into compliance with
   Principle XIV's bulleted next-step format, Principle XX's chain-of-thought
   and token-economy requirements, and Principle XII's Star Wars voice

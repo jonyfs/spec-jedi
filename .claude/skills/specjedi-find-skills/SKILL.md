@@ -148,6 +148,15 @@ Say so in one line, then offer the next step(s) as a short bulleted list
 like a recurring need — `npx skills init <name>` to turn it into a real
 skill. A short honest "nothing found" beats a padded one.
 
+## `--auto` mode
+
+Proceed through checking the leaderboard, searching, and weighing signals
+without stopping for confirmation — `--auto` only removes the pause
+before presenting the recommendation itself. It never removes step 7's
+explicit-yes gate before installing anything, and it never skips logging
+a gap to `.specify/memory/skill-gaps.md` when nothing verifiable is
+found.
+
 ## Always / Never
 
 - **Always** verify install count + source before recommending — never

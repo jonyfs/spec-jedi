@@ -35,14 +35,17 @@ writing.
    yet, note that it will be created with a minimal
    [Keep a Changelog](https://keepachangelog.com/)-style header. Append
    the new entry under an "Unreleased" section — this skill doesn't
-   suggest a version number (that's `scripts/suggest-release.sh`'s job,
-   Principle XI).
+   suggest a version number (that's `specjedi-release`'s job, Principle
+   XI).
 6. **Present all three drafts together and wait for explicit
    confirmation** before writing anything — never a silent write, even in
    `--auto` mode.
 7. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   opening a PR with the doc changes, or running `scripts/
-   suggest-release.sh` if a release feels due.
+   opening a PR with the doc changes, or running `specjedi-release` if a
+   release feels due — named as an option here, never proactively
+   self-invoked (a release check has no urgency comparable to a security
+   gap, and this project's own multi-feature-per-session pace would make
+   an automatic trigger noisy).
 
 If a feature's domain needs expertise this skill's general doc-drafting
 competence doesn't cover (e.g., specialized regulatory-disclosure

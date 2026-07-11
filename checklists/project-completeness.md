@@ -41,16 +41,20 @@ no single feature for "the whole project," so this file lives at
       than silently served as current")? No localized docs exist yet
       (`TODO(LOCALIZATION)`), so this detection mechanism is also
       undesigned. [Gap, Constitution §I]
-- [ ] CHK004 - Does Principle IX's validation battery growth requirement
+- [x] CHK004 - Does Principle IX's validation battery growth requirement
       ("the moment any skill produces unit-testable logic, integration
       behavior, or a web UI, the corresponding tests join the battery")
       have a documented trigger/owner for noticing that moment has arrived,
       or does it rely entirely on someone remembering to re-read the
-      principle? [Gap, Constitution §IX] — **Partial progress**: the
-      exemption reasoning ("no unit-testable logic or web UI shipped yet")
-      is now stated explicitly in `references/principle-traceability.md`'s
-      Principle IX row; an automated trigger/owner mechanism still doesn't
-      exist.
+      principle? [Gap, Constitution §IX] — **Resolved**:
+      `scripts/validate.sh`/`.ps1` now includes an automated, non-blocking
+      battery-growth-trigger check — scans for test-pattern files, language
+      runtime manifests, and web UI markers not yet covered by a matching
+      CI job, warning the moment one appears. Real dry run confirmed both
+      the clean-state (OK) and triggered (WARN) paths, on both `bash` and
+      `pwsh`, and caught a real false-positive bug (a comment mentioning
+      future job names was initially misread as an existing job) before
+      shipping.
 - [x] CHK005 - Is there a per-PR governance checklist artifact a reviewer
       (human or automated) can mechanically check against all 20 Core
       Principles, or does "Code and content review MUST explicitly check

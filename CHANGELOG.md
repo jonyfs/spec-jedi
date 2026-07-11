@@ -11,6 +11,11 @@ this file directly.
 
 ### Added
 
+- `scripts/validate.sh`/`.ps1` — automated, non-blocking Principle IX
+  validation-battery-growth-trigger check: warns the moment the repo
+  gains a test-pattern file, a language runtime manifest, or a web UI
+  marker not yet covered by a matching CI job. Closes
+  `checklists/project-completeness.md` CHK004.
 - `specjedi-govcheck` ⚖️ — strictly read-only per-PR/per-branch governance
   compliance checklist against all 20 constitution principles plus the
   Distribution & Ecosystem Standards and Development Workflow sections —

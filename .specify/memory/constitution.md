@@ -1,5 +1,32 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.6 → 1.16.7
+- Modified principles: none (no MUST-level rule changed) — PATCH bump, a
+  compliance mechanism added to existing tooling, not new guidance
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: TODO(LOCALIZATION) remains open (opened v1.15.14). This
+  amendment closes another finding from `checklists/project-completeness.md`:
+  - CHK004: `scripts/validate.sh`/`.ps1` gained an automated, non-blocking
+    Principle IX validation-battery-growth-trigger check — scans for
+    test-pattern files, language runtime manifests, and web UI markers
+    not yet covered by a matching unit/integration/Playwright CI job,
+    warning the moment one appears rather than relying on someone
+    remembering to re-read the principle. Deliberately implemented as a
+    `scripts/validate.sh` enhancement rather than a new `specjedi-*`
+    skill: this check is introspective tooling about this repo's own CI
+    configuration, not a general SDD capability an end user of the
+    toolkit would want in their own project — the same category as
+    `scripts/validate.sh` itself, not the product surface (Principle
+    XV). Real dry run on both `bash` and `pwsh` confirmed the clean-state
+    and triggered paths, and caught a real false-positive bug (a code
+    comment mentioning future job names was initially misread as an
+    existing job) before shipping.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.5 → 1.16.6
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   consistent with how routine skill shipments are versioned after the
@@ -1000,4 +1027,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.6 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.7 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

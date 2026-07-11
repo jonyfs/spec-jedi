@@ -62,6 +62,56 @@ foreach ($skillFile in $skillFiles) {
 }
 
 Write-Host ""
+Write-Host "== Constitution Principle IX: validation battery growth trigger =="
+# Informational only (never fails the build): flags the moment this repo
+# gains unit-testable logic, an integration surface, or a web UI that the
+# CI battery (.github/workflows/*.yml) doesn't yet cover — the exact
+# "moment any skill produces..." trigger Principle IX names but leaves
+# undetected otherwise (checklists/project-completeness.md CHK004).
+$batterySignal = $false
+
+$testFiles = Get-ChildItem -Path $repoRoot -Recurse -Force -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch '\.git[\\/]' -and ($_.Name -match '\.test\.' -or $_.Name -match '\.spec\.' -or $_.Name -match '_test\.py$') } |
+    Select-Object -First 1
+if ($testFiles) {
+    Write-Host "SIGNAL: test-pattern file(s) found (*.test.*, *.spec.*, *_test.py) - unit-testable logic may exist"
+    $batterySignal = $true
+}
+
+$packageJsonPath = Join-Path $repoRoot 'package.json'
+if ((Test-Path (Join-Path $repoRoot 'package.json')) -or (Test-Path (Join-Path $repoRoot 'pyproject.toml')) -or (Test-Path (Join-Path $repoRoot 'Cargo.toml')) -or (Test-Path (Join-Path $repoRoot 'go.mod'))) {
+    Write-Host "SIGNAL: a language runtime manifest (package.json/pyproject.toml/Cargo.toml/go.mod) exists at repo root"
+    $batterySignal = $true
+}
+
+$hasWebMarker = (Test-Path (Join-Path $repoRoot 'index.html'))
+if (-not $hasWebMarker -and (Test-Path $packageJsonPath)) {
+    $pkgContent = Get-Content -Path $packageJsonPath -Raw
+    if ($pkgContent -match '"(react|vue|svelte|next)"') {
+        $hasWebMarker = $true
+    }
+}
+if ($hasWebMarker) {
+    Write-Host "SIGNAL: web UI marker found (index.html, or a React/Vue/Svelte/Next dependency)"
+    $batterySignal = $true
+}
+
+if ($batterySignal) {
+    $workflowFiles = Get-ChildItem -Path (Join-Path $repoRoot '.github/workflows') -Filter '*.yml' -ErrorAction SilentlyContinue
+    $batteryJobs = $workflowFiles | Where-Object {
+        $nonCommentLines = (Get-Content -Path $_.FullName) | Where-Object { $_ -notmatch '^\s*#' }
+        ($nonCommentLines -join "`n") -match 'unit|integration|playwright'
+    }
+    if (-not $batteryJobs) {
+        Write-Host "WARN: signal(s) found above, but no unit/integration/playwright job exists in .github/workflows/ - the validation battery should grow (Principle IX)."
+    } else {
+        Write-Host "OK: signal(s) found above, and a corresponding CI job already exists - battery already covers this."
+    }
+} else {
+    Write-Host "OK: no unit-testable code, integration surface, or web UI detected - battery growth not yet triggered."
+}
+
+Write-Host ""
 if ($fail) {
     Write-Host "validate.ps1: FAILED"
     exit 1

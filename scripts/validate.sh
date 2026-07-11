@@ -50,6 +50,41 @@ while IFS= read -r -d '' skill_file; do
 done < <(find . -path ./.git -prune -o -name 'SKILL.md' -print0)
 
 echo
+echo "== Constitution Principle IX: validation battery growth trigger =="
+# Informational only (never fails the build): flags the moment this repo
+# gains unit-testable logic, an integration surface, or a web UI that the
+# CI battery (.github/workflows/*.yml) doesn't yet cover — the exact
+# "moment any skill produces..." trigger Principle IX names but leaves
+# undetected otherwise (checklists/project-completeness.md CHK004).
+battery_signal=0
+
+if find . -path ./.git -prune -o \( -iname '*.test.*' -o -iname '*.spec.*' -o -iname '*_test.py' \) -print -quit 2>/dev/null | grep -q .; then
+  echo "SIGNAL: test-pattern file(s) found (*.test.*, *.spec.*, *_test.py) — unit-testable logic may exist"
+  battery_signal=1
+fi
+
+if [ -f package.json ] || [ -f pyproject.toml ] || [ -f Cargo.toml ] || [ -f go.mod ]; then
+  echo "SIGNAL: a language runtime manifest (package.json/pyproject.toml/Cargo.toml/go.mod) exists at repo root"
+  battery_signal=1
+fi
+
+if [ -f index.html ] || grep -qE '"(react|vue|svelte|next)"' package.json 2>/dev/null; then
+  echo "SIGNAL: web UI marker found (index.html, or a React/Vue/Svelte/Next dependency)"
+  battery_signal=1
+fi
+
+if [ "$battery_signal" -eq 1 ]; then
+  battery_jobs=$(grep -vE '^\s*#' .github/workflows/*.yml 2>/dev/null | grep -iE 'unit|integration|playwright' || true)
+  if [ -z "$battery_jobs" ]; then
+    echo "WARN: signal(s) found above, but no unit/integration/playwright job exists in .github/workflows/ — the validation battery should grow (Principle IX)."
+  else
+    echo "OK: signal(s) found above, and a corresponding CI job already exists — battery already covers this."
+  fi
+else
+  echo "OK: no unit-testable code, integration surface, or web UI detected — battery growth not yet triggered."
+fi
+
+echo
 if [ "$fail" -ne 0 ]; then
   echo "validate.sh: FAILED"
   exit 1

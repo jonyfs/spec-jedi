@@ -145,6 +145,21 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   into this feature's scope. See
   [specs/011-specjedi-skill-review/](../specs/011-specjedi-skill-review/)
   for the full research/spec/plan.
+- **`specjedi-tokencheck`** 🎒 (feature 012, shipped 2026-07-11) —
+  mechanizes Principle VIII's token-economy mandate: proactively checks
+  whether `rtk` and `graphify` are present, explains any missing tool's
+  purpose and expected savings, and offers an install walkthrough — never
+  installs or configures anything without explicit confirmation.
+  Self-invoked by `specjedi-onboard`'s first-run flow once the
+  constitution and spec land (never before, matching that skill's own
+  "never front-load" discipline), and independently runnable for any
+  session that skipped onboarding. Closes the same class of gap
+  `TODO(INSTALLER)`/`specjedi-release` closed for their own principles: a
+  principle mandated a capability (`specjedi-plan`/`specjedi-converge`
+  only ever *used* `graphify` when already present, never checked for or
+  suggested either tool), and nothing gave it a real product surface. See
+  [specs/012-specjedi-tokencheck/](../specs/012-specjedi-tokencheck/) for
+  the full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 

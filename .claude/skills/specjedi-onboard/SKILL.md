@@ -1,7 +1,7 @@
 ---
 name: specjedi-onboard
 description: A first-run walkthrough that produces a real first constitution and spec together, teaching each SDD concept at the moment it's needed. Triggers on a fresh project with no constitution.md yet, or on an explicit "help me get started" request. Steps aside immediately if onboarding already happened.
-compatibility: No external dependencies. Self-invokes specjedi-constitution and specjedi-specify rather than reimplementing them; writes only what those two skills write.
+compatibility: No external dependencies. Self-invokes specjedi-constitution and specjedi-specify rather than reimplementing them, then specjedi-tokencheck once both land; writes only what those skills write.
 ---
 
 # 🌱 Spec Jedi Onboard
@@ -37,10 +37,14 @@ relevant — never before.
    lands and before spec work starts: what a spec is (what you're building
    and why) and why ambiguity gets marked instead of guessed. Then
    self-invoke `specjedi-specify` with the same project idea.
-5. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): `specjedi-clarify`, the natural next pipeline stage
-   after a first spec exists, plus `specjedi-explain` if any concept from
-   the walkthrough still feels unclear.
+5. **Once both artifacts land, self-invoke `specjedi-tokencheck`**
+   (Principle VIII) — a quick, proactive check for `rtk`/`graphify`
+   belongs here, after the user has something real to show for the
+   session, not before (matching this skill's own "never front-load"
+   discipline). Then **report, and offer the next step(s) as a short
+   bulleted list** (Principle XIV): `specjedi-clarify`, the natural next
+   pipeline stage after a first spec exists, plus `specjedi-explain` if
+   any concept from the walkthrough still feels unclear.
 
 If the project idea clearly needs domain expertise nothing installed
 covers even to draft an initial constitution around (e.g., a heavily
@@ -81,7 +85,8 @@ wouldn't know to do that yet.
 4. *"Now a spec: what you're building and why, with any real ambiguity
    marked instead of guessed at. Let's turn your idea into one."* → invokes
    `specjedi-specify`.
-5. Reports both artifacts are ready.
+5. Self-invokes `specjedi-tokencheck` (a quick `rtk`/`graphify` check),
+   then reports both artifacts are ready.
 
 **Agent's chat narration** (Principle XII voice — the invocations above
 stay plain; this is what the skill actually says at the finish):

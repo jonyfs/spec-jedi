@@ -67,6 +67,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-new-skill` 🌟 | Scaffolds a new `specjedi-*` skill's file structure — placeholders only, never invented content — following this project's own Skill Authoring Standard and baking in the Principle II research checklist |
 | `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
 | `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
+| `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -254,7 +255,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Twenty-one product skills ship today ([What you get today](#what-you-get-today))
+Twenty-two product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -349,6 +350,11 @@ before? Start with step 0.
     content, not just headings, cross-referenced against the matching
     `plan.md` for legitimate exemptions — and reports findings or a clean
     pass; it never edits the file itself.
+21. `specjedi-onboard` already runs this once for you on first use, but
+    `specjedi-tokencheck` 🎒 works standalone too — checks whether `rtk`
+    and `graphify` are installed, explains what's missing and its expected
+    token savings, and offers to walk through installing it; never
+    installs anything without your explicit yes.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

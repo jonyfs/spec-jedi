@@ -1,5 +1,41 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.3 → 1.16.4
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  consistent with how routine skill shipments are versioned after the
+  first process-milestone MINOR bump
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: TODO(LOCALIZATION) remains open (opened v1.15.14).
+  This amendment adds a new item:
+  - `specjedi-tokencheck` shipped (feature 012-specjedi-tokencheck,
+    2026-07-11) — the fourth second-wave addition beyond the original
+    roadmap backlog. Mechanizes Principle VIII's token-economy mandate: a
+    fresh audit found `specjedi-plan`/`specjedi-converge` only ever *used*
+    `graphify` when already present, never checked for or suggested
+    either `rtk` or `graphify` — the same shape of gap `TODO(INSTALLER)`
+    closed for Principle XVIII and `specjedi-release` closed for
+    Principle XI. Checks both tools independently and with equal
+    treatment (resolved via a real `/speckit-clarify` question this
+    cycle: Principle VIII's text names both without qualification, and
+    this project's own downstream consumption of `graphify` doesn't
+    change whether a *target* project has it installed). Never installs
+    or configures anything without explicit, unambiguous confirmation
+    naming the specific tool — an absolute boundary, not a confirm-then-
+    proceed gate, mirroring `specjedi-find-skills`' own install gate.
+    Proactively self-invoked by `specjedi-onboard/SKILL.md`'s step 5,
+    once the constitution and spec artifacts land (never before, per that
+    skill's own established "never front-load" discipline) — a real,
+    verified edit to `specjedi-onboard`'s own file, matching the
+    `specjedi-plan` → `specjedi-security` proactive-wiring precedent
+    (feature 007, Principle XVII discipline). Also independently
+    runnable for any session that skipped onboarding. Built via the same
+    literal `/speckit-*` pipeline invocation established at v1.16.0.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.2 → 1.16.3
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   a compliance fix, not new guidance
@@ -883,4 +919,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.4 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

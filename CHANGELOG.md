@@ -11,6 +11,21 @@ this file directly.
 
 ### Added
 
+- `references/harness-capability-notes.md` — desk-research capability
+  matrix for all 19 non-Claude-Code harnesses in Principle III's
+  compatibility table (mechanism, cited source, Yes/Unclear call per
+  harness); flags that Gemini CLI is being sunset in favor of Antigravity
+  CLI (2026-06-18). Closes `checklists/project-completeness.md` CHK002.
+- `references/genuine-contributions-log.md` — durable index of every
+  shipped feature's Principle II "genuine contribution" claim, linking
+  back to each `research.md`, with a maintenance rule for future
+  features. Closes `checklists/project-completeness.md` CHK013.
+- `.github/workflows/validate.yml` gained `tokencheck-detection`
+  (ubuntu/macos/windows matrix) and `tokencheck-detection-windows-native`
+  jobs, both required by `ci-gate`, proving `specjedi-tokencheck`'s
+  `which`/`where` present/absent detection logic for real on every OS
+  Principle XIII requires. Closes `checklists/project-completeness.md`
+  CHK016.
 - Localized documentation (`docs/i18n/<lang>/README.md` and
   `CONTRIBUTING.md`) in ten languages — Mandarin Chinese, Hindi, Spanish,
   French, Arabic, Bengali, Portuguese (Brazilian), Russian, Urdu, and
@@ -97,6 +112,12 @@ this file directly.
 
 ### Changed
 
+- `checklists/project-completeness.md` — all 19 items now resolved.
+  CHK011 (retroactive badge-row review gap) and CHK015 (Principle XX
+  retrospective-audit gap) closed by construction/reasoning rather than
+  new infrastructure: `specjedi-govcheck`'s mandatory per-PR self-invoke
+  already makes the former structural going forward, and git's own
+  append-only history already is the latter's audit trail.
 - Constitution Principle III clarified: the compatibility-matrix
   re-verification trigger now explicitly names Principle XI's MAJOR
   product release line, not the constitution's own version number.

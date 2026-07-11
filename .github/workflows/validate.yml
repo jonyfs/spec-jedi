@@ -127,6 +127,59 @@ jobs:
           echo "Blocked: this PR requires an APPROVED review from $OWNER before it can merge."
           exit 1
 
+  # checklists/project-completeness.md CHK016: specjedi-tokencheck's
+  # SKILL.md documents "which X (or where X on Windows)" as its detection
+  # mechanism, but that was only dry-run tested on macOS. This job
+  # actually exercises the exact commands on all three OSes — both the
+  # tool-present case (a binary guaranteed to exist, `git`) and the
+  # tool-absent case (a name guaranteed not to exist) — proving the
+  # present/absent distinction the skill relies on genuinely holds on
+  # each OS, not just documented.
+  tokencheck-detection:
+    name: tokencheck-detection (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Verify which-based present/absent detection
+        shell: bash
+        run: |
+          if ! which git >/dev/null 2>&1; then
+            echo "FAIL: 'which git' did not detect a binary known to be present on this runner"
+            exit 1
+          fi
+          echo "OK: 'which git' correctly detected a present tool"
+          if which specjedi-nonexistent-tool-xyz >/dev/null 2>&1; then
+            echo "FAIL: 'which' reported a nonexistent tool as present"
+            exit 1
+          fi
+          echo "OK: 'which' correctly reported a nonexistent tool as absent"
+
+  # Native-PowerShell counterpart: specjedi-tokencheck's own text names
+  # `where` as the Windows-specific command, so this exercises that
+  # exact command (not bash's `which`) on native PowerShell.
+  tokencheck-detection-windows-native:
+    name: tokencheck-detection (windows-latest, native PowerShell)
+    runs-on: windows-latest
+    steps:
+      - name: Verify where-based present/absent detection (PowerShell)
+        shell: pwsh
+        run: |
+          where.exe git 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "FAIL: 'where git' did not detect a binary known to be present on this runner"
+            exit 1
+          }
+          Write-Host "OK: 'where git' correctly detected a present tool"
+          where.exe specjedi-nonexistent-tool-xyz 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "FAIL: 'where' reported a nonexistent tool as present"
+            exit 1
+          }
+          Write-Host "OK: 'where' correctly reported a nonexistent tool as absent"
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -135,7 +188,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, owner-gate]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

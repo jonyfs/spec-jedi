@@ -59,19 +59,25 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   date and lets the reader judge. See
   [specs/005-specjedi-status/](../specs/005-specjedi-status/) for the full
   research/spec/plan.
+- **`specjedi-retro`** 🪞 (feature 006, shipped 2026-07-11) —
+  post-`specjedi-implement` retrospective: strictly read-only, compares a
+  completed feature's actual implementation against its `plan.md`,
+  grounds any deviation's cause in traceable `git log` history (never
+  invents one), and logs a durable, dated entry to
+  `.specify/memory/retro-log.md` — the second cross-session signal log
+  this project ships, alongside `skill-gaps.md`. Genuine contribution: no
+  researched competitor's retrospective practice (where one exists at
+  all) links back into a durable, structural signal log the way this
+  does. See [specs/006-specjedi-retro/](../specs/006-specjedi-retro/) for
+  the full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
-   shipped against what was planned, captures what changed and why. Feeds
-   genuine product signal back into future `specjedi-*` skill research the same
-   way `.specify/memory/skill-gaps.md` does for missing skills (Principle
-   XVII).
-2. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
+1. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
    before implementation — not a full security audit tool, just the "did we
    think about auth/input validation/secrets" questions a spec often misses.
    Serves security-conscious teams without requiring them elsewhere.
-3. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
+2. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
    sections, changelog entries) from a shipped spec/plan, kept in sync instead
    of drifting from what actually got built.
 

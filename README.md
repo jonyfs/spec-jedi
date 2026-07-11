@@ -60,6 +60,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
 | `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
 | `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
+| `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -247,7 +248,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Fifteen product skills ship today ([What you get today](#what-you-get-today))
+Sixteen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -316,6 +317,10 @@ before? Start with step 0.
     project-wide dashboard — which features are specified, planned, in
     progress, or complete — derived entirely from what's actually on
     disk, no separate tracking system to keep in sync.
+16. Just finished a feature? `specjedi-retro` 🪞 compares what actually
+    shipped against what `plan.md` said, grounds any deviation's cause in
+    real git history — never invents one — and logs a durable entry so
+    the signal survives past this conversation.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

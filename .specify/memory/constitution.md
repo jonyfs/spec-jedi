@@ -1,35 +1,32 @@
 <!--
 Sync Impact Report
-- Version change: 1.1.0 → 1.2.0
-- Modified principles: none redefined; all ten v1.1.0 principles retained
+- Version change: 1.2.0 → 1.3.0
+- Modified principles: none redefined; all ten v1.2.0 principles retained
+- Added sections:
+  - Core Principle XI (Semantic-Versioned Releases with Proactive Cut
+    Suggestions)
 - Amended sections:
-  - Principle IX — now specifies that the validation battery is the
-    complete, evolving set of applicable checks (lint, dry runs, unit,
-    integration, e2e/Playwright, constitution check), not just the
-    structural lint that exists today
-  - Principle X — auto-merge now explicitly requires 100% of the battery
-    green via a single aggregating CI gate job, never a partial-check
-    subset
-  - Repository & CI Configuration Prerequisites — documents the
-    aggregating-gate-job pattern (branch protection points at one gate
-    job so growing the battery never requires reconfiguring GitHub)
-- Added sections: none
+  - Distribution & Ecosystem Standards — README.md is now explicitly
+    required (not just implied by "installation guides"), with a mandated
+    minimum content shape (what the project is, prerequisites, step-by-
+    step install per supported harness, quickstart, versioning/release
+    pointer)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - .github/workflows/validate.yml ⚠ pending — needs a `lint` job plus a
-    `ci-gate` aggregating job (`needs: [lint, ...]`), with branch
-    protection's required context switched from `validate` to `ci-gate`
+  - README.md ⚠ pending at time of this amendment — created in the same
+    change set that introduces this principle (see repo root)
+  - scripts/suggest-release.sh ⚠ pending — created alongside this
+    amendment as the concrete mechanism behind Principle XI
 - Follow-up TODOs:
-  - TODO(TEST_BATTERY): No product-facing skill code exists yet, so the
-    only real check today is the structural lint. As soon as a skill
-    produces testable output (unit/integration/e2e/Playwright per
-    Principle VI), its tests MUST be added as new jobs under `ci-gate`'s
-    `needs` list — the gate job's definition already anticipates this and
-    requires no further constitution amendment when it happens.
+  - TODO(LICENSE_CONTRIBUTING): Distribution & Ecosystem Standards (added
+    in v1.0.0) already requires an OSI-approved LICENSE and
+    CONTRIBUTING.md; neither exists yet. License choice is a maintainer
+    decision (not inferred) and remains open until the maintainer picks
+    one explicitly.
 -->
 
 # Spec Jedi Constitution
@@ -251,6 +248,30 @@ bypass — this project aims to be professional and trustworthy for
 thousands of downstream users, so its own CI cannot rely on a technique
 security researchers flag as a vulnerability.
 
+### XI. Semantic-Versioned Releases with Proactive Cut Suggestions
+
+The project's own releases (a distinct version line from this constitution
+document's own version) MUST follow Semantic Versioning (MAJOR.MINOR.PATCH)
+scoped to the public skill-package contract: MAJOR for breaking changes to
+a skill's behavior/interface or a removed skill, MINOR for a new skill or a
+backward-compatible capability addition, PATCH for fixes, documentation, or
+internal-only changes that don't alter observable skill behavior.
+
+The project MUST proactively surface when a release is warranted rather
+than leave it to the maintainer to notice. Changes accumulated since the
+last tag MUST be classifiable via a documented, reproducible mechanism
+(e.g., Conventional Commits prefixes read by a `scripts/suggest-release.sh`
+or equivalent CI job) that recommends the next version number and states
+why. Actually cutting a release — tagging, publishing, finalizing a
+changelog — MUST require explicit maintainer confirmation; suggesting a
+release and shipping one are different acts, and only the former is
+autonomous.
+
+**Rationale**: Directly requested: the project should tell the maintainer
+when it's time to release, using semver, without silently tagging and
+publishing on its own — consistent with this project's standing rule that
+visible, externally-facing actions need a human go-ahead.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -260,7 +281,18 @@ file, and a pointer to its validation mechanism (Principle IX). Competitive
 research artifacts (Principle II) live alongside the skill they informed,
 not in a disconnected wiki.
 
-The repository root MUST carry an OSI-approved open-source license, a
+The repository root MUST carry a `README.md` that gives newcomers a
+complete, self-contained path to a working install — not a stub pointing
+elsewhere. At minimum it MUST cover, in this order: what the project is and
+who it's for; prerequisites; step-by-step installation for every currently
+supported harness (Principle III), written so a user with no prior context
+can follow it to a working state; a quickstart showing the first commands
+to run; and a pointer to how releases/versioning work (Principle XI). A
+harness listed in the Principle III compatibility matrix but not yet
+covered by working install steps MUST be marked as such in the README
+rather than silently omitted.
+
+The repository root MUST also carry an OSI-approved open-source license, a
 `CONTRIBUTING.md` describing how new skills are proposed and reviewed under
 this constitution, and issue/PR templates that require contributors to
 confirm they performed the research and validation steps above before
@@ -343,4 +375,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.2.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.3.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

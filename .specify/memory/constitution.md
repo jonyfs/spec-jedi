@@ -1,26 +1,28 @@
 <!--
 Sync Impact Report
-- Version change: 1.12.1 → 1.13.0
-- Modified principles: Principle XIX expanded — adds an "Audience
-  Calibration" requirement to the Prompt Engineering Discipline
-  subsection: every skill's explanations MUST scale from complete
-  beginner to advanced practitioner rather than assuming one fixed
-  expertise level (directly requested: "atender pessoas de todos os
-  niveis de conhecimento de IA, seja do usuário básico ao avançado")
-- Added sections: none (amendment to existing Principle XIX)
+- Version change: 1.13.0 → 1.14.0
+- Modified principles: Distribution & Ecosystem Standards' README badge
+  requirement strengthened — badges MUST be dynamic/self-updating
+  wherever technically feasible (not hardcoded values that silently go
+  stale), and the badge row MUST be reviewed for accuracy and for
+  whether a new relevant badge is warranted before every PR (directly
+  requested: "sempre deixe a lista de badges atualizadas... antes de
+  fazer cada novo pull request"). Triggered by catching a real instance:
+  the Constitution badge had been hardcoded to v1.8.0 since it was
+  created and was 5 versions stale by v1.13.0.
+- Added sections: none (amendment to existing Distribution & Ecosystem
+  Standards section)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - references/skill-roadmap.md ⚠ pending — new file, created in the same
-    change set: a prioritized backlog of proposed specjedi-* skills beyond
-    the P1-P9 pipeline, gated by Principle II research per idea before any
-    of them actually get built
-  - .claude/skills/specjedi-explain/SKILL.md ⚠ pending — new skill created
-    in the same change set as the first concrete example of Audience
-    Calibration in practice
+  - README.md ✅ updated in the same change set — Constitution badge
+    converted from a hardcoded string to a shields.io dynamic/regex badge
+    reading the live version from constitution.md on `main`; added a
+    naturally-dynamic "last commit" badge (GitHub-native shields.io
+    badge, no manual maintenance) as the new relevant addition this round
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
@@ -706,7 +708,29 @@ what the project is and who it's for; prerequisites; step-by-step
 installation for every currently supported harness (Principle III),
 written so a user with no prior context can follow it to a working state;
 a quickstart showing the first commands to run; and a pointer to how
-releases/versioning work (Principle XI). A harness listed in the
+releases/versioning work (Principle XI).
+
+**Badges MUST be dynamic wherever a dynamic source exists, never a
+hand-typed value that can silently go stale.** A badge showing a version,
+a build/CI result, or any other fact with a live source of truth (a file
+in the repo, a GitHub API endpoint) MUST be wired to that source — e.g. a
+shields.io `dynamic/regex` badge reading the version line directly out of
+`constitution.md`, or a native GitHub badge (`github/last-commit`,
+`github/actions/workflow/status`, and similar) — rather than a static
+`img.shields.io/badge/...` string someone has to remember to edit. This
+project shipped exactly that mistake once (the Constitution badge sat
+hardcoded at `v1.8.0` while the constitution moved through five more
+version bumps before anyone noticed) and MUST NOT repeat it: a
+hardcoded fact-bearing badge is a constitution violation, not a
+stylistic choice, whenever a dynamic alternative is technically feasible.
+
+**Before opening any pull request, the badge row MUST be reviewed** for
+two things: that every existing badge still reads correctly (a dynamic
+badge is generally self-correcting, but confirm nothing broke), and
+whether the PR's own change warrants a genuinely new, relevant badge (a
+new capability worth signaling, a milestone, a newly-available dynamic
+metric) — not addition for its own sake, and never another hardcoded
+value that will just go stale again the same way. A harness listed in the
 Principle III compatibility matrix but not yet covered by working install
 steps MUST be marked as such in the README rather than silently omitted.
 
@@ -810,4 +834,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.13.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.14.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -29,6 +29,71 @@ versioned artifacts instead of throwaway chat messages — solo developers, team
 standardizing how their agents work, and anyone tired of re-explaining project
 context every session.
 
+## How Spec Jedi works, in comic form
+
+> A quick note on format: these are text-and-emoji comic panels, not generated
+> artwork. Actual Star Wars imagery (characters, ships, the logo) is Lucasfilm/
+> Disney IP — this project's own [Principle XII](.specify/memory/constitution.md)
+> commits to text references only, never reproduced copyrighted art. So: the story
+> beats are real, the panels are Markdown. 🖋️
+
+---
+
+**PANEL 1 — A lone terminal, blinking cursor.**
+> 🧑‍💻 *"I have an idea for a feature. ...Now what?"*
+
+**PANEL 2 — A hooded figure steps out of the shadows, holding a scroll.**
+> 🧙 *"First, the Code."* 📜
+> `/speckit-constitution` — the project's non-negotiable rules, written down once,
+> checked forever after.
+
+**PANEL 3 — The idea, pinned to a wall, question marks circling it.**
+> 🌀 *"What are you really building — and for whom?"*
+> `/speckit-specify` turns the idea into `spec.md`. `/speckit-clarify` hunts down
+> the ambiguity before it becomes a bug.
+
+**PANEL 4 — A blueprint unrolls across a workbench.**
+> 🛠️ *"Now the how."*
+> `/speckit-plan` → `plan.md`. `/speckit-tasks` → an ordered, dependency-aware
+> `tasks.md`. No step skipped, no step out of order.
+
+**PANEL 5 — Tools whirring, tests failing red, then turning green one by one.**
+> 🤖 *"Tests first. Always tests first."*
+> `/speckit-implement` executes `tasks.md`, test-first where it applies
+> ([Principle VI](.specify/memory/constitution.md)).
+
+**PANEL 6 — A council chamber. A pull request stands before the bench.**
+> 🏛️ *"State your changes."*
+> A PR opens. `ci-gate` 🤖 runs the full validation battery — every OS, every
+> check. No self-approval allowed; the machine can't pardon itself, and neither
+> can you ([Principle X](.specify/memory/constitution.md)).
+
+**PANEL 7 — Green light. The gate opens on its own.**
+> ✅ *"The battery has spoken."*
+> All checks pass → auto-merge, no human had to click a button.
+
+**PANEL 8 — A ship leaps to hyperspace.**
+> 🚀 *"Shipped."*
+> 🌌 *"May the Spec be with you."*
+
+### The same story, as a diagram
+
+```mermaid
+sequenceDiagram
+    participant Dev as 🧑‍💻 Contributor
+    participant Repo as 📜 Repo (main)
+    participant PR as 🔀 Pull Request
+    participant CI as 🤖 ci-gate
+    Dev->>Repo: /speckit-constitution, /speckit-specify, /speckit-plan, /speckit-tasks
+    Dev->>Dev: /speckit-implement (test-first)
+    Dev->>PR: open PR on a feature branch
+    PR->>CI: trigger validation battery (Linux/macOS/Windows)
+    CI-->>PR: 🔴 red? fix and push again
+    CI-->>PR: 🟢 green? proceed
+    PR->>Repo: auto-merge (no self-approval, checks-only gate)
+    Repo-->>Dev: 🚀 shipped — "This is the way."
+```
+
 ## Prerequisites
 
 Spec Jedi is developed and validated on **Linux, macOS, and Windows**

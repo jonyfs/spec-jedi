@@ -49,23 +49,29 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   through an equivalent render-check. See
   [specs/004-specjedi-diagram/](../specs/004-specjedi-diagram/) for the
   full research/spec/plan.
+- **`specjedi-status`** 🧭 (feature 005, shipped 2026-07-11) — a
+  project-wide dashboard: which features are specified, planned, in
+  progress, or complete, derived entirely from on-disk `spec.md`/
+  `plan.md`/`tasks.md` artifacts. Genuine contribution: zero
+  separately-maintained tracking system — no researched competitor's
+  dashboard-equivalent avoids a manually-updated status field. Explicitly
+  never asserts "stalled" as a fact; reports the objective last-commit
+  date and lets the reader judge. See
+  [specs/005-specjedi-status/](../specs/005-specjedi-status/) for the full
+  research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-status`** 🧭 — a project-wide dashboard skill: which features have
-   a spec/plan/tasks, which are mid-implementation, which are stalled — useful
-   once a project has more than one or two features in flight. Mainly serves
-   advanced/team users managing multiple concurrent efforts.
-2. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
+1. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
    shipped against what was planned, captures what changed and why. Feeds
    genuine product signal back into future `specjedi-*` skill research the same
    way `.specify/memory/skill-gaps.md` does for missing skills (Principle
    XVII).
-3. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
+2. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
    before implementation — not a full security audit tool, just the "did we
    think about auth/input validation/secrets" questions a spec often misses.
    Serves security-conscious teams without requiring them elsewhere.
-4. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
+3. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
    sections, changelog entries) from a shipped spec/plan, kept in sync instead
    of drifting from what actually got built.
 

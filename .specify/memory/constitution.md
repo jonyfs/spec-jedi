@@ -1,5 +1,47 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.5 → 1.16.6
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  consistent with how routine skill shipments are versioned after the
+  first process-milestone MINOR bump
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: TODO(LOCALIZATION) remains open (opened v1.15.14).
+  This amendment adds a new item:
+  - `specjedi-govcheck` shipped (feature 013-specjedi-govcheck,
+    2026-07-11) — the fifth second-wave addition beyond the original
+    roadmap backlog. Strictly read-only, per-PR/per-branch governance
+    compliance checklist against all 20 Core Principles plus the
+    Distribution & Ecosystem Standards and Development Workflow
+    sections — a three-state per-principle report (Not Applicable /
+    Compliant / Non-Compliant) rather than a binary pass/fail, with any
+    confirmed constitution conflict marked CRITICAL unconditionally.
+    Mechanizes the Development Workflow section's own "review MUST
+    explicitly check compliance with every Core Principle" requirement,
+    closing `checklists/project-completeness.md` CHK005 — the gap
+    neither `specjedi-analyze` (spec/plan/tasks consistency for one
+    feature) nor `specjedi-skill-review` (one skill's authoring
+    standard) covers. Proactively self-invoked by `specjedi-implement`
+    right before opening a PR (resolved via a real `/speckit-clarify`
+    question this cycle), surfacing CRITICAL findings without blocking
+    PR-opening itself — `specjedi-implement`'s existing autonomy
+    statement and Principle X's CI-is-the-gate design are both
+    explicitly preserved, not overridden. Reads `references/
+    principle-traceability.md` for per-principle mechanism context
+    rather than re-deriving it. Built via the same literal `/speckit-*`
+    pipeline invocation established at v1.16.0. Separately this session:
+    `specjedi-find-skills` logged its first real entries in
+    `.specify/memory/skill-gaps.md` and, on explicit user confirmation,
+    installed two verified third-party skill sets locally for this
+    project's own development use (`trailofbits/skills`,
+    `Community-Access/accessibility-agents`) — gitignored as personal
+    local tooling, not part of the Spec Jedi product surface (Principle
+    XV).
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.4 → 1.16.5
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   a compliance/documentation fix, not new guidance
@@ -958,4 +1000,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.6 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

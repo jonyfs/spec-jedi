@@ -7,3 +7,14 @@
 # hook status` / `graphify claude install`). Not committed: it's a derived
 # cache, not source of truth.
 graphify-out/
+
+# Third-party dev-tool skills installed locally via `npx skills add`
+# (e.g. trailofbits/skills, Community-Access/accessibility-agents) for
+# working on this project — personal local tooling, not part of the Spec
+# Jedi product surface (Principle XV: specjedi-* is the product,
+# speckit-* is vendored bootstrap tooling; anything else here is neither).
+.agents/
+.claude/skills/*
+!.claude/skills/specjedi-*
+!.claude/skills/speckit-*
+skills-lock.json

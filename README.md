@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
+[![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
 
@@ -194,24 +195,35 @@ skills themselves work identically either way.
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   the five `specjedi-*` product skills (`constitution`, `specify`, `clarify`,
-   `find-skills`, `explain`) and the `speckit-*` commands (this repo's own
-   internal bootstrap tooling — see [What you get today](#what-you-get-today))
+   all 12 `specjedi-*` product skills and the `speckit-*` commands (this repo's
+   own internal bootstrap tooling — see [What you get today](#what-you-get-today))
    listed together, since Claude Code discovers every skill under
    `.claude/skills/` without distinguishing the two.
 
-4. That's it — you're ready to run `specjedi-constitution` on a project, ask
-   `specjedi-explain` anything if you're not sure where to start, or read the
-   constitution to understand where the rest of the pipeline is headed.
+4. That's it — you're ready to run `specjedi-onboard` for a guided first run,
+   ask `specjedi-explain` anything if you're not sure where to start, or read
+   the constitution to understand where the rest of the pipeline is headed.
 
-**Using Spec Jedi in a project other than this one?** Today, copying the whole
-`.claude/skills/` directory brings the `speckit-*` bootstrap tooling along with the
-actual `specjedi-*` product — there's no separation yet. If you only want the
-product skills, copy `.claude/skills/specjedi-constitution/`,
-`.claude/skills/specjedi-specify/`, `.claude/skills/specjedi-clarify/`,
-`.claude/skills/specjedi-find-skills/`, and `.claude/skills/specjedi-explain/`
-individually. A proper installer that installs product-only by default is tracked
-([Principle XVIII](.specify/memory/constitution.md)) but doesn't exist yet.
+**Using Spec Jedi in a project other than this one?** Run the installer
+(Constitution [Principle XVIII](.specify/memory/constitution.md)) — it copies
+only the `specjedi-*` product skills, never the `speckit-*` bootstrap tooling,
+plus the four `.specify/templates/*.md` files those skills need, and validates
+the result before finishing:
+
+```bash
+# from a Spec Jedi checkout, targeting another project on disk
+./scripts/install.sh /path/to/your-project
+```
+
+```powershell
+# Windows native PowerShell
+.\scripts\install.ps1 -TargetDir C:\path\to\your-project
+```
+
+Only `-harness claude-code` (the default) is built and tested today; any
+other value is reported as not-yet-supported rather than silently attempted
+— see [Supported harnesses](#supported-harnesses) below. Run `./scripts/install.sh --help`
+(or `.\scripts\install.ps1 -Help`) for the full option list.
 
 ### Supported harnesses
 

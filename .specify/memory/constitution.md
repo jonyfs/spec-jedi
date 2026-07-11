@@ -1,55 +1,37 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.4 → 1.15.5
+- Version change: 1.15.5 → 1.15.6
 - Modified principles: none (governance/tooling debt closed — no MUST-level
   rule changed)
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
-- Follow-up TODOs:
+- Follow-up TODOs (all six now resolved — this closes the last one):
   - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
   - TODO(VOICE_PASS): RESOLVED at v1.15.4.
   - TODO(NEXT_STEP_PASS): RESOLVED at v1.15.2.
-  - TODO(INSTALLER): still open from v1.8.0.
-  - TODO(PROMPT_ENG_PASS): **RESOLVED**. Audited all 12 shipped skills
-    against Principle XIX's non-negotiables. Token budgets (~1,100-1,700
-    tokens each) comfortably clear the 5,000 hard cap — the "targets under
-    500" language is aspirational, not violated. Ruthless literalness: no
-    unmeasurable claims found outside intentional "Not this" negative
-    examples. The real finding: **only 2 of 12 skills
-    (`specjedi-constitution`, `specjedi-specify`) had the required
-    explicit "which actions are autonomous vs. need confirmation"
-    statement** — the other 10 left this implicit or unstated entirely,
-    despite Principle XIX requiring it plainly for every skill. Added an
-    `## Autonomous vs. confirm-first` section to all 10, each stating the
-    skill's actual boundary rather than a copy-pasted template —
-    `specjedi-implement`'s is the highest-stakes case (code/commit/PR all
-    autonomous once tasks.md is ready; merging is never claimed, only
-    requested) and `specjedi-analyze`/`specjedi-explain`'s are trivial
-    (no writes at all, nothing to confirm).
-  - TODO(GROUNDING_PASS): **RESOLVED**. Re-reviewed all 11 shipped skills
-    against Principle XX's three pillars:
-    - *Best-practice AI usage* (persona/task/chain-of-thought actually
-      shape output): found 3 skills whose real judgment call lacked
-      explicit "reason through it" framing despite having one —
-      `specjedi-checklist` (generic-vs-grounded item discard),
-      `specjedi-converge` (drift-vs-incidental-detail), and
-      `specjedi-implement` (`[P]`-eligibility re-verification). Fixed all
-      three; `specjedi-onboard`'s lack of a labeled chain-of-thought
-      section is intentional (documented in
-      `specs/002-specjedi-onboard/plan.md` — its judgment calls are binary
-      gates, not open-ended reasoning) and not a gap.
-    - *Token economy by default* (prefer an installed token-economy tool
-      over brute-force reads): found the codebase-scanning steps in
-      `specjedi-plan` (the golden-rule scan) and `specjedi-converge` (drift
-      detection) never mentioned preferring an installed tool like
-      `graphify query` over raw file reads, despite Principle XX requiring
-      exactly that. Fixed both.
-    - *Hallucination resistance*: no violations found — every skill's
-      factual-claim language already required grounding in something
-      actually read/run this session; `specjedi-find-skills` remains the
-      strongest reference implementation (install counts, sources, and
-      links always tied to an actual lookup, never asserted from memory).
+  - TODO(INSTALLER): **RESOLVED**. Built `scripts/install.sh` and
+    `scripts/install.ps1` per Principle XVIII: single entrypoint, copies
+    only the 12 `specjedi-*` product skills (never `speckit-*` bootstrap
+    tooling) plus the four `.specify/templates/*.md` files those skills
+    read at runtime, into a target project. Harness selection defaults to
+    `claude-code` (the only harness actually built/tested per Principle
+    III's matrix); any other value is rejected with an honest
+    not-yet-supported message rather than silently attempted. Validated,
+    not just asserted (Principle IX/XIII): tested locally against a
+    scratch directory with both scripts on this machine before shipping,
+    and added `install-test`/`install-test-windows-native` CI jobs (now
+    required by `ci-gate`) that run the installer fresh on every PR across
+    Linux, macOS, and Windows and confirm zero `speckit-*` leakage.
+    README's Installation section replaces the old "copy five files by
+    hand" instructions (already stale — 12 skills ship now, not five)
+    with the one-command installer.
+  - TODO(PROMPT_ENG_PASS): RESOLVED at v1.15.5.
+  - TODO(GROUNDING_PASS): RESOLVED at v1.15.3.
+
+All six TODOs tracked since early versions of this constitution are now
+closed. Future debt gets its own freshly-named TODO rather than reopening
+one of these.
 -->
 
 # Spec Jedi Constitution
@@ -843,4 +825,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.6 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

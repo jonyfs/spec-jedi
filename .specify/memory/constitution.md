@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.6 → 1.15.7
+- Version change: 1.15.7 → 1.15.8
 - Modified principles: none (no MUST-level rule changed)
 - Added sections: none
 - Removed sections: none
@@ -8,18 +8,20 @@ Sync Impact Report
 - Follow-up TODOs: all six historical governance TODOs remain resolved
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
-  This amendment adds a new one:
-  - `specjedi-migrate` shipped (feature 003-specjedi-migrate, 2026-07-11)
-    — the second `references/skill-roadmap.md` backlog item beyond the
-    core pipeline (after `specjedi-onboard`, feature 002). Rewrites
-    literal `/speckit-*` tooling references in a project's own
-    constitution/spec/plan/tasks to their shipped `specjedi-*`
-    equivalents; scoped narrowly to references only (never principle or
-    requirement content) since the underlying template format was already
-    shared per feature 001's FR-009. Flags, never silently drops, a
-    reference with no shipped equivalent (`/speckit-taskstoissues`,
-    `/speckit-agent-context-update`). Explicit request only — the first
-    shipped skill required by spec to never trigger proactively.
+  `specjedi-migrate` shipped at v1.15.7 (see prior history). This
+  amendment adds a new one:
+  - `specjedi-diagram` shipped (feature 004-specjedi-diagram,
+    2026-07-11) — the third `references/skill-roadmap.md` backlog item
+    beyond the core pipeline. Generates a render-verified Mermaid diagram
+    (flowchart, sequence, or ER, inferred from content — reasoned through
+    explicitly, never defaulted) from an existing spec/plan, applying
+    Principle XVI automatically. Genuine contribution: validates every
+    diagram against the harness's actual Mermaid render mechanism before
+    presenting it — the worked example in `SKILL.md` was itself render-
+    verified live during this feature's dry run, not just asserted to
+    work. Always a supplement to the source prose, never a replacement
+    (Principle XVI); never writes to a target file without explicit
+    confirmation.
 -->
 
 # Spec Jedi Constitution
@@ -813,4 +815,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.7 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.8 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -40,27 +40,32 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   equivalent instead of guessing. Explicit request only, never proactive.
   See [specs/003-specjedi-migrate/](../specs/003-specjedi-migrate/) for the
   full research/spec/plan.
+- **`specjedi-diagram`** 📊 (feature 004, shipped 2026-07-11) — generates a
+  render-verified Mermaid diagram (flowchart, sequence, or ER, inferred
+  from content) from an existing spec/plan, applying Principle XVI
+  automatically instead of requiring the user to draw one by hand each
+  time. Genuine contribution: validates every diagram actually renders
+  before presenting it — no researched competitor's diagram output goes
+  through an equivalent render-check. See
+  [specs/004-specjedi-diagram/](../specs/004-specjedi-diagram/) for the
+  full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-diagram`** 📊 — generates a Mermaid diagram (flow, sequence, or
-   ER as appropriate) from an existing spec/plan on request, applying
-   Principle XVI automatically instead of requiring the user to ask for one
-   by hand each time.
-2. **`specjedi-status`** 🧭 — a project-wide dashboard skill: which features have
+1. **`specjedi-status`** 🧭 — a project-wide dashboard skill: which features have
    a spec/plan/tasks, which are mid-implementation, which are stalled — useful
    once a project has more than one or two features in flight. Mainly serves
    advanced/team users managing multiple concurrent efforts.
-3. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
+2. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
    shipped against what was planned, captures what changed and why. Feeds
    genuine product signal back into future `specjedi-*` skill research the same
    way `.specify/memory/skill-gaps.md` does for missing skills (Principle
    XVII).
-4. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
+3. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
    before implementation — not a full security audit tool, just the "did we
    think about auth/input validation/secrets" questions a spec often misses.
    Serves security-conscious teams without requiring them elsewhere.
-5. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
+4. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
    sections, changelog entries) from a shipped spec/plan, kept in sync instead
    of drifting from what actually got built.
 

@@ -12,11 +12,18 @@ Set-Location $repoRoot
 $fail = $false
 
 Write-Host "== Constitution: no leftover placeholder tokens =="
+# Skip the leading Sync Impact Report HTML comment: it's a historical audit
+# log and may legitimately mention a literal token like "[TEMPLATE]" when
+# describing a version transition without that being an unresolved
+# placeholder in the constitution body itself.
 $constitutionPath = Join-Path $repoRoot '.specify/memory/constitution.md'
-$placeholders = Select-String -Path $constitutionPath -Pattern '\[[A-Z_]+\]'
+$lines = Get-Content -Path $constitutionPath
+$commentEndIndex = ($lines | Select-String -Pattern '-->' -List | Select-Object -First 1).LineNumber
+$bodyLines = if ($commentEndIndex) { $lines[$commentEndIndex..($lines.Count - 1)] } else { $lines }
+$placeholders = $bodyLines | Select-String -Pattern '\[[A-Z_]+\]'
 if ($placeholders) {
     $placeholders | ForEach-Object { Write-Host $_.Line }
-    Write-Host "FAIL: unresolved [PLACEHOLDER] tokens found in constitution.md"
+    Write-Host "FAIL: unresolved [PLACEHOLDER] tokens found in constitution.md body"
     $fail = $true
 } else {
     Write-Host "OK"

@@ -17,18 +17,24 @@ no single feature for "the whole project," so this file lives at
 
 ## Requirement Completeness
 
-- [ ] CHK001 - Does a single, canonical document map every Core Principle
+- [x] CHK001 - Does a single, canonical document map every Core Principle
       (I-XX) to the specific skill(s)/script(s)/CI job(s) that implement it,
       or an explicit tracked TODO if none exists yet? Today this mapping
       only exists scattered across `references/skill-roadmap.md` prose and
       individual Sync Impact Report entries in `constitution.md`'s history.
-      [Gap, Traceability]
+      [Gap, Traceability] — **Resolved**: `references/principle-traceability.md`
+      created, mapping all 20 principles + 2 cross-cutting sections to their
+      implementing mechanism or explicit partial-gap status.
 - [ ] CHK002 - Is Principle III's mandated "documented compatibility matrix
       covering at least twenty of the highest-usage LLM tools/harnesses"
       actually documented as a matrix (per-harness rows with capability
       notes), or collapsed into a single "and others: 📋 Planned" row
       covering ~8 named tools plus an open-ended remainder? [Completeness,
-      Constitution §III, README "Supported harnesses"]
+      Constitution §III, README "Supported harnesses"] — **Partial progress**:
+      the table now names all 20 harnesses individually (status only, no
+      fabricated capability claims per Principle XX); a deeper matrix with
+      actual per-harness capability notes still doesn't exist and would
+      require testing each harness, out of scope for a same-session fix.
 - [ ] CHK003 - Is there a stated, reproducible mechanism for detecting when
       a localized doc has "drifted more than one minor release behind" the
       English source, as Principle I requires ("MUST be flagged... rather
@@ -40,7 +46,11 @@ no single feature for "the whole project," so this file lives at
       behavior, or a web UI, the corresponding tests join the battery")
       have a documented trigger/owner for noticing that moment has arrived,
       or does it rely entirely on someone remembering to re-read the
-      principle? [Gap, Constitution §IX]
+      principle? [Gap, Constitution §IX] — **Partial progress**: the
+      exemption reasoning ("no unit-testable logic or web UI shipped yet")
+      is now stated explicitly in `references/principle-traceability.md`'s
+      Principle IX row; an automated trigger/owner mechanism still doesn't
+      exist.
 - [ ] CHK005 - Is there a per-PR governance checklist artifact a reviewer
       (human or automated) can mechanically check against all 20 Core
       Principles, or does "Code and content review MUST explicitly check
@@ -48,7 +58,11 @@ no single feature for "the whole project," so this file lives at
       rely on unaided manual judgment each time? `specjedi-skill-review`
       covers the Principle XIX authoring-standard subset only, not
       project-wide governance principles like I, III, X, XI. [Gap,
-      Constitution "Development Workflow"]
+      Constitution "Development Workflow"] — **Partial progress**:
+      `references/principle-traceability.md` gives a reviewer a fast
+      per-principle status lookup, but is a reference index, not itself a
+      per-PR mechanical checklist skill — that remains a real gap, and a
+      plausible future `specjedi-*` skill candidate.
 
 ## Requirement Clarity
 
@@ -68,32 +82,36 @@ no single feature for "the whole project," so this file lives at
 
 ## Requirement Consistency
 
-- [ ] CHK008 - README's Installation section step 3 states "You'll see all
+- [x] CHK008 - README's Installation section step 3 states "You'll see all
       12 `specjedi-*` product skills" — does this match the actual current
       shipped count (22, per the skill table and Quickstart numbering in
       the same file)? [Consistency, Conflict, README "Installation" vs.
-      README "What you get today"]
-- [ ] CHK009 - Does the README badge row's `Roadmap` badge
+      README "What you get today"] — **Resolved**: corrected to 22.
+- [x] CHK009 - Does the README badge row's `Roadmap` badge
       ("roadmap_backlog-7%2F7_shipped") still accurately represent the
       current roadmap state, given `references/skill-roadmap.md` now lists
       11 shipped items (7 original + 4 second-wave) under two separate
       "Shipped" headings? A hardcoded fact-bearing badge that has gone
       stale is explicitly named a "constitution violation, not a stylistic
       choice" by the Distribution & Ecosystem Standards section itself.
-      [Consistency, Constitution "Distribution & Ecosystem Standards"]
-- [ ] CHK010 - Is there a badge (dynamic or otherwise) reflecting the
+      [Consistency, Constitution "Distribution & Ecosystem Standards"] —
+      **Resolved**: badge corrected to `11/11_shipped`.
+- [x] CHK010 - Is there a badge (dynamic or otherwise) reflecting the
       current total shipped-skill count, given the project has doubled in
       skill count (12 → 22) since the last skill-count badge would have
       been relevant, and the Distribution & Ecosystem Standards section
       requires new badge-worthy milestones to be added, not just existing
       ones kept accurate? [Gap, Constitution "Distribution & Ecosystem
-      Standards"]
+      Standards"] — **Resolved**: new `Skills` badge added
+      (`specjedi_skills-22_shipped`).
 - [ ] CHK011 - Did the most recent PRs (features 011 and 012) each include
       an explicit badge-row review, as the Distribution & Ecosystem
       Standards section requires "before opening any pull request"? Neither
       PR #45 nor PR #47's description documents this review having
       happened. [Consistency, Gap, Constitution "Distribution & Ecosystem
-      Standards"]
+      Standards"] — **Note**: cannot be fixed retroactively for past PRs;
+      this checklist-closing PR itself performs and documents the review
+      (CHK008-CHK010) as the going-forward practice.
 
 ## Acceptance Criteria Quality
 

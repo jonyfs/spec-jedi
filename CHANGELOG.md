@@ -11,6 +11,13 @@ this file directly.
 
 ### Added
 
+- `references/principle-traceability.md` — canonical index mapping every
+  constitution principle to its implementing skill/script/CI mechanism or
+  explicit tracked gap; closes `checklists/project-completeness.md`
+  CHK001.
+- `checklists/project-completeness.md` — a project-wide requirements-
+  completeness audit (19 items) run via `/speckit-checklist` against the
+  constitution itself rather than a single feature.
 - `specjedi-tokencheck` 🎒 — mechanizes Principle VIII: proactively checks
   whether `rtk` and `graphify` are installed, explains what's missing and
   its expected token savings, and offers an install walkthrough; never
@@ -63,6 +70,15 @@ this file directly.
 
 ### Changed
 
+- README badge row corrected: `Roadmap` badge updated from stale
+  `7/7 shipped` to accurate `11/11 shipped`; new `Skills` badge added
+  (`22 shipped`) — found by `checklists/project-completeness.md`.
+- README's Installation section corrected from a stale "12 `specjedi-*`
+  product skills" count to the accurate 22.
+- README's "Supported harnesses" table expanded from ~8 named tools
+  collapsed into one "and others" row to all 20 harnesses named
+  individually, per Principle III's "at least twenty" mandate — status
+  only, no fabricated capability claims.
 - `specjedi-explain` and `specjedi-find-skills` brought into full
   compliance with the Skill Authoring Standard (`specjedi-explain` was
   missing its `Format` and `` `--auto` mode `` sections; `specjedi-

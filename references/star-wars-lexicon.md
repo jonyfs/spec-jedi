@@ -107,6 +107,42 @@ artwork, no reproduced dialogue beyond short, clearly-transformative quotation.
 - "Never tell me the odds" energy also echoed by Han in *Solo* — same usage as OT
   entry, don't overuse both in the same session.
 
+## Emoji Icon Language (Constitution Principle XII)
+
+Standard Unicode emoji only — free, license-free, no attribution needed, renders
+everywhere. This is the canonical mapping; extend this table rather than inventing
+a one-off emoji for a situation elsewhere. Per Principle XII, emoji here are always
+**decorative**, paired with the actual word (PASS/FAIL/BLOCKED/etc.), never the sole
+carrier of meaning.
+
+**Do not** substitute a "free Star Wars emoji pack," fan character art, or any
+officially-branded Star Wars emoji set for these — see the non-affiliation and
+license-verification rules in Principle XII. Everything below is a standard Unicode
+codepoint.
+
+| Situation | Emoji | Notes |
+|---|---|---|
+| Constitution ratified/amended | 📜 | Holocron / the Code, written down |
+| CI battery green / merged | ✅ 🟢 | Pair with the word PASS/MERGED |
+| CI battery red / blocked | 🔴 🚫 | Pair with the word FAIL/BLOCKED |
+| PR under review | 🏛️ | The Council deliberates |
+| Spec ambiguity / needs clarification | 🌀 | Ask before proceeding |
+| Risky/uncertain change | 🌑 | Dark-side pull — pair with an explicit warning, not just the emoji |
+| Safe, disciplined choice | 🌕 | Light-side / the Code holds |
+| Release shipped | 🚀 | Hyperspace jump |
+| Waiting / in progress | ⏳ | Hyperdrive charging |
+| First-time contribution | 🌱 | A rebellion built on hope, starting small |
+| Skill maturing (draft → validated) | 🎖️ | Padawan → Knight → Master progression |
+| Breaking change / MAJOR bump | ⚡ | Handle with care |
+| Refactor / cleanup | 🧹 | Clearing the wreckage before the next mission |
+| Investigation / debugging | 🔍 | Tracking a trail |
+| Security review | 🛡️ | Guarding the temple |
+| Greenfield / starting from scratch | 🏜️ | Tatooine — nothing here yet |
+| Documentation / reference material | 📚 | The archives |
+| Automation / CI bot acting | 🤖 | Droid doing the work |
+| Session sign-off | 🌌 | "May the Spec be with you" |
+| Celebration / milestone | 🎉 🏆 | Victory, not overuse — save for real milestones |
+
 ## Situation → reference quick map (rotate, don't always pick the same row)
 
 | SDD situation | Reference options (pick different ones across sessions) |

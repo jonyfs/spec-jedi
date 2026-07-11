@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.7 → 1.15.8
+- Version change: 1.15.8 → 1.15.9
 - Modified principles: none (no MUST-level rule changed)
 - Added sections: none
 - Removed sections: none
@@ -8,20 +8,20 @@ Sync Impact Report
 - Follow-up TODOs: all six historical governance TODOs remain resolved
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
-  `specjedi-migrate` shipped at v1.15.7 (see prior history). This
-  amendment adds a new one:
-  - `specjedi-diagram` shipped (feature 004-specjedi-diagram,
-    2026-07-11) — the third `references/skill-roadmap.md` backlog item
-    beyond the core pipeline. Generates a render-verified Mermaid diagram
-    (flowchart, sequence, or ER, inferred from content — reasoned through
-    explicitly, never defaulted) from an existing spec/plan, applying
-    Principle XVI automatically. Genuine contribution: validates every
-    diagram against the harness's actual Mermaid render mechanism before
-    presenting it — the worked example in `SKILL.md` was itself render-
-    verified live during this feature's dry run, not just asserted to
-    work. Always a supplement to the source prose, never a replacement
-    (Principle XVI); never writes to a target file without explicit
-    confirmation.
+  `specjedi-migrate` shipped at v1.15.7, `specjedi-diagram` at v1.15.8
+  (see prior history). This amendment adds a new one:
+  - `specjedi-status` shipped (feature 005-specjedi-status, 2026-07-11)
+    — the fourth `references/skill-roadmap.md` backlog item beyond the
+    core pipeline. A project-wide dashboard deriving every feature's
+    status entirely from on-disk `spec.md`/`plan.md`/`tasks.md`
+    artifacts — zero separately-maintained tracking system. Genuine
+    contribution: no researched competitor's dashboard-equivalent avoids
+    a manually-updated status field. Explicitly never asserts "stalled"
+    as a fact (Principle XX hallucination resistance applied to a
+    subjective judgment, not just a literal fabrication) — reports the
+    objective last-commit date and lets the reader judge. Dry run ran
+    the derivation rules against this repo's own actual `specs/`
+    directory as a real, non-synthetic test corpus.
 -->
 
 # Spec Jedi Constitution
@@ -815,4 +815,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.8 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.9 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -59,6 +59,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
 | `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
+| `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -246,7 +247,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Fourteen product skills ship today ([What you get today](#what-you-get-today))
+Fifteen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -311,6 +312,10 @@ before? Start with step 0.
     a spec or plan into a render-verified Mermaid diagram — flowchart,
     sequence, or ER, whichever the actual content calls for — always
     alongside the source prose, never in place of it.
+15. Juggling more than one or two features? `specjedi-status` 🧭 shows a
+    project-wide dashboard — which features are specified, planned, in
+    progress, or complete — derived entirely from what's actually on
+    disk, no separate tracking system to keep in sync.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

@@ -95,12 +95,27 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   [specs/008-specjedi-docs/](../specs/008-specjedi-docs/) for the full
   research/spec/plan.
 
+## Shipped (second wave, beyond the original backlog)
+
+- **`specjedi-new-skill`** 🌟 (feature 009, shipped 2026-07-11) —
+  scaffolds a new `specjedi-*` skill's file structure (the
+  `specs/NNN-specjedi-<name>/` research/spec/plan/tasks set plus the
+  `.claude/skills/specjedi-<name>/SKILL.md` skeleton) following this
+  project's own Skill Authoring Standard, placeholders only, never
+  invented content. Genuine contribution: no researched competitor ships
+  a self-scaffolding meta-tool for their own skill ecosystem that stops
+  short of generating finished (and therefore unverified) content. The
+  first feature in this repository's history built by literally invoking
+  `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` →
+  `/speckit-tasks` → `/speckit-implement` rather than hand-authoring
+  matching artifacts. See
+  [specs/009-specjedi-new-skill/](../specs/009-specjedi-new-skill/) for
+  the full research/spec/plan.
+
 ## Proposed, not yet built (prioritized by expected impact)
 
-None currently — every item from this backlog's original list (features
-002-008) has shipped. New proposals get added here as they're identified,
-each still needing its own research pass per Principle II before it's
-built.
+None currently. New proposals get added here as they're identified, each
+still needing its own research pass per Principle II before it's built.
 
 ## Not proposed (deliberately)
 

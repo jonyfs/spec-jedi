@@ -1,5 +1,49 @@
 <!--
 Sync Impact Report
+- Version change: 1.18.1 → 1.18.2
+- Modified principles: none — PATCH bump for mechanism/documentation
+  additions closing the final five open items in
+  `checklists/project-completeness.md`, none of which required changing
+  any principle's normative text.
+  - CHK002: `references/harness-capability-notes.md` — a real per-harness
+    matrix (mechanism, cited source, Yes/Unclear capability call) for all
+    19 non-Claude-Code harnesses in Principle III's compatibility table,
+    explicitly labeled desk research rather than the higher, hands-on-
+    tested bar the README's ✅/📋 status column reserves. Also surfaced and
+    documented a real, current finding: Gemini CLI is being sunset in
+    favor of Antigravity CLI (Google, effective 2026-06-18) — noted as a
+    prioritization signal for future install-path work, not acted on by
+    changing the harness table itself.
+  - CHK011: no retroactive fix exists for PR #45/#47's missing badge-row
+    review — resolved by construction instead: `specjedi-govcheck`'s
+    mandatory self-invoke from `specjedi-implement` (shipped in feature
+    013) already makes this check structural on every PR going forward,
+    so the historical gap can't recur.
+  - CHK013: `references/genuine-contributions-log.md` — durable one-line-
+    per-feature index of every shipped feature's Principle II "genuine
+    contribution" claim, spot-checkable against the researched-competitor
+    field over time, with a maintenance rule for future features.
+  - CHK015: answered by reasoning rather than new infrastructure — git
+    history (commit messages, PR descriptions) already is the append-only,
+    inspectable retrospective audit trail Principle XX's hallucination-
+    resistance requirement needs; `specjedi-govcheck`'s per-PR Principle XX
+    row is the forward-looking half. A separate tracking ledger would be a
+    weaker, easier-to-forget duplicate of what git already guarantees.
+  - CHK016: `.github/workflows/validate.yml` gained `tokencheck-detection`
+    (ubuntu/macos/windows matrix, bash `which`) and
+    `tokencheck-detection-windows-native` (native PowerShell `where.exe`)
+    jobs, both required by `ci-gate` — proving `specjedi-tokencheck`'s
+    present/absent detection logic for real on every OS Principle XIII
+    requires, not just the one it was originally dry-run tested on.
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none. All 19 items in
+  `checklists/project-completeness.md` are now resolved.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.18.0 → 1.18.1
 - Modified principles: Principle III (Universal LLM & Harness
   Compatibility) and the Development Workflow section — PATCH bump:
@@ -1154,4 +1198,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.18.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.18.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

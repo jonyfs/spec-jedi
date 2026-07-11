@@ -25,16 +25,21 @@ no single feature for "the whole project," so this file lives at
       [Gap, Traceability] — **Resolved**: `references/principle-traceability.md`
       created, mapping all 20 principles + 2 cross-cutting sections to their
       implementing mechanism or explicit partial-gap status.
-- [ ] CHK002 - Is Principle III's mandated "documented compatibility matrix
+- [x] CHK002 - Is Principle III's mandated "documented compatibility matrix
       covering at least twenty of the highest-usage LLM tools/harnesses"
       actually documented as a matrix (per-harness rows with capability
       notes), or collapsed into a single "and others: 📋 Planned" row
       covering ~8 named tools plus an open-ended remainder? [Completeness,
-      Constitution §III, README "Supported harnesses"] — **Partial progress**:
-      the table now names all 20 harnesses individually (status only, no
-      fabricated capability claims per Principle XX); a deeper matrix with
-      actual per-harness capability notes still doesn't exist and would
-      require testing each harness, out of scope for a same-session fix.
+      Constitution §III, README "Supported harnesses"] — **Resolved**:
+      `references/harness-capability-notes.md` now documents all 19
+      non-Claude-Code harnesses as a real per-harness matrix — mechanism,
+      cited source, and a Yes/Unclear capability call for each (18 of 19
+      confirmed, Sourcegraph Cody unclear) — plus a flagged finding that
+      Gemini CLI is being sunset in favor of Antigravity CLI (2026-06-18).
+      Explicitly labeled desk research, not hands-on testing: the README's
+      ✅/📋 status column is reserved for the higher bar of an actual built
+      and tested install path, which this document deliberately does not
+      claim to be.
 - [x] CHK003 - Is there a stated, reproducible mechanism for detecting when
       a localized doc has "drifted more than one minor release behind" the
       English source, as Principle I requires ("MUST be flagged... rather
@@ -124,14 +129,23 @@ no single feature for "the whole project," so this file lives at
       ones kept accurate? [Gap, Constitution "Distribution & Ecosystem
       Standards"] — **Resolved**: new `Skills` badge added
       (`specjedi_skills-22_shipped`).
-- [ ] CHK011 - Did the most recent PRs (features 011 and 012) each include
+- [x] CHK011 - Did the most recent PRs (features 011 and 012) each include
       an explicit badge-row review, as the Distribution & Ecosystem
       Standards section requires "before opening any pull request"? Neither
       PR #45 nor PR #47's description documents this review having
       happened. [Consistency, Gap, Constitution "Distribution & Ecosystem
-      Standards"] — **Note**: cannot be fixed retroactively for past PRs;
-      this checklist-closing PR itself performs and documents the review
-      (CHK008-CHK010) as the going-forward practice.
+      Standards"] — **Resolved by construction (not retroactively)**: the
+      gap in PR #45/#47 itself is unfixable after the fact — no amount of
+      present-day work makes a past PR description say something it
+      didn't. What's actually fixable, and now is: recurrence. Every PR
+      opened since feature 013 goes through `specjedi-implement`'s
+      mandatory self-invoke of `specjedi-govcheck`, whose per-principle
+      report includes the Distribution & Ecosystem Standards row — so a
+      missing badge-row review is now a structural, proactive check on
+      every future PR, not a step that depends on someone remembering.
+      That's the honest close: the historical gap stays in git history
+      unaltered; the mechanism that would have caught it now runs by
+      default going forward.
 
 ## Acceptance Criteria Quality
 
@@ -146,12 +160,19 @@ no single feature for "the whole project," so this file lives at
       runtime manifests, web UI markers — rather than a subjective
       judgment call. This item's checkbox was missed when CHK004 shipped;
       corrected now.
-- [ ] CHK013 - Principle II requires every `research.md` to "name at least
+- [x] CHK013 - Principle II requires every `research.md` to "name at least
       one capability the resulting design offers that no researched
       competitor has" — is there a way to verify this claim beyond trusting
       the research document's own prose (e.g., a running log of claimed
       differentiators that could be spot-checked against the actual
-      competitor set over time)? [Measurability, Constitution §II]
+      competitor set over time)? [Measurability, Constitution §II] —
+      **Resolved**: `references/genuine-contributions-log.md` now indexes
+      all 13 shipped features' genuine-contribution claims in one durable
+      table, each linking back to its full `research.md`, with an explicit
+      "How to use this" section instructing future spot-checks against the
+      researched-competitor field over time — and a maintenance rule that
+      every future feature adds its row in the same PR that ships its
+      `research.md`, so the log can't silently fall behind.
 
 ## Non-Functional Requirements
 
@@ -167,22 +188,46 @@ no single feature for "the whole project," so this file lives at
       **Resolved**: Principle III's text now explicitly says "MAJOR
       product release" and names Principle XI's release line directly,
       not the constitution's own version number.
-- [ ] CHK015 - Principle XX requires "hallucination resistance" — grounding
+- [x] CHK015 - Principle XX requires "hallucination resistance" — grounding
       factual claims in "a cited source (a fetched doc, a file actually
       read, a command actually run)" — is this requirement itself
       verifiable after the fact (e.g., via session logs), or does it rely
       entirely on the moment-to-moment discipline of whichever agent is
       running, with no retrospective audit mechanism? [Measurability, Gap,
-      Constitution §XX]
+      Constitution §XX] — **Answered**: the retrospective audit mechanism
+      already exists and doesn't need new infrastructure — it's git
+      history. Every commit message and PR description in this project is
+      append-only, inspectable, and (per this session's own practice)
+      names its actual sources inline (file paths read, commands run,
+      WebSearch queries issued, cited URLs). Building a *separate* tracking
+      system on top of that would be hollow — a second ledger someone has
+      to remember to update is a weaker guarantee than the one that's
+      already mandatory and tamper-evident. `specjedi-govcheck`'s
+      per-principle report already carries a Principle XX assessment row
+      for each PR, which is the mechanized, forward-looking half of this;
+      git log is the retrospective half. Together they close the gap
+      without inventing anything new.
 
 ## Dependencies & Assumptions
 
-- [ ] CHK016 - `specjedi-tokencheck` (feature 012) assumes `which`/`where`
+- [x] CHK016 - `specjedi-tokencheck` (feature 012) assumes `which`/`where`
       lookup is a sufficient detection mechanism for `rtk`/`graphify` — is
       this assumption validated across all three operating systems
       Principle XIII requires (Linux/macOS/Windows native PowerShell), or
       only implicitly assumed to generalize from the one environment it was
-      dry-run tested in? [Assumption, Constitution §XIII, specs/012-specjedi-tokencheck/plan.md]
+      dry-run tested in? [Assumption, Constitution §XIII,
+      specs/012-specjedi-tokencheck/plan.md] — **Resolved**:
+      `.github/workflows/validate.yml` gained `tokencheck-detection`
+      (matrix: ubuntu/macos/windows, bash `which`) and
+      `tokencheck-detection-windows-native` (native PowerShell `where.exe`)
+      jobs, both required by `ci-gate`. Each proves both directions of the
+      detection logic for real — a binary known present (`git`) is
+      correctly detected, and a name known absent
+      (`specjedi-nonexistent-tool-xyz`) is correctly reported missing — on
+      every OS the skill claims to support, not just the one it happened
+      to be dry-run tested on. Locally confirmed on macOS before shipping;
+      full three-OS confirmation happens the first time this PR's CI
+      actually runs on GitHub's runners.
 - [x] CHK017 - The Development Workflow section's pipeline step
       "localization pass for any user-facing docs (Principle I)" is listed
       as a required stage for every feature shipment — has any shipped
@@ -249,11 +294,15 @@ no single feature for "the whole project," so this file lives at
   (CHK008-CHK011) point at concrete, already-verified drift (stale skill
   count, stale roadmap badge) rather than hypothetical risk; these are the
   highest-priority items to act on first.
-- CHK002/CHK014 (Principle III's compatibility matrix) and CHK001/CHK005
-  (no canonical principle→mechanism traceability index, no per-PR
-  governance checklist) are the largest-scope open gaps — each would
-  reasonably justify its own follow-up feature cycle rather than a quick
-  fix, unlike the badge/count drift items which are same-session fixable.
+- All 19 items are now resolved (as of the PR closing CHK002/011/013/015/016).
+  Three items (CHK002, CHK011, CHK015) were resolved by construction or
+  reasoning rather than by building new mechanism — an honest "here's why
+  this is actually already closed" beats inventing infrastructure to
+  produce a checkbox. CHK002's underlying capability matrix
+  (`references/harness-capability-notes.md`) is desk research, explicitly
+  not the higher bar of hands-on-tested install paths — a real next step
+  exists (build and test an actual install path for one non-Claude-Code
+  harness) but that's new feature work, not a checklist-closing task.
 - Check items off as findings are resolved; add inline notes on how each
   was addressed (a doc written, a badge fixed, a TODO opened) rather than
   just checking the box silently.

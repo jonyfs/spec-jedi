@@ -111,6 +111,19 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   matching artifacts. See
   [specs/009-specjedi-new-skill/](../specs/009-specjedi-new-skill/) for
   the full research/spec/plan.
+- **`specjedi-release`** 🚀 (feature 010, shipped 2026-07-11) — wraps the
+  existing `scripts/suggest-release.sh`/`.ps1` with Spec Jedi's own
+  voice, narrating the last tag, suggested next version/bump type, and
+  contributing commits. Never tags or publishes — declines explicitly
+  with the correct manual command if asked to actually cut a release
+  (Principle XI's suggest-only boundary is absolute, not a confirm-then-
+  proceed gate). Closes the same class of gap `TODO(INSTALLER)` closed
+  for Principle XVIII: a principle mandated a capability, only a bare
+  script implemented it, no `specjedi-*` skill gave it a product surface.
+  `specjedi-docs`'s own next-step reference now points here instead of
+  the bare script. See
+  [specs/010-specjedi-release/](../specs/010-specjedi-release/) for the
+  full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 

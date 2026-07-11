@@ -1,12 +1,9 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.14 → 1.16.0
-- Modified principles: none (no MUST-level rule changed) — MINOR bump:
-  the first second-wave skill beyond the original roadmap backlog, and
-  the first feature in this repository's history built via literal
-  `/speckit-*` invocation rather than hand-authored matching artifacts —
-  a genuine process milestone, consistent with how the first roadmap-wave
-  skill (`specjedi-onboard`) also got a MINOR bump for the same reason
+- Version change: 1.16.0 → 1.16.1
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  consistent with how routine skill shipments are versioned after the
+  first process-milestone MINOR bump
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
@@ -14,21 +11,25 @@ Sync Impact Report
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
   TODO(LOCALIZATION) opened at v1.15.14, still open — needs a maintainer
-  decision on translation approach before execution (see that entry in
-  prior history for detail). This amendment adds a new item:
-  - `specjedi-new-skill` shipped (feature 009-specjedi-new-skill,
-    2026-07-11) — the first second-wave addition beyond the original
-    seven-item `references/skill-roadmap.md` backlog (features 002-008).
-    Scaffolds a new `specjedi-*` skill's file structure — placeholders
-    only, never invented content (the same overclaiming discipline
-    Principle XX already establishes, applied here to a meta-tool's own
-    output) — following the Skill Authoring Standard and baking
-    Principle II's research checklist directly into the scaffolded
-    `research.md`. Built by literally invoking `/speckit-specify` →
-    `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
-    `/speckit-implement`, per the maintainer's explicit instruction to use
-    the vendored tooling directly rather than hand-authoring artifacts
-    matching its shape — the first feature to do so this thoroughly.
+  decision on translation approach before execution. `specjedi-new-skill`
+  shipped at v1.16.0 (see prior history). This amendment adds a new item:
+  - `specjedi-release` shipped (feature 010-specjedi-release,
+    2026-07-11) — the second second-wave addition beyond the original
+    roadmap backlog. Wraps the existing `scripts/suggest-release.sh`/
+    `.ps1` with Spec Jedi's own voice, narrating the last tag, suggested
+    next version/bump type, and contributing commits. Never tags or
+    publishes — a hard, unconditional boundary (Principle XI), not a
+    confirm-then-proceed gate. Closes the same class of gap
+    TODO(INSTALLER) closed for Principle XVIII: a principle mandated a
+    capability, only a bare script implemented it, no `specjedi-*` skill
+    gave it a product surface. `specjedi-docs/SKILL.md`'s own next-step
+    reference was updated to point here instead of the bare script — a
+    reference update only, explicitly not a proactive self-invoke wiring
+    (resolved via a real `/speckit-clarify` question this cycle: a
+    release check has no urgency comparable to a security gap, and this
+    project's own multi-feature-per-session pace would make an automatic
+    trigger noisy). Built via the same literal `/speckit-*` pipeline
+    invocation established at v1.16.0.
 -->
 
 # Spec Jedi Constitution
@@ -822,4 +823,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

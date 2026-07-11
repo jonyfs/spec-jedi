@@ -65,6 +65,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
 | `specjedi-docs` 📚 | Drafts a README skill-table row, Quickstart step, and `CHANGELOG.md` entry from a shipped feature's spec/plan — grounded in actual content, always shown for confirmation before writing |
 | `specjedi-new-skill` 🌟 | Scaffolds a new `specjedi-*` skill's file structure — placeholders only, never invented content — following this project's own Skill Authoring Standard and baking in the Principle II research checklist |
+| `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -252,7 +253,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Nineteen product skills ship today ([What you get today](#what-you-get-today))
+Twenty product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -337,6 +338,11 @@ before? Start with step 0.
     scaffolds the file structure — `specs/`, `SKILL.md` skeleton, every
     section a labeled placeholder — never invented research findings or
     behavior on your behalf.
+19. Wondering if a release is due? `specjedi-release` 🚀 narrates
+    `scripts/suggest-release.sh`'s own suggestion — last tag, next
+    version, contributing commits — and declines with the exact manual
+    command if you ask it to actually cut one; it never tags or
+    publishes itself.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

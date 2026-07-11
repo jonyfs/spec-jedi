@@ -6,11 +6,11 @@ description: "Task list for the specjedi-* SDD pipeline (Feature 001)"
 
 **Input**: `specs/001-specjedi-pipeline/{spec.md, plan.md, research.md}`
 
-**Scope**: P1-P6 (`specjedi-constitution`, `specjedi-specify`,
-`specjedi-clarify`, `specjedi-plan`, `specjedi-tasks`, `specjedi-implement`)
-have shipped; P7 (`specjedi-analyze`) is this cycle's target, each its own
-cycle per spec.md's Assumptions (prove the pattern incrementally). P8-P9
-remain a scoped backlog.
+**Scope**: P1-P7 (`specjedi-constitution`, `specjedi-specify`,
+`specjedi-clarify`, `specjedi-plan`, `specjedi-tasks`, `specjedi-implement`,
+`specjedi-analyze`) have shipped; P8 (`specjedi-checklist`) is this cycle's
+target, each its own cycle per spec.md's Assumptions (prove the pattern
+incrementally). P9 remains a scoped backlog.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -300,14 +300,60 @@ at any point after `specjedi-tasks` exists.
 - [x] T108 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
 
-## Backlog (future cycle): User Stories 8-9
+## Phase 12: User Story 8 — `specjedi-checklist` (P8)
+
+**Goal**: A user can request a custom checklist for a named focus area
+(e.g., security, accessibility) and get one generated from the actual
+feature's `spec.md`/`plan.md`, not a generic boilerplate template.
+
+**Independent test**: See spec.md User Story 8 → Independent Test.
+
+- [x] T110 [P] [US8] Create `.claude/skills/specjedi-checklist/SKILL.md`
+  per plan.md's Design section: persona, task, the requirements-quality-
+  vs-implementation-verification distinction made explicit, the Markdown
+  checklist format with inline spec/plan pointers, chain-of-thought for
+  discarding generic items that don't trace to this feature's actual
+  content, `--auto` behavior, proactive gap-check hook.
+- [x] T111 [US8] Add a full input → output worked example: a focus area
+  request in, a checklist excerpt with items traceable to specific
+  spec.md/plan.md sections out.
+- [x] T112 [US8] Add Always/Never guardrails and verifiable success
+  criteria per the Skill Authoring Standard checklist — explicitly
+  including "Never include an item that doesn't trace to something the
+  spec/plan actually says" as a Never guardrail.
+- [x] T113 [US8] Run `scripts/validate.sh` (and `.ps1` on Windows) —
+  structural lint must pass.
+- [x] T114 [US8] Manual scenario dry run: request a checklist for a named
+  concern against a real spec/plan pair and confirm every generated item
+  traces back to a specific section; confirm no generic boilerplate item
+  (one that would fit any unrelated project) appears in the output.
+- [x] T115 [US8] Review `specjedi-checklist/SKILL.md` against the full
+  Skill Authoring Standard checklist in
+  `references/skill-authoring-standard.md` before marking this story done.
+
+**Checkpoint**: the pipeline now supports targeted requirements-quality
+review on demand, layered on an already-working core pipeline.
+
+## Phase 13: Documentation & Ship (P8)
+
+- [x] T116 Update README.md's "What you get today" table: move
+  `specjedi-checklist` from the roadmap table to the "ships today" table;
+  update the roadmap Mermaid diagram's live/roadmap markers to match
+  (Principle XVI). Review the badge row per Principle X's pre-PR
+  requirement.
+- [x] T117 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
+  note to reflect P1-P8 shipped, P9 remaining.
+- [x] T118 Validate full repo (`scripts/validate.sh`), commit on this
+  feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
+
+## Backlog (future cycle): User Story 9
 
 Not detailed task-by-task this cycle (spec.md Assumptions: prove the pattern
-incrementally rather than all at once). Each becomes its own `[Story]`-tagged
-task group later, following the exact shape of Phase 2-6/8/10 above:
+incrementally rather than all at once). Becomes its own `[Story]`-tagged
+task group later, following the exact shape of Phase 2-6/8/10/12 above:
 
-- **US8** `specjedi-checklist` (P8).
-- **US9** `specjedi-converge` (P9).
+- **US9** `specjedi-converge` (P9) — final pipeline stage: reconciles
+  codebase drift back into `tasks.md`.
 
 ## Dependencies
 
@@ -329,4 +375,8 @@ task group later, following the exact shape of Phase 2-6/8/10 above:
   that must already exist (it does not require implementation to have
   happened yet, per spec.md's own "at any point" framing).
 - Phase 11 (Documentation & Ship) depends on Phase 10 being complete.
-- US8-US9 (backlog) depend on US1-US7 as each stage requires.
+- Phase 12 (US8) depends on Phase 5 (US4) — checklist reads `spec.md`/
+  `plan.md`, which must already exist (it does not require `tasks.md` or
+  implementation).
+- Phase 13 (Documentation & Ship) depends on Phase 12 being complete.
+- US9 (backlog) depends on US1-US8 as each stage requires.

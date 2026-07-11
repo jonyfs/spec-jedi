@@ -1,24 +1,49 @@
 <!--
 Sync Impact Report
-- Version change: 1.6.0 → 1.7.0
-- Modified principles: Principle XII expanded (not redefined) — adds a
-  documented "Emoji Icon Language" requirement (standard Unicode emoji
-  only, mapped to recurring saga situations) and an explicit caveat
-  against non-Unicode "Star Wars emoji packs" of uncertain license/
-  copyright status, reinforcing the existing non-affiliation clause
-- Added sections: none (amendment to existing Principle XII)
+- Version change: 1.7.0 → 1.8.0
+- Modified principles: Principle XII amended again — adds a warm/human/
+  funny tone requirement (explicitly not a claim of literal humanity;
+  skills must never lie about being AI if asked directly)
+- Added sections:
+  - Core Principle XIV (Guided Next-Step Suggestion)
+  - Core Principle XV (specjedi- Skill Naming Convention)
+  - Core Principle XVI (Mermaid-First Process Documentation)
+  - Core Principle XVII (Skill Discovery & Gap-Filling —
+    specjedi-find-skills)
+  - Core Principle XVIII (Zero-Footprint Installer with Harness Selection)
+  - Core Principle XIX (Skill Authoring Standard)
+- Amended sections:
+  - Distribution & Ecosystem Standards — license requirement concretized
+    from generic "OSI-approved" to MIT specifically, with a plain-language
+    explanation requirement; README badge requirement added
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - references/star-wars-lexicon.md ⚠ pending — adds a canonical "Emoji
-    Icon Language" table (situation → standard Unicode emoji) in the same
-    change set as this amendment
+  - LICENSE ⚠ pending — MIT text added in the same change set
+  - README.md ⚠ pending — badges, license section, and a Mermaid
+    quickstart diagram added in the same change set
+  - references/skill-authoring-standard.md ⚠ pending — new reference doc
+    backing Principle XIX, created in the same change set
+  - .claude/skills/specjedi-find-skills/ ⚠ pending — tracked as a
+    follow-up PR (separate, larger change set), ported from
+    vercel-labs/skills' find-skills (MIT per its package.json) and
+    renamed/adapted per Principle XV and XVII
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
-  - TODO(VOICE_PASS): still open from v1.4.0.
+  - TODO(LICENSE_CONTRIBUTING): CONTRIBUTING.md still open; LICENSE
+    resolved by this amendment.
+  - TODO(VOICE_PASS): still open from v1.4.0 — the warm-tone amendment to
+    Principle XII adds to what that eventual pass must cover.
+  - TODO(NEXT_STEP_PASS): Principle XIV applies project-wide but, like
+    TODO(VOICE_PASS), retrofitting the vendored speckit-* command skills
+    is deferred to a proper SDD cycle, not an ad hoc edit.
+  - TODO(INSTALLER): Principle XVIII requires a harness-aware installer;
+    none exists yet. Deliberately not built ad hoc in this session —
+    scoped as its own feature needing research (Principle II) + spec +
+    plan, given it must work across the full Principle III compatibility
+    matrix.
 -->
 
 # Spec Jedi Constitution
@@ -314,6 +339,13 @@ This voice is deliberately scoped:
   skills and docs MUST NOT imply endorsement by, or sponsorship from,
   Lucasfilm/Disney, and MUST NOT reproduce official logos or
   copyrighted artwork — text references only.
+- The overall register MUST read as warm, funny, and human — natural
+  sentences a witty person would actually say, not stock AI-assistant
+  phrasing ("I'd be happy to help you with that!", "As an AI..."). This is
+  a *writing style* requirement, not a deception one: a skill MUST NEVER
+  claim to literally be a human being if a user asks directly whether
+  they're talking to AI — answer that question honestly, in the same warm
+  voice, and keep going.
 
 **Emoji Icon Language**: the project MUST maintain a documented, consistent
 mapping from recurring SDD situations (spec ambiguity, CI green/red,
@@ -398,6 +430,117 @@ turns "should work on Windows too" from a hope into something continuously
 checked — consistent with Principle IX's insistence that validation be
 reproducible and automated, not asserted.
 
+### XIV. Guided Next-Step Suggestion
+
+A Spec Jedi skill MUST NOT end an interaction by leaving the user to guess
+what happens next. Every meaningful stopping point — end of a response,
+completion of a step in the SDD pipeline, a decision point in a flow —
+MUST offer the next step(s) as a short, selectable bulleted list, so the
+user can act by picking an option rather than composing a new request from
+scratch. This extends Principle IV's elicitation discipline from "gathering
+requirements" to "what now" moments throughout the whole lifecycle, not
+just at the start.
+
+**Rationale**: Directly requested: the project should be self-intuitive —
+a user should always be able to see, and pick from, the next move.
+
+### XV. `specjedi-` Skill Naming Convention
+
+Every skill authored as part of this project's own product surface (as
+opposed to vendored third-party tooling this project builds on, like the
+spec-kit `speckit-*` command skills) MUST be named `specjedi-<subject>`,
+where `<subject>` is the specific problem the skill solves. This applies
+going forward to every new Spec-Jedi-authored skill; it does not require
+renaming already-vendored, non-Spec-Jedi-authored skills.
+
+**Rationale**: Directly requested: a consistent prefix makes Spec Jedi's
+own skills instantly recognizable in any harness's skill listing,
+distinguishing "what this project ships" from "what this project is built
+on top of."
+
+### XVI. Mermaid-First Process Documentation
+
+Whenever a skill or doc needs to explain a process, flow, decision tree,
+or sequence of steps, it MUST prefer a Mermaid diagram over a prose wall
+or hand-drawn ASCII art, wherever the target rendering surface supports it
+(GitHub, most IDEs, and many agent harnesses render Mermaid natively).
+Prose remains required alongside the diagram for surfaces that don't
+render Mermaid and for accessibility (a diagram is a supplement, not a
+replacement, per the same spirit as Principle XII's decorative-emoji
+rule) — never diagram-only documentation of a process.
+
+**Rationale**: Directly requested: visual process explanations read faster
+and stay accurate longer than prose walls describing the same flow.
+
+### XVII. Skill Discovery & Gap-Filling (`specjedi-find-skills`)
+
+This project MUST ship a skill, `specjedi-find-skills`, adapted from the
+open-source `find-skills` skill (vercel-labs/skills, MIT-licensed) with
+attribution retained, that recognizes when a user's request touches a
+domain the currently installed skill set doesn't cover well and
+proactively suggests a specific, verifiable complementary skill to close
+that gap — never installing anything without the user's explicit go-ahead,
+consistent with Principle VIII's suggest-then-confirm pattern. This skill
+MUST be usable in two contexts: developing Spec Jedi itself, and inside
+any end-user project that has installed the Spec Jedi skill pack.
+
+**Rationale**: Directly requested: a project that teaches structured
+development shouldn't leave users stuck when their need falls outside its
+own skill set — pointing at a specific, vetted alternative is more useful
+than silence or a vague "I can't do that."
+
+### XVIII. Zero-Footprint Installer with Harness Selection
+
+This project MUST provide a single installer entrypoint capable of
+placing the Spec Jedi skill set into a new or existing target project's
+directory, and MUST let the user choose which harness(es), from the
+Principle III compatibility matrix, to configure for — rather than
+assuming the maintainer's own daily-driver harness. The installer itself
+MUST follow Principle XIII (work on Linux, macOS, and Windows) and
+Principle IX (be validated, not just asserted to work).
+
+**Rationale**: Directly requested: broad harness support (Principle III)
+is only useful if getting the skills into a real project is a single,
+guided step rather than manual copy-pasting.
+
+### XIX. Skill Authoring Standard
+
+Every `specjedi-*` `SKILL.md` MUST follow a defined structure and quality
+bar, documented in full in `references/skill-authoring-standard.md`. The
+non-negotiables:
+
+- **Structure**: YAML frontmatter (name, description, required
+  compatibility/environment constraints, allowed tools where applicable),
+  a context/domain section stating clearly when and why to use the skill,
+  step-by-step actionable instructions (not abstract concepts), realistic
+  copy-pasteable examples including edge cases, and optional executable
+  scripts the skill can trigger.
+- **Ruthless literalness**: no subjective, unmeasurable claims ("fast",
+  "user-friendly"). Requirements MUST be quantifiable and testable where
+  possible (e.g., a concrete token budget, not "concise").
+- **Conciseness via progressive disclosure**: the core `SKILL.md` targets
+  under 500 tokens for fast loading and MUST NOT exceed roughly 5,000
+  tokens; material beyond that MUST move to `references/` and be loaded
+  on demand, never inlined wholesale.
+- **Always-Do / Never-Do guardrails**: every prohibition MUST be paired
+  with the alternative action to take instead — a bare "don't do X" is
+  incomplete.
+- **Verifiable assertions**: a skill MUST state success criteria the
+  agent (or CI, per Principle IX) can check programmatically — e.g., "the
+  output is valid JSON" — not just prose intent.
+- **Explicit human-approval boundaries**: every skill MUST state plainly
+  which of its actions are autonomous and which require the user's
+  explicit confirmation first, mirroring the pattern this constitution
+  already applies to tool installation (Principle VIII) and destructive
+  git/repo operations (Principle X).
+
+**Rationale**: Directly requested, synthesizing widely-used industry
+guidance (Anthropic, Vercel, and similar agent-skill practitioners) into
+one enforceable bar, so every skill this project ships is reliable by
+construction rather than by luck — the same "documented, reproducible
+mechanism" ethos Principle IX already applies to validation, now applied
+to how skills themselves get written.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -409,20 +552,27 @@ not in a disconnected wiki.
 
 The repository root MUST carry a `README.md` that gives newcomers a
 complete, self-contained path to a working install — not a stub pointing
-elsewhere. At minimum it MUST cover, in this order: what the project is and
-who it's for; prerequisites; step-by-step installation for every currently
-supported harness (Principle III), written so a user with no prior context
-can follow it to a working state; a quickstart showing the first commands
-to run; and a pointer to how releases/versioning work (Principle XI). A
-harness listed in the Principle III compatibility matrix but not yet
-covered by working install steps MUST be marked as such in the README
-rather than silently omitted.
+elsewhere. At minimum it MUST cover, in this order: a row of status badges
+(build/CI status, license, latest version, and similar) so a visitor can
+tell at a glance how the project is built before reading a word of prose;
+what the project is and who it's for; prerequisites; step-by-step
+installation for every currently supported harness (Principle III),
+written so a user with no prior context can follow it to a working state;
+a quickstart showing the first commands to run; and a pointer to how
+releases/versioning work (Principle XI). A harness listed in the
+Principle III compatibility matrix but not yet covered by working install
+steps MUST be marked as such in the README rather than silently omitted.
 
-The repository root MUST also carry an OSI-approved open-source license, a
-`CONTRIBUTING.md` describing how new skills are proposed and reviewed under
-this constitution, and issue/PR templates that require contributors to
-confirm they performed the research and validation steps above before
-requesting review.
+The repository root MUST carry a `LICENSE` file using the **MIT License**
+specifically (not left as a generic "any OSI-approved license" choice),
+and the README's license section MUST explain in plain language what MIT
+actually permits and requires (free use/modification/redistribution,
+including commercially, with the original copyright notice retained and
+no warranty provided) rather than just linking the file. The repository
+root MUST also carry a `CONTRIBUTING.md` describing how new skills are
+proposed and reviewed under this constitution, and issue/PR templates
+that require contributors to confirm they performed the research and
+validation steps above before requesting review.
 
 ## Development Workflow
 
@@ -501,4 +651,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.7.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.8.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

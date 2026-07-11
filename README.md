@@ -152,6 +152,12 @@ skill checks its output against whatever the constitution says. And per Principl
 XIV: whatever you just ran, your agent should tell you what to run next — you
 shouldn't have to come back to this table to figure it out.
 
+**Stuck on something outside this pipeline?** `specjedi-find-skills` 🔍 (Principle
+XVII) searches the open agent-skills ecosystem and suggests a specific,
+install-count-verified skill to fill the gap — never installing anything without
+asking first. It's included in this skill pack and works the same way inside any
+project that installs Spec Jedi.
+
 ## Recommended companions
 
 This project's constitution ([Principle VIII](.specify/memory/constitution.md))

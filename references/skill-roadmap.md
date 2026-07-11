@@ -70,14 +70,23 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   all) links back into a durable, structural signal log the way this
   does. See [specs/006-specjedi-retro/](../specs/006-specjedi-retro/) for
   the full research/spec/plan.
+- **`specjedi-security`** 🛡️ (feature 007, shipped 2026-07-11) —
+  lightweight, proactive threat-modeling prompt: self-invoked by
+  `specjedi-plan` when spec/plan content is security-relevant, surfacing
+  targeted "did we think about X" questions grounded in a maintained
+  taxonomy (`references/security-question-bank.md`) — never a full
+  security audit, and every response says so explicitly. Scoped
+  deliberately to avoid duplicating `specjedi-checklist`'s own
+  security-focus-area capability: this skill prompts proactively with
+  targeted questions, `specjedi-checklist` produces a comprehensive
+  on-request checklist — they compose, this skill recommends the other
+  for full coverage. See
+  [specs/007-specjedi-security/](../specs/007-specjedi-security/) for the
+  full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
-   before implementation — not a full security audit tool, just the "did we
-   think about auth/input validation/secrets" questions a spec often misses.
-   Serves security-conscious teams without requiring them elsewhere.
-2. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
+1. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
    sections, changelog entries) from a shipped spec/plan, kept in sync instead
    of drifting from what actually got built.
 

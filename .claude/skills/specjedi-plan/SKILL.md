@@ -51,6 +51,12 @@ planning a mobile app with no mobile-specific skill present), self-invoke
 `specjedi-find-skills` before the plan is considered complete
 (Principle XVII).
 
+If the spec/plan content is security-relevant (authentication, external
+input, secrets/credentials, data handling), self-invoke
+`specjedi-security` before the plan is considered complete — a lightweight
+proactive prompt for commonly-missed categories, not a substitute for the
+plan's own Constitution Check.
+
 ## Autonomous vs. confirm-first
 
 Writing `plan.md` is autonomous once the spec is clarified — no separate

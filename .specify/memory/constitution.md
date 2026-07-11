@@ -1,28 +1,26 @@
 <!--
 Sync Impact Report
-- Version change: 1.12.0 → 1.12.1
-- Modified principles: Principle X's mechanism description corrected
-  (PATCH — the underlying rule from v1.12.0 is unchanged: owner's PRs
-  checks-only auto-merge, everyone else's needs the owner's approval).
-  v1.12.0, as merged, documented a GitHub-native ruleset
-  (`bypass_actors`) as the implementation. That was tested live
-  immediately after merging and confirmed NOT to work: the bypass only
-  unlocks a manual admin-override merge, it does not make
-  `gh pr merge --auto` treat the PR as satisfied — so it would have
-  silently broken the owner's own auto-merge, not granted a working
-  exception. The ruleset has been deleted from the live repository.
-  Replaced with a custom `owner-gate` CI battery job (Principle IX) that
-  checks PR authorship directly and, for non-owner PRs, checks for a real
-  `APPROVED` GitHub review from the owner via the API.
-- Added sections: none
+- Version change: 1.12.1 → 1.13.0
+- Modified principles: Principle XIX expanded — adds an "Audience
+  Calibration" requirement to the Prompt Engineering Discipline
+  subsection: every skill's explanations MUST scale from complete
+  beginner to advanced practitioner rather than assuming one fixed
+  expertise level (directly requested: "atender pessoas de todos os
+  niveis de conhecimento de IA, seja do usuário básico ao avançado")
+- Added sections: none (amendment to existing Principle XIX)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - .github/workflows/validate.yml ✅ updated in the same change set —
-    adds the `owner-gate` job, listed in `ci-gate`'s `needs`
+  - references/skill-roadmap.md ⚠ pending — new file, created in the same
+    change set: a prioritized backlog of proposed specjedi-* skills beyond
+    the P1-P9 pipeline, gated by Principle II research per idea before any
+    of them actually get built
+  - .claude/skills/specjedi-explain/SKILL.md ⚠ pending — new skill created
+    in the same change set as the first concrete example of Audience
+    Calibration in practice
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
@@ -630,6 +628,19 @@ documentation:
   the harness supports it. This is the same discipline Principle V
   already requires of specs — visible reasoning catches hidden
   assumptions before they ship.
+- **Audience calibration**: a skill's explanations MUST scale to the
+  person asking, not assume one fixed expertise level. A user who has
+  never touched SDD before and a practitioner who's shipped ten specs
+  this month both need to come away understanding what to do next — the
+  first needs plain language and the "why," the second needs the answer
+  without the preamble. A skill MUST read the signals already available
+  (how the user phrased the question, prior turns in the session, an
+  explicit "I'm new to this" or "just the command") rather than defaulting
+  to jargon-heavy brevity or over-explaining to someone who clearly
+  doesn't need it. This applies project-wide, not just to a dedicated
+  explainer skill: every `specjedi-*` skill's own responses, not only
+  documentation, are a beginner's or an expert's first impression of
+  whether this project is for them.
 
 **Rationale**: Directly requested, synthesizing widely-used industry
 guidance (Anthropic, Vercel, and similar agent-skill practitioners, plus
@@ -799,4 +810,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.12.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.13.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

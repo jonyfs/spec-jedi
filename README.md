@@ -43,11 +43,17 @@ about what's actually shipped versus what's still roadmap.
 | `specjedi-constitution` 📜 | Establishes or amends a project's non-negotiable rules — the foundation every other `specjedi-*` skill checks against. See [spec](specs/001-specjedi-pipeline/spec.md) |
 | `specjedi-specify` 🎯 | Turns a feature idea — one sentence is enough — into a prioritized, independently-testable `spec.md`, marking real ambiguity instead of guessing |
 | `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
+| `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
+
+See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
+proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
+and more) — a backlog, not a promise; each still needs its own research pass
+before it gets built.
 
 **Roadmap — the rest of the `specjedi-*` SDD pipeline** (each will mirror, and
 eventually replace for end users, spec-kit's own command surface, with Spec Jedi's
 own added principles — guided next steps, prompt-engineering discipline, Star Wars
-voice, and the rest — already baked into the two shipped above):
+voice, and the rest — already baked into the skills shipped above):
 
 | Planned skill | Will replace |
 |---|---|
@@ -199,20 +205,23 @@ skills themselves work identically either way.
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   the three `specjedi-*` product skills (`constitution`, `specify`, `find-skills`)
-   and the `speckit-*` commands (this repo's own internal bootstrap tooling — see
-   [What you get today](#what-you-get-today)) listed together, since Claude Code
-   discovers every skill under `.claude/skills/` without distinguishing the two.
+   the four `specjedi-*` product skills (`constitution`, `specify`, `find-skills`,
+   `explain`) and the `speckit-*` commands (this repo's own internal bootstrap
+   tooling — see [What you get today](#what-you-get-today)) listed together, since
+   Claude Code discovers every skill under `.claude/skills/` without distinguishing
+   the two.
 
-4. That's it — you're ready to run `specjedi-constitution` on a project, or read
-   the constitution to understand where the rest of the pipeline is headed.
+4. That's it — you're ready to run `specjedi-constitution` on a project, ask
+   `specjedi-explain` anything if you're not sure where to start, or read the
+   constitution to understand where the rest of the pipeline is headed.
 
 **Using Spec Jedi in a project other than this one?** Today, copying the whole
 `.claude/skills/` directory brings the `speckit-*` bootstrap tooling along with the
 actual `specjedi-*` product — there's no separation yet. If you only want the
 product skills, copy `.claude/skills/specjedi-constitution/`,
-`.claude/skills/specjedi-specify/`, and `.claude/skills/specjedi-find-skills/`
-individually. A proper installer that installs product-only by default is tracked
+`.claude/skills/specjedi-specify/`, `.claude/skills/specjedi-find-skills/`, and
+`.claude/skills/specjedi-explain/` individually. A proper installer that installs
+product-only by default is tracked
 ([Principle XVIII](.specify/memory/constitution.md)) but doesn't exist yet.
 
 ### Supported harnesses
@@ -234,8 +243,13 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Three product skills ship today ([What you get today](#what-you-get-today)):
+Four product skills ship today ([What you get today](#what-you-get-today)).
+Never used an SDD tool before? Start with step 0.
 
+0. **Not sure what any of this means?** Just ask — "what is a spec and why
+   would I need one," "what does this project actually do." `specjedi-explain`
+   🎓 answers at whatever depth you need, beginner or advanced, and always
+   points you to what to run next ([Principle XIX](.specify/memory/constitution.md)).
 1. Install (see [Installation](#installation) above).
 2. Establish your project's rules: describe your non-negotiables in plain
    language and `specjedi-constitution` 📜 produces a versioned

@@ -1,37 +1,25 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.5 → 1.15.6
-- Modified principles: none (governance/tooling debt closed — no MUST-level
-  rule changed)
+- Version change: 1.15.6 → 1.15.7
+- Modified principles: none (no MUST-level rule changed)
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
-- Follow-up TODOs (all six now resolved — this closes the last one):
-  - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
-  - TODO(VOICE_PASS): RESOLVED at v1.15.4.
-  - TODO(NEXT_STEP_PASS): RESOLVED at v1.15.2.
-  - TODO(INSTALLER): **RESOLVED**. Built `scripts/install.sh` and
-    `scripts/install.ps1` per Principle XVIII: single entrypoint, copies
-    only the 12 `specjedi-*` product skills (never `speckit-*` bootstrap
-    tooling) plus the four `.specify/templates/*.md` files those skills
-    read at runtime, into a target project. Harness selection defaults to
-    `claude-code` (the only harness actually built/tested per Principle
-    III's matrix); any other value is rejected with an honest
-    not-yet-supported message rather than silently attempted. Validated,
-    not just asserted (Principle IX/XIII): tested locally against a
-    scratch directory with both scripts on this machine before shipping,
-    and added `install-test`/`install-test-windows-native` CI jobs (now
-    required by `ci-gate`) that run the installer fresh on every PR across
-    Linux, macOS, and Windows and confirm zero `speckit-*` leakage.
-    README's Installation section replaces the old "copy five files by
-    hand" instructions (already stale — 12 skills ship now, not five)
-    with the one-command installer.
-  - TODO(PROMPT_ENG_PASS): RESOLVED at v1.15.5.
-  - TODO(GROUNDING_PASS): RESOLVED at v1.15.3.
-
-All six TODOs tracked since early versions of this constitution are now
-closed. Future debt gets its own freshly-named TODO rather than reopening
-one of these.
+- Follow-up TODOs: all six historical governance TODOs remain resolved
+  (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
+  v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
+  This amendment adds a new one:
+  - `specjedi-migrate` shipped (feature 003-specjedi-migrate, 2026-07-11)
+    — the second `references/skill-roadmap.md` backlog item beyond the
+    core pipeline (after `specjedi-onboard`, feature 002). Rewrites
+    literal `/speckit-*` tooling references in a project's own
+    constitution/spec/plan/tasks to their shipped `specjedi-*`
+    equivalents; scoped narrowly to references only (never principle or
+    requirement content) since the underlying template format was already
+    shared per feature 001's FR-009. Flags, never silently drops, a
+    reference with no shipped equivalent (`/speckit-taskstoissues`,
+    `/speckit-agent-context-update`). Explicit request only — the first
+    shipped skill required by spec to never trigger proactively.
 -->
 
 # Spec Jedi Constitution
@@ -825,4 +813,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.6 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.7 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

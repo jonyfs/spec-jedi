@@ -1,5 +1,36 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.7 → 1.17.0
+- Modified principles: Principle I (English-Source, Globally-Localized
+  Documentation) — MINOR bump: this is a substantive change to a MUST-level
+  requirement, not a clarification. The open-ended "ten most-spoken
+  languages (per the most recent authoritative linguistic survey)" text —
+  which named no actual languages and left TODO(LOCALIZATION) blocked since
+  v1.15.14 — is replaced with a maintainer-decided, concrete scope: six
+  named languages (Mandarin Chinese, Hindi, Spanish, French, Arabic,
+  Bengali), actually translated and shipped this cycle under
+  `docs/i18n/<lang>/`. A new sub-requirement is added: `scripts/validate.sh`/
+  `.ps1` MUST flag localized docs whose recorded source commit has drifted
+  from the English file's actual latest commit — this closes the
+  previously-undesigned "kept in sync... MUST be flagged" mechanism
+  (`checklists/project-completeness.md` CHK003), now a real, automated,
+  non-blocking check (verified working on both `bash` and `pwsh` this
+  cycle, including catching and fixing a real bug in the sync-marker
+  commit hashes before shipping).
+- Added sections: none (Principle I's existing text is substantively
+  rewritten, not extended with a new section)
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: `TODO(LOCALIZATION)` (opened v1.15.14) is now CLOSED —
+  the maintainer decided the scope (six languages, not ten) and the
+  content shipped this cycle. `checklists/project-completeness.md` CHK003
+  and CHK006 are both resolved by this amendment; CHK002 (a full 20-harness
+  capability matrix) remains the one substantial open item from that
+  checklist, out of scope for this amendment.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.6 → 1.16.7
 - Modified principles: none (no MUST-level rule changed) — PATCH bump, a
   compliance mechanism added to existing tooling, not new guidance
@@ -251,18 +282,34 @@ or contributors. English is the single source of truth; translations are
 derivative, not parallel originals.
 
 The top-level project documentation (README, CONTRIBUTING, installation
-guides, and getting-started material) MUST additionally be maintained in the
-ten most-spoken languages in the world (by total speakers, per the most
-recent authoritative linguistic survey at time of writing) so the project is
-approachable to the widest possible audience. Localized docs MUST be kept in
-sync with the English source; a localized doc that has drifted more than one
-minor release behind MUST be flagged (e.g., a banner or issue) rather than
-silently served as current.
+guides, and getting-started material) MUST additionally be maintained in
+Mandarin Chinese (`zh`), Hindi (`hi`), Spanish (`es`), French (`fr`), Arabic
+(`ar`), and Bengali (`bn`) — the six most-spoken languages in the world after
+English, by total speakers, per the most recent authoritative linguistic
+survey at time of writing — so the project is approachable to the widest
+practical audience. This is a deliberate, maintainer-decided scope: the
+original "ten most-spoken languages" text left the actual list undefined,
+re-derivable differently each time it was read (`checklists/project-
+completeness.md` CHK006); six named languages, translated and shipped, is a
+concrete commitment the project can actually keep, rather than an
+open-ended target nothing ever satisfies. Growing beyond six is a future
+option, not a standing obligation.
+
+Localized docs live under `docs/i18n/<lang>/`, each carrying an
+`i18n-sync: source=<file>@<commit>` marker recording the English commit it
+was translated from. Localized docs MUST be kept in sync with the English
+source; `scripts/validate.sh`/`.ps1` MUST flag (non-blocking) any localized
+doc whose recorded source commit no longer matches the English file's
+actual latest commit, rather than letting it be silently served as current.
 
 **Rationale**: A single canonical language prevents semantic drift and merge
 conflicts in the material that skills actually execute from, while broad
 localization of onboarding docs maximizes real-world adoption — the
-project's explicit goal is reaching "thousands of people" globally.
+project's explicit goal is reaching "thousands of people" globally. Naming
+six specific languages instead of a re-derivable "ten most-spoken" makes the
+mandate checkable and keepable; an automated sync check makes "kept in
+sync" a real, continuously-verified mechanism instead of an unenforced
+aspiration.
 
 ### II. Competitive Research Before Creation (NON-NEGOTIABLE)
 
@@ -1027,4 +1074,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.7 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.17.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

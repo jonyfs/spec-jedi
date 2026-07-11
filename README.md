@@ -44,6 +44,7 @@ research discipline (Principle II), never rushed.
 
 | Skill | What it does |
 |---|---|
+| `specjedi-onboard` 🌱 | First-run walkthrough for a brand-new project — produces a real first `constitution.md` and `spec.md` together, teaching each SDD concept exactly when it's needed. Steps aside instantly if onboarding already happened |
 | `specjedi-constitution` 📜 | Establishes or amends a project's non-negotiable rules — the foundation every other `specjedi-*` skill checks against. See [spec](specs/001-specjedi-pipeline/spec.md) |
 | `specjedi-specify` 🎯 | Turns a feature idea — one sentence is enough — into a prioritized, independently-testable `spec.md`, marking real ambiguity instead of guessing |
 | `specjedi-clarify` 🌀 | Scans a spec for real ambiguity and asks up to 5 prioritized questions — each with a Recommended answer so a beginner gets guidance and an expert can reply in one word — before you plan against a guess |
@@ -231,7 +232,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Eleven product skills ship today ([What you get today](#what-you-get-today)) —
+Twelve product skills ship today ([What you get today](#what-you-get-today)) —
 the full `specjedi-*` pipeline is complete. Never used an SDD tool before?
 Start with step 0.
 
@@ -240,44 +241,50 @@ Start with step 0.
    🎓 answers at whatever depth you need, beginner or advanced, and always
    points you to what to run next ([Principle XIX](.specify/memory/constitution.md)).
 1. Install (see [Installation](#installation) above).
-2. Establish your project's rules: describe your non-negotiables in plain
+2. Brand-new project, no idea where to start? `specjedi-onboard` 🌱 walks
+   you through producing a real first `constitution.md` and `spec.md`
+   together from a one-sentence idea, explaining each concept only when
+   you actually need it — never a wall of docs up front. (Steps 3-4 below
+   are exactly what it orchestrates for you; skip straight to them if
+   you'd rather run each stage yourself.)
+3. Establish your project's rules: describe your non-negotiables in plain
    language and `specjedi-constitution` 📜 produces a versioned
    `.specify/memory/constitution.md` — every other `specjedi-*` skill checks
    its own output against it.
-3. Spec a feature: describe what you want to build — a rough one-sentence idea
+4. Spec a feature: describe what you want to build — a rough one-sentence idea
    is enough — and `specjedi-specify` 🎯 turns it into a prioritized,
    independently-testable `spec.md`, marking real ambiguity instead of
    guessing at it.
-4. Not sure the spec is solid yet? `specjedi-clarify` 🌀 scans it for real
+5. Not sure the spec is solid yet? `specjedi-clarify` 🌀 scans it for real
    ambiguity and asks up to 5 prioritized questions — each with a
    Recommended answer, so you can accept it in one word or read the
    reasoning if you want it — before anything gets planned against a guess.
-5. Ready to design the "how"? `specjedi-plan` 🛠️ scans your actual codebase
+6. Ready to design the "how"? `specjedi-plan` 🛠️ scans your actual codebase
    for existing conventions first, then turns the clarified spec into a
    technical `plan.md` — so implementation never has to stop and search
    for a pattern that already exists elsewhere in your project.
-6. Ready to break it into work? `specjedi-tasks` ✅ turns the plan into an
+7. Ready to break it into work? `specjedi-tasks` ✅ turns the plan into an
    ordered, dependency-aware `tasks.md` grouped by user story — a failing
    test task sequenced before its implementation task wherever the plan
    calls for code.
-7. Ready to build it? `specjedi-implement` 🔨 executes `tasks.md` in
+8. Ready to build it? `specjedi-implement` 🔨 executes `tasks.md` in
    dependency order, test-first where the plan calls for code — every
    commit lands on a feature branch and a pull request, never directly on
    `main`.
-8. Want a safety net? `specjedi-analyze` 🔍 cross-checks `spec.md`,
+9. Want a safety net? `specjedi-analyze` 🔍 cross-checks `spec.md`,
    `plan.md`, and `tasks.md` (and your constitution) for gaps, duplication,
    or contradictions — strictly read-only, runnable any time, never edits
    a file.
-9. Need a targeted review? `specjedi-checklist` ☑️ generates a checklist
-   for a named focus area — security, accessibility, performance, whatever
-   you name — grounded entirely in this feature's own spec/plan, never
-   generic boilerplate.
-10. Changed code by hand since your last `tasks.md`? `specjedi-converge`
+10. Need a targeted review? `specjedi-checklist` ☑️ generates a checklist
+    for a named focus area — security, accessibility, performance, whatever
+    you name — grounded entirely in this feature's own spec/plan, never
+    generic boilerplate.
+11. Changed code by hand since your last `tasks.md`? `specjedi-converge`
     🔁 scans the actual codebase, detects any capability with no
     corresponding task, and appends it as new work instead of letting it
     silently drift out of sync — the pipeline's final stage, closing the
     loop back to `specjedi-implement`.
-11. Stuck on something outside this set? Just describe it — "how do I do X,"
+12. Stuck on something outside this set? Just describe it — "how do I do X,"
     "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
     automatically, searches the open agent-skills ecosystem, and suggests a
     specific, verified skill. Never installs anything without asking first
@@ -285,18 +292,20 @@ Start with step 0.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
-list to figure it out. The full chain runs `specjedi-constitution` →
-`specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks`
-→ `specjedi-implement` → `specjedi-analyze` → `specjedi-checklist` →
-`specjedi-converge`, looping back to `specjedi-implement` whenever
-`specjedi-converge` finds drift to work through.
+list to figure it out. The full chain runs `specjedi-onboard` (first run
+only) → `specjedi-constitution` → `specjedi-specify` → `specjedi-clarify` →
+`specjedi-plan` → `specjedi-tasks` → `specjedi-implement` →
+`specjedi-analyze` → `specjedi-checklist` → `specjedi-converge`, looping
+back to `specjedi-implement` whenever `specjedi-converge` finds drift to
+work through.
 
 ### The pipeline, end to end
 
-Constitution through convergence — every stage below is live:
+Onboarding through convergence — every stage below is live:
 
 ```mermaid
 flowchart TD
+    Z["✅ specjedi-onboard 🌱<br/>first run only: idea → constitution + spec"] -.-> A
     A["✅ specjedi-constitution 📜<br/>establish or amend the project's rules"] --> B["✅ specjedi-specify 🎯<br/>feature idea → spec.md"]
     B --> C{"✅ specjedi-clarify 🌀<br/>ambiguity to resolve?"}
     C -->|yes| C2["✅ resolve, encode answers into spec.md"] --> D
@@ -310,7 +319,8 @@ flowchart TD
     F -.->|stuck outside this pipeline| K["✅ specjedi-find-skills 🔍<br/>ships today"]
 ```
 
-✅ = ships today — the full 9-stage `specjedi-*` pipeline is complete.
+✅ = ships today — the full 9-stage `specjedi-*` pipeline is complete, plus
+`specjedi-onboard` as the guided first-run entry point.
 
 ## Recommended companions
 

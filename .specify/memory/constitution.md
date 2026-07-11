@@ -1,31 +1,34 @@
 <!--
 Sync Impact Report
-- Version change: 1.8.0 → 1.9.0
-- Modified principles: Principle XIX renamed and materially expanded —
-  "Skill Authoring Standard" → "Skill Authoring & Prompt Engineering
-  Standard." Adds a formal Prompt Engineering Discipline subsection
-  (persona/role, explicit task framing, defined output format, few-shot
-  examples, chain-of-thought for non-trivial judgment calls) on top of
-  the existing structural/quality requirements.
-- Added sections: none (amendment to existing Principle XIX)
+- Version change: 1.9.0 → 1.9.1
+- Modified principles: Principle XV clarified (PATCH, no new MUST-level
+  rule) — makes explicit the bootstrap-then-replace relationship between
+  the vendored speckit-* tooling and the specjedi-* product surface, and
+  states that end-user-facing docs (README, installers) MUST present
+  speckit-* as internal/bootstrap tooling, never as "the product."
+- Added sections: none
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - references/skill-authoring-standard.md ⚠ pending — adds the Prompt
-    Engineering Discipline section in the same change set
+  - README.md ⚠ pending — Quickstart/Installation/comic-panel sections
+    were presenting speckit-* commands as the product; corrected in the
+    same change set to reflect this clarification
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
-  - TODO(INSTALLER): still open from v1.8.0.
-  - TODO(PROMPT_ENG_PASS): like TODO(VOICE_PASS), applying this amended
-    standard retroactively to the vendored speckit-* command skills is
-    deferred to a proper SDD cycle, not an ad hoc edit. New
-    specjedi-authored skills (e.g. specjedi-find-skills) should already
-    be checked against it going forward.
+  - TODO(INSTALLER): still open from v1.8.0 — now additionally scoped to
+    install specjedi-* product skills only by default, per this
+    amendment, with speckit-* meta-tooling opt-in for contributors.
+  - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
+  - TODO(SPECJEDI_PIPELINE): the full specjedi-* SDD pipeline (mirroring
+    constitution/specify/clarify/plan/tasks/implement/analyze/checklist/
+    converge) doesn't exist yet — only specjedi-find-skills ships today.
+    Building it is substantial, competitive-research-gated (Principle II)
+    work, tracked as a major follow-up, not attempted ad hoc here.
 -->
 
 # Spec Jedi Constitution
@@ -435,10 +438,27 @@ where `<subject>` is the specific problem the skill solves. This applies
 going forward to every new Spec-Jedi-authored skill; it does not require
 renaming already-vendored, non-Spec-Jedi-authored skills.
 
-**Rationale**: Directly requested: a consistent prefix makes Spec Jedi's
-own skills instantly recognizable in any harness's skill listing,
-distinguishing "what this project ships" from "what this project is built
-on top of."
+The `speckit-*` skills are **bootstrap tooling, not the product**: this
+project currently uses spec-kit's own command skills to build itself
+(dogfooding the incumbent to construct its replacement — the same
+"bootstrap a compiler with an older compiler" pattern), while Spec Jedi's
+actual competitive offering to end users is the `specjedi-*` surface.
+End-user-facing material (README, quickstarts, installers) MUST present
+`specjedi-*` skills as the product and `speckit-*` skills as internal
+bootstrap tooling — never the reverse, and never blurred together as if
+Spec Jedi were merely a themed reskin of spec-kit. Where the full
+`specjedi-*` pipeline doesn't exist yet for a given capability, docs MUST
+say so plainly (what ships today vs. what's roadmap) rather than
+substituting a `speckit-*` walkthrough and calling it the product
+experience.
+
+**Rationale**: Directly requested (naming), then directly requested again
+(positioning): a consistent prefix makes Spec Jedi's own skills instantly
+recognizable, and keeping the bootstrap/product distinction explicit in
+every end-user-facing surface is what makes Spec Jedi a genuine competitor
+to spec-kit rather than a Star Wars-flavored wrapper around it — the
+project's stated ambition (Principle II) doesn't hold if its own README
+teaches newcomers the incumbent's command surface instead of its own.
 
 ### XVI. Mermaid-First Process Documentation
 
@@ -665,4 +685,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.9.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.9.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

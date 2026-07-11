@@ -58,6 +58,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
+| `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -245,7 +246,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Thirteen product skills ship today ([What you get today](#what-you-get-today))
+Fourteen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -306,6 +307,10 @@ before? Start with step 0.
     rewrites your project's own `/speckit-*` tooling references to their
     `specjedi-*` equivalents — never touches a principle or requirement,
     explicit request only.
+14. Want a picture instead of a wall of prose? `specjedi-diagram` 📊 turns
+    a spec or plan into a render-verified Mermaid diagram — flowchart,
+    sequence, or ER, whichever the actual content calls for — always
+    alongside the source prose, never in place of it.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
@@ -335,6 +340,7 @@ flowchart TD
     G -->|clean| I(["🚀 shipped"])
     F -.->|need a checklist mid-flight| J["✅ specjedi-checklist ☑️<br/>ships today"]
     F -.->|stuck outside this pipeline| K["✅ specjedi-find-skills 🔍<br/>ships today"]
+    D -.->|want a picture of the spec/plan| L["✅ specjedi-diagram 📊<br/>ships today"]
 ```
 
 ✅ = ships today — the full 9-stage `specjedi-*` pipeline is complete, plus

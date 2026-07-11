@@ -29,9 +29,56 @@ versioned artifacts instead of throwaway chat messages — solo developers, team
 standardizing how their agents work, and anyone tired of re-explaining project
 context every session.
 
-## How Spec Jedi works, in comic form
+## What you get today
 
-> A quick note on format: these are text-and-emoji comic panels, not generated
+Spec Jedi is being built as a genuine **competitor** to
+[spec-kit](https://github.com/github/spec-kit), not a themed wrapper around it
+([Principle XV](.specify/memory/constitution.md)) — so it's worth being upfront
+about what's actually shipped versus what's still roadmap.
+
+**Ships today, install and use now:**
+
+| Skill | What it does |
+|---|---|
+| `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
+
+**Roadmap — the full `specjedi-*` SDD pipeline** (each will mirror, and eventually
+replace for end users, spec-kit's own command surface, with Spec Jedi's own added
+principles — guided next steps, prompt-engineering discipline, Star Wars voice, and
+the rest — baked in):
+
+| Planned skill | Will replace |
+|---|---|
+| `specjedi-constitution` 📜 | `speckit-constitution` |
+| `specjedi-specify` 🎯 | `speckit-specify` |
+| `specjedi-clarify` 🌀 | `speckit-clarify` |
+| `specjedi-plan` 🛠️ | `speckit-plan` |
+| `specjedi-tasks` ✅ | `speckit-tasks` |
+| `specjedi-implement` 🤖 | `speckit-implement` |
+| `specjedi-analyze` 🔍 | `speckit-analyze` |
+| `specjedi-checklist` | `speckit-checklist` |
+| `specjedi-converge` | `speckit-converge` |
+
+None of the roadmap skills exist yet. Building them is real, competitive-research-gated
+work (Principle II) — tracked, not rushed. Until they land, this repository's own
+development uses spec-kit's `speckit-*` commands as internal bootstrap tooling (see
+below) — that's this project dogfooding the incumbent to build its replacement, not
+the product you'd install elsewhere.
+
+## How Spec Jedi builds *itself*, in comic form
+
+> ⚠️ **This section is about our internal bootstrap process, not the Spec Jedi
+> product.** The `/speckit-*` commands below are [spec-kit](https://github.com/github/spec-kit)'s
+> own tooling — Spec Jedi currently dogfoods spec-kit to construct itself (the
+> same "bootstrap a compiler with an older compiler" pattern), the way any
+> competitor might use an incumbent's tools while building its replacement.
+> **If you're evaluating Spec Jedi as a product, skip to
+> [What you get today](#what-you-get-today) below** — the actual product surface
+> is the `specjedi-*` skills, not these. See
+> [Principle XV](.specify/memory/constitution.md) for the full policy on why
+> these are kept clearly separate.
+>
+> Also, a note on format: these are text-and-emoji comic panels, not generated
 > artwork. Actual Star Wars imagery (characters, ships, the logo) is Lucasfilm/
 > Disney IP — this project's own [Principle XII](.specify/memory/constitution.md)
 > commits to text references only, never reproduced copyrighted art. So: the story
@@ -76,7 +123,7 @@ context every session.
 > 🚀 *"Shipped."*
 > 🌌 *"May the Spec be with you."*
 
-### The same story, as a diagram
+### The same internal-bootstrap story, as a diagram
 
 ```mermaid
 sequenceDiagram
@@ -149,15 +196,21 @@ skills themselves work identically either way.
    separate install step or build process, and this step is identical on all three
    operating systems.
 
-3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You should see
-   the `speckit-*` commands listed (see [Quickstart](#quickstart) for what each one
-   does).
+3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
+   both `specjedi-find-skills` (the product, today) and the `speckit-*` commands
+   (this repo's own internal bootstrap tooling — see
+   [What you get today](#what-you-get-today)) listed together, since Claude Code
+   discovers every skill under `.claude/skills/` without distinguishing the two.
 
-4. That's it — you're ready to run the workflow below.
+4. That's it — you're ready to use `specjedi-find-skills`, or to read the
+   constitution to understand where the rest of the pipeline is headed.
 
-**Using Spec Jedi in a project other than this one?** Copy the `.claude/skills/`
-directory (and `.specify/` if you want the full spec-kit scaffolding, templates, and
-scripts) into your target repository, then follow steps 2–4 above from that repo.
+**Using Spec Jedi in a project other than this one?** Today, copying the whole
+`.claude/skills/` directory brings the `speckit-*` bootstrap tooling along with the
+actual `specjedi-*` product — there's no separation yet. If you only want the
+product skill, copy `.claude/skills/specjedi-find-skills/` alone. A proper
+installer that installs product-only by default is tracked
+([Principle XVIII](.specify/memory/constitution.md)) but doesn't exist yet.
 
 ### Supported harnesses
 
@@ -178,50 +231,42 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-The SDD workflow this project ships runs in this order (Principle XVI: process
-explanations here use Mermaid first, prose as backup for surfaces that don't render
-it):
+Today's quickstart is short, because one product skill ships so far
+([What you get today](#what-you-get-today)):
+
+1. Install (see [Installation](#installation) above).
+2. In Claude Code, just describe what you're stuck on — "how do I do X," "is there
+   a skill for X," or similar. `specjedi-find-skills` 🔍 triggers automatically,
+   searches the open agent-skills ecosystem, and suggests a specific,
+   install-count-and-source-verified skill — never installing anything without
+   asking first ([Principle VIII](.specify/memory/constitution.md)).
+3. Say yes if you want it installed; say no and it won't touch anything.
+
+That's the whole quickstart for what exists today. Per
+[Principle XIV](.specify/memory/constitution.md), whatever you just ran should
+tell you what to run next — you shouldn't need to come back to a table to figure
+it out, though today there isn't much of a table yet.
+
+### The vision (roadmap, not yet real)
+
+Once the full `specjedi-*` pipeline from [What you get today](#what-you-get-today)
+ships, the intended flow looks like this — shown now so contributors and early
+adopters know what "done" looks like, not because you can run it yet:
 
 ```mermaid
 flowchart TD
-    A["/speckit-constitution 📜<br/>establish or amend the project's rules"] --> B["/speckit-specify 🎯<br/>feature idea → spec.md"]
-    B --> C{"/speckit-clarify 🌀<br/>ambiguity to resolve?"}
+    A["specjedi-constitution 📜<br/>establish or amend the project's rules"] --> B["specjedi-specify 🎯<br/>feature idea → spec.md"]
+    B --> C{"specjedi-clarify 🌀<br/>ambiguity to resolve?"}
     C -->|yes| C2["resolve, encode answers into spec.md"] --> D
-    C -->|no| D["/speckit-plan 🛠️<br/>spec.md → plan.md"]
-    D --> E["/speckit-tasks ✅<br/>plan.md → tasks.md"]
-    E --> F["/speckit-implement 🤖<br/>execute tasks.md"]
-    F --> G{"/speckit-analyze 🔍<br/>spec/plan/tasks consistent?"}
-    G -->|gaps found| H["/speckit-converge<br/>queue remaining work"] --> F
+    C -->|no| D["specjedi-plan 🛠️<br/>spec.md → plan.md"]
+    D --> E["specjedi-tasks ✅<br/>plan.md → tasks.md"]
+    E --> F["specjedi-implement 🤖<br/>execute tasks.md"]
+    F --> G{"specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
+    G -->|gaps found| H["specjedi-converge<br/>queue remaining work"] --> F
     G -->|clean| I(["🚀 shipped"])
-    F -.->|need a checklist mid-flight| J["/speckit-checklist"]
-    F -.->|prefer issue tracking| K["/speckit-taskstoissues"]
+    F -.->|need a checklist mid-flight| J["specjedi-checklist"]
+    F -.->|stuck outside this pipeline| K["specjedi-find-skills 🔍<br/>ships today"]
 ```
-
-Plain-text equivalent, if Mermaid isn't rendering for you:
-
-```text
-/speckit-constitution   → establish or amend the project's non-negotiable rules
-/speckit-specify        → turn a feature idea into a spec.md
-/speckit-clarify        → resolve ambiguity in the spec before planning (optional but recommended)
-/speckit-plan           → turn the spec into a technical plan.md
-/speckit-tasks          → break the plan into an ordered, dependency-aware tasks.md
-/speckit-implement      → execute tasks.md
-/speckit-analyze        → cross-check spec/plan/tasks for consistency at any point
-/speckit-checklist      → generate a custom checklist for the current feature
-/speckit-converge       → diff the codebase against spec/plan/tasks and queue any remaining work
-/speckit-taskstoissues  → turn tasks.md into GitHub issues, if you prefer issue-tracker-driven work
-```
-
-Start every new project or repository with `/speckit-constitution` — every other
-skill checks its output against whatever the constitution says. And per Principle
-XIV: whatever you just ran, your agent should tell you what to run next — you
-shouldn't have to come back to this table to figure it out.
-
-**Stuck on something outside this pipeline?** `specjedi-find-skills` 🔍 (Principle
-XVII) searches the open agent-skills ecosystem and suggests a specific,
-install-count-verified skill to fill the gap — never installing anything without
-asking first. It's included in this skill pack and works the same way inside any
-project that installs Spec Jedi.
 
 ## Recommended companions
 

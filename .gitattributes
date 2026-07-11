@@ -1,0 +1,10 @@
+# Constitution Principle XIII: pin line endings so a Windows checkout can't
+# silently corrupt a bash script's shebang handling (CRLF breaks `#!/usr/bin/env bash`).
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf

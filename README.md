@@ -26,25 +26,58 @@ context every session.
 
 ## Prerequisites
 
+Spec Jedi is developed and validated on **Linux, macOS, and Windows**
+(Constitution [Principle XIII](.specify/memory/constitution.md)) — every script under
+`scripts/` ships as both a POSIX shell (`.sh`) and a native PowerShell (`.ps1`)
+version, and CI runs the battery on all three operating systems on every PR.
+
 - `git`
 - A supported coding agent (see [Supported harnesses](#supported-harnesses) below)
 - [GitHub CLI (`gh`)](https://cli.github.com/), only if you plan to contribute changes
   back via pull request
+- Only if you want to run the helper scripts locally (optional — the coding agent
+  itself doesn't require them): a POSIX shell (bash/zsh, present by default on Linux
+  and macOS) **or** [PowerShell 7+](https://aka.ms/powershell) (`pwsh`), which runs
+  on all three operating systems
 
 ## Installation
 
 ### Claude Code (fully supported today)
 
-1. Clone this repository:
+The clone step differs slightly by OS; everything after that is identical.
 
-   ```bash
-   git clone https://github.com/jonyfs/spec-jedi.git
-   cd spec-jedi
-   ```
+**Linux / macOS** (Terminal):
+
+```bash
+git clone https://github.com/jonyfs/spec-jedi.git
+cd spec-jedi
+```
+
+**Windows — native PowerShell** (no WSL required):
+
+```powershell
+git clone https://github.com/jonyfs/spec-jedi.git
+cd spec-jedi
+```
+
+**Windows — WSL or Git Bash** (if you prefer a Unix-like shell on Windows):
+
+```bash
+git clone https://github.com/jonyfs/spec-jedi.git
+cd spec-jedi
+```
+
+Both Windows paths work equally well — pick whichever shell you already use daily.
+The only place it matters going forward is which helper script you run
+(`scripts/*.sh` in a POSIX shell, `scripts/*.ps1` in native PowerShell); the
+skills themselves work identically either way.
+
+1. Clone the repository using the block above for your OS.
 
 2. Open the folder in [Claude Code](https://claude.com/claude-code). Claude Code
    auto-discovers every skill under `.claude/skills/*/SKILL.md` — there is no
-   separate install step or build process.
+   separate install step or build process, and this step is identical on all three
+   operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You should see
    the `speckit-*` commands listed (see [Quickstart](#quickstart) for what each one
@@ -117,7 +150,13 @@ skills or additive capability = MINOR, fixes/docs = PATCH). See
 The project suggests when a release is warranted rather than cutting one silently:
 
 ```bash
+# Linux / macOS / Windows (WSL or Git Bash)
 ./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (native PowerShell)
+./scripts/suggest-release.ps1
 ```
 
 This inspects commits since the last tag and recommends a next version — it never
@@ -128,10 +167,12 @@ maintainer-driven step.
 
 Every change ships through a pull request validated by this project's own CI battery
 and auto-merged only once every check is green (see
-[Principle IX and X](.specify/memory/constitution.md)). A full `CONTRIBUTING.md` with
-the step-by-step contribution process is on the roadmap; until it lands, read the
-constitution first — it's the definitive statement of how this project expects
-changes to be made.
+[Principle IX and X](.specify/memory/constitution.md)). That battery runs on Linux,
+macOS, and Windows on every PR (Principle XIII) — if you add or change a script under
+`scripts/`, both the `.sh` and `.ps1` versions must exist and pass on all three. A
+full `CONTRIBUTING.md` with the step-by-step contribution process is on the roadmap;
+until it lands, read the constitution first — it's the definitive statement of how
+this project expects changes to be made.
 
 ## License
 

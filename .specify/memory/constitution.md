@@ -1,30 +1,31 @@
 <!--
 Sync Impact Report
-- Version change: 1.4.0 → 1.5.0
-- Modified principles: Principle XII expanded (not redefined) — Star Wars
-  fluency now explicitly spans the full saga (all trilogies + major
-  series) plus genuine Jedi-culture depth, replacing the earlier
-  "original-trilogy-only" scoping with a "deep cuts as seasoning, core
-  meaning always plain" rule
-- Added sections: none (amendment to existing Principle XII)
+- Version change: 1.5.0 → 1.6.0
+- Modified principles: none redefined; all twelve v1.5.0 principles
+  retained
+- Added sections:
+  - Core Principle XIII (Cross-Platform Support: Linux, macOS, Windows)
+- Amended sections: none
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - references/star-wars-lexicon.md ⚠ pending — created in the same
-    change set as this amendment as the concrete, documented reference
-    pool Principle XII now points to (saga-wide quotes/concepts mapped to
-    SDD situations), consistent with Principle IX's "documented,
-    reproducible mechanism" ethos applied to voice as well as validation
+  - scripts/validate.ps1, scripts/suggest-release.ps1 ⚠ pending — created
+    in the same change set as this amendment, mirroring the bash scripts
+    (same pattern already used by the vendored
+    .specify/extensions/agent-context/scripts/{bash,powershell}/)
+  - .github/workflows/validate.yml ⚠ pending — lint battery matrixed
+    across ubuntu-latest/macos-latest/windows-latest plus a
+    windows-native PowerShell leg, all required by `ci-gate`
+  - .gitattributes ⚠ pending — pins LF line endings for shell scripts so
+    a Windows checkout can't silently break them
+  - README.md ⚠ pending — explicit per-OS installation steps (Linux,
+    macOS, Windows via native PowerShell and via WSL/Git Bash)
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0 — license choice is
-    a maintainer decision, not inferred.
-  - TODO(VOICE_PASS): still open from v1.4.0 — no Spec-Jedi-authored
-    end-user-facing skill exists yet; restyling the vendored speckit-*
-    command output to draw from the expanded lexicon is future work
-    through the normal SDD pipeline, not a direct edit.
+  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
+  - TODO(VOICE_PASS): still open from v1.4.0.
 -->
 
 # Spec Jedi Constitution
@@ -333,6 +334,47 @@ opt-out rules keep the fun from becoming an accessibility tax; the
 non-affiliation rule keeps a trademark-adjacent theme legally sane for a
 project meant to reach thousands of people.
 
+### XIII. Cross-Platform Support: Linux, macOS, Windows
+
+Spec Jedi MUST work for a user on Linux, macOS, or Windows — not "Windows
+via WSL only" as an unstated assumption, and not documentation that quietly
+only covers Unix-like systems. This is a distinct axis from Principle III
+(which harness/LLM tool): this principle is about which *operating system*
+the human and their shell are running.
+
+Concretely:
+
+- Every executable script this project ships (e.g., under `scripts/`) MUST
+  have both a POSIX shell version (`.sh`, bash-compatible) and a native
+  PowerShell version (`.ps1`) with equivalent behavior — mirroring the
+  pattern spec-kit's own tooling already uses
+  (`.specify/*/scripts/{bash,powershell}/`). A contributor MUST NOT add a
+  `.sh` script without its `.ps1` counterpart (or vice versa) in the same
+  change set.
+- Installation and quickstart documentation MUST give explicit,
+  step-by-step instructions for all three operating systems, including
+  Windows users who work in native PowerShell/CMD and Windows users who
+  work through WSL or Git Bash — these are different setups with different
+  failure modes and MUST NOT be collapsed into a single unlabeled set of
+  steps that only actually works on one of them.
+- The CI validation battery (Principle IX/X) MUST exercise more than one
+  operating system, not just the runner the maintainer happens to develop
+  on, so cross-platform claims are continuously verified rather than
+  asserted once and left to rot.
+- Scripts and docs MUST avoid OS-specific assumptions that silently break
+  elsewhere: hard-coded path separators, case-sensitivity assumptions,
+  and inconsistent line endings (the repository MUST pin line endings for
+  script files via `.gitattributes` so a Windows checkout can't corrupt a
+  bash script's shebang handling).
+
+**Rationale**: Directly requested: a skill package that only documents (or
+only works on) one operating system excludes a large share of the "thousands
+of people" this project is meant to reach. Requiring a tested `.ps1`
+alongside every `.sh`, OS-labeled documentation, and a multi-OS CI matrix
+turns "should work on Windows too" from a hope into something continuously
+checked — consistent with Principle IX's insistence that validation be
+reproducible and automated, not asserted.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -436,4 +478,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.5.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.6.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

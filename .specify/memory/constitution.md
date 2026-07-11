@@ -1,34 +1,33 @@
 <!--
 Sync Impact Report
-- Version change: 1.9.0 → 1.9.1
-- Modified principles: Principle XV clarified (PATCH, no new MUST-level
-  rule) — makes explicit the bootstrap-then-replace relationship between
-  the vendored speckit-* tooling and the specjedi-* product surface, and
-  states that end-user-facing docs (README, installers) MUST present
-  speckit-* as internal/bootstrap tooling, never as "the product."
-- Added sections: none
+- Version change: 1.9.1 → 1.10.0
+- Modified principles: Principle XVII materially expanded — the
+  gap-filling skill must now (a) operate proactively, self-invoking
+  whenever another specjedi-* skill's task touches a domain the installed
+  skill set doesn't cover, not just when the user explicitly asks; (b)
+  reason across whatever discovery mechanism fits the user's actual
+  harness (Principle III), not just one npm-centric registry; (c) be
+  written in Spec Jedi's own original voice rather than lightly-adapted
+  source wording; (d) track recurring gaps as a product-roadmap signal.
+- Added sections: none (amendment to existing Principle XVII)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - README.md ⚠ pending — Quickstart/Installation/comic-panel sections
-    were presenting speckit-* commands as the product; corrected in the
-    same change set to reflect this clarification
+  - .claude/skills/specjedi-find-skills/SKILL.md ⚠ pending — full rewrite
+    to this expanded spec, in the same change set
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
-  - TODO(INSTALLER): still open from v1.8.0 — now additionally scoped to
-    install specjedi-* product skills only by default, per this
-    amendment, with speckit-* meta-tooling opt-in for contributors.
+  - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): the full specjedi-* SDD pipeline (mirroring
-    constitution/specify/clarify/plan/tasks/implement/analyze/checklist/
-    converge) doesn't exist yet — only specjedi-find-skills ships today.
-    Building it is substantial, competitive-research-gated (Principle II)
-    work, tracked as a major follow-up, not attempted ad hoc here.
+  - TODO(SPECJEDI_PIPELINE): still open from v1.9.1 — this amendment
+    documents the proactive-invocation *contract* other future
+    specjedi-* skills must call into; it can't be exercised end-to-end
+    until those skills exist.
 -->
 
 # Spec Jedi Constitution
@@ -476,20 +475,44 @@ and stay accurate longer than prose walls describing the same flow.
 
 ### XVII. Skill Discovery & Gap-Filling (`specjedi-find-skills`)
 
-This project MUST ship a skill, `specjedi-find-skills`, adapted from the
-open-source `find-skills` skill (vercel-labs/skills, MIT-licensed) with
-attribution retained, that recognizes when a user's request touches a
-domain the currently installed skill set doesn't cover well and
-proactively suggests a specific, verifiable complementary skill to close
-that gap — never installing anything without the user's explicit go-ahead,
-consistent with Principle VIII's suggest-then-confirm pattern. This skill
-MUST be usable in two contexts: developing Spec Jedi itself, and inside
-any end-user project that has installed the Spec Jedi skill pack.
+This project MUST ship a skill, `specjedi-find-skills`, that recognizes
+when a task touches a domain the currently installed skill set doesn't
+cover well and proactively suggests a specific, verifiable complementary
+skill to close that gap — never installing anything without the user's
+explicit go-ahead, consistent with Principle VIII's suggest-then-confirm
+pattern. It was originally seeded from the open-source `find-skills` skill
+(vercel-labs/skills, MIT-licensed, attribution retained) but MUST be
+written in Spec Jedi's own voice and MUST exceed that source on every
+axis below, not just rename it:
+
+- **Proactive, not just reactive**: it MUST self-invoke whenever another
+  `specjedi-*` skill's task touches a domain outside the installed skill
+  set's competence — the agent should notice and surface a suggestion as
+  part of that skill's own output, not wait for the user to separately
+  ask "is there a skill for X." This is a standing invocation contract
+  every future `specjedi-*` skill MUST honor once it exists (tracked:
+  TODO(SPECJEDI_PIPELINE)); it does not require the whole pipeline to
+  exist to be true today for whichever `specjedi-*` skills already ship.
+- **Harness-aware, not registry-locked**: it MUST reason about which
+  discovery mechanism actually fits the user's current harness
+  (Principle III's compatibility matrix) rather than assuming one
+  npm-centric registry is universal — the underlying ecosystem it queries
+  is an implementation detail, not the point.
+- **Gap memory, not a one-shot lookup**: when it declines to find a good
+  match, it SHOULD note the gap (e.g., in the host project's
+  `.specify/memory/` if that scaffolding is present) so a recurring,
+  unfilled need becomes visible product-roadmap signal rather than being
+  silently re-discovered every session.
+- Usable in two contexts: developing Spec Jedi itself, and inside any
+  end-user project that has installed the Spec Jedi skill pack.
 
 **Rationale**: Directly requested: a project that teaches structured
 development shouldn't leave users stuck when their need falls outside its
 own skill set — pointing at a specific, vetted alternative is more useful
-than silence or a vague "I can't do that."
+than silence or a vague "I can't do that." Making it proactive rather than
+purely reactive, and harness-aware rather than registry-locked, is what
+makes it genuinely better than the skill it was seeded from rather than a
+reskin of it — consistent with Principle XV's competitive stance.
 
 ### XVIII. Zero-Footprint Installer with Harness Selection
 
@@ -685,4 +708,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.9.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.10.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -22,9 +22,13 @@ conventions named explicitly, not gestured at.
    against unresolved ambiguity just moves the guessing downstream.
 2. **Scan the target codebase for existing conventions** — naming,
    error-handling patterns, test structure, directory layout — before
-   writing Technical Context. Name the actual conventions found ("errors
-   return `Result<T, E>`, see `src/errors.rs`"), not a vague "follow
-   existing patterns" instruction.
+   writing Technical Context. Prefer an installed token-economy/
+   knowledge-graph tool (e.g., `graphify query`) over brute-force file
+   reads when one is available in the target project (Principle XX). Name
+   the actual conventions found ("errors return `Result<T, E>`, see
+   `src/errors.rs`"), not a vague "follow existing patterns" instruction —
+   an unverified guess at a convention is exactly the kind of fabrication
+   Principle XX's hallucination-resistance pillar forbids.
 3. **Write Technical Context**: language/version, primary dependencies,
    storage, testing approach, target platform, project type, and any
    domain-specific constraints — mark anything genuinely undeterminable

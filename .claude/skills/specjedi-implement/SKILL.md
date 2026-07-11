@@ -32,9 +32,11 @@ whatever branch the target repo protects (Principle X).
 3. **Walk `tasks.md`'s Dependencies section literally.** A task starts
    only once every task that blocks it is both complete and verified
    (tests passing, not just checked off). `[P]`-marked tasks in a ready
-   phase may run in any order, but re-confirm the `[P]` marking still
-   holds against the codebase's *actual current state* — `tasks.md` was
-   written before any of this code existed.
+   phase may run in any order, but **reason explicitly** before trusting
+   that marking — this is a real judgment call, not a formality: does the
+   `[P]` label still hold against the codebase's *actual current state*?
+   `tasks.md` was written before any of this code existed, so a marking
+   that assumed independence at planning time may no longer be true now.
 4. **Test-first, for real, where the plan calls for code** (Principle VI):
    when `tasks.md` sequences a test task before its implementation task,
    write the test, run it, and observe it fail before starting the

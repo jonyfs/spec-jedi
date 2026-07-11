@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.1 → 1.15.2
+- Version change: 1.15.2 → 1.15.3
 - Modified principles: none (governance/tooling debt closed — no MUST-level
   rule changed)
 - Added sections: none
@@ -9,28 +9,32 @@ Sync Impact Report
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
   - TODO(VOICE_PASS): still open from v1.4.0.
-  - TODO(NEXT_STEP_PASS): **RESOLVED**. Audited all 11 shipped skills
-    against Principle XIV's literal requirement ("the next step(s) as a
-    short, selectable bulleted list") — found only `specjedi-constitution`
-    actually complied; the other 10 named a single next skill in inline
-    prose ("suggest the next step: X"), which reads fine but isn't the
-    selectable-list format the principle requires. Fixed all 10: `-specify`,
-    `-clarify`, `-plan`, `-tasks`, `-implement`, `-analyze`, `-checklist`,
-    `-converge`, `-onboard`, and `-explain` (including its two worked
-    examples). Also brought `specjedi-find-skills` into compliance — its
-    "exactly one recommendation, never a list" design rule is about not
-    listing competing *skill candidates*, which is unrelated to and
-    doesn't excuse the separate requirement to list the *actions* available
-    once a recommendation is made (install vs. skip); its Format template,
-    both examples, and "when nothing is found" section now end with a
-    bulleted action list instead of an inline "Install?" prompt.
+  - TODO(NEXT_STEP_PASS): RESOLVED at v1.15.2.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(GROUNDING_PASS): all ten shipped skills (nine pipeline stages plus
-    `specjedi-onboard`) predate Principle XX; they avoid fabrication by
-    construction but haven't been explicitly re-reviewed against XX's
-    checklist yet. `specjedi-find-skills` remains the closest reference
-    implementation.
+  - TODO(GROUNDING_PASS): **RESOLVED**. Re-reviewed all 11 shipped skills
+    against Principle XX's three pillars:
+    - *Best-practice AI usage* (persona/task/chain-of-thought actually
+      shape output): found 3 skills whose real judgment call lacked
+      explicit "reason through it" framing despite having one —
+      `specjedi-checklist` (generic-vs-grounded item discard),
+      `specjedi-converge` (drift-vs-incidental-detail), and
+      `specjedi-implement` (`[P]`-eligibility re-verification). Fixed all
+      three; `specjedi-onboard`'s lack of a labeled chain-of-thought
+      section is intentional (documented in
+      `specs/002-specjedi-onboard/plan.md` — its judgment calls are binary
+      gates, not open-ended reasoning) and not a gap.
+    - *Token economy by default* (prefer an installed token-economy tool
+      over brute-force reads): found the codebase-scanning steps in
+      `specjedi-plan` (the golden-rule scan) and `specjedi-converge` (drift
+      detection) never mentioned preferring an installed tool like
+      `graphify query` over raw file reads, despite Principle XX requiring
+      exactly that. Fixed both.
+    - *Hallucination resistance*: no violations found — every skill's
+      factual-claim language already required grounding in something
+      actually read/run this session; `specjedi-find-skills` remains the
+      strongest reference implementation (install counts, sources, and
+      links always tied to an actual lookup, never asserted from memory).
 -->
 
 # Spec Jedi Constitution
@@ -824,4 +828,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

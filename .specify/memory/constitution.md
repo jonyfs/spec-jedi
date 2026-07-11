@@ -1,49 +1,31 @@
 <!--
 Sync Impact Report
-- Version change: 1.7.0 → 1.8.0
-- Modified principles: Principle XII amended again — adds a warm/human/
-  funny tone requirement (explicitly not a claim of literal humanity;
-  skills must never lie about being AI if asked directly)
-- Added sections:
-  - Core Principle XIV (Guided Next-Step Suggestion)
-  - Core Principle XV (specjedi- Skill Naming Convention)
-  - Core Principle XVI (Mermaid-First Process Documentation)
-  - Core Principle XVII (Skill Discovery & Gap-Filling —
-    specjedi-find-skills)
-  - Core Principle XVIII (Zero-Footprint Installer with Harness Selection)
-  - Core Principle XIX (Skill Authoring Standard)
-- Amended sections:
-  - Distribution & Ecosystem Standards — license requirement concretized
-    from generic "OSI-approved" to MIT specifically, with a plain-language
-    explanation requirement; README badge requirement added
+- Version change: 1.8.0 → 1.9.0
+- Modified principles: Principle XIX renamed and materially expanded —
+  "Skill Authoring Standard" → "Skill Authoring & Prompt Engineering
+  Standard." Adds a formal Prompt Engineering Discipline subsection
+  (persona/role, explicit task framing, defined output format, few-shot
+  examples, chain-of-thought for non-trivial judgment calls) on top of
+  the existing structural/quality requirements.
+- Added sections: none (amendment to existing Principle XIX)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - LICENSE ⚠ pending — MIT text added in the same change set
-  - README.md ⚠ pending — badges, license section, and a Mermaid
-    quickstart diagram added in the same change set
-  - references/skill-authoring-standard.md ⚠ pending — new reference doc
-    backing Principle XIX, created in the same change set
-  - .claude/skills/specjedi-find-skills/ ⚠ pending — tracked as a
-    follow-up PR (separate, larger change set), ported from
-    vercel-labs/skills' find-skills (MIT per its package.json) and
-    renamed/adapted per Principle XV and XVII
+  - references/skill-authoring-standard.md ⚠ pending — adds the Prompt
+    Engineering Discipline section in the same change set
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): CONTRIBUTING.md still open; LICENSE
-    resolved by this amendment.
-  - TODO(VOICE_PASS): still open from v1.4.0 — the warm-tone amendment to
-    Principle XII adds to what that eventual pass must cover.
-  - TODO(NEXT_STEP_PASS): Principle XIV applies project-wide but, like
-    TODO(VOICE_PASS), retrofitting the vendored speckit-* command skills
-    is deferred to a proper SDD cycle, not an ad hoc edit.
-  - TODO(INSTALLER): Principle XVIII requires a harness-aware installer;
-    none exists yet. Deliberately not built ad hoc in this session —
-    scoped as its own feature needing research (Principle II) + spec +
-    plan, given it must work across the full Principle III compatibility
-    matrix.
+  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
+  - TODO(VOICE_PASS): still open from v1.4.0.
+  - TODO(NEXT_STEP_PASS): still open from v1.8.0.
+  - TODO(INSTALLER): still open from v1.8.0.
+  - TODO(PROMPT_ENG_PASS): like TODO(VOICE_PASS), applying this amended
+    standard retroactively to the vendored speckit-* command skills is
+    deferred to a proper SDD cycle, not an ad hoc edit. New
+    specjedi-authored skills (e.g. specjedi-find-skills) should already
+    be checked against it going forward.
 -->
 
 # Spec Jedi Constitution
@@ -503,7 +485,7 @@ Principle IX (be validated, not just asserted to work).
 is only useful if getting the skills into a real project is a single,
 guided step rather than manual copy-pasting.
 
-### XIX. Skill Authoring Standard
+### XIX. Skill Authoring & Prompt Engineering Standard
 
 Every `specjedi-*` `SKILL.md` MUST follow a defined structure and quality
 bar, documented in full in `references/skill-authoring-standard.md`. The
@@ -517,7 +499,9 @@ non-negotiables:
   scripts the skill can trigger.
 - **Ruthless literalness**: no subjective, unmeasurable claims ("fast",
   "user-friendly"). Requirements MUST be quantifiable and testable where
-  possible (e.g., a concrete token budget, not "concise").
+  possible (e.g., a concrete token budget, not "concise"). A vague
+  instruction produces a vague, or hallucinated, result — literalness is
+  a hallucination-prevention mechanism, not a style preference.
 - **Conciseness via progressive disclosure**: the core `SKILL.md` targets
   under 500 tokens for fast loading and MUST NOT exceed roughly 5,000
   tokens; material beyond that MUST move to `references/` and be loaded
@@ -534,12 +518,42 @@ non-negotiables:
   already applies to tool installation (Principle VIII) and destructive
   git/repo operations (Principle X).
 
+**Prompt Engineering Discipline** — every skill's instructional content
+IS a prompt to an LLM, and MUST be engineered as one, not just written as
+documentation:
+
+- **Persona**: where the skill benefits from the agent adopting a
+  specific role (e.g., "act as a security reviewer," "act as a release
+  manager"), the skill MUST state that role explicitly in its
+  context/domain section — persona changes tone and depth, and leaving it
+  implicit leaves output quality to chance.
+- **Task**: the core directive MUST be stated as a single, unambiguous
+  action up front, not buried in background paragraphs the agent has to
+  infer intent from.
+- **Format**: whenever consistency of output matters (a report, a
+  generated file, a structured response), the skill MUST specify the
+  exact expected shape — table columns, required sections, a schema — not
+  leave structure to model discretion.
+- **Few-shot examples**: the examples required by the Structure bullet
+  above MUST include at least one full input → desired-output pairing,
+  not just a description of what a good example would look like —
+  showing beats describing.
+- **Chain-of-thought for non-trivial judgment**: any skill that asks the
+  agent to classify, prioritize, or resolve ambiguity (not just execute a
+  deterministic procedure) MUST instruct the agent to reason through the
+  decision before committing to an answer, surfacing the reasoning where
+  the harness supports it. This is the same discipline Principle V
+  already requires of specs — visible reasoning catches hidden
+  assumptions before they ship.
+
 **Rationale**: Directly requested, synthesizing widely-used industry
-guidance (Anthropic, Vercel, and similar agent-skill practitioners) into
-one enforceable bar, so every skill this project ships is reliable by
-construction rather than by luck — the same "documented, reproducible
-mechanism" ethos Principle IX already applies to validation, now applied
-to how skills themselves get written.
+guidance (Anthropic, Vercel, and similar agent-skill practitioners, plus
+established prompt-engineering fundamentals: context, task, format,
+few-shot examples, chain-of-thought, persona) into one enforceable bar, so
+every skill this project ships is reliable by construction rather than by
+luck — the same "documented, reproducible mechanism" ethos Principle IX
+already applies to validation, now applied to how skills themselves get
+written and to the prompt craft inside them.
 
 ## Distribution & Ecosystem Standards
 
@@ -651,4 +665,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.8.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.9.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

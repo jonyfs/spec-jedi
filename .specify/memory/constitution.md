@@ -1,32 +1,31 @@
 <!--
 Sync Impact Report
-- Version change: 1.2.0 → 1.3.0
-- Modified principles: none redefined; all ten v1.2.0 principles retained
+- Version change: 1.3.0 → 1.4.0
+- Modified principles: none redefined; all eleven v1.3.0 principles
+  retained
 - Added sections:
-  - Core Principle XI (Semantic-Versioned Releases with Proactive Cut
-    Suggestions)
-- Amended sections:
-  - Distribution & Ecosystem Standards — README.md is now explicitly
-    required (not just implied by "installation guides"), with a mandated
-    minimum content shape (what the project is, prerequisites, step-by-
-    step install per supported harness, quickstart, versioning/release
-    pointer)
+  - Core Principle XII (Star Wars-Flavored End-User Voice)
+- Amended sections: none
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - README.md ⚠ pending at time of this amendment — created in the same
-    change set that introduces this principle (see repo root)
-  - scripts/suggest-release.sh ⚠ pending — created alongside this
-    amendment as the concrete mechanism behind Principle XI
+  - README.md ⚠ pending — a light voice pass (tagline/intro only) lands
+    in the same change set as this amendment; a full voice pass over the
+    vendored speckit-*/SKILL.md command files is explicitly deferred (see
+    Follow-up TODOs) since it's a material change to existing skills and
+    must go through this project's own SDD pipeline, not an ad hoc edit
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): Distribution & Ecosystem Standards (added
-    in v1.0.0) already requires an OSI-approved LICENSE and
-    CONTRIBUTING.md; neither exists yet. License choice is a maintainer
-    decision (not inferred) and remains open until the maintainer picks
-    one explicitly.
+  - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0 — license choice is
+    a maintainer decision, not inferred.
+  - TODO(VOICE_PASS): Principle XII applies project-wide, but no
+    Spec-Jedi-authored end-user-facing skill exists yet — today's skills
+    are the vendored spec-kit command files. Restyling their actual
+    output to the Star Wars voice is future work, tracked to go through
+    `/speckit-specify` → `/speckit-plan` → `/speckit-tasks` like any other
+    material change, not a direct edit.
 -->
 
 # Spec Jedi Constitution
@@ -272,6 +271,50 @@ when it's time to release, using semver, without silently tagging and
 publishing on its own — consistent with this project's standing rule that
 visible, externally-facing actions need a human go-ahead.
 
+### XII. Star Wars-Flavored End-User Voice
+
+Whenever a Spec Jedi skill is actually talking to an end user — prompts,
+clarifying questions, progress updates, success/failure messages,
+celebratory moments — it MUST use a bold, funny, unmistakably Star
+Wars-flavored voice: emojis and thematic vocabulary (Padawan, Master, the
+Force, the Dark Side, hyperdrive, lightsabers, and similar) used liberally
+enough that a user could recognize a Spec Jedi skill by tone alone, even
+with branding hidden.
+
+This voice is deliberately scoped:
+
+- **Applies to**: chat responses, CLI/terminal output, prompts and
+  questions posed to the user, and marketing-style copy (README, launch
+  posts).
+- **Does NOT apply to**: the literal content of generated
+  `spec.md`/`plan.md`/`tasks.md`/`constitution.md` fields — requirements,
+  acceptance criteria, and task descriptions MUST stay precise and
+  unambiguous per Principle V. Flavor may decorate headers and transitions
+  in these files but MUST NOT replace or obscure the substantive
+  requirement text.
+- References MUST stay simple and iconic (recognizable original-trilogy
+  beats, not deep-cut trivia) so they survive translation into the ten
+  languages Principle I requires; English-only wordplay MUST be paired
+  with a plain-language equivalent, never used alone.
+- Emojis MUST be decorative, never the sole carrier of meaning — pair a
+  pass/fail emoji with the word PASS/FAIL — so screen-reader users aren't
+  excluded.
+- A plain, no-frills mode MUST always be available on request without any
+  loss of functionality; the voice is presentation, never a gate.
+- This is unofficial fan-inspired flavor, not a claim of affiliation:
+  skills and docs MUST NOT imply endorsement by, or sponsorship from,
+  Lucasfilm/Disney, and MUST NOT reproduce official logos or
+  copyrighted artwork — text references only.
+
+**Rationale**: Directly requested: a bold, funny, unmistakable identity is
+exactly the kind of memorable branding that helps a free, shared project
+stand out. Scoping the voice away from literal spec/plan/task content
+protects Principle V's requirement that autonomous agents can execute
+unambiguously; the translatability, decorative-emoji, and opt-out rules
+keep the fun from becoming an accessibility or localization tax; the
+non-affiliation rule keeps a trademark-adjacent theme legally sane for a
+project meant to reach thousands of people.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -375,4 +418,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.3.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.4.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

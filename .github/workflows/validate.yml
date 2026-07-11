@@ -8,10 +8,30 @@ permissions:
   contents: read
 
 jobs:
-  validate:
-    name: validate
+  lint:
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run self-validation
+      - name: Run structural + constitution validation
         run: ./scripts/validate.sh
+
+  # Add new battery jobs here as the project grows (unit, integration,
+  # e2e/Playwright, etc. — Constitution Principle IX) and list each one
+  # under ci-gate's `needs:` below. Branch protection only ever requires
+  # `ci-gate`, so it never needs reconfiguring when the battery changes.
+
+  ci-gate:
+    name: ci-gate
+    runs-on: ubuntu-latest
+    needs: [lint]
+    if: always()
+    steps:
+      - name: Require every battery job to have succeeded
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "One or more validation battery jobs did not succeed."
+            exit 1
+          fi
+          echo "Full validation battery passed."

@@ -1,32 +1,35 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 → 1.1.0
-- Modified principles: none redefined; all nine v1.0.0 principles retained
-  verbatim
-- Added sections:
-  - Core Principle X (Trunk-Based Git Workflow with Self-Validating Pull
-    Requests)
-  - Repository & CI Configuration Prerequisites (new top-level section)
-- Expanded sections:
-  - Development Workflow — now states the branch → PR → automated
-    validation → merge sequence explicitly instead of a bare "review →
-    merge" step
+- Version change: 1.1.0 → 1.2.0
+- Modified principles: none redefined; all ten v1.1.0 principles retained
+- Amended sections:
+  - Principle IX — now specifies that the validation battery is the
+    complete, evolving set of applicable checks (lint, dry runs, unit,
+    integration, e2e/Playwright, constitution check), not just the
+    structural lint that exists today
+  - Principle X — auto-merge now explicitly requires 100% of the battery
+    green via a single aggregating CI gate job, never a partial-check
+    subset
+  - Repository & CI Configuration Prerequisites — documents the
+    aggregating-gate-job pattern (branch protection points at one gate
+    job so growing the battery never requires reconfiguring GitHub)
+- Added sections: none
 - Removed sections: none
 - Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ compatible as-is (Constitution
-    Check gate is dynamically derived from this file)
+  - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - .specify/extensions/agent-context/* ✅ no change needed
+  - .github/workflows/validate.yml ⚠ pending — needs a `lint` job plus a
+    `ci-gate` aggregating job (`needs: [lint, ...]`), with branch
+    protection's required context switched from `validate` to `ci-gate`
 - Follow-up TODOs:
-  - TODO(CI_WORKFLOW): No `.github/workflows/*.yml` validation/auto-merge
-    workflow exists yet. Principle X and the Repository & CI Configuration
-    section describe the required shape; the actual workflow file and
-    GitHub-side settings (branch protection, "Allow auto-merge", bot
-    identity/secret) still need to be created and require the
-    maintainer's explicit go-ahead since they touch live repository
-    security configuration.
+  - TODO(TEST_BATTERY): No product-facing skill code exists yet, so the
+    only real check today is the structural lint. As soon as a skill
+    produces testable output (unit/integration/e2e/Playwright per
+    Principle VI), its tests MUST be added as new jobs under `ci-gate`'s
+    `needs` list — the gate job's definition already anticipates this and
+    requires no further constitution amendment when it happens.
 -->
 
 # Spec Jedi Constitution
@@ -192,6 +195,14 @@ least one representative target harness. Validation results MUST be
 reproducible via a single documented command (e.g., a `scripts/validate.sh`
 or CI workflow) — not a manual, undocumented checklist.
 
+The set of checks in (a)–(c) is the **validation battery**, and it MUST
+grow as the project grows: the moment any skill produces unit-testable
+logic, integration behavior, or a web UI, the corresponding unit,
+integration, or Playwright (Principle VI) tests join the battery as
+required checks — never as optional or informational-only jobs. A battery
+that only re-runs what existed at the project's infancy, while the project
+itself has grown more capable, is itself a constitution violation.
+
 **Rationale**: A project whose entire purpose is enabling reliable
 downstream automation cannot itself ship unverified skills; that would
 undermine the credibility this project depends on.
@@ -204,11 +215,21 @@ own short-lived branch and opened as a pull request targeting `main`; a PR
 MUST correspond to one coherent change set, not an unrelated batch.
 
 Every PR MUST be automatically validated against this constitution's
-mechanisms — at minimum Principle IX's skill validation, plus any
+mechanisms — at minimum Principle IX's full validation battery, plus any
 applicable linters, tests, and the Constitution Check — via a CI workflow
-triggered on the PR. A PR MUST merge automatically once, and only once,
-its required checks pass; a PR whose checks fail MUST NOT merge and MUST
-be fixed or closed.
+triggered on the PR. Auto-merge MUST NOT trigger on a partial result: it
+is permitted only once every job in the battery reports success, with zero
+failing, erroring, or still-pending required checks. A single red or
+pending check MUST hold the PR open indefinitely — there is no timeout,
+manual override, or "merge anyway" path for automated PRs; a PR whose
+checks fail MUST be fixed (new commits re-run the battery) or closed.
+
+To keep this enforceable as the battery grows, the CI workflow MUST expose
+one aggregating gate job (e.g., `ci-gate`) that depends on every other job
+in the battery (`needs: [lint, unit, integration, e2e, ...]`) and MUST be
+the single status check branch protection requires. New battery jobs are
+added to that `needs` list as the project grows (Principle IX); branch
+protection itself never needs to be reconfigured when the battery changes.
 
 Automated merging MUST be achieved through GitHub's supported mechanism —
 required status checks plus the repository's "Allow auto-merge" setting —
@@ -271,11 +292,12 @@ a maintainer rather than silently assumed:
 
 - **Default branch**: `main`, with direct pushes disabled for all
   contributors including automation.
-- **Branch protection on `main`**: require the validation workflow's
-  status check(s) to pass before merging. Required *approving reviews*
-  are OPTIONAL for bot-authored PRs specifically because GitHub cannot let
-  a PR self-approve; gating on status checks alone is the supported
-  pattern for fully automated merges.
+- **Branch protection on `main`**: require the aggregating `ci-gate` status
+  check (Principle X) to pass before merging — not individual sub-checks,
+  so the required-checks list in GitHub never needs to change as the
+  battery grows. Required *approving reviews* are OPTIONAL for bot-authored
+  PRs specifically because GitHub cannot let a PR self-approve; gating on
+  status checks alone is the supported pattern for fully automated merges.
 - **Repository setting "Allow auto-merge"**: MUST be enabled so a PR can
   be marked `gh pr merge --auto` (or equivalent) immediately on open and
   complete automatically once checks go green.
@@ -321,4 +343,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.1.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-10
+**Version**: 1.2.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

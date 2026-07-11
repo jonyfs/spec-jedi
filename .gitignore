@@ -1,3 +1,9 @@
 .remember/
 *.log
 .DS_Store
+
+# graphify knowledge graph — regenerated locally via the post-commit hook
+# and the CLAUDE.md "always check the graph" instruction (see `graphify
+# hook status` / `graphify claude install`). Not committed: it's a derived
+# cache, not source of truth.
+graphify-out/

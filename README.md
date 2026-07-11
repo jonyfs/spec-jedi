@@ -140,6 +140,24 @@ two token-saving companions:
 If your agent offers to install or configure either, that's this policy in action —
 you're always asked first.
 
+**graphify is already wired into this repo** (with maintainer confirmation): a
+`## graphify` section in `CLAUDE.md` tells Claude Code to consult the knowledge graph
+before browsing source and to refresh it after code changes, and `.claude/settings.json`
+registers hooks that nudge tool calls toward `graphify query`/`explain`/`path` instead
+of raw grep/read once the graph exists. The graph itself
+(`graphify-out/`) is not committed — it's a derived cache, regenerated per clone.
+
+To get the same auto-updating behavior locally after cloning:
+
+```bash
+pip install graphifyy   # or: uv tool install graphifyy
+graphify .               # first build (only needed once; also runs on first use anyway)
+graphify hook install    # auto-rebuild graph.json after every commit (code changes)
+```
+
+Doc/content changes aren't picked up by the commit hook — run `graphify update .`
+(or just ask your agent to) after editing non-code files.
+
 ## Versioning & releases
 
 Spec Jedi follows [Semantic Versioning](https://semver.org/) for its own releases,

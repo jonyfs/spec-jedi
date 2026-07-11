@@ -52,6 +52,14 @@ covers (e.g., a compliance-specific checklist requiring regulatory
 knowledge), self-invoke `specjedi-find-skills` before generating items
 that would otherwise be guessed rather than grounded (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Writing the checklist file is autonomous once a focus area is known — no
+separate "may I save this?" prompt. What's not autonomous: generating
+anything at all before a focus area is confirmed (Step 1, Always/Never
+below) — an unscoped checklist is exactly the genericness this skill
+exists to prevent.
+
 ## Format
 
 A Markdown checklist: `- [ ] CHK-NNN <requirements-quality question> (spec.md/plan.md pointer)`,

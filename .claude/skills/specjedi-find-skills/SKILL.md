@@ -74,6 +74,15 @@ better-suited skill might exist.
    sessions is a signal Spec Jedi itself should eventually cover it (Constitution
    Principle II) — this file is how that signal survives past one conversation.
 
+## Autonomous vs. confirm-first
+
+Searching, weighing signals, and presenting a recommendation are all
+autonomous — no confirmation needed to look. Installing is never
+autonomous: it requires the user's explicit yes to that specific skill
+(step 7) every time, with no "sounds like yes" inference. Logging a gap
+to `skill-gaps.md` is autonomous, same as any other file this skill's own
+mechanism writes.
+
 ## Format
 
 Every recommendation follows this shape — consistency here is what makes "one

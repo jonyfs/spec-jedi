@@ -51,6 +51,13 @@ even evaluate (e.g., assessing a security-specific requirement), name that
 explicitly in the Recommendation column and self-invoke
 `specjedi-find-skills` (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Fully autonomous, trivially: this skill never writes to any file, so there
+is nothing to confirm before saving. Producing and presenting the findings
+table requires no user input at all — the only "confirmation" that matters
+is the read-only guarantee itself (Always/Never below).
+
 ## Format
 
 A structured findings table:

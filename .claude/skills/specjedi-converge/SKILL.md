@@ -49,6 +49,14 @@ If reconciling a piece of drifted functionality needs domain expertise
 nothing installed covers, self-invoke `specjedi-find-skills` before
 guessing at how to describe it (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Appending a detected-drift task to `tasks.md` is autonomous — no separate
+"may I add this?" prompt, the same way every other pipeline skill's
+primary write is autonomous. The narrow scope of that write (append-only,
+Always/Never below) is the actual safety mechanism, not a confirmation
+gate before each append.
+
 ## Format
 
 Appended tasks follow `tasks.md`'s own existing convention exactly — no

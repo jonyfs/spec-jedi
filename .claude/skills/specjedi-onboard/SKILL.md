@@ -47,6 +47,14 @@ covers even to draft an initial constitution around (e.g., a heavily
 regulated domain), self-invoke `specjedi-find-skills` before proceeding
 (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Once a real project idea is in hand, orchestrating `specjedi-constitution`
+then `specjedi-specify` is fully autonomous — no separate confirmation
+between the two. What's not autonomous: starting without a real idea (the
+real-idea gate, step 2) — that's a hard stop, not a soft suggestion to
+provide one eventually.
+
 ## Format
 
 No new artifact format — the outputs are exactly what

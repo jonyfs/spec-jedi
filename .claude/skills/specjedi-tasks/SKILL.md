@@ -45,6 +45,14 @@ If a task clearly needs domain expertise nothing installed covers, self-
 invoke `specjedi-find-skills` before finishing that story's task group
 (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Writing `tasks.md` is autonomous once `plan.md` has passed its
+Constitution Check — no separate "may I save this?" prompt. What's not
+autonomous: decomposing a plan whose own gate never passed (Always/Never
+below) — that stops the skill outright rather than proceeding on a shaky
+foundation.
+
 ## Format
 
 `tasks.md` follows `.specify/templates/tasks-template.md`'s shape: a Setup

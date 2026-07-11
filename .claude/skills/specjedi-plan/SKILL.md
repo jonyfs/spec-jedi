@@ -51,6 +51,14 @@ planning a mobile app with no mobile-specific skill present), self-invoke
 `specjedi-find-skills` before the plan is considered complete
 (Principle XVII).
 
+## Autonomous vs. confirm-first
+
+Writing `plan.md` is autonomous once the spec is clarified — no separate
+"may I save this?" prompt. What's not autonomous: proceeding past a
+Constitution Check failure without either simplifying the plan or
+recording a real justification in Complexity Tracking — that gate always
+stops the skill, it never gets waved through silently.
+
 ## Format
 
 `plan.md` follows `.specify/templates/plan-template.md`'s exact shape:

@@ -1,31 +1,30 @@
 <!--
 Sync Impact Report
-- Version change: 1.3.0 → 1.4.0
-- Modified principles: none redefined; all eleven v1.3.0 principles
-  retained
-- Added sections:
-  - Core Principle XII (Star Wars-Flavored End-User Voice)
-- Amended sections: none
+- Version change: 1.4.0 → 1.5.0
+- Modified principles: Principle XII expanded (not redefined) — Star Wars
+  fluency now explicitly spans the full saga (all trilogies + major
+  series) plus genuine Jedi-culture depth, replacing the earlier
+  "original-trilogy-only" scoping with a "deep cuts as seasoning, core
+  meaning always plain" rule
+- Added sections: none (amendment to existing Principle XII)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
   - .specify/templates/spec-template.md ✅ compatible as-is
   - .specify/templates/tasks-template.md ✅ compatible as-is
   - .specify/templates/checklist-template.md ✅ compatible as-is
-  - README.md ⚠ pending — a light voice pass (tagline/intro only) lands
-    in the same change set as this amendment; a full voice pass over the
-    vendored speckit-*/SKILL.md command files is explicitly deferred (see
-    Follow-up TODOs) since it's a material change to existing skills and
-    must go through this project's own SDD pipeline, not an ad hoc edit
+  - references/star-wars-lexicon.md ⚠ pending — created in the same
+    change set as this amendment as the concrete, documented reference
+    pool Principle XII now points to (saga-wide quotes/concepts mapped to
+    SDD situations), consistent with Principle IX's "documented,
+    reproducible mechanism" ethos applied to voice as well as validation
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0 — license choice is
     a maintainer decision, not inferred.
-  - TODO(VOICE_PASS): Principle XII applies project-wide, but no
-    Spec-Jedi-authored end-user-facing skill exists yet — today's skills
-    are the vendored spec-kit command files. Restyling their actual
-    output to the Star Wars voice is future work, tracked to go through
-    `/speckit-specify` → `/speckit-plan` → `/speckit-tasks` like any other
-    material change, not a direct edit.
+  - TODO(VOICE_PASS): still open from v1.4.0 — no Spec-Jedi-authored
+    end-user-facing skill exists yet; restyling the vendored speckit-*
+    command output to draw from the expanded lexicon is future work
+    through the normal SDD pipeline, not a direct edit.
 -->
 
 # Spec Jedi Constitution
@@ -271,15 +270,29 @@ when it's time to release, using semver, without silently tagging and
 publishing on its own — consistent with this project's standing rule that
 visible, externally-facing actions need a human go-ahead.
 
-### XII. Star Wars-Flavored End-User Voice
+### XII. Star Wars-Flavored End-User Voice — Jedi Master Fluency
 
 Whenever a Spec Jedi skill is actually talking to an end user — prompts,
 clarifying questions, progress updates, success/failure messages,
 celebratory moments — it MUST use a bold, funny, unmistakably Star
-Wars-flavored voice: emojis and thematic vocabulary (Padawan, Master, the
-Force, the Dark Side, hyperdrive, lightsabers, and similar) used liberally
-enough that a user could recognize a Spec Jedi skill by tone alone, even
-with branding hidden.
+Wars-flavored voice: emojis and thematic vocabulary used liberally enough
+that a user could recognize a Spec Jedi skill by tone alone, even with
+branding hidden.
+
+This project's Star Wars fluency MUST be genuinely deep, not a handful of
+recycled original-trilogy quotes. It MUST draw from across the full saga —
+the prequel, original, and sequel trilogies, plus the major episodic series
+(*The Clone Wars*, *Rebels*, *The Mandalorian*, *The Book of Boba Fett*,
+*Obi-Wan Kenobi*, *Ahsoka*, *Andor*, and others as canon grows) and the
+anthology films (*Rogue One*, *Solo*) — and from genuine Jedi-culture
+depth: the Jedi Code, the Force's light/dark duality, the Padawan → Knight
+→ Master progression, the Jedi Council, lightsaber forms, and similar.
+References MUST rotate across this breadth rather than leaning on the same
+three or four famous lines everywhere; a user well-versed in the saga
+SHOULD regularly notice a well-chosen, specific reference, not a generic
+one. The canonical reference pool lives in
+`references/star-wars-lexicon.md` and MUST be extended (not duplicated
+ad hoc) as new situations or new canon material arise.
 
 This voice is deliberately scoped:
 
@@ -292,10 +305,12 @@ This voice is deliberately scoped:
   unambiguous per Principle V. Flavor may decorate headers and transitions
   in these files but MUST NOT replace or obscure the substantive
   requirement text.
-- References MUST stay simple and iconic (recognizable original-trilogy
-  beats, not deep-cut trivia) so they survive translation into the ten
-  languages Principle I requires; English-only wordplay MUST be paired
-  with a plain-language equivalent, never used alone.
+- Deep-cut references are encouraged and expected — that's what "Jedi
+  Master fluency" means — but they are seasoning, not the dish: the CORE
+  meaning of any message MUST remain understandable to a reader who has
+  never seen a single frame of Star Wars, so translation into the ten
+  languages Principle I requires never breaks. English-only wordplay MUST
+  be paired with a plain-language equivalent, never used alone.
 - Emojis MUST be decorative, never the sole carrier of meaning — pair a
   pass/fail emoji with the word PASS/FAIL — so screen-reader users aren't
   excluded.
@@ -306,12 +321,15 @@ This voice is deliberately scoped:
   Lucasfilm/Disney, and MUST NOT reproduce official logos or
   copyrighted artwork — text references only.
 
-**Rationale**: Directly requested: a bold, funny, unmistakable identity is
-exactly the kind of memorable branding that helps a free, shared project
-stand out. Scoping the voice away from literal spec/plan/task content
-protects Principle V's requirement that autonomous agents can execute
-unambiguously; the translatability, decorative-emoji, and opt-out rules
-keep the fun from becoming an accessibility or localization tax; the
+**Rationale**: Directly requested: the project should be a "Jedi Master" of
+its own theme, not a shallow reskin — genuine breadth and depth across the
+whole saga (not just the original trilogy) is what makes the identity feel
+authored rather than generic. Scoping the voice away from literal
+spec/plan/task content protects Principle V's requirement that autonomous
+agents can execute unambiguously; requiring the core meaning to survive
+without the reference protects Principle I's translation mandate even as
+the references themselves get more adventurous; the decorative-emoji and
+opt-out rules keep the fun from becoming an accessibility tax; the
 non-affiliation rule keeps a trademark-adjacent theme legally sane for a
 project meant to reach thousands of people.
 
@@ -418,4 +436,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.4.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.5.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -57,9 +57,10 @@ research discipline (Principle II), never rushed.
 | `specjedi-converge` 🔁 | Detects drift between the actual codebase and `tasks.md` after manual changes, appending any gap as a new task instead of silently ignoring it — closes the loop back to `specjedi-implement` |
 | `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
+| `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
-proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
+proposed beyond the core pipeline (diagrams,
 and more) — a backlog of *additional* skills, not core-pipeline gaps; each
 still needs its own research pass before it gets built.
 
@@ -244,9 +245,9 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Twelve product skills ship today ([What you get today](#what-you-get-today)) —
-the full `specjedi-*` pipeline is complete. Never used an SDD tool before?
-Start with step 0.
+Thirteen product skills ship today ([What you get today](#what-you-get-today))
+— the full `specjedi-*` pipeline is complete. Never used an SDD tool
+before? Start with step 0.
 
 0. **Not sure what any of this means?** Just ask — "what is a spec and why
    would I need one," "what does this project actually do." `specjedi-explain`
@@ -301,6 +302,10 @@ Start with step 0.
     automatically, searches the open agent-skills ecosystem, and suggests a
     specific, verified skill. Never installs anything without asking first
     ([Principle VIII](.specify/memory/constitution.md)).
+13. Coming from an existing spec-kit project? `specjedi-migrate` 🔄
+    rewrites your project's own `/speckit-*` tooling references to their
+    `specjedi-*` equivalents — never touches a principle or requirement,
+    explicit request only.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
@@ -317,6 +322,7 @@ Onboarding through convergence — every stage below is live:
 
 ```mermaid
 flowchart TD
+    Y["✅ specjedi-migrate 🔄<br/>coming from spec-kit: rewrite tooling refs"] -.-> A
     Z["✅ specjedi-onboard 🌱<br/>first run only: idea → constitution + spec"] -.-> A
     A["✅ specjedi-constitution 📜<br/>establish or amend the project's rules"] --> B["✅ specjedi-specify 🎯<br/>feature idea → spec.md"]
     B --> C{"✅ specjedi-clarify 🌀<br/>ambiguity to resolve?"}

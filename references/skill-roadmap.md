@@ -31,32 +31,36 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   their logic; steps aside instantly if a constitution already exists. See
   [specs/002-specjedi-onboard/](../specs/002-specjedi-onboard/) for the full
   research/spec/plan.
+- **`specjedi-migrate`** 🔄 (feature 003, shipped 2026-07-11) — rewrites
+  literal `/speckit-*` tooling references in a project's own constitution/
+  spec/plan/tasks to their shipped `specjedi-*` equivalents. Scoped
+  narrowly and honestly: the underlying file format was already shared
+  (FR-009, feature 001), so this rewrites tooling *references* only, never
+  principle or requirement content — flags any reference with no shipped
+  equivalent instead of guessing. Explicit request only, never proactive.
+  See [specs/003-specjedi-migrate/](../specs/003-specjedi-migrate/) for the
+  full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-migrate`** 🔄 — converts an existing spec-kit project (its
-   `constitution.md`/`spec.md`/etc.) into `specjedi-*` conventions, preserving
-   content while adding Spec Jedi's own guided-next-step and voice layers.
-   Directly lowers switching cost for spec-kit's existing user base — a genuine
-   competitive move (Principle XV), not just parity.
-2. **`specjedi-diagram`** 📊 — generates a Mermaid diagram (flow, sequence, or
+1. **`specjedi-diagram`** 📊 — generates a Mermaid diagram (flow, sequence, or
    ER as appropriate) from an existing spec/plan on request, applying
    Principle XVI automatically instead of requiring the user to ask for one
    by hand each time.
-3. **`specjedi-status`** 🧭 — a project-wide dashboard skill: which features have
+2. **`specjedi-status`** 🧭 — a project-wide dashboard skill: which features have
    a spec/plan/tasks, which are mid-implementation, which are stalled — useful
    once a project has more than one or two features in flight. Mainly serves
    advanced/team users managing multiple concurrent efforts.
-4. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
+3. **`specjedi-retro`** 🪞 — post-`specjedi-implement` retrospective: diffs what
    shipped against what was planned, captures what changed and why. Feeds
    genuine product signal back into future `specjedi-*` skill research the same
    way `.specify/memory/skill-gaps.md` does for missing skills (Principle
    XVII).
-5. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
+4. **`specjedi-security`** 🛡️ — lightweight threat-modeling pass over a spec/plan
    before implementation — not a full security audit tool, just the "did we
    think about auth/input validation/secrets" questions a spec often misses.
    Serves security-conscious teams without requiring them elsewhere.
-6. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
+5. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
    sections, changelog entries) from a shipped spec/plan, kept in sync instead
    of drifting from what actually got built.
 

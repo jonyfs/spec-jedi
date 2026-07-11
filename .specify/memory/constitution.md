@@ -1,5 +1,45 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.1 → 1.16.2
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  consistent with how routine skill shipments are versioned after the
+  first process-milestone MINOR bump
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: all six historical governance TODOs remain resolved
+  (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
+  v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
+  TODO(LOCALIZATION) opened at v1.15.14, still open — needs a maintainer
+  decision on translation approach before execution. This amendment adds
+  a new item:
+  - `specjedi-skill-review` shipped (feature 011-specjedi-skill-review,
+    2026-07-11) — the third second-wave addition beyond the original
+    roadmap backlog. Strictly read-only audit of an existing `specjedi-*`
+    skill's `SKILL.md` against the Skill Authoring & Prompt Engineering
+    Standard (Principle XIX), plus next-step format (Principle XIV),
+    chain-of-thought framing (Principle XX), and voice (Principle XII) —
+    distinguishes "section missing" from "section present but weak," and
+    cross-references the matching `specs/NNN-name/plan.md` for legitimate
+    chain-of-thought exemptions (resolved via a real `/speckit-clarify`
+    question this cycle: a standalone `SKILL.md`-only scan risks the same
+    false-positive class the 6-skill consistency audit, PR #41, already
+    hit and had to correct by hand). Never edits the reviewed file — a
+    hard, unconditional report-only boundary, mirroring `specjedi-
+    analyze`'s established precedent. Automates the exact manual process
+    this project's own history already performed twice by hand (the
+    GROUNDING_PASS/NEXT_STEP_PASS/VOICE_PASS/PROMPT_ENG_PASS governance
+    passes, and the 6-skill consistency audit). Its own first real dry
+    run against every shipped skill surfaced two true, previously-unknown
+    gaps in already-shipped skills (`specjedi-explain` and `specjedi-
+    find-skills`, both missing a `` `--auto` mode `` section) — tracked as
+    a follow-up fix, deliberately not bundled into this feature's own
+    scope. Built via the same literal `/speckit-*` pipeline invocation
+    established at v1.16.0.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.0 → 1.16.1
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   consistent with how routine skill shipments are versioned after the
@@ -823,4 +863,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

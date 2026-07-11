@@ -42,9 +42,9 @@ next step once the spec is done.
    Don't invent detail that wasn't given and isn't a safe default.
 5. **Define measurable success criteria** — technology-agnostic, numeric or
    otherwise checkable, never "the system should work well."
-6. **Suggest the next step**: if any `NEEDS CLARIFICATION` markers remain,
-   recommend running the clarification pass next; otherwise recommend moving
-   to planning.
+6. **Offer the next step(s) as a short bulleted list** (Principle XIV): if
+   any `NEEDS CLARIFICATION` markers remain, `specjedi-clarify` as the
+   primary option; otherwise `specjedi-plan` to move to technical planning.
 
 If the idea clearly needs domain expertise this skill doesn't have (e.g.,
 "spec out a HIPAA-compliant intake flow" with no healthcare-domain skill

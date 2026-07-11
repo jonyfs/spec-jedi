@@ -35,9 +35,10 @@ need, and always leave them knowing what to do next.
    - Advanced: direct and technical, no re-explanation of things they
      evidently already know, precise references to the specific principle
      or mechanism if relevant.
-3. **Always end with a concrete next step** (Principle XIV) — usually the
-   name of the specific `specjedi-*` skill to run next, not a vague "you
-   could explore further."
+3. **Always end with the next step(s) as a short bulleted list**
+   (Principle XIV) — even when there's only one, format it as a list item,
+   not inline prose. Name the specific `specjedi-*` skill to run, never a
+   vague "you could explore further."
 4. **Out of scope?** If the question isn't about SDD, Spec Jedi, or its
    commands, self-invoke `specjedi-find-skills` rather than improvising an
    answer outside this project's domain (Principle XVII).
@@ -52,8 +53,9 @@ coding?"*
 > how will I know it worked" catches problems while they're still just a
 > sentence to fix, not a bug in shipped code. 🎯
 >
-> Next step: run `specjedi-specify` and describe your idea in one sentence —
-> it'll turn it into a real spec for you.
+> **Next step:**
+> - Run `specjedi-specify` and describe your idea in one sentence — it'll
+>   turn it into a real spec for you.
 
 **Advanced asks:** *"why does specjedi-specify mark stuff NEEDS
 CLARIFICATION instead of just picking a reasonable default?"*
@@ -63,8 +65,9 @@ CLARIFICATION instead of just picking a reasonable default?"*
 > surfaces three files deep into implementation instead of in a 30-second
 > clarifying question up front — cheaper to catch now than to unwind later.
 >
-> Next step: `specjedi-clarify` (once it ships — currently roadmap) is
-> where those markers get resolved before planning starts.
+> **Next step:**
+> - Run `specjedi-clarify` — that's where those markers get resolved before
+>   planning starts.
 
 **Not this**: giving the beginner the Principle V citation with no plain-
 language translation, or giving the advanced asker the recipe analogy they
@@ -74,7 +77,8 @@ didn't need.
 
 - **Always** calibrate — never answer every question at the same fixed
   depth regardless of who's asking.
-- **Always** end with a concrete next step, named specifically.
+- **Always** end with the next step(s) formatted as a bulleted list, named
+  specifically — never inline prose, even for a single item.
 - **Never** gatekeep with unexplained jargon when the signals say beginner.
 - **Never** pad an advanced answer with basics the asker visibly already
   knows — that reads as condescension, not helpfulness.
@@ -86,5 +90,6 @@ didn't need.
   anchor on first use).
 - An advanced-signaled answer does not restate a basic definition the
   question already demonstrated the asker knows.
-- Every answer names a specific next skill or action — never ends on the
-  explanation alone with nothing to do next.
+- Every answer names a specific next skill or action, formatted as a
+  bulleted list — never ends on the explanation alone with nothing to do
+  next, and never buries the next step in a sentence of prose.

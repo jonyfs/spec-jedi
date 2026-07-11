@@ -77,12 +77,18 @@ better-suited skill might exist.
 ## Format
 
 Every recommendation follows this shape — consistency here is what makes "one
-good answer" scannable instead of another wall of text:
+good answer" scannable instead of another wall of text. The closing options
+are a short bulleted list (Principle XIV) even though there's exactly one
+skill on the table — that list is of *actions* (install vs. skip), not of
+competing skill candidates:
 
 > 🔭 **\<skill name\>** — \<one-line description\>. \<install count\> installs,
-> \<source\>\<caveat if stars < 100 or installs < 1K\>. Install?
-> `npx skills add <owner/repo@skill>` (or the harness-native equivalent)
+> \<source\>\<caveat if stars < 100 or installs < 1K\>.
 > More: \<skills.sh link\>
+>
+> **Next step:**
+> - Install: `npx skills add <owner/repo@skill>` (or the harness-native equivalent)
+> - Skip and continue without it
 
 ## Examples (input → output)
 
@@ -93,9 +99,12 @@ User: *"How do I make my React app faster? No idea where to start."*
 responds:
 
 > 🔭 **react-best-practices** — React/Next.js performance guidelines from Vercel
-> Engineering. 185K installs, official source. Install?
-> `npx skills add vercel-labs/agent-skills@react-best-practices`
+> Engineering. 185K installs, official source.
 > More: https://skills.sh/vercel-labs/agent-skills/react-best-practices
+>
+> **Next step:**
+> - Install: `npx skills add vercel-labs/agent-skills@react-best-practices`
+> - Skip and continue without it
 
 **Proactive trigger — the part the seed skill couldn't do**
 
@@ -123,9 +132,10 @@ there.
 
 ## When nothing is found
 
-Say so in one line, offer to help directly with general capabilities, and
-mention `npx skills init <name>` if this looks like a recurring need worth
-turning into a real skill. A short honest "nothing found" beats a padded one.
+Say so in one line, then offer the next step(s) as a short bulleted list
+(Principle XIV): continuing with general capabilities, and — if this looks
+like a recurring need — `npx skills init <name>` to turn it into a real
+skill. A short honest "nothing found" beats a padded one.
 
 ## Always / Never
 

@@ -37,8 +37,10 @@ relevant — never before.
    lands and before spec work starts: what a spec is (what you're building
    and why) and why ambiguity gets marked instead of guessed. Then
    self-invoke `specjedi-specify` with the same project idea.
-5. **Report and suggest the next step**: `specjedi-clarify`, the natural
-   next pipeline stage after a first spec exists.
+5. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV): `specjedi-clarify`, the natural next pipeline stage
+   after a first spec exists, plus `specjedi-explain` if any concept from
+   the walkthrough still feels unclear.
 
 If the project idea clearly needs domain expertise nothing installed
 covers even to draft an initial constitution around (e.g., a heavily

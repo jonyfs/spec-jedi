@@ -36,7 +36,10 @@ items grouped by user story, each story independently completable.
    to uphold.
 6. **Write the Dependencies section** stating what blocks what across
    phases, not just within them.
-7. **Report and suggest the next step**: `specjedi-implement` once ready.
+7. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV): `specjedi-implement` once ready, plus
+   `specjedi-analyze` first if the task breakdown itself feels worth a
+   consistency check before building.
 
 If a task clearly needs domain expertise nothing installed covers, self-
 invoke `specjedi-find-skills` before finishing that story's task group

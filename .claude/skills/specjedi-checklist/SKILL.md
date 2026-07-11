@@ -39,9 +39,11 @@ regardless of what it does.
 6. **Group items by natural subcategory** within the requested focus area
    rather than one flat list.
 7. **Write the checklist** to `specs/<feature>/checklists/<focus-area>.md`.
-8. **Report and suggest the next step**: revisit `specjedi-clarify` or
-   `specjedi-plan` for any item the checklist surfaces as unresolved,
-   otherwise proceed toward `specjedi-implement`/`specjedi-analyze`.
+8. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV) — never a single line of prose: revisit
+   `specjedi-clarify` or `specjedi-plan` for any item the checklist
+   surfaces as unresolved, otherwise proceed toward
+   `specjedi-implement`/`specjedi-analyze`.
 
 If the requested focus area needs domain expertise nothing installed
 covers (e.g., a compliance-specific checklist requiring regulatory

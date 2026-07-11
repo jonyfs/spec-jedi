@@ -1,23 +1,29 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.0 → 1.15.1
+- Version change: 1.15.1 → 1.15.2
 - Modified principles: none (governance/tooling debt closed — no MUST-level
   rule changed)
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs:
-  - TODO(LICENSE_CONTRIBUTING): **RESOLVED**. `LICENSE` (MIT) already
-    existed with correct text; added `CONTRIBUTING.md` (research/spec/
-    clarify/plan/tasks/implement walkthrough, validation steps, Skill
-    Authoring Standard checklist, voice/naming rules), plus
-    `.github/ISSUE_TEMPLATE/{new-skill-proposal,bug-report}.md` and
-    `.github/PULL_REQUEST_TEMPLATE.md` requiring contributors to confirm
-    research/validation steps before requesting review. README's
-    Contributing section now points at the real file instead of "on the
-    roadmap."
+  - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
   - TODO(VOICE_PASS): still open from v1.4.0.
-  - TODO(NEXT_STEP_PASS): still open from v1.8.0.
+  - TODO(NEXT_STEP_PASS): **RESOLVED**. Audited all 11 shipped skills
+    against Principle XIV's literal requirement ("the next step(s) as a
+    short, selectable bulleted list") — found only `specjedi-constitution`
+    actually complied; the other 10 named a single next skill in inline
+    prose ("suggest the next step: X"), which reads fine but isn't the
+    selectable-list format the principle requires. Fixed all 10: `-specify`,
+    `-clarify`, `-plan`, `-tasks`, `-implement`, `-analyze`, `-checklist`,
+    `-converge`, `-onboard`, and `-explain` (including its two worked
+    examples). Also brought `specjedi-find-skills` into compliance — its
+    "exactly one recommendation, never a list" design rule is about not
+    listing competing *skill candidates*, which is unrelated to and
+    doesn't excuse the separate requirement to list the *actions* available
+    once a recommendation is made (install vs. skip); its Format template,
+    both examples, and "when nothing is found" section now end with a
+    bulleted action list instead of an inline "Install?" prompt.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
   - TODO(GROUNDING_PASS): all ten shipped skills (nine pipeline stages plus
@@ -818,4 +824,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

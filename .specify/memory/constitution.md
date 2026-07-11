@@ -1,5 +1,25 @@
 <!--
 Sync Impact Report
+- Version change: 1.16.2 → 1.16.3
+- Modified principles: none (no MUST-level rule changed) — PATCH bump,
+  a compliance fix, not new guidance
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: TODO(LOCALIZATION) remains open (opened v1.15.14). This
+  amendment closes the follow-up finding from `specjedi-skill-review`'s
+  own first real dry run (v1.16.2): `specjedi-explain/SKILL.md` was
+  missing its `Format` and `` `--auto` mode `` sections, and
+  `specjedi-find-skills/SKILL.md` was missing its `` `--auto` mode ``
+  section — both pre-existing gaps in already-shipped skills, now fixed
+  and re-verified structurally clean via `scripts/validate.sh`. The same
+  class of "found on audit, fixed in a dedicated follow-up" discipline as
+  the original GROUNDING_PASS/NEXT_STEP_PASS/VOICE_PASS/PROMPT_ENG_PASS
+  governance passes.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.1 → 1.16.2
 - Modified principles: none (no MUST-level rule changed) — PATCH bump,
   consistent with how routine skill shipments are versioned after the
@@ -863,4 +883,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.16.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

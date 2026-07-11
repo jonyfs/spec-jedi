@@ -25,10 +25,12 @@ regardless of what it does.
 2. **Read `spec.md` and `plan.md`** for everything relevant to that focus
    area: functional requirements, success criteria, edge cases, and any
    plan-level design decisions touching it.
-3. **For each candidate item, ask: does this interrogate something the
-   spec/plan actually says, or would it fit any unrelated project
-   unchanged?** Discard the latter before it reaches the output — this is
-   the single check that keeps the checklist grounded instead of generic.
+3. **For each candidate item, reason explicitly** — this is the skill's
+   one real judgment call, not a formality: does this item interrogate
+   something the spec/plan actually says, or would it fit any unrelated
+   project unchanged? Discard the latter before it reaches the output —
+   this is the single check that keeps the checklist grounded instead of
+   generic.
 4. **Phrase every surviving item as a requirements-quality question**, not
    an implementation-verification statement: "Are hover-state requirements
    defined for every interactive element the spec lists?" — never "Verify

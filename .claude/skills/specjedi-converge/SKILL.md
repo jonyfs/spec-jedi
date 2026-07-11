@@ -17,10 +17,14 @@ never silently ignoring drift, never touching anything already written.
 
 ## Step-by-step
 
-1. **Scan the actual codebase** for user-observable capabilities, not
-   every file diff — a helper function or refactor with no new observable
-   behavior isn't drift; a capability a user could exercise that no task
-   describes, is.
+1. **Scan the actual codebase** for user-observable capabilities. Prefer
+   an installed token-economy/knowledge-graph tool (e.g., `graphify query`)
+   over brute-force file reads when one is available in the target project
+   (Principle XX). **Reason explicitly about each candidate** — this is
+   the skill's real judgment call: a helper function or refactor with no
+   new observable behavior isn't drift; a capability a user could exercise
+   that no task describes, is. Don't flatten that distinction into "any
+   file changed" pattern-matching.
 2. **Cross-reference against `tasks.md`.** For each candidate capability,
    confirm no existing task (complete or incomplete) already covers it.
    Also check `spec.md`/`plan.md` for context — if the capability

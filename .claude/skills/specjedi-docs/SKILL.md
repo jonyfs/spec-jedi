@@ -23,10 +23,12 @@ writing.
 2. **Read the spec/plan.** Identify the feature's actual scope — what it
    does, for whom, and any constraint worth surfacing in a one-line doc
    description.
-3. **Draft the README skill-table row**, matching this project's
-   established format exactly (`| \`name\` emoji | description |`) and
-   this project's own doc voice — grounded in what the spec actually
-   states, never a generic or inflated description.
+3. **Draft the README skill-table row.** This is the skill's one real
+   judgment call — reason through it explicitly: does this wording
+   describe only what the spec/plan actually states, or does it drift
+   into a generic capability claim the spec doesn't support? Match this
+   project's established format exactly (`| \`name\` emoji | description |`)
+   and its own doc voice — grounded, never generic or inflated.
 4. **Draft the Quickstart step**, matching the existing numbered-step
    format and voice.
 5. **Draft the `CHANGELOG.md` entry.** If `CHANGELOG.md` doesn't exist

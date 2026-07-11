@@ -36,9 +36,10 @@ never silently ignoring drift, never touching anything already written.
 4. **Verify the append didn't touch anything else** — diff the file before
    and after; everything except the new section must be byte-for-byte
    identical.
-5. **Report and suggest the next step**: `specjedi-implement` to work the
-   newly appended tasks, or `specjedi-analyze` first if a contradiction
-   (not just a gap) was found.
+5. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV): `specjedi-implement` to work the newly appended tasks,
+   or `specjedi-analyze` first if a contradiction (not just a gap) was
+   found.
 
 If reconciling a piece of drifted functionality needs domain expertise
 nothing installed covers, self-invoke `specjedi-find-skills` before

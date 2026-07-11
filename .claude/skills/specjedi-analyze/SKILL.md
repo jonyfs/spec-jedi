@@ -39,11 +39,12 @@ after implementation — without modifying any of them.
 5. **Build the findings table** (see Format) — Category, Location,
    Severity, Recommendation. An empty table is a valid, good outcome; do
    not invent findings to have something to report.
-6. **Report and suggest the next step**: whichever skill owns the artifact
-   with the highest-severity finding (e.g., `specjedi-plan` for a
-   plan-level gap, `specjedi-tasks` for a missing task) — or
-   `specjedi-implement`/`specjedi-checklist` if the report comes back
-   clean.
+6. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV) — never a single line of prose: whichever skill owns
+   the artifact with the highest-severity finding (e.g., `specjedi-plan`
+   for a plan-level gap, `specjedi-tasks` for a missing task) as the
+   primary option, plus `specjedi-implement`/`specjedi-checklist` if the
+   report comes back clean.
 
 If a finding clearly needs domain expertise nothing installed covers to
 even evaluate (e.g., assessing a security-specific requirement), name that

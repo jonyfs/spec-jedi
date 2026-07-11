@@ -41,9 +41,10 @@ the spec before anyone plans against a guess.
 5. **Stop** at 5 questions, when the user signals done, or when nothing
    Partial/Missing remains above the skip threshold — whichever comes
    first.
-6. **Report** a coverage summary (category → Resolved/Deferred/Clear) and
-   suggest the next step: `specjedi-plan` if clean, or flag what's still
-   Deferred and why if the question budget ran out first.
+6. **Report** a coverage summary (category → Resolved/Deferred/Clear), then
+   **offer the next step(s) as a short bulleted list** (Principle XIV):
+   `specjedi-plan` if clean, or the still-Deferred categories and why if
+   the question budget ran out first.
 
 If resolving a gap clearly needs domain expertise outside general SDD scope
 (e.g., specific regulatory language), self-invoke `specjedi-find-skills`

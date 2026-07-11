@@ -38,8 +38,9 @@ conventions named explicitly, not gestured at.
    place to file every inconvenient constraint.
 5. **Define Project Structure** — the actual directories/files this
    feature touches, not a generic template with unfilled placeholders.
-6. **Report and suggest the next step**: `specjedi-tasks` if the plan is
-   clean, or what's blocking if the Constitution Check didn't pass.
+6. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
+   blocking (and how to resolve it) if the Constitution Check didn't pass.
 
 If the plan needs expertise the installed skill set doesn't have (e.g.,
 planning a mobile app with no mobile-specific skill present), self-invoke

@@ -51,9 +51,10 @@ whatever branch the target repo protects (Principle X).
    the repo's own supported mechanism (e.g. `gh pr merge --auto`) where
    available — whether that merge actually happens is the target repo's
    CI/branch-protection decision, never this skill's to claim or force.
-8. **Report and suggest the next step**: `specjedi-analyze` once a slice
-   is shipped, to catch any drift between spec/plan/tasks and what just
-   landed.
+8. **Report, then offer the next step(s) as a short bulleted list**
+   (Principle XIV): `specjedi-analyze` once a slice is shipped, to catch
+   any drift between spec/plan/tasks and what just landed, plus
+   `specjedi-checklist` if a targeted review is warranted before moving on.
 
 If a task needs implementation expertise nothing installed covers (a
 language-specific linter or framework with no matching skill here),

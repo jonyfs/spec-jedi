@@ -6,11 +6,11 @@ description: "Task list for the specjedi-* SDD pipeline (Feature 001)"
 
 **Input**: `specs/001-specjedi-pipeline/{spec.md, plan.md, research.md}`
 
-**Scope**: P1-P5 (`specjedi-constitution`, `specjedi-specify`,
-`specjedi-clarify`, `specjedi-plan`, `specjedi-tasks`) have shipped; P6
-(`specjedi-implement`) is this cycle's target, each its own cycle per
-spec.md's Assumptions (prove the pattern incrementally). P7-P9 remain a
-scoped backlog.
+**Scope**: P1-P6 (`specjedi-constitution`, `specjedi-specify`,
+`specjedi-clarify`, `specjedi-plan`, `specjedi-tasks`, `specjedi-implement`)
+have shipped; P7 (`specjedi-analyze`) is this cycle's target, each its own
+cycle per spec.md's Assumptions (prove the pattern incrementally). P8-P9
+remain a scoped backlog.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -252,13 +252,60 @@ code, entirely through feature branches and pull requests.
 - [x] T098 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
 
-## Backlog (future cycle): User Stories 7-9
+## Phase 10: User Story 7 — `specjedi-analyze` (P7)
+
+**Goal**: A user can run `specjedi-analyze` at any point to verify
+`spec.md`, `plan.md`, and `tasks.md` remain consistent with each other and
+with the constitution — strictly non-destructively.
+
+**Independent test**: See spec.md User Story 7 → Independent Test.
+
+- [x] T100 [P] [US7] Create `.claude/skills/specjedi-analyze/SKILL.md` per
+  plan.md's Design section: persona, task, the structured findings-table
+  format (Category/Location/Severity/Recommendation), the strictly
+  read-only constraint made explicit as a step-sequence rule (no step
+  writes to spec.md/plan.md/tasks.md), chain-of-thought for cross-artifact
+  requirement tracing, constitution-conflict-is-always-CRITICAL rule,
+  `--auto` behavior, proactive gap-check hook.
+- [x] T101 [US7] Add a full input → output worked example: a spec/plan/
+  tasks trio with one deliberately introduced inconsistency (a requirement
+  with no corresponding task) in, the findings-table row that catches it
+  out.
+- [x] T102 [US7] Add Always/Never guardrails and verifiable success
+  criteria per the Skill Authoring Standard checklist — explicitly
+  including "Never modify spec.md/plan.md/tasks.md" as a Never guardrail.
+- [x] T103 [US7] Run `scripts/validate.sh` (and `.ps1` on Windows) —
+  structural lint must pass.
+- [x] T104 [US7] Manual scenario dry run: exercise against intentionally
+  inconsistent spec/plan/tasks (a task referencing a requirement removed
+  from the spec) and confirm the skill surfaces it in the findings table
+  without modifying any file; exercise against consistent artifacts and
+  confirm no false positives are reported.
+- [x] T105 [US7] Review `specjedi-analyze/SKILL.md` against the full Skill
+  Authoring Standard checklist in
+  `references/skill-authoring-standard.md` before marking this story done.
+
+**Checkpoint**: the pipeline now has a non-destructive safety net runnable
+at any point after `specjedi-tasks` exists.
+
+## Phase 11: Documentation & Ship (P7)
+
+- [x] T106 Update README.md's "What you get today" table: move
+  `specjedi-analyze` from the roadmap table to the "ships today" table;
+  update the roadmap Mermaid diagram's live/roadmap markers to match
+  (Principle XVI). Review the badge row per Principle X's pre-PR
+  requirement.
+- [x] T107 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
+  note to reflect P1-P7 shipped, P8-P9 remaining.
+- [x] T108 Validate full repo (`scripts/validate.sh`), commit on this
+  feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
+
+## Backlog (future cycle): User Stories 8-9
 
 Not detailed task-by-task this cycle (spec.md Assumptions: prove the pattern
 incrementally rather than all at once). Each becomes its own `[Story]`-tagged
-task group later, following the exact shape of Phase 2-6/8 above:
+task group later, following the exact shape of Phase 2-6/8/10 above:
 
-- **US7** `specjedi-analyze` (P7) — non-destructive consistency checker.
 - **US8** `specjedi-checklist` (P8).
 - **US9** `specjedi-converge` (P9).
 
@@ -278,4 +325,8 @@ task group later, following the exact shape of Phase 2-6/8 above:
 - Phase 8 (US6) depends on Phase 6 (US5) — implement executes a `tasks.md`
   that must already exist.
 - Phase 9 (Documentation & Ship) depends on Phase 8 being complete.
-- US7-US9 (backlog) depend on US1-US6 as each stage requires.
+- Phase 10 (US7) depends on Phase 6 (US5) — analyze reads a `tasks.md`
+  that must already exist (it does not require implementation to have
+  happened yet, per spec.md's own "at any point" framing).
+- Phase 11 (Documentation & Ship) depends on Phase 10 being complete.
+- US8-US9 (backlog) depend on US1-US7 as each stage requires.

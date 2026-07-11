@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.14.3 → 1.14.4
+- Version change: 1.14.4 → 1.14.5
 - Modified principles: none (governance bookkeeping only — no MUST-level
   rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, consistent
   with how prior PATCH amendments tracked each pipeline stage)
@@ -13,17 +13,14 @@ Sync Impact Report
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): **P6 (`specjedi-implement`) shipped**
-    (feature 001-specjedi-pipeline, 2026-07-11) — P1-P6 now live; P7-P9
-    (`specjedi-analyze` through `specjedi-converge`) remain open, tracked
-    in `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
-    `specjedi-implement` enforces Principle X (branch+PR only, never
-    direct-to-main) as a pre-flight step-sequence gate — a branch check
-    that fires before the first edit of every run and is re-verified
-    before every subsequent commit — rather than a guideline mentioned
-    once in prose; see `plan.md`'s Design: `specjedi-implement` section
-    for the full mechanism.
-  - TODO(GROUNDING_PASS): the six shipped pipeline skills predate
+  - TODO(SPECJEDI_PIPELINE): **P7 (`specjedi-analyze`) shipped**
+    (feature 001-specjedi-pipeline, 2026-07-11) — P1-P7 now live; P8-P9
+    (`specjedi-checklist`, `specjedi-converge`) remain open, tracked in
+    `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
+    `specjedi-analyze` is strictly non-destructive — every step in its
+    SKILL.md reads spec.md/plan.md/tasks.md/constitution.md and reports
+    findings in a structured table; no step ever writes to any of them.
+  - TODO(GROUNDING_PASS): the seven shipped pipeline skills predate
     Principle XX; they avoid fabrication by construction but haven't
     been explicitly re-reviewed against XX's checklist yet.
     `specjedi-find-skills` remains the closest reference implementation.
@@ -820,4 +817,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.14.4 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.14.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

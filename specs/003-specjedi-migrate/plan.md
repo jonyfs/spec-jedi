@@ -28,7 +28,7 @@ has (typically `.specify/memory/constitution.md` and `specs/*/spec.md`,
 `plan.md`, `tasks.md`) in place — no new files created beyond the
 in-response migration report.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` plus a
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` plus a
 scenario-based dry run per the Skill Authoring Standard's review checklist
 — same as every prior pipeline/roadmap skill.
 

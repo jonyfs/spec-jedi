@@ -97,6 +97,15 @@ this file directly.
 
 ### Changed
 
+- Constitution Principle III clarified: the compatibility-matrix
+  re-verification trigger now explicitly names Principle XI's MAJOR
+  product release line, not the constitution's own version number.
+- Constitution Development Workflow section corrected: localization
+  (Principle I) runs on its own whole-project cadence, not as a
+  per-feature pipeline step — matching what actually happened.
+- All 12 pre-existing feature plans (`specs/001-*` through `specs/012-*`)
+  updated to explicitly cite their Principle VI test-first exemption,
+  matching the precedent feature 013 already set.
 - README badge row corrected: `Roadmap` badge updated from stale
   `7/7 shipped` to accurate `11/11 shipped`; new `Skills` badge added
   (`22 shipped`) — found by `checklists/project-completeness.md`.

@@ -1,5 +1,48 @@
 <!--
 Sync Impact Report
+- Version change: 1.18.0 → 1.18.1
+- Modified principles: Principle III (Universal LLM & Harness
+  Compatibility) and the Development Workflow section — PATCH bump:
+  both are clarifications resolving genuine ambiguity, not new
+  obligations or removed guarantees.
+  - Principle III: "re-verified whenever a new major release of this
+    project ships" now explicitly names Principle XI's MAJOR product
+    release line, disambiguating it from the constitution's own MAJOR
+    version (`checklists/project-completeness.md` CHK014).
+  - Development Workflow: the per-feature pipeline step list no longer
+    lists "localization pass" as a per-feature stage — localization
+    (Principle I) runs on its own whole-project cadence, signaled by the
+    `scripts/validate.sh`/`.ps1` sync-drift check, not re-triggered by
+    every individual feature's PR. This matches what actually happened
+    (localization shipped once, covering all prior features at once,
+    not per-feature) rather than leaving the step list implying
+    something no shipped feature ever did (CHK017).
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none new. This amendment also closes several
+  `checklists/project-completeness.md` findings via non-constitution
+  fixes shipped in the same PR: CHK007 (all 12 prior feature plans now
+  cite their Principle VI test-first exemption explicitly, matching the
+  precedent feature 013 already set), CHK012 (already resolved by the
+  CHK004 battery-growth-trigger mechanism; checkbox corrected),
+  CHK018 (a real systematic audit confirmed 20 of 22 shipped skills
+  carry the Principle XVII self-invoke contract, the 2 that don't
+  already have documented exemptions), and CHK019 (resolved by
+  construction — the two localization amendments already are the
+  "constitution amendment first" resolution path this item asked
+  whether would be needed). Remaining open: CHK002 (a real 20-harness
+  capability matrix — needs live multi-harness testing), CHK011
+  (retroactive PR reviews — can't be fixed after the fact), CHK013
+  (verifying `research.md`'s "genuine contribution" claims beyond
+  trusting the document's own prose), CHK015 (no retrospective audit
+  mechanism for Principle XX hallucination-resistance), and CHK016
+  (`specjedi-tokencheck`'s cross-platform detection is designed
+  correctly per-OS but not live-verified on Linux/Windows).
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.17.0 → 1.18.0
 - Modified principles: Principle I (English-Source, Globally-Localized
   Documentation) — MINOR bump: a substantive expansion of a MUST-level
@@ -379,8 +422,11 @@ highest-usage LLM tools/harnesses in the market (e.g., Claude Code, Cursor,
 GitHub Copilot, Codex CLI, Gemini CLI/Antigravity, Windsurf, Cline, Continue,
 Aider, Amazon Q Developer, JetBrains AI, Zed, OpenCode, and others determined
 current at research time). The matrix MUST be re-verified whenever a new
-major release of this project ships, since the ranking and capabilities of
-these tools change quickly.
+MAJOR product release ships (the skill-package release line Principle XI
+defines, not this constitution document's own version number — the two
+are explicitly distinct lines, and this is the one that tracks actual
+skill/harness behavior), since the ranking and capabilities of these
+tools change quickly.
 
 Skill content itself MUST be written against the lowest common denominator
 of agent capability (markdown instructions, explicit file paths, no
@@ -1020,10 +1066,15 @@ New skills and material changes to existing skills MUST follow this
 project's own SDD pipeline, dogfooding the tool it ships: research
 (Principle II) → `/speckit-specify` → `/speckit-clarify` as needed →
 `/speckit-plan` → `/speckit-tasks` → implementation → validation
-(Principle IX) → localization pass for any user-facing docs (Principle I)
-→ commit on a feature branch → open a PR against `main` → automated
-validation workflow runs → auto-merge on green, blocked on red
-(Principle X).
+(Principle IX) → commit on a feature branch → open a PR against `main` →
+automated validation workflow runs → auto-merge on green, blocked on red
+(Principle X). Localization (Principle I) runs on its own cadence, not
+per-feature: `README.md`/`CONTRIBUTING.md` are localized as a
+whole-project pass whenever their English content has meaningfully
+changed since the last pass, not re-translated on every individual
+feature's PR — the `scripts/validate.sh`/`.ps1` sync-drift check is what
+actually signals when that pass is due, not a step in each feature's own
+pipeline.
 
 Code and content review MUST explicitly check compliance with every Core
 Principle above before approval; a reviewer (human or the automated
@@ -1103,4 +1154,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.18.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.18.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

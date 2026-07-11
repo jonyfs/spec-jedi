@@ -25,7 +25,7 @@ stated project prerequisite.
 **Storage**: Reads the target feature's `plan.md`/`tasks.md` and codebase/
 git history; writes only an append to `.specify/memory/retro-log.md`.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` plus a
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` plus a
 scenario-based dry run per the Skill Authoring Standard's review checklist
 — run against one of this repo's own completed features as a real test
 corpus.

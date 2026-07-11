@@ -28,7 +28,7 @@ API keys. Optional: `git` for any script that inspects repo state.
 `specs/NNN-feature/spec.md`, in whichever project has Spec Jedi installed (this
 repo, or an end user's own project). No database.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`scripts/validate.ps1`
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`scripts/validate.ps1`
 (extended in this feature — see below) plus scenario-based dry runs per the
 Skill Authoring Standard's review checklist. No unit-test framework applies;
 these are prompt artifacts, not executable application code.

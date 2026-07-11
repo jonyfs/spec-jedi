@@ -27,7 +27,7 @@ matching `specs/*/plan.md` when locatable. No script dependency, unlike
 
 **Storage**: Read-only; writes nothing (FR-005's absolute boundary).
 
-**Testing**: Scenario-based dry run against real repo state — run the
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content, not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is a scenario-based dry run against real repo state — run the
 review against a scratch copy of a skill with a reintroduced known gap
 (SC-001), and against every currently shipped skill to confirm zero false
 positives (SC-003).

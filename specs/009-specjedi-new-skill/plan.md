@@ -26,7 +26,7 @@ skill's own scaffold structure derives from) — no external services.
 **Storage**: Creates new directories/files under `specs/` and
 `.claude/skills/`; never modifies an existing skill's files.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` (the
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` (the
 scaffolded `SKILL.md` skeleton must itself pass frontmatter validation
 even as a placeholder) plus a scenario-based dry run.
 

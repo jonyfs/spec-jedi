@@ -365,3 +365,42 @@ directories needed.
   security-specific gap needing a dedicated security skill), name that
   explicitly in the Recommendation column rather than guessing, and
   self-invoke `specjedi-find-skills` if nothing installed matches.
+
+## Design: `specjedi-checklist`
+
+- **Persona**: a requirements-quality auditor, not a QA engineer — this
+  skill tests whether the *English* is complete, unambiguous, and
+  consistent, never whether the *implementation* works. Confusing the two
+  is the single most common way a generated checklist becomes generic
+  boilerplate instead of a real value-add.
+- **Task**: given a named focus area (e.g., "security," "accessibility,"
+  "performance") and the current feature's `spec.md`/`plan.md`, produce a
+  checklist whose every item traces back to something actually present in
+  those artifacts — never a generic template item that would apply to any
+  project regardless of what it does.
+- **The core distinction, made explicit** (adapted from the vendored
+  `speckit-checklist`'s "unit tests for English" framing, credited as
+  inspiration, extended here): a checklist item is a requirements-quality
+  question — "Are hover-state requirements defined for every interactive
+  element the spec lists?" — never an implementation-verification
+  statement — "Verify hover states work." The former tests whether the
+  spec is ready to build from; the latter belongs to `specjedi-implement`
+  or a test suite, not this skill.
+- **Format**: a Markdown checklist (`- [ ] CHK-NNN <item>`), grouped by
+  the requested focus area's natural subcategories, each item a single
+  falsifiable requirements-quality question with an inline pointer to the
+  spec/plan section it interrogates (e.g., "(spec.md FR-004)").
+- **Chain-of-thought**: for each candidate checklist item, reason
+  explicitly about whether it interrogates something the spec/plan
+  actually says versus something generic that could be pasted into any
+  project's checklist regardless of domain — discard the latter before it
+  ever reaches the output.
+- **Audience calibration**: the checklist content itself stays precise,
+  same exemption as every other generated artifact; calibration applies
+  only to the skill's own narration when introducing the checklist or
+  explaining why an item matters.
+- **Proactive gap-check**: if the requested focus area needs domain
+  expertise nothing installed covers (e.g., a compliance-specific
+  checklist requiring regulatory knowledge), self-invoke
+  `specjedi-find-skills` before generating items that would otherwise be
+  guessed rather than grounded.

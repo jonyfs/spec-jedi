@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.14.4 → 1.14.5
+- Version change: 1.14.5 → 1.14.6
 - Modified principles: none (governance bookkeeping only — no MUST-level
   rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, consistent
   with how prior PATCH amendments tracked each pipeline stage)
@@ -13,14 +13,17 @@ Sync Impact Report
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): **P7 (`specjedi-analyze`) shipped**
-    (feature 001-specjedi-pipeline, 2026-07-11) — P1-P7 now live; P8-P9
-    (`specjedi-checklist`, `specjedi-converge`) remain open, tracked in
+  - TODO(SPECJEDI_PIPELINE): **P8 (`specjedi-checklist`) shipped**
+    (feature 001-specjedi-pipeline, 2026-07-11) — P1-P8 now live; only P9
+    (`specjedi-converge`) remains, tracked in
     `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
-    `specjedi-analyze` is strictly non-destructive — every step in its
-    SKILL.md reads spec.md/plan.md/tasks.md/constitution.md and reports
-    findings in a structured table; no step ever writes to any of them.
-  - TODO(GROUNDING_PASS): the seven shipped pipeline skills predate
+    `specjedi-checklist` generates every item grounded in the current
+    feature's own spec.md/plan.md (with an inline pointer to the section
+    it interrogates) — never generic boilerplate; items are phrased as
+    requirements-quality questions, never implementation-verification
+    statements (the "unit tests for English" distinction, adapted from
+    the vendored `speckit-checklist`).
+  - TODO(GROUNDING_PASS): the eight shipped pipeline skills predate
     Principle XX; they avoid fabrication by construction but haven't
     been explicitly re-reviewed against XX's checklist yet.
     `specjedi-find-skills` remains the closest reference implementation.
@@ -817,4 +820,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.14.5 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.14.6 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

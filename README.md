@@ -50,6 +50,7 @@ about what's actually shipped versus what's still roadmap.
 | `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
 | `specjedi-implement` 🔨 | Executes `tasks.md` in dependency order, test-first where the plan calls for code — commits only through a feature branch and pull request, never directly to `main` |
 | `specjedi-analyze` 🔍 | Strictly read-only cross-check of `spec.md`/`plan.md`/`tasks.md` (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file |
+| `specjedi-checklist` ☑️ | Generates a custom checklist for a named focus area (security, accessibility, performance...) grounded entirely in this feature's own `spec.md`/`plan.md` — never generic boilerplate |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
@@ -63,7 +64,6 @@ voice, and the rest — already baked into the skills shipped above):
 
 | Planned skill | Will replace |
 |---|---|
-| `specjedi-checklist` | `speckit-checklist` |
 | `specjedi-converge` | `speckit-converge` |
 
 The shipped skills prove the pattern, one story at a time; building the rest is
@@ -244,7 +244,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Nine product skills ship today ([What you get today](#what-you-get-today)).
+Ten product skills ship today ([What you get today](#what-you-get-today)).
 Never used an SDD tool before? Start with step 0.
 
 0. **Not sure what any of this means?** Just ask — "what is a spec and why
@@ -280,25 +280,29 @@ Never used an SDD tool before? Start with step 0.
    `plan.md`, and `tasks.md` (and your constitution) for gaps, duplication,
    or contradictions — strictly read-only, runnable any time, never edits
    a file.
-9. Stuck on something outside this set? Just describe it — "how do I do X,"
-   "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
-   automatically, searches the open agent-skills ecosystem, and suggests a
-   specific, verified skill. Never installs anything without asking first
-   ([Principle VIII](.specify/memory/constitution.md)).
+9. Need a targeted review? `specjedi-checklist` ☑️ generates a checklist
+   for a named focus area — security, accessibility, performance, whatever
+   you name — grounded entirely in this feature's own spec/plan, never
+   generic boilerplate.
+10. Stuck on something outside this set? Just describe it — "how do I do X,"
+    "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
+    automatically, searches the open agent-skills ecosystem, and suggests a
+    specific, verified skill. Never installs anything without asking first
+    ([Principle VIII](.specify/memory/constitution.md)).
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
 list to figure it out. Today that chain runs `specjedi-constitution` →
 `specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks`
-→ `specjedi-implement` → `specjedi-analyze`; the step after that
-(`specjedi-checklist`/`specjedi-converge`) is still roadmap.
+→ `specjedi-implement` → `specjedi-analyze` → `specjedi-checklist`; the
+step after that (`specjedi-converge`) is still roadmap.
 
-### The vision (roadmap — checklist/converge aren't real yet)
+### The vision (roadmap — converge isn't real yet)
 
-Constitution, specify, clarify, plan, tasks, implement, and analyze (steps
-2-8 above) are live. The rest of the pipeline below is shown now so
-contributors and early adopters know what "done" looks like, not because
-you can run all of it yet:
+Constitution, specify, clarify, plan, tasks, implement, analyze, and
+checklist (steps 2-9 above) are live. The rest of the pipeline below is
+shown now so contributors and early adopters know what "done" looks like,
+not because you can run all of it yet:
 
 ```mermaid
 flowchart TD
@@ -311,7 +315,7 @@ flowchart TD
     F --> G{"✅ specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
     G -->|gaps found| H["📋 specjedi-converge<br/>queue remaining work"] --> F
     G -->|clean| I(["🚀 shipped"])
-    F -.->|need a checklist mid-flight| J["📋 specjedi-checklist"]
+    F -.->|need a checklist mid-flight| J["✅ specjedi-checklist ☑️<br/>ships today"]
     F -.->|stuck outside this pipeline| K["✅ specjedi-find-skills 🔍<br/>ships today"]
 ```
 

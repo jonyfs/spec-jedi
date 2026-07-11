@@ -11,6 +11,18 @@ this file directly.
 
 ### Added
 
+- `specjedi-skill-review` 🎓 — strictly read-only audit of an existing
+  `specjedi-*` skill's `SKILL.md` against the Skill Authoring & Prompt
+  Engineering Standard, distinguishing missing from weak sections and
+  cross-referencing the matching `plan.md` for legitimate exemptions;
+  never edits the reviewed file (feature 011).
+- `specjedi-release` 🚀 — wraps `scripts/suggest-release.sh`/`.ps1` with
+  Spec Jedi's own voice, narrating the last tag, suggested next version,
+  and contributing commits; declines and names the manual command if
+  asked to actually cut a release (feature 010).
+- `specjedi-new-skill` 🌟 — scaffolds a new `specjedi-*` skill's file
+  structure, placeholders only, following this project's own Skill
+  Authoring Standard (feature 009).
 - `specjedi-docs` 📚 — drafts a README skill-table row, Quickstart step,
   and this changelog's own entries from a shipped feature's spec/plan,
   grounded in actual content, always confirmed before writing

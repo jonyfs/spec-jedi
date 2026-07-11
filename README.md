@@ -66,6 +66,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-docs` 📚 | Drafts a README skill-table row, Quickstart step, and `CHANGELOG.md` entry from a shipped feature's spec/plan — grounded in actual content, always shown for confirmation before writing |
 | `specjedi-new-skill` 🌟 | Scaffolds a new `specjedi-*` skill's file structure — placeholders only, never invented content — following this project's own Skill Authoring Standard and baking in the Principle II research checklist |
 | `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
+| `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -253,7 +254,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Twenty product skills ship today ([What you get today](#what-you-get-today))
+Twenty-one product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -343,6 +344,11 @@ before? Start with step 0.
     version, contributing commits — and declines with the exact manual
     command if you ask it to actually cut one; it never tags or
     publishes itself.
+20. Wrote or changed a `specjedi-*` skill by hand? `specjedi-skill-review`
+    🎓 checks its `SKILL.md` against the Skill Authoring Standard — section
+    content, not just headings, cross-referenced against the matching
+    `plan.md` for legitimate exemptions — and reports findings or a clean
+    pass; it never edits the file itself.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

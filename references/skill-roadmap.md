@@ -124,6 +124,27 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   the bare script. See
   [specs/010-specjedi-release/](../specs/010-specjedi-release/) for the
   full research/spec/plan.
+- **`specjedi-skill-review`** 🎓 (feature 011, shipped 2026-07-11) —
+  strictly read-only audit of an existing `specjedi-*` skill's `SKILL.md`
+  against the Skill Authoring & Prompt Engineering Standard (Principle
+  XIX), plus next-step format, chain-of-thought framing, and voice —
+  distinguishes "section missing" from "section present but weak,"
+  cross-references the matching `specs/NNN-name/plan.md` for legitimate
+  chain-of-thought exemptions, and reports findings or an explicit clean
+  pass without ever editing the reviewed file. Automates the exact manual
+  process this project's own history already performed twice by hand (the
+  GROUNDING_PASS/NEXT_STEP_PASS/VOICE_PASS/PROMPT_ENG_PASS governance
+  passes, and the 6-skill consistency audit, PR #41). Complements
+  `specjedi-new-skill` (scaffolds a brand-new skill) with a review tool
+  for an already-written one. Genuine contribution: no researched
+  competitor ships a self-review mechanism checking its own skill/agent
+  files against a documented authoring standard. Its own first real dry
+  run against every shipped skill surfaced two true, previously-unknown
+  gaps (`specjedi-explain` and `specjedi-find-skills`, both missing a
+  `` `--auto` mode `` section) — tracked as a follow-up fix, not bundled
+  into this feature's scope. See
+  [specs/011-specjedi-skill-review/](../specs/011-specjedi-skill-review/)
+  for the full research/spec/plan.
 
 ## Proposed, not yet built (prioritized by expected impact)
 

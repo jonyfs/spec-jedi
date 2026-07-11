@@ -45,6 +45,7 @@ about what's actually shipped versus what's still roadmap.
 | `specjedi-specify` 🎯 | Turns a feature idea — one sentence is enough — into a prioritized, independently-testable `spec.md`, marking real ambiguity instead of guessing |
 | `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
+| `specjedi-clarify` 🌀 | Scans a spec for real ambiguity and asks up to 5 prioritized questions — each with a Recommended answer so a beginner gets guidance and an expert can reply in one word — before you plan against a guess |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
@@ -58,7 +59,6 @@ voice, and the rest — already baked into the skills shipped above):
 
 | Planned skill | Will replace |
 |---|---|
-| `specjedi-clarify` 🌀 | `speckit-clarify` |
 | `specjedi-plan` 🛠️ | `speckit-plan` |
 | `specjedi-tasks` ✅ | `speckit-tasks` |
 | `specjedi-implement` 🤖 | `speckit-implement` |
@@ -66,13 +66,13 @@ voice, and the rest — already baked into the skills shipped above):
 | `specjedi-checklist` | `speckit-checklist` |
 | `specjedi-converge` | `speckit-converge` |
 
-The two shipped skills prove the pattern; building the rest is real,
-competitive-research-gated work (Principle II) — tracked in
+The shipped skills prove the pattern, one story at a time; building the rest is
+real, competitive-research-gated work (Principle II) — tracked in
 [research.md](specs/001-specjedi-pipeline/research.md), not rushed. Until they
 land, this repository's own development still uses spec-kit's `speckit-*`
 commands as internal bootstrap tooling (see below) for anything past
-constitution/spec — that's this project dogfooding the incumbent to build its
-replacement, not the product you'd install elsewhere.
+constitution/spec/clarify — that's this project dogfooding the incumbent to
+build its replacement, not the product you'd install elsewhere.
 
 ## How Spec Jedi builds *itself*, in comic form
 
@@ -206,11 +206,11 @@ skills themselves work identically either way.
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   the four `specjedi-*` product skills (`constitution`, `specify`, `find-skills`,
-   `explain`) and the `speckit-*` commands (this repo's own internal bootstrap
-   tooling — see [What you get today](#what-you-get-today)) listed together, since
-   Claude Code discovers every skill under `.claude/skills/` without distinguishing
-   the two.
+   the five `specjedi-*` product skills (`constitution`, `specify`, `clarify`,
+   `find-skills`, `explain`) and the `speckit-*` commands (this repo's own
+   internal bootstrap tooling — see [What you get today](#what-you-get-today))
+   listed together, since Claude Code discovers every skill under
+   `.claude/skills/` without distinguishing the two.
 
 4. That's it — you're ready to run `specjedi-constitution` on a project, ask
    `specjedi-explain` anything if you're not sure where to start, or read the
@@ -220,9 +220,9 @@ skills themselves work identically either way.
 `.claude/skills/` directory brings the `speckit-*` bootstrap tooling along with the
 actual `specjedi-*` product — there's no separation yet. If you only want the
 product skills, copy `.claude/skills/specjedi-constitution/`,
-`.claude/skills/specjedi-specify/`, `.claude/skills/specjedi-find-skills/`, and
-`.claude/skills/specjedi-explain/` individually. A proper installer that installs
-product-only by default is tracked
+`.claude/skills/specjedi-specify/`, `.claude/skills/specjedi-clarify/`,
+`.claude/skills/specjedi-find-skills/`, and `.claude/skills/specjedi-explain/`
+individually. A proper installer that installs product-only by default is tracked
 ([Principle XVIII](.specify/memory/constitution.md)) but doesn't exist yet.
 
 ### Supported harnesses
@@ -260,7 +260,11 @@ Never used an SDD tool before? Start with step 0.
    is enough — and `specjedi-specify` 🎯 turns it into a prioritized,
    independently-testable `spec.md`, marking real ambiguity instead of
    guessing at it.
-4. Stuck on something outside this pair? Just describe it — "how do I do X,"
+4. Not sure the spec is solid yet? `specjedi-clarify` 🌀 scans it for real
+   ambiguity and asks up to 5 prioritized questions — each with a
+   Recommended answer, so you can accept it in one word or read the
+   reasoning if you want it — before anything gets planned against a guess.
+5. Stuck on something outside this set? Just describe it — "how do I do X,"
    "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
    automatically, searches the open agent-skills ecosystem, and suggests a
    specific, verified skill. Never installs anything without asking first
@@ -268,20 +272,21 @@ Never used an SDD tool before? Start with step 0.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
-list to figure it out. Today that means `specjedi-constitution` points you to
-`specjedi-specify`; the step after that (`specjedi-clarify`) is still roadmap.
+list to figure it out. Today that chain runs `specjedi-constitution` →
+`specjedi-specify` → `specjedi-clarify`; the step after that
+(`specjedi-plan`) is still roadmap.
 
-### The vision (roadmap — clarify onward isn't real yet)
+### The vision (roadmap — plan onward isn't real yet)
 
-Constitution and specify (steps 2-3 above) are live. The rest of the pipeline
-below is shown now so contributors and early adopters know what "done" looks
-like, not because you can run all of it yet:
+Constitution, specify, and clarify (steps 2-4 above) are live. The rest of
+the pipeline below is shown now so contributors and early adopters know what
+"done" looks like, not because you can run all of it yet:
 
 ```mermaid
 flowchart TD
     A["✅ specjedi-constitution 📜<br/>establish or amend the project's rules"] --> B["✅ specjedi-specify 🎯<br/>feature idea → spec.md"]
-    B --> C{"📋 specjedi-clarify 🌀<br/>ambiguity to resolve?"}
-    C -->|yes| C2["📋 resolve, encode answers into spec.md"] --> D
+    B --> C{"✅ specjedi-clarify 🌀<br/>ambiguity to resolve?"}
+    C -->|yes| C2["✅ resolve, encode answers into spec.md"] --> D
     C -->|no| D["📋 specjedi-plan 🛠️<br/>spec.md → plan.md"]
     D --> E["📋 specjedi-tasks ✅<br/>plan.md → tasks.md"]
     E --> F["📋 specjedi-implement 🤖<br/>execute tasks.md"]

@@ -1,46 +1,30 @@
 <!--
 Sync Impact Report
-- Version change: 1.13.0 → 1.14.0
-- Modified principles: Distribution & Ecosystem Standards' README badge
-  requirement strengthened — badges MUST be dynamic/self-updating
-  wherever technically feasible (not hardcoded values that silently go
-  stale), and the badge row MUST be reviewed for accuracy and for
-  whether a new relevant badge is warranted before every PR (directly
-  requested: "sempre deixe a lista de badges atualizadas... antes de
-  fazer cada novo pull request"). Triggered by catching a real instance:
-  the Constitution badge had been hardcoded to v1.8.0 since it was
-  created and was 5 versions stale by v1.13.0.
-- Added sections: none (amendment to existing Distribution & Ecosystem
-  Standards section)
+- Version change: 1.14.0 → 1.14.1
+- Modified principles: none (governance bookkeeping only — no MUST-level
+  rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, consistent
+  with how the v1.10.1 amendment tracked P1+P2)
+- Added sections: none
 - Removed sections: none
-- Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ compatible as-is
-  - .specify/templates/spec-template.md ✅ compatible as-is
-  - .specify/templates/tasks-template.md ✅ compatible as-is
-  - .specify/templates/checklist-template.md ✅ compatible as-is
-  - README.md ✅ updated in the same change set — Constitution badge
-    converted from a hardcoded string to a shields.io dynamic/regex badge
-    reading the live version from constitution.md on `main`; added a
-    naturally-dynamic "last commit" badge (GitHub-native shields.io
-    badge, no manual maintenance) as the new relevant addition this round
+- Templates requiring updates: none
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): still open from v1.0.0.
   - TODO(VOICE_PASS): still open from v1.4.0.
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): P1+P2 shipped (see v1.10.1 note); P3-P9 still
-    open. New Principle XX and the strengthened Principle II now apply to
-    all of them going forward — P3-P9 design work MUST name a genuine
-    innovation, not just replicate speckit-*'s equivalent command.
-  - TODO(GROUNDING_PASS): the two shipped specjedi-* skills
-    (`specjedi-constitution`, `specjedi-specify`) predate Principle XX;
-    they already avoid fabrication by construction (they generate
-    structured docs from user input, not factual claims about the world)
-    but haven't been explicitly re-reviewed against XX's checklist yet.
-    `specjedi-find-skills` already grounds every claim in a real, checked
-    install-count/source signal — closest thing to a reference
-    implementation of Principle XX today.
+  - TODO(SPECJEDI_PIPELINE): **P3 (`specjedi-clarify`) shipped**
+    (feature 001-specjedi-pipeline, 2026-07-11) — P1+P2+P3 now live;
+    P4-P9 (`specjedi-plan` through `specjedi-converge`) remain open,
+    tracked in `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
+  - TODO(GROUNDING_PASS): the three shipped pipeline skills
+    (`specjedi-constitution`, `specjedi-specify`, `specjedi-clarify`)
+    predate Principle XX; they avoid fabrication by construction
+    (structured docs from user input, not factual claims about the
+    world) but haven't been explicitly re-reviewed against XX's
+    checklist yet. `specjedi-find-skills` already grounds every claim in
+    a real, checked install-count/source signal — closest thing to a
+    reference implementation of Principle XX today.
 -->
 
 # Spec Jedi Constitution
@@ -834,4 +818,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.14.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.14.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

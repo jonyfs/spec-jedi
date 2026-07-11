@@ -6,9 +6,9 @@ description: "Task list for the specjedi-* SDD pipeline (Feature 001)"
 
 **Input**: `specs/001-specjedi-pipeline/{spec.md, plan.md, research.md}`
 
-**Scope this cycle**: P1 (`specjedi-constitution`) and P2 (`specjedi-specify`)
-are executed now. P3-P9 are listed as a scoped backlog for a future cycle,
-per spec.md's Assumptions.
+**Scope**: P1 (`specjedi-constitution`), P2 (`specjedi-specify`), and P3
+(`specjedi-clarify`) have shipped, each its own cycle per spec.md's
+Assumptions (prove the pattern incrementally). P4-P9 remain a scoped backlog.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -18,7 +18,7 @@ per spec.md's Assumptions.
 
 ## Phase 1: Setup
 
-- [ ] T001 Confirm `specs/001-specjedi-pipeline/{research.md,spec.md,plan.md}`
+- [x] T001 Confirm `specs/001-specjedi-pipeline/{research.md,spec.md,plan.md}`
   are complete and internally consistent (manual re-read; no automated tool
   needed for docs-only artifacts)
 
@@ -29,30 +29,30 @@ an end-user project) and get a fully valid, versioned `constitution.md`.
 
 **Independent test**: See spec.md User Story 1 → Independent Test.
 
-- [ ] T010 [P] [US1] Create `.claude/skills/specjedi-constitution/SKILL.md`
+- [x] T010 [P] [US1] Create `.claude/skills/specjedi-constitution/SKILL.md`
   per plan.md's Design section: persona, task, format (constitution.md
   structure), chain-of-thought for version-bump classification, `--auto`
   flag behavior (FR-008), read-compatibility with an existing
   `speckit-*`-produced constitution (FR-009), guided next-step suggestion
   (Principle XIV) at the end of every run, proactive gap-check hook into
   `specjedi-find-skills` (Principle XVII).
-- [ ] T011 [US1] Add at least one full input→output worked example to
+- [x] T011 [US1] Add at least one full input→output worked example to
   `specjedi-constitution/SKILL.md` (Skill Authoring Standard requirement) —
   a plain-language principle description in, a resolved constitution excerpt
   + Sync Impact Report out.
-- [ ] T012 [US1] Add Always/Never guardrails and verifiable success criteria
+- [x] T012 [US1] Add Always/Never guardrails and verifiable success criteria
   sections to `specjedi-constitution/SKILL.md` per the Skill Authoring
   Standard checklist.
-- [ ] T013 [US1] Run `scripts/validate.sh` (and `scripts/validate.ps1` if on
+- [x] T013 [US1] Run `scripts/validate.sh` (and `scripts/validate.ps1` if on
   Windows) — structural lint must pass (frontmatter `name`/`description`,
   starts with `---`).
-- [ ] T014 [US1] Manual scenario dry run (Principle IX, "scenario-based dry
+- [x] T014 [US1] Manual scenario dry run (Principle IX, "scenario-based dry
   run confirming the skill's elicitation questions and branching logic
   behave as documented"): exercise `specjedi-constitution` against a fresh
   throwaway directory with no existing constitution, and again against a
   directory with an existing `speckit-*`-produced one (FR-009 path); confirm
   both produce a valid result and the guided next-step suggestion appears.
-- [ ] T015 [US1] Review `specjedi-constitution/SKILL.md` against the full
+- [x] T015 [US1] Review `specjedi-constitution/SKILL.md` against the full
   Skill Authoring Standard checklist in `references/skill-authoring-standard.md`
   before marking this story done.
 
@@ -66,49 +66,81 @@ on its own even if nothing else in this feature lands.
 
 **Independent test**: See spec.md User Story 2 → Independent Test.
 
-- [ ] T020 [P] [US2] Create `.claude/skills/specjedi-specify/SKILL.md` per
+- [x] T020 [P] [US2] Create `.claude/skills/specjedi-specify/SKILL.md` per
   plan.md's Design section: persona (welcomes rough ideas), task, format
   (spec.md structure — prioritized user stories, functional requirements,
   success criteria), chain-of-thought for prioritization judgment, explicit
   `NEEDS CLARIFICATION` marking discipline (Principle V), `--auto` behavior,
   guided next-step suggestion, proactive gap-check hook.
-- [ ] T021 [US2] Add at least one full input→output worked example — a
+- [x] T021 [US2] Add at least one full input→output worked example — a
   one-sentence idea in, a `spec.md` excerpt with a P1 user story +
   acceptance scenarios out.
-- [ ] T022 [US2] Add Always/Never guardrails and verifiable success criteria
+- [x] T022 [US2] Add Always/Never guardrails and verifiable success criteria
   per the Skill Authoring Standard checklist.
-- [ ] T023 [US2] Run `scripts/validate.sh`/`scripts/validate.ps1` — must pass.
-- [ ] T024 [US2] Manual scenario dry run: exercise `specjedi-specify` against
+- [x] T023 [US2] Run `scripts/validate.sh`/`scripts/validate.ps1` — must pass.
+- [x] T024 [US2] Manual scenario dry run: exercise `specjedi-specify` against
   a deliberately vague one-line idea and confirm it produces
   `NEEDS CLARIFICATION` markers rather than silently assuming; exercise
   against a clear idea and confirm no spurious markers appear.
-- [ ] T025 [US2] Review against the Skill Authoring Standard checklist.
+- [x] T025 [US2] Review against the Skill Authoring Standard checklist.
 
 **Checkpoint**: `specjedi-constitution` + `specjedi-specify` together prove
 the full pattern P3-P9 will follow.
 
-## Phase 4: Documentation & Ship
+## Phase 4: User Story 3 — `specjedi-clarify` (P3)
 
-- [ ] T030 Update README.md's "What you get today" table: move
-  `specjedi-constitution` and `specjedi-specify` from the roadmap table to
-  the "ships today" table; update the roadmap Mermaid diagram's framing if
-  it now undersells what's live (Principle XVI: diagram must stay accurate).
-- [ ] T031 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
-  note to reflect P1+P2 shipped, P3-P9 remaining (governance bookkeeping,
-  consistent with how every prior amendment in this project tracked its own
-  follow-up TODOs).
+**Goal**: A user can run `specjedi-clarify` on a spec with `NEEDS
+CLARIFICATION` markers (or vaguer ambiguity) and get asked up to 5
+targeted, calibrated questions whose answers are written back into
+`spec.md`.
+
+**Independent test**: See spec.md User Story 3 → Independent Test.
+
+- [x] T040 [P] [US3] Create `.claude/skills/specjedi-clarify/SKILL.md` per
+  plan.md's Design section: persona, task, `## Clarifications` format,
+  chain-of-thought for impact×uncertainty question prioritization,
+  Audience Calibration (Principle XIX — Recommended option + reasoning on
+  every multiple-choice question), `--auto` behavior, proactive gap-check
+  hook into `specjedi-find-skills`.
+- [x] T041 [US3] Add a full input → output worked example: a spec with 2-3
+  ambiguities in, the resulting `## Clarifications` block + integrated
+  spec edits out.
+- [x] T042 [US3] Add Always/Never guardrails and verifiable success
+  criteria per the Skill Authoring Standard checklist.
+- [x] T043 [US3] Run `scripts/validate.sh` (and `.ps1` on Windows) —
+  structural lint must pass.
+- [x] T044 [US3] Manual scenario dry run: exercise against a spec with
+  genuine ambiguity (confirm targeted, prioritized questions with a
+  Recommended option each) and against a spec with no ambiguity (confirm
+  it reports nothing needs clarifying rather than inventing questions).
+- [x] T045 [US3] Review against the Skill Authoring Standard checklist.
+
+**Checkpoint**: `specjedi-constitution` → `specjedi-specify` →
+`specjedi-clarify` is now a complete, usable slice through spec.md
+readiness.
+
+## Phase 5: Documentation & Ship
+
+- [x] T030 Update README.md's "What you get today" table: move
+  `specjedi-clarify` from the roadmap table to the "ships today" table;
+  update the roadmap Mermaid diagram's live/roadmap markers to match
+  (Principle XVI: diagram must stay accurate). Review the badge row per
+  Principle X's pre-PR requirement (added v1.14.0) — confirm the dynamic
+  Constitution badge still resolves and decide if a new badge is warranted.
+- [x] T031 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
+  note to reflect P1+P2+P3 shipped, P4-P9 remaining (governance
+  bookkeeping, consistent with how every prior amendment in this project
+  tracked its own follow-up TODOs).
 - [ ] T032 Validate full repo (`scripts/validate.sh`), commit on this
-  feature branch, open PR, verify `ci-gate` green across all four OS legs,
-  confirm auto-merge (Principle X).
+  feature branch, open PR, verify `ci-gate` green across all five required
+  jobs (four OS lint legs + `owner-gate`), confirm auto-merge (Principle X).
 
-## Backlog (future cycle): User Stories 3-9
+## Backlog (future cycle): User Stories 4-9
 
 Not detailed task-by-task this cycle (spec.md Assumptions: prove the pattern
-with P1+P2 first). Each becomes its own `[Story]`-tagged task group later,
-following the exact shape of Phase 2/3 above:
+incrementally rather than all at once). Each becomes its own `[Story]`-tagged
+task group later, following the exact shape of Phase 2-4 above:
 
-- **US3** `specjedi-clarify` (P3) — ambiguity resolution, mirrors
-  `speckit-clarify`'s mechanics, reframed per Principle XIX.
 - **US4** `specjedi-plan` (P4) — applies PRP's "golden rule" (research.md #8)
   explicitly in its own design.
 - **US5** `specjedi-tasks` (P5).
@@ -124,6 +156,9 @@ following the exact shape of Phase 2/3 above:
 - Phase 2 (US1) has no dependency on Phase 3 (US2) — both are `[P]`-eligible
   relative to each other structurally, but are being executed sequentially
   in this cycle for reviewability (one skill's worth of diff at a time).
-- Phase 4 depends on Phases 2 and 3 both being complete.
-- US3-US9 (backlog) depend on US1 (a constitution must exist) and, for
-  US4 onward, on US2 (a spec must exist) and US3 (clarified).
+- Phase 4 (US3) depends on Phase 3 (US2) — clarify operates on a spec that
+  must already exist.
+- Phase 5 (Documentation & Ship) depends on Phases 2, 3, and 4 all being
+  complete.
+- US4-US9 (backlog) depend on US1 (a constitution must exist), US2 (a spec
+  must exist), and — for anything past planning — US3 (clarified).

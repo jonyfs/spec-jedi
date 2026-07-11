@@ -7,8 +7,9 @@ description: "Task list for the specjedi-* SDD pipeline (Feature 001)"
 **Input**: `specs/001-specjedi-pipeline/{spec.md, plan.md, research.md}`
 
 **Scope**: P1 (`specjedi-constitution`), P2 (`specjedi-specify`), and P3
-(`specjedi-clarify`) have shipped, each its own cycle per spec.md's
-Assumptions (prove the pattern incrementally). P4-P9 remain a scoped backlog.
+(`specjedi-clarify`) have shipped; P4 (`specjedi-plan`) is this cycle's
+target, each its own cycle per spec.md's Assumptions (prove the pattern
+incrementally). P5-P9 remain a scoped backlog.
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -119,30 +120,59 @@ targeted, calibrated questions whose answers are written back into
 `specjedi-clarify` is now a complete, usable slice through spec.md
 readiness.
 
-## Phase 5: Documentation & Ship
+## Phase 5: User Story 4 — `specjedi-plan` (P4)
 
-- [x] T030 Update README.md's "What you get today" table: move
-  `specjedi-clarify` from the roadmap table to the "ships today" table;
+**Goal**: A user can run `specjedi-plan` against a clarified spec and get a
+`plan.md` (plus `research.md`/`data-model.md` as applicable) detailed
+enough that implementation never has to stop and search the codebase.
+
+**Independent test**: See spec.md User Story 4 → Independent Test.
+
+- [x] T050 [P] [US4] Create `.claude/skills/specjedi-plan/SKILL.md` per
+  plan.md's Design section: persona, task, `plan.md` format (Summary,
+  Technical Context, Constitution Check, Project Structure, Complexity
+  Tracking), the golden-rule codebase-scan step, chain-of-thought for
+  Constitution Check gate evaluation, audience calibration scoped to the
+  skill's narration (not the plan's own field content), `--auto`
+  behavior, proactive gap-check hook.
+- [x] T051 [US4] Add a full input → output worked example: a clarified
+  spec in, a `plan.md` excerpt (including a real Constitution Check gate
+  entry) out.
+- [x] T052 [US4] Add Always/Never guardrails and verifiable success
+  criteria per the Skill Authoring Standard checklist.
+- [x] T053 [US4] Run `scripts/validate.sh` (and `.ps1` on Windows) —
+  structural lint must pass.
+- [x] T054 [US4] Manual scenario dry run: exercise against a spec whose
+  plan would violate a constitution principle without justification and
+  confirm the skill either records it in Complexity Tracking with real
+  justification or simplifies the plan — never silently passes a gate
+  failure.
+- [x] T055 [US4] Review against the Skill Authoring Standard checklist.
+
+**Checkpoint**: `specjedi-constitution` → `specjedi-specify` →
+`specjedi-clarify` → `specjedi-plan` is now a complete, usable slice
+through technical planning.
+
+## Phase 6: Documentation & Ship
+
+- [x] T060 Update README.md's "What you get today" table: move
+  `specjedi-plan` from the roadmap table to the "ships today" table;
   update the roadmap Mermaid diagram's live/roadmap markers to match
-  (Principle XVI: diagram must stay accurate). Review the badge row per
-  Principle X's pre-PR requirement (added v1.14.0) — confirm the dynamic
-  Constitution badge still resolves and decide if a new badge is warranted.
-- [x] T031 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
-  note to reflect P1+P2+P3 shipped, P4-P9 remaining (governance
-  bookkeeping, consistent with how every prior amendment in this project
-  tracked its own follow-up TODOs).
-- [ ] T032 Validate full repo (`scripts/validate.sh`), commit on this
+  (Principle XVI). Review the badge row per Principle X's pre-PR
+  requirement — confirm the dynamic Constitution badge still resolves and
+  decide if a new badge is warranted.
+- [x] T061 Update `.specify/memory/constitution.md`'s TODO(SPECJEDI_PIPELINE)
+  note to reflect P1-P4 shipped, P5-P9 remaining.
+- [x] T062 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green across all five required
   jobs (four OS lint legs + `owner-gate`), confirm auto-merge (Principle X).
 
-## Backlog (future cycle): User Stories 4-9
+## Backlog (future cycle): User Stories 5-9
 
 Not detailed task-by-task this cycle (spec.md Assumptions: prove the pattern
 incrementally rather than all at once). Each becomes its own `[Story]`-tagged
-task group later, following the exact shape of Phase 2-4 above:
+task group later, following the exact shape of Phase 2-5 above:
 
-- **US4** `specjedi-plan` (P4) — applies PRP's "golden rule" (research.md #8)
-  explicitly in its own design.
 - **US5** `specjedi-tasks` (P5).
 - **US6** `specjedi-implement` (P6) — must enforce Principle X (branch+PR
   only, never direct-to-main) as a hard behavioral constraint, not just
@@ -158,7 +188,9 @@ task group later, following the exact shape of Phase 2-4 above:
   in this cycle for reviewability (one skill's worth of diff at a time).
 - Phase 4 (US3) depends on Phase 3 (US2) — clarify operates on a spec that
   must already exist.
-- Phase 5 (Documentation & Ship) depends on Phases 2, 3, and 4 all being
+- Phase 5 (US4) depends on Phase 4 (US3) — plan operates on a clarified
+  spec, per the pipeline's own intended order (spec → clarify → plan).
+- Phase 6 (Documentation & Ship) depends on Phases 2 through 5 all being
   complete.
-- US4-US9 (backlog) depend on US1 (a constitution must exist), US2 (a spec
-  must exist), and — for anything past planning — US3 (clarified).
+- US5-US9 (backlog) depend on US1 (a constitution must exist), US2 (a spec
+  must exist), US3 (clarified), and US4 (planned) as each stage requires.

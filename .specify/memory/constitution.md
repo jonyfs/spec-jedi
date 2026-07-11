@@ -1,9 +1,9 @@
 <!--
 Sync Impact Report
-- Version change: 1.14.0 → 1.14.1
+- Version change: 1.14.1 → 1.14.2
 - Modified principles: none (governance bookkeeping only — no MUST-level
   rule changed; TODO(SPECJEDI_PIPELINE) progress reflected, consistent
-  with how the v1.10.1 amendment tracked P1+P2)
+  with how v1.10.1 and v1.14.1 tracked prior pipeline stages)
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
@@ -13,18 +13,18 @@ Sync Impact Report
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): **P3 (`specjedi-clarify`) shipped**
-    (feature 001-specjedi-pipeline, 2026-07-11) — P1+P2+P3 now live;
-    P4-P9 (`specjedi-plan` through `specjedi-converge`) remain open,
+  - TODO(SPECJEDI_PIPELINE): **P4 (`specjedi-plan`) shipped**
+    (feature 001-specjedi-pipeline, 2026-07-11) — P1+P2+P3+P4 now live;
+    P5-P9 (`specjedi-tasks` through `specjedi-converge`) remain open,
     tracked in `specs/001-specjedi-pipeline/tasks.md`'s Backlog section.
-  - TODO(GROUNDING_PASS): the three shipped pipeline skills
-    (`specjedi-constitution`, `specjedi-specify`, `specjedi-clarify`)
-    predate Principle XX; they avoid fabrication by construction
-    (structured docs from user input, not factual claims about the
-    world) but haven't been explicitly re-reviewed against XX's
-    checklist yet. `specjedi-find-skills` already grounds every claim in
-    a real, checked install-count/source signal — closest thing to a
-    reference implementation of Principle XX today.
+  - TODO(GROUNDING_PASS): the four shipped pipeline skills
+    (`specjedi-constitution`, `specjedi-specify`, `specjedi-clarify`,
+    `specjedi-plan`) predate Principle XX; they avoid fabrication by
+    construction (structured docs from user input, not factual claims
+    about the world) but haven't been explicitly re-reviewed against
+    XX's checklist yet. `specjedi-find-skills` already grounds every
+    claim in a real, checked install-count/source signal — closest thing
+    to a reference implementation of Principle XX today.
 -->
 
 # Spec Jedi Constitution
@@ -818,4 +818,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.14.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.14.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

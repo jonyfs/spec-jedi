@@ -88,13 +88,17 @@ no single feature for "the whole project," so this file lives at
       Bengali) as a deliberate, maintainer-decided scope, replacing the
       open-ended "ten most-spoken" phrase entirely — no re-derivation
       needed.
-- [ ] CHK007 - Principle VI requires plans to "state the explicit reason"
+- [x] CHK007 - Principle VI requires plans to "state the explicit reason"
       when test-first delivery doesn't apply — do shipped feature `plan.md`
       files actually cite this reasoning explicitly (e.g., "Principle VI
       exemption: pure documentation, no executable logic"), or do they only
       implicitly satisfy it via a "scenario-based dry run" Testing line with
       no explicit exemption statement? [Clarity, Consistency, Constitution
-      §VI]
+      §VI] — **Resolved**: all 12 prior feature plans (001-012) that were
+      missing the explicit citation now state it in their own Testing
+      line ("Principle VI exemption — this feature's deliverable is
+      `SKILL.md` prompt content..."); feature 013 already had it (the
+      original fix that surfaced this systemic gap).
 
 ## Requirement Consistency
 
@@ -131,12 +135,17 @@ no single feature for "the whole project," so this file lives at
 
 ## Acceptance Criteria Quality
 
-- [ ] CHK012 - Principle IX's validation battery requirement is phrased as
+- [x] CHK012 - Principle IX's validation battery requirement is phrased as
       a MUST with a growth trigger — is there a measurable, checkable
       criterion for "the moment any skill produces unit-testable logic"
       (e.g., a specific file pattern, a specific skill capability), or is
       the trigger itself a subjective judgment call with no objective test?
-      [Measurability, Constitution §IX]
+      [Measurability, Constitution §IX] — **Resolved**: the CHK004 fix
+      (`scripts/validate.sh`/`.ps1`'s battery-growth-trigger check) made
+      this criterion concrete and checkable — test-pattern files, language
+      runtime manifests, web UI markers — rather than a subjective
+      judgment call. This item's checkbox was missed when CHK004 shipped;
+      corrected now.
 - [ ] CHK013 - Principle II requires every `research.md` to "name at least
       one capability the resulting design offers that no researched
       competitor has" — is there a way to verify this claim beyond trusting
@@ -146,7 +155,7 @@ no single feature for "the whole project," so this file lives at
 
 ## Non-Functional Requirements
 
-- [ ] CHK014 - Principle III requires the compatibility matrix to be
+- [x] CHK014 - Principle III requires the compatibility matrix to be
       "re-verified whenever a new major release of this project ships" —
       since the project has never yet cut a release (v1.0.0 or any tag),
       is it clear whether "major release" refers to the constitution's own
@@ -154,7 +163,10 @@ no single feature for "the whole project," so this file lives at
       Principle XI defines separately? The two versioning lines are
       explicitly distinct per Principle XI's own text, but this specific
       cross-reference doesn't disambiguate which one triggers
-      re-verification. [Clarity, Ambiguity, Constitution §III vs. §XI]
+      re-verification. [Clarity, Ambiguity, Constitution §III vs. §XI] —
+      **Resolved**: Principle III's text now explicitly says "MAJOR
+      product release" and names Principle XI's release line directly,
+      not the constitution's own version number.
 - [ ] CHK015 - Principle XX requires "hallucination resistance" — grounding
       factual claims in "a cited source (a fetched doc, a file actually
       read, a command actually run)" — is this requirement itself
@@ -171,7 +183,7 @@ no single feature for "the whole project," so this file lives at
       Principle XIII requires (Linux/macOS/Windows native PowerShell), or
       only implicitly assumed to generalize from the one environment it was
       dry-run tested in? [Assumption, Constitution §XIII, specs/012-specjedi-tokencheck/plan.md]
-- [ ] CHK017 - The Development Workflow section's pipeline step
+- [x] CHK017 - The Development Workflow section's pipeline step
       "localization pass for any user-facing docs (Principle I)" is listed
       as a required stage for every feature shipment — has any shipped
       feature (001-012) actually performed this step, given zero localized
@@ -179,11 +191,24 @@ no single feature for "the whole project," so this file lives at
       been uniformly skipped pending the maintainer's translation-approach
       decision, is that exemption stated anywhere per-feature, or only
       implied by the standing open TODO? [Assumption, Consistency,
-      Constitution "Development Workflow" §I]
+      Constitution "Development Workflow" §I] — **Answered**: no feature
+      (001-013) performed a per-feature localization pass; `TODO(LOCALIZATION)`
+      is now closed, but localization shipped as one whole-project effort
+      covering README/CONTRIBUTING at once, not per-feature as the
+      Development Workflow's own step ordering implies. This is a real,
+      still-open process-consistency gap worth naming for future
+      features: the Development Workflow section's step list isn't
+      currently amended to say localization is a whole-project cadence
+      rather than a per-feature one, so a literal reading still implies
+      each future feature should localize on its own. Left as an honest,
+      named inconsistency rather than silently resolved — a future
+      amendment could reword this step, but that's a real principle-text
+      change requiring its own maintainer decision, not a same-session
+      fix.
 
 ## Ambiguities & Conflicts
 
-- [ ] CHK018 - Principle XVII's proactive-invocation contract states every
+- [x] CHK018 - Principle XVII's proactive-invocation contract states every
       future `specjedi-*` skill "MUST honor" self-invoking
       `specjedi-find-skills` when it hits a domain gap — is there a
       systematic check (beyond ad hoc manual verification, as done for
@@ -191,15 +216,30 @@ no single feature for "the whole project," so this file lives at
       `specjedi-onboard`) confirming which of the 22 shipped skills
       actually carry this self-invoke instruction versus which merely
       mention `specjedi-find-skills` as a next-step suggestion (a weaker,
-      non-proactive form)? [Ambiguity, Coverage, Constitution §XVII]
-- [ ] CHK019 - Is there a documented resolution for what happens if
+      non-proactive form)? [Ambiguity, Coverage, Constitution §XVII] —
+      **Resolved**: ran a real systematic grep audit across all 22
+      shipped `specjedi-*` skills (excluding `specjedi-find-skills`
+      itself). 20 of 22 carry the self-invoke contract with an explicit
+      Principle XVII citation; the 2 that don't
+      (`specjedi-release`, `specjedi-tokencheck`) each already have a
+      documented, reasoned exemption in their own `plan.md` ("Proactive
+      gap-check: not typically applicable"). Clean result — first grep
+      pass had a false-negative bug (missed line-wrapped citations),
+      corrected before concluding.
+- [x] CHK019 - Is there a documented resolution for what happens if
       `TODO(LOCALIZATION)`'s eventual maintainer decision conflicts with
       Principle I's specific "ten most-spoken languages" mandate (e.g., if
       the maintainer decides on a smaller or different language set for
       practical reasons) — would that require a constitution amendment
       first, or is Principle I's own text already flexible enough to
       absorb a narrower initial rollout? [Conflict, Ambiguity, Constitution
-      §I]
+      §I] — **Resolved by construction**: the maintainer's actual decision
+      (six languages, later extended to ten) was implemented via two real
+      constitution amendments (v1.17.0, v1.18.0) that rewrote Principle
+      I's own text to match the decision directly, rather than leaving a
+      conflict to resolve — confirming a constitution amendment is
+      exactly the right mechanism for this class of change, as this item
+      speculated.
 
 ## Notes
 

@@ -27,7 +27,7 @@ lookup (`which`/`where`, or `graphify-out/` as a secondary signal for
 explicitly confirms an install, at which point installation is handled by
 each tool's own documented installer, not by this skill's own logic.
 
-**Testing**: Scenario-based dry run against real repo state — this
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content, not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is a scenario-based dry run against real repo state — this
 repository already has `graphify` integrated (`graphify-out/` exists) but
 `rtk` availability varies by environment, giving a real mixed-state test
 case for SC-001/SC-003 without needing a fabricated scenario.

@@ -23,7 +23,7 @@ shipped, unchanged by this feature) — no new dependencies.
 **Storage**: Reads git tag/log history via the existing scripts; writes
 nothing itself.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` plus a
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` plus a
 scenario-based dry run — run the actual script against this repository's
 real (tagless) history as the test corpus.
 

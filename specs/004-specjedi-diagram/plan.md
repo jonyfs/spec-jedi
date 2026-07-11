@@ -26,7 +26,7 @@ back to an explicit unverified-caveat path per Principle III when absent.
 default (inline response only) — optionally writes into a target file at a
 user-confirmed location (FR-006).
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` plus a
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` plus a
 scenario-based dry run per the Skill Authoring Standard's review checklist.
 
 **Target Platform**: Claude Code today (Principle III), same per-harness

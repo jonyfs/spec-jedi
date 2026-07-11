@@ -23,7 +23,7 @@ matching every other `specjedi-*` skill in this repo.
 `README.md` (skill table, Quickstart) and `CHANGELOG.md` (creating it if
 missing) — only after explicit confirmation of the drafted change.
 
-**Testing**: Structural lint via `scripts/validate.sh`/`.ps1` plus a
+**Testing**: Principle VI exemption — this feature's deliverable is `SKILL.md` prompt content (and any supporting script), not application code with unit-testable business logic, so test-first (TDD) execution does not apply; verification is structural lint via `scripts/validate.sh`/`.ps1` plus a
 scenario-based dry run per the Skill Authoring Standard's review checklist
 — run against this project's own README/skill-roadmap.md update pattern,
 already exercised by hand seven times this session, as the real reference

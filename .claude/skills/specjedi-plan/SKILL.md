@@ -96,6 +96,14 @@ src/export/user-data.ts   — new, follows Result<T, ExportError> pattern
 tests/export/user-data.test.ts — new, covers zero-records case explicitly
 ```
 
+**Agent's chat narration** (Principle XII voice — the plan.md content above
+stays plain; this is what the skill actually says around it):
+> 🛠️ This is where the fun begins. Gate's green, conventions named, nothing
+> left to guess at mid-build.
+>
+> **Next step:**
+> - Run `specjedi-tasks` to break this into ordered work.
+
 **Not this**: "Technical Context: TBD, follow best practices" — nothing
 here tells an implementer what pattern to actually follow, which is
 exactly what the golden rule exists to prevent.

@@ -79,6 +79,16 @@ produce a valid CSV.
   passes.
 ```
 
+**Agent's chat narration** (Principle XII voice — the tasks.md content
+above stays plain; this is what the skill actually says around it):
+> ✅ Padawan to Knight, one ordered step at a time — a test before the
+> code that answers it, exactly the sequence discipline demands.
+>
+> **Next step:**
+> - Run `specjedi-implement` once ready.
+> - Or `specjedi-analyze` first, if this breakdown is worth a consistency
+>   check before building.
+
 **Not this**: "Task: implement the export feature" — no file path, no
 pattern reference, no test-first sequencing; not a task, a restatement of
 the requirement.

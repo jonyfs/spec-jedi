@@ -69,7 +69,12 @@ sitting unresolved elsewhere in the file.
 **Spec has:** `FR-003: System MUST authenticate users via [NEEDS
 CLARIFICATION: method not specified].`
 
-**Agent asks:**
+**Agent asks** (Principle XII voice — a real question posed to the user, not
+generated file content, so it carries flavor):
+> 🌀 Only a Sith deals in absolutes — and "authenticate users" without a
+> method is worse than absolute, it's undefined. One quick call and this
+> gap closes.
+>
 > **Recommended:** Option B — email/password with a hashed-and-salted store
 > is the simplest option that doesn't require standing up a third-party
 > identity provider, and fits a spec with no other auth infrastructure

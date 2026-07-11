@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.2 → 1.15.3
+- Version change: 1.15.3 → 1.15.4
 - Modified principles: none (governance/tooling debt closed — no MUST-level
   rule changed)
 - Added sections: none
@@ -8,7 +8,21 @@ Sync Impact Report
 - Templates requiring updates: none
 - Follow-up TODOs:
   - TODO(LICENSE_CONTRIBUTING): RESOLVED at v1.15.1.
-  - TODO(VOICE_PASS): still open from v1.4.0.
+  - TODO(VOICE_PASS): **RESOLVED**. Audited all 12 shipped skills for
+    Principle XII's actual voice requirement, not just the emoji-header
+    part — found `references/star-wars-lexicon.md` was comprehensive but
+    genuinely unused: zero skills, including the flagship
+    `specjedi-constitution`, had a single saga reference anywhere in their
+    body text; the voice existed only as a documented intention, not as
+    implemented behavior. Added a distinct "Agent's chat narration"
+    example to all 12 skills' worked Example sections, each explicitly
+    separated from the generated-artifact content it decorates (per the
+    exemption — spec.md/plan.md/tasks.md/constitution.md field content
+    stays plain), rotating across 11 different lexicon references spanning
+    OT, prequel, sequel, Clone Wars, Mandalorian, and Rogue One material —
+    no single quote repeated more than twice across the full set. Every
+    added line pairs the reference with a plain-language equivalent per
+    the translation-safety rule.
   - TODO(NEXT_STEP_PASS): RESOLVED at v1.15.2.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
@@ -828,4 +842,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.4 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -79,6 +79,17 @@ narration introducing the checklist or explaining why an item matters.
   assuming it's always well-formed? (spec.md FR-009)
 ```
 
+**Agent's chat narration** (Principle XII voice — the checklist content
+above stays plain; this is what the skill actually says around it):
+> ☑️ Like a lightsaber form — disciplined, specific to the fight in front
+> of you, not a generic stance borrowed from someone else's battle. Every
+> item here traces back to FR-009, nothing pasted in from a template.
+>
+> **Next step:**
+> - Revisit `specjedi-clarify` or `specjedi-plan` for anything this
+>   surfaces as unresolved.
+> - Otherwise proceed toward `specjedi-implement`.
+
 **Not this**: "CHK-001 Verify input validation is implemented" — no
 pointer to what this feature actually requires, indistinguishable from a
 checklist for any other project.

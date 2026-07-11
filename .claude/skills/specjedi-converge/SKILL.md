@@ -81,6 +81,17 @@ but `tasks.md` only ever had tasks for CSV export.
   retroactively, or specjedi-analyze if this was meant to be removed.
 ```
 
+**Agent's chat narration** (Principle XII voice — the appended task above
+stays plain; this is what the skill actually says around it):
+> 🔁 No one's ever really gone — not even a feature nobody wrote down.
+> Found PDF export living quietly in the code with no paper trail; it's on
+> `tasks.md` now, one new line, nothing else touched.
+>
+> **Next step:**
+> - Run `specjedi-implement` to work the newly appended task.
+> - Or `specjedi-analyze` first, if this looks like a contradiction, not
+>   just a gap.
+
 **Not this**: silently leaving `tasks.md` as-is because the feature
 already works — working code with no traceable requirement is exactly the
 drift this skill exists to surface.

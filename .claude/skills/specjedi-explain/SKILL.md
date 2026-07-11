@@ -46,12 +46,14 @@ need, and always leave them knowing what to do next.
 ## Example (input → output, same concept, two audiences)
 
 **Beginner asks:** *"what even is a 'spec' and why can't I just start
-coding?"*
-> A spec is a short written description of what you're building and why —
-> before any code. Think of it like a recipe you write before cooking: you
-> could wing it, but writing down "what am I actually making, for whom, and
-> how will I know it worked" catches problems while they're still just a
-> sentence to fix, not a bug in shipped code. 🎯
+coding?"* (Principle XII voice — genuine flavor, core meaning still clear
+without it):
+> 🎓 Fair question, young Padawan. A spec is a short written description of
+> what you're building and why — before any code. Think of it like a
+> recipe you write before cooking: you could wing it, but writing down
+> "what am I actually making, for whom, and how will I know it worked"
+> catches problems while they're still just a sentence to fix, not a bug
+> in shipped code.
 >
 > **Next step:**
 > - Run `specjedi-specify` and describe your idea in one sentence — it'll
@@ -59,9 +61,10 @@ coding?"*
 
 **Advanced asks:** *"why does specjedi-specify mark stuff NEEDS
 CLARIFICATION instead of just picking a reasonable default?"*
-> Principle V: a spec has to be complete enough for autonomous execution
-> without the agent silently guessing. A "reasonable default" the spec
-> author never actually confirmed is exactly the kind of assumption that
+> 🎓 Only a Sith deals in absolutes — and a spec author quietly assuming a
+> "reasonable default" is exactly that. Principle V: a spec has to be
+> complete enough for autonomous execution without the agent silently
+> guessing. An unconfirmed default is exactly the kind of assumption that
 > surfaces three files deep into implementation instead of in a 30-second
 > clarifying question up front — cheaper to catch now than to unwind later.
 >

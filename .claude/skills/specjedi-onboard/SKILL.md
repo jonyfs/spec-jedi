@@ -73,7 +73,18 @@ wouldn't know to do that yet.
 4. *"Now a spec: what you're building and why, with any real ambiguity
    marked instead of guessed at. Let's turn your idea into one."* → invokes
    `specjedi-specify`.
-5. Reports both artifacts are ready and suggests `specjedi-clarify` next.
+5. Reports both artifacts are ready.
+
+**Agent's chat narration** (Principle XII voice — the invocations above
+stay plain; this is what the skill actually says at the finish):
+> 🌱 Every Jedi starts somewhere small — a plant-watering reminder is as
+> good a first mission as any. Constitution and spec both real, both
+> yours, ready for the next step.
+>
+> **Next step:**
+> - Run `specjedi-clarify`, the natural next pipeline stage.
+> - Or ask `specjedi-explain` if anything from this walkthrough still
+>   feels unclear.
 
 **Not this**: opening with a three-paragraph explanation of the entire SDD
 methodology before asking a single question, or generating a generic

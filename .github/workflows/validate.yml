@@ -179,6 +179,15 @@ jobs:
             exit 1
           }
           Write-Host "OK: 'where' correctly reported a nonexistent tool as absent"
+          # pwsh's GitHub Actions step wrapper treats the script's trailing
+          # $LASTEXITCODE (from the last native command) as the step's own
+          # exit code, even when the script's own control flow never called
+          # exit. The "absent" case above deliberately leaves $LASTEXITCODE
+          # nonzero (that's what "correctly reported absent" means) - an
+          # explicit exit 0 here is required so that expected result isn't
+          # misread as step failure. Caught by this job's own first live
+          # CI run (PR #58).
+          exit 0
 
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one

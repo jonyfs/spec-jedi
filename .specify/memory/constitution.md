@@ -1,9 +1,10 @@
 <!--
 Sync Impact Report
-- Version change: 1.14.6 → 1.14.7
-- Modified principles: none (governance bookkeeping only — no MUST-level
-  rule changed; TODO(SPECJEDI_PIPELINE) now fully resolved and closed)
-- Added sections: none
+- Version change: 1.14.7 → 1.15.0
+- Modified principles: none (no MUST-level rule changed)
+- Added sections: none — MINOR bump reflects a new shipped skill
+  (`specjedi-onboard`) extending the product surface beyond the core P1-P9
+  pipeline for the first time, not a new constitutional rule
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs:
@@ -12,21 +13,19 @@ Sync Impact Report
   - TODO(NEXT_STEP_PASS): still open from v1.8.0.
   - TODO(INSTALLER): still open from v1.8.0.
   - TODO(PROMPT_ENG_PASS): still open from v1.9.0.
-  - TODO(SPECJEDI_PIPELINE): **RESOLVED — full pipeline shipped**
-    (feature 001-specjedi-pipeline, 2026-07-11). All 9 stages
-    (`specjedi-constitution`, `-specify`, `-clarify`, `-plan`, `-tasks`,
-    `-implement`, `-analyze`, `-checklist`, `-converge`) are live,
-    installable, and documented in README.md's "What you get today".
-    `specjedi-converge` closes the loop: its only write is appending
-    detected codebase drift to `tasks.md` as new tasks — it never edits
-    `spec.md`, `plan.md`, the constitution, or any existing `tasks.md`
-    line. This TODO is closed; future pipeline work (new stages, deeper
-    per-skill hardening) gets its own tracked item rather than reopening
-    this one.
-  - TODO(GROUNDING_PASS): all nine shipped pipeline skills predate
-    Principle XX; they avoid fabrication by construction but haven't
-    been explicitly re-reviewed against XX's checklist yet.
-    `specjedi-find-skills` remains the closest reference implementation.
+  - TODO(GROUNDING_PASS): all ten shipped skills (nine pipeline stages plus
+    `specjedi-onboard`) predate Principle XX; they avoid fabrication by
+    construction but haven't been explicitly re-reviewed against XX's
+    checklist yet. `specjedi-find-skills` remains the closest reference
+    implementation.
+  - `specjedi-onboard` shipped (feature 002-specjedi-onboard, 2026-07-11)
+    — the first `references/skill-roadmap.md` backlog item built beyond
+    the core pipeline (TODO(SPECJEDI_PIPELINE), resolved at v1.14.7).
+    Orchestrates `specjedi-constitution`/`specjedi-specify` rather than
+    duplicating their logic; its own first-run detection gate is Step 1 of
+    every run, before any narration or other file access, mirroring how
+    `specjedi-implement`'s branch-check gate (v1.14.4) made a behavioral
+    constraint structural rather than just documented.
 -->
 
 # Spec Jedi Constitution
@@ -820,4 +819,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.14.7 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.15.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

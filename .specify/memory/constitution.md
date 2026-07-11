@@ -1,5 +1,31 @@
 <!--
 Sync Impact Report
+- Version change: 1.17.0 → 1.18.0
+- Modified principles: Principle I (English-Source, Globally-Localized
+  Documentation) — MINOR bump: a substantive expansion of a MUST-level
+  requirement's scope, not a clarification. The maintainer directed
+  extending localization from the six languages named at v1.17.0 (zh, hi,
+  es, fr, ar, bn) to the full ten most-spoken languages after English:
+  Portuguese (`pt`, Brazilian variant, explicitly named by the
+  maintainer), Russian (`ru`), Urdu (`ur`), and Indonesian (`id`) added.
+  `docs/i18n/{pt,ru,ur,id}/{README.md,CONTRIBUTING.md}` shipped this
+  cycle — AI-assisted translations, English canonical, each carrying the
+  same `i18n-sync` marker convention established at v1.17.0. All ten
+  translations' language-switcher banners updated to cross-link the full
+  set; the six original translations were also found missing the
+  `Languages` badge entirely (added when the badge was introduced to the
+  English README after they were first written) — fixed as part of this
+  amendment.
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none new. `checklists/project-completeness.md` CHK002
+  (a full 20-harness capability matrix) remains the one substantial open
+  item from that checklist.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.16.7 → 1.17.0
 - Modified principles: Principle I (English-Source, Globally-Localized
   Documentation) — MINOR bump: this is a substantive change to a MUST-level
@@ -284,16 +310,19 @@ derivative, not parallel originals.
 The top-level project documentation (README, CONTRIBUTING, installation
 guides, and getting-started material) MUST additionally be maintained in
 Mandarin Chinese (`zh`), Hindi (`hi`), Spanish (`es`), French (`fr`), Arabic
-(`ar`), and Bengali (`bn`) — the six most-spoken languages in the world after
-English, by total speakers, per the most recent authoritative linguistic
-survey at time of writing — so the project is approachable to the widest
-practical audience. This is a deliberate, maintainer-decided scope: the
-original "ten most-spoken languages" text left the actual list undefined,
-re-derivable differently each time it was read (`checklists/project-
-completeness.md` CHK006); six named languages, translated and shipped, is a
-concrete commitment the project can actually keep, rather than an
-open-ended target nothing ever satisfies. Growing beyond six is a future
-option, not a standing obligation.
+(`ar`), Bengali (`bn`), Portuguese (`pt`, Brazilian variant), Russian (`ru`),
+Urdu (`ur`), and Indonesian (`id`) — the ten most-spoken languages in the
+world after English, by total speakers, per the most recent authoritative
+linguistic survey at time of writing — so the project is approachable to the
+widest practical audience. This is a deliberate, maintainer-decided scope,
+naming the actual ten languages concretely rather than leaving the original
+"ten most-spoken" text open-ended and re-derivable differently each time it
+was read (`checklists/project-completeness.md` CHK006). The list started at
+six (`zh`, `hi`, `es`, `fr`, `ar`, `bn`, shipped first) and was deliberately
+extended to ten (`pt`, `ru`, `ur`, `id` added) once the maintainer confirmed
+the scope — each extension MUST follow the same discipline: real,
+maintainer-decided languages actually translated and shipped, never an
+open-ended target nothing ever satisfies.
 
 Localized docs live under `docs/i18n/<lang>/`, each carrying an
 `i18n-sync: source=<file>@<commit>` marker recording the English commit it
@@ -306,7 +335,7 @@ actual latest commit, rather than letting it be silently served as current.
 conflicts in the material that skills actually execute from, while broad
 localization of onboarding docs maximizes real-world adoption — the
 project's explicit goal is reaching "thousands of people" globally. Naming
-six specific languages instead of a re-derivable "ten most-spoken" makes the
+ten specific languages instead of a re-derivable "ten most-spoken" makes the
 mandate checkable and keepable; an automated sync check makes "kept in
 sync" a real, continuously-verified mechanism instead of an unenforced
 aspiration.
@@ -1074,4 +1103,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.17.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.18.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

@@ -3,8 +3,10 @@
 > 🌐 **Read this in another language:** [中文](docs/i18n/zh/README.md) ·
 > [हिन्दी](docs/i18n/hi/README.md) · [Español](docs/i18n/es/README.md) ·
 > [Français](docs/i18n/fr/README.md) · [العربية](docs/i18n/ar/README.md) ·
-> [বাংলা](docs/i18n/bn/README.md) — AI-assisted translations; English is
-> canonical ([Principle I](.specify/memory/constitution.md)).
+> [বাংলা](docs/i18n/bn/README.md) · [Português](docs/i18n/pt/README.md) ·
+> [Русский](docs/i18n/ru/README.md) · [اردو](docs/i18n/ur/README.md) ·
+> [Bahasa Indonesia](docs/i18n/id/README.md) — AI-assisted translations;
+> English is canonical ([Principle I](.specify/memory/constitution.md)).
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -13,7 +15,7 @@
 [![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#what-you-get-today)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
-[![Languages](https://img.shields.io/badge/docs-7_languages-informational)](docs/i18n/)
+[![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
 [![PRs](https://img.shields.io/badge/pull_requests-auto--merged_on_green-brightgreen)](.specify/memory/constitution.md)
 [![Last commit](https://img.shields.io/github/last-commit/jonyfs/spec-jedi)](https://github.com/jonyfs/spec-jedi/commits/main)
 

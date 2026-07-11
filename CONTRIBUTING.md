@@ -3,8 +3,11 @@
 > 🌐 **Read this in another language:** [中文](docs/i18n/zh/CONTRIBUTING.md) ·
 > [हिन्दी](docs/i18n/hi/CONTRIBUTING.md) · [Español](docs/i18n/es/CONTRIBUTING.md) ·
 > [Français](docs/i18n/fr/CONTRIBUTING.md) · [العربية](docs/i18n/ar/CONTRIBUTING.md) ·
-> [বাংলা](docs/i18n/bn/CONTRIBUTING.md) — AI-assisted translations; English is
-> canonical ([Principle I](.specify/memory/constitution.md)).
+> [বাংলা](docs/i18n/bn/CONTRIBUTING.md) · [Português](docs/i18n/pt/CONTRIBUTING.md) ·
+> [Русский](docs/i18n/ru/CONTRIBUTING.md) · [اردو](docs/i18n/ur/CONTRIBUTING.md) ·
+> [Bahasa Indonesia](docs/i18n/id/CONTRIBUTING.md) — AI-assisted
+> translations; English is canonical
+> ([Principle I](.specify/memory/constitution.md)).
 
 Spec Jedi is built under its own [constitution](.specify/memory/constitution.md) —
 a versioned set of non-negotiable rules that every change, including this one, is

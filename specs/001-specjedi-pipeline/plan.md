@@ -324,3 +324,44 @@ directories needed.
   or framework this environment has no skill for), self-invoke
   `specjedi-find-skills` before attempting that task rather than guessing
   at unfamiliar conventions.
+
+## Design: `specjedi-analyze`
+
+- **Persona**: a strictly read-only auditor — finds the gap, names it,
+  never quietly patches it. Fixing belongs to a human decision or a later
+  run of the skill that owns the artifact in question, not to this one.
+- **Task**: given `spec.md`, `plan.md`, `tasks.md`, and
+  `.specify/memory/constitution.md` (when present), surface
+  inconsistencies, duplications, ambiguity, and underspecified items
+  across the three artifacts — before or after implementation — without
+  modifying any of them.
+- **Strictly non-destructive**: the single hardest constraint on this
+  skill. It produces a report; it never edits `spec.md`, `plan.md`, or
+  `tasks.md` itself, even when the fix is obvious. A `specjedi-analyze`
+  run that "helpfully" patches a file it was only supposed to inspect has
+  failed its one job.
+- **Format**: a structured findings table — Category (Ambiguity /
+  Inconsistency / Duplication / Underspecification / Constitution
+  Violation), Location (file + section), Severity (CRITICAL / HIGH /
+  MEDIUM / LOW), and Recommendation (what a human or a follow-up skill run
+  should do about it — never applied automatically).
+- **Constitution authority**: any conflict with
+  `.specify/memory/constitution.md` is automatically CRITICAL — the
+  constitution is never diluted or reinterpreted to make a conflict go
+  away; the spec/plan/tasks are what must change, in a separate run of the
+  skill that owns that artifact.
+- **Chain-of-thought**: cross-referencing is a judgment call — for each
+  requirement in `spec.md`, trace whether `plan.md` addresses it and
+  whether `tasks.md` has a task that implements it; a requirement present
+  in one artifact and silently absent from a downstream one is exactly the
+  class of gap this skill exists to catch, reasoned through explicitly
+  rather than pattern-matched superficially.
+- **Audience calibration**: the findings table itself stays precise
+  (Principle V/XII exemption, same as every other pipeline artifact);
+  calibration applies to the skill's own narration introducing/summarizing
+  the report.
+- **Proactive gap-check**: if an inconsistency clearly requires domain
+  expertise this project's skill set doesn't cover to resolve (e.g., a
+  security-specific gap needing a dedicated security skill), name that
+  explicitly in the Recommendation column rather than guessing, and
+  self-invoke `specjedi-find-skills` if nothing installed matches.

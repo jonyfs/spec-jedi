@@ -49,6 +49,7 @@ about what's actually shipped versus what's still roadmap.
 | `specjedi-plan` 🛠️ | Turns a clarified spec into a technical `plan.md` — scans the actual codebase for existing conventions first, so implementation never has to stop and search for one |
 | `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
 | `specjedi-implement` 🔨 | Executes `tasks.md` in dependency order, test-first where the plan calls for code — commits only through a feature branch and pull request, never directly to `main` |
+| `specjedi-analyze` 🔍 | Strictly read-only cross-check of `spec.md`/`plan.md`/`tasks.md` (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
@@ -62,7 +63,6 @@ voice, and the rest — already baked into the skills shipped above):
 
 | Planned skill | Will replace |
 |---|---|
-| `specjedi-analyze` 🔍 | `speckit-analyze` |
 | `specjedi-checklist` | `speckit-checklist` |
 | `specjedi-converge` | `speckit-converge` |
 
@@ -244,7 +244,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Eight product skills ship today ([What you get today](#what-you-get-today)).
+Nine product skills ship today ([What you get today](#what-you-get-today)).
 Never used an SDD tool before? Start with step 0.
 
 0. **Not sure what any of this means?** Just ask — "what is a spec and why
@@ -276,7 +276,11 @@ Never used an SDD tool before? Start with step 0.
    dependency order, test-first where the plan calls for code — every
    commit lands on a feature branch and a pull request, never directly on
    `main`.
-8. Stuck on something outside this set? Just describe it — "how do I do X,"
+8. Want a safety net? `specjedi-analyze` 🔍 cross-checks `spec.md`,
+   `plan.md`, and `tasks.md` (and your constitution) for gaps, duplication,
+   or contradictions — strictly read-only, runnable any time, never edits
+   a file.
+9. Stuck on something outside this set? Just describe it — "how do I do X,"
    "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
    automatically, searches the open agent-skills ecosystem, and suggests a
    specific, verified skill. Never installs anything without asking first
@@ -286,13 +290,13 @@ Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
 list to figure it out. Today that chain runs `specjedi-constitution` →
 `specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks`
-→ `specjedi-implement`; the step after that (`specjedi-analyze`) is still
-roadmap.
+→ `specjedi-implement` → `specjedi-analyze`; the step after that
+(`specjedi-checklist`/`specjedi-converge`) is still roadmap.
 
-### The vision (roadmap — analyze onward isn't real yet)
+### The vision (roadmap — checklist/converge aren't real yet)
 
-Constitution, specify, clarify, plan, tasks, and implement (steps 2-7
-above) are live. The rest of the pipeline below is shown now so
+Constitution, specify, clarify, plan, tasks, implement, and analyze (steps
+2-8 above) are live. The rest of the pipeline below is shown now so
 contributors and early adopters know what "done" looks like, not because
 you can run all of it yet:
 
@@ -304,7 +308,7 @@ flowchart TD
     C -->|no| D["✅ specjedi-plan 🛠️<br/>spec.md → plan.md"]
     D --> E["✅ specjedi-tasks ✅<br/>plan.md → tasks.md"]
     E --> F["✅ specjedi-implement 🔨<br/>execute tasks.md"]
-    F --> G{"📋 specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
+    F --> G{"✅ specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
     G -->|gaps found| H["📋 specjedi-converge<br/>queue remaining work"] --> F
     G -->|clean| I(["🚀 shipped"])
     F -.->|need a checklist mid-flight| J["📋 specjedi-checklist"]

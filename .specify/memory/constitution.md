@@ -1,29 +1,34 @@
 <!--
 Sync Impact Report
-- Version change: 1.15.13 → 1.15.14
-- Modified principles: none (no MUST-level rule changed) — PATCH bump,
-  governance bookkeeping only
+- Version change: 1.15.14 → 1.16.0
+- Modified principles: none (no MUST-level rule changed) — MINOR bump:
+  the first second-wave skill beyond the original roadmap backlog, and
+  the first feature in this repository's history built via literal
+  `/speckit-*` invocation rather than hand-authored matching artifacts —
+  a genuine process milestone, consistent with how the first roadmap-wave
+  skill (`specjedi-onboard`) also got a MINOR bump for the same reason
 - Added sections: none
 - Removed sections: none
 - Templates requiring updates: none
 - Follow-up TODOs: all six historical governance TODOs remain resolved
   (LICENSE_CONTRIBUTING v1.15.1, NEXT_STEP_PASS v1.15.2, GROUNDING_PASS
   v1.15.3, VOICE_PASS v1.15.4, PROMPT_ENG_PASS v1.15.5, INSTALLER v1.15.6).
-  `specjedi-migrate` through `specjedi-docs` shipped v1.15.7-v1.15.12; the
-  6-skill consistency audit landed at v1.15.13 (see prior history). This
-  amendment adds a new one, discovered while surveying for further work:
-  - TODO(LOCALIZATION): Principle I requires README, CONTRIBUTING, and
-    installation guides maintained in the ten most-spoken world
-    languages, kept in sync with the English source. Zero localized docs
-    exist as of this amendment — only `README.md` in English. This is a
-    genuine, non-negotiable constitutional gap, not a "nice to have"
-    roadmap item; flagged here rather than left silently undiscovered.
-    Needs a maintainer decision on translation approach (which languages
-    first, machine-translation-with-review vs. community-contributed, how
-    drift-detection is enforced per Principle I's own "flag if one minor
-    release behind" requirement) before execution — quality and cultural
-    accuracy matter for a doc surface meant to reach "thousands of
-    people," so this isn't a blind-autonomous-execution task.
+  TODO(LOCALIZATION) opened at v1.15.14, still open — needs a maintainer
+  decision on translation approach before execution (see that entry in
+  prior history for detail). This amendment adds a new item:
+  - `specjedi-new-skill` shipped (feature 009-specjedi-new-skill,
+    2026-07-11) — the first second-wave addition beyond the original
+    seven-item `references/skill-roadmap.md` backlog (features 002-008).
+    Scaffolds a new `specjedi-*` skill's file structure — placeholders
+    only, never invented content (the same overclaiming discipline
+    Principle XX already establishes, applied here to a meta-tool's own
+    output) — following the Skill Authoring Standard and baking
+    Principle II's research checklist directly into the scaffolded
+    `research.md`. Built by literally invoking `/speckit-specify` →
+    `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` →
+    `/speckit-implement`, per the maintainer's explicit instruction to use
+    the vendored tooling directly rather than hand-authoring artifacts
+    matching its shape — the first feature to do so this thoroughly.
 -->
 
 # Spec Jedi Constitution
@@ -817,4 +822,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.15.14 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.16.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

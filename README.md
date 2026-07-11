@@ -64,6 +64,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
 | `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
 | `specjedi-docs` 📚 | Drafts a README skill-table row, Quickstart step, and `CHANGELOG.md` entry from a shipped feature's spec/plan — grounded in actual content, always shown for confirmation before writing |
+| `specjedi-new-skill` 🌟 | Scaffolds a new `specjedi-*` skill's file structure — placeholders only, never invented content — following this project's own Skill Authoring Standard and baking in the Principle II research checklist |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -251,7 +252,7 @@ install path, but this hasn't been verified or documented per-harness yet.
 
 ## Quickstart
 
-Eighteen product skills ship today ([What you get today](#what-you-get-today))
+Nineteen product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 
@@ -332,6 +333,10 @@ before? Start with step 0.
     the README row, Quickstart step, and `CHANGELOG.md` entry for you —
     grounded in your actual spec/plan, always shown for confirmation
     before anything is written.
+18. Extending Spec Jedi itself with a new skill? `specjedi-new-skill` 🌟
+    scaffolds the file structure — `specs/`, `SKILL.md` skeleton, every
+    section a labeled placeholder — never invented research findings or
+    behavior on your behalf.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this

@@ -142,6 +142,7 @@ codepoint.
 | Automation / CI bot acting | 🤖 | Droid doing the work |
 | Session sign-off | 🌌 | "May the Spec be with you" |
 | Celebration / milestone | 🎉 🏆 | Victory, not overuse — save for real milestones |
+| Skill-gap scan / discovery | 🔭 | `specjedi-find-skills` scouting for a missing capability |
 
 ## Situation → reference quick map (rotate, don't always pick the same row)
 

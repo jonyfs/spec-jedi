@@ -1,112 +1,150 @@
 ---
 name: specjedi-find-skills
-description: Finds and suggests installable agent skills when a user's request touches a domain the current skill set doesn't cover well — triggers on "how do I do X", "is there a skill for X", "find a skill that...", or general requests to extend capabilities. Use both while developing Spec Jedi itself and inside any project that has installed the Spec Jedi skill pack.
-compatibility: Requires Node.js (for `npx skills`) and network access to skills.sh / GitHub. No API key needed.
+description: Spec Jedi's own skill-gap scout — recognizes when a task needs expertise the installed skill set doesn't have, and finds one specific, vetted skill to close the gap. Triggers two ways — reactively, when the user asks "how do I do X" / "is there a skill for X" / "can you do X"; and proactively, self-invoked by any specjedi-* skill mid-task the moment it notices the installed set can't fully cover what it's doing. Never installs anything without asking first.
+compatibility: Primary discovery path uses Node.js (`npx skills`) and network access to skills.sh/GitHub. No API key required. Degrades gracefully — see "When npx isn't available."
 ---
 
-# 🔍 Spec Jedi Find Skills
+# 🔭 Spec Jedi Find Skills
 
-*Adapted from [vercel-labs/skills](https://github.com/vercel-labs/skills)'
-`find-skills` (MIT License, per its `package.json`), renamed and reframed under
-Constitution [Principle XV](../../../.specify/memory/constitution.md) (naming) and
-[Principle XVII](../../../.specify/memory/constitution.md) (skill discovery &
-gap-filling).*
+**Persona**: while this skill runs, act as a scout, not a salesperson — skeptical
+of unverified sources, generous with the user's time, allergic to presenting a
+pile of unranked maybes. One good answer beats five.
 
-**Persona**: while running this skill, act as a skills-ecosystem curator —
-skeptical of unverified sources, generous with the user's time. Your job is to
-find the one good answer, not list every possible match.
+*Originally seeded from [vercel-labs/skills](https://github.com/vercel-labs/skills)'
+`find-skills` (MIT License, per its `package.json`). What ships here has been
+rebuilt to be broader, proactive, and harness-aware rather than a straight port —
+see Constitution [Principle XVII](../../../.specify/memory/constitution.md) for
+the exact bar it's held to.*
 
-## When to use this skill
+## Context: two ways this triggers
 
-- The user asks "how do I do X" and X sounds like a common, already-solved task.
-- The user says "find a skill for X" or "is there a skill for X."
-- The user asks "can you do X" and X is a specialized capability outside what's
-  currently installed.
-- The user is stuck on a domain this skill set doesn't cover — testing frameworks,
-  a specific cloud provider, a design system, etc.
-- **Never** trigger this for something already well-handled by an installed
-  `specjedi-*` skill — check the installed skill list first.
+**Reactive** — the obvious case: the user says something like "how do I do X," "is
+there a skill for X," "can you help me with X," or otherwise asks for a capability
+that sounds like it should already exist as a skill.
 
-## What it does
+**Proactive** — the improvement over the skill this was seeded from: any
+`specjedi-*` skill, mid-task, that notices its own installed skill set doesn't
+fully cover what it's being asked to do MUST pause and run this skill's gap-check
+before improvising past the gap silently. Noticing is the job — the user shouldn't
+have to ask.
 
-Searches the open agent-skills ecosystem (via the `npx skills` CLI and the
-[skills.sh](https://skills.sh/) leaderboard) for a skill that fills the gap, then
-presents it — it does not install anything without explicit confirmation.
+## Task
+
+Find the single best-verified skill that closes the gap, or say plainly that none
+exists. Never do both of: quietly work around the gap AND fail to mention a
+better-suited skill might exist.
 
 ## Step-by-step
 
-1. **Identify the gap.** Extract: the domain (e.g., React, testing, deployment),
-   the specific task, and whether this is common enough that a skill likely exists.
-2. **Check the leaderboard first.** Look at [skills.sh](https://skills.sh/) for an
-   established skill before running a search — it ranks by install count, so it
-   surfaces battle-tested options first. Known strong sources: `vercel-labs/agent-skills`
-   (React, Next.js, web design), `anthropics/skills` (frontend design, document
-   processing).
+1. **Name the gap.** Domain, specific task, and — for the proactive trigger —
+   which `specjedi-*` skill hit the wall and on what step.
+2. **Check the leaderboard first.** [skills.sh](https://skills.sh/) ranks by
+   installs — a fast, high-signal first stop before running a search. Known
+   strong sources: `vercel-labs/agent-skills` (React, Next.js, web),
+   `anthropics/skills` (frontend design, document processing).
 3. **Search if the leaderboard doesn't cover it:**
    ```bash
    npx skills find [query] [--owner <owner>]
    ```
-   Example: user asks "can you help me with PR reviews?" → `npx skills find pr review`
-4. **Verify before recommending — do not suggest a skill on search results alone.**
-   Reason through this explicitly before presenting anything (this is a judgment
-   call, not a lookup — think it through rather than pattern-matching the first
-   result):
-   - Install count: prefer 1K+; treat anything under 100 with skepticism.
-   - Source reputation: official/well-known owners (`vercel-labs`, `anthropics`,
-     `microsoft`) outrank unknown authors.
-   - GitHub stars on the source repo: under 100 stars, flag it as unverified when
-     you present it, don't hide the caveat.
-   - Weigh the three signals together — a 5K-install skill from an unknown author
-     still needs the star-count sanity check; a 200-install skill from
-     `anthropics` may still be worth surfacing with a caveat. State which way you
-     weighed it, don't just present a verdict.
-5. **Present the option(s)** — name, what it does, install count + source, the
-   install command, and a skills.sh link. Multiple candidates: rank by the
-   Step 4 criteria, present the top 1-2, not a long list.
-6. **Install only on explicit confirmation** (Constitution Principle VIII's
-   suggest-then-confirm pattern — proactively surfacing an option is autonomous;
-   running the install is not):
-   ```bash
-   npx skills add <owner/repo@skill> -g -y
-   ```
+4. **Match the discovery mechanism to the actual harness.** `npx skills` assumes
+   an npm-capable environment; if the user's harness (Constitution Principle III's
+   compatibility matrix) has its own native marketplace or extension mechanism,
+   check there too, or instead — don't force an npm-centric answer onto a harness
+   that doesn't use one.
+5. **Weigh before recommending — this is judgment, not a lookup.** Reason through
+   it, don't pattern-match the first result:
+   - Install count: 1K+ is comfortable; under 100 needs real justification to
+     still recommend.
+   - Source: `vercel-labs`, `anthropics`, `microsoft`, and similarly established
+     sources outrank unknown authors, all else equal.
+   - GitHub stars on the source repo: under 100, say so explicitly — don't hide
+     the caveat.
+   - These signals trade off against each other. A mid-install skill from a top
+     source can beat a high-install skill from an unknown one. State which way
+     you weighed it; don't just present a verdict.
+6. **Present exactly one recommendation** — rarely two, never a list: name, what
+   it does, the verification signals from step 5, the install command, and a
+   skills.sh link.
+7. **Install only on explicit yes.** `npx skills add <owner/repo@skill> -g -y` —
+   never run this from a "sounds like yes" inference.
+8. **If nothing verifiable exists, log the gap instead of pretending it's fine.**
+   If the host project has a `.specify/memory/` directory, append a dated,
+   one-line entry to `.specify/memory/skill-gaps.md` (create it if missing)
+   noting the domain and what was searched. A gap that keeps recurring across
+   sessions is a signal Spec Jedi itself should eventually cover it (Constitution
+   Principle II) — this file is how that signal survives past one conversation.
 
-## Example (input → output)
+## Format
 
-**User asks:** "how do I make my React app faster? I don't know where to start."
+Every recommendation follows this shape — consistency here is what makes "one
+good answer" scannable instead of another wall of text:
 
-**Agent does:** checks skills.sh leaderboard first (covers React/Next.js per the
-Common Skill Categories table below) → verifies install count/source/stars →
+> 🔭 **\<skill name\>** — \<one-line description\>. \<install count\> installs,
+> \<source\>\<caveat if stars < 100 or installs < 1K\>. Install?
+> `npx skills add <owner/repo@skill>` (or the harness-native equivalent)
+> More: \<skills.sh link\>
+
+## Examples (input → output)
+
+**Reactive trigger**
+
+User: *"How do I make my React app faster? No idea where to start."*
+→ checks skills.sh (covers React per its leaderboard) → verifies signals →
 responds:
 
-> 🌱 Found something that might fill the gap: **react-best-practices** — React/
-> Next.js performance guidelines from Vercel Engineering (185K installs, official
-> source). Want me to install it?
->
+> 🔭 **react-best-practices** — React/Next.js performance guidelines from Vercel
+> Engineering. 185K installs, official source. Install?
 > `npx skills add vercel-labs/agent-skills@react-best-practices`
-> Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
+> More: https://skills.sh/vercel-labs/agent-skills/react-best-practices
 
-**Not this:** immediately outputting an install command with no verification step
-shown, or listing five unranked results and asking the user to pick.
+**Proactive trigger — the part the seed skill couldn't do**
+
+Mid-task, a future `specjedi-plan` is generating a technical plan; the spec calls
+for Kubernetes deployment, but nothing installed covers Kubernetes.
+→ `specjedi-plan` pauses, runs this skill's gap-check → search finds no
+install-count-verified match → the gap gets logged to
+`.specify/memory/skill-gaps.md` → surfaces inline in `specjedi-plan`'s own output:
+
+> 🔭 Heads up — this plan calls for Kubernetes deployment and nothing installed
+> covers it well. No verified skill found either (logged for later). Proceeding
+> with the plan on general knowledge; say the word if you'd rather pause and
+> source a K8s-specific skill first.
+
+**Not this**: a five-item unranked list, an install command with no verification
+step shown, or a proactive gap buried in a footnote instead of the triggering
+skill's actual response.
+
+## When npx isn't available
+
+If Node.js/`npx` genuinely isn't available, say so plainly, skip straight to
+whatever harness-native discovery exists (step 4), and if neither works, fall
+back to general knowledge — don't stall the user waiting on a tool that isn't
+there.
 
 ## When nothing is found
 
-Say so plainly, offer to help directly with general capabilities, and mention
-`npx skills init my-xyz-skill` if this looks like a recurring need worth turning
-into a proper skill. Don't pad the "nothing found" response — a short, honest
-answer beats an invented recommendation.
+Say so in one line, offer to help directly with general capabilities, and
+mention `npx skills init <name>` if this looks like a recurring need worth
+turning into a real skill. A short honest "nothing found" beats a padded one.
 
 ## Always / Never
 
-- **Always** verify install count + source before recommending (Step 4) — never
+- **Always** verify install count + source before recommending — never
   recommend from raw search output alone.
-- **Always** ask before installing — never run `npx skills add` without the user
-  explicitly saying yes to that specific skill.
-- **Never** claim a skill will solve the problem you haven't actually checked the
-  skill's description against — if uncertain, say so and let the user decide.
+- **Always** ask before installing — never run the install command without the
+  user saying yes to that specific skill.
+- **Always** surface a proactive gap the moment you notice it mid-task — never
+  quietly route around a coverage gap and let the user find out later.
+- **Never** claim a skill solves the problem without having actually checked its
+  description against the need.
 
 ## Verifiable success criteria
 
-- The presented install command is copy-pasteable and matches the exact
-  `owner/repo@skill` format `npx skills add` expects.
-- Every recommendation states its install count and source explicitly — a
-  recommendation missing either is incomplete, not just under-detailed.
+- Every recommendation includes install count, source, and a working
+  `owner/repo@skill` install command — missing any one makes it an incomplete
+  answer, not a shorter one.
+- A proactive gap surfaces inline in the triggering skill's own output, not as a
+  separate, easy-to-miss message.
+- A logged gap entry in `.specify/memory/skill-gaps.md` (when written) carries a
+  date and a one-line domain description — enough for a future session to
+  recognize a repeat.

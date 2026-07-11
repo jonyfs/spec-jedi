@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@a355195 lang=zh -->
+<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=zh -->
 > 🌐 本文档由 AI 辅助翻译。**英文原文为权威版本**（[Principle I](../../../.specify/memory/constitution.md)）；如有出入，以英文为准。查看其他语言：[English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md)
 
 # 为 Spec Jedi 做贡献

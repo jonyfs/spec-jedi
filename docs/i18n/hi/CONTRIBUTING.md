@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@a355195 lang=hi -->
+<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है** ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md)
 
 # Spec Jedi में योगदान देना

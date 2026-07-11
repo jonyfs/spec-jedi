@@ -77,6 +77,16 @@ producing one.
 | Underspecification | spec.md FR-012 → plan.md (absent) → tasks.md (absent) | HIGH | FR-012 has no corresponding design in plan.md and no task in tasks.md. Re-run specjedi-plan to add a checksum-manifest design before implementing, or explicitly mark FR-012 out-of-scope in spec.md if it was superseded. |
 ```
 
+**Agent's chat narration** (Principle XII voice — the table above stays
+plain; this is what the skill actually says around it):
+> 🔍 I have a bad feeling about this one — FR-012 promises a checksum, and
+> nothing downstream delivers it. One row, one real gap, table otherwise
+> clean.
+>
+> **Next step:**
+> - Run `specjedi-plan` to add the missing design.
+> - Or mark FR-012 out-of-scope in spec.md, if it was superseded.
+
 **Not this**: silently adding a checksum task to `tasks.md` because the
 gap is obvious — this skill reports, it never edits.
 

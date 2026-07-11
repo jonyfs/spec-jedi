@@ -96,6 +96,15 @@ task-file content.
 5. Re-checks `git branch --show-current` → still `feat/export-user-data`
    → commits, pushes, opens a PR describing "Completes T001-T002 (US1)."
 
+**Agent's chat narration** (Principle XII voice — commits/PRs above stay
+plain; this is what the skill actually says around them):
+> 🔨 This is the way. Branch first, test failing before it's fixed, PR
+> open — no shortcut through `main`, not once.
+>
+> **Next step:**
+> - Run `specjedi-analyze` once this slice is shipped, to catch any drift.
+> - Or `specjedi-checklist`, if a targeted review is warranted first.
+
 **Not this**: implementing directly on `main`, or marking T001 `[x]`
 because the test file exists without ever having run it.
 

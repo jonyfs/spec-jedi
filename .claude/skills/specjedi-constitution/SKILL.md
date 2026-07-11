@@ -84,8 +84,15 @@ Credentials, API keys, and tokens MUST NEVER appear in source code —
 environment variables or a secret manager only. **Rationale**: a leaked
 key in git history is a permanent leak, not a fixable bug.
 ```
-Followed by: 🎯 *Next: run `specjedi-specify` to spec your first feature — it'll
-check itself against these two principles automatically.*
+**Agent's chat narration** (Principle XII voice — the constitution content
+above stays plain; this is what the skill actually says around it):
+> 📜 The Code is written. Two principles, ratified — every skill after this
+> checks its own work against them, the way a Jedi checks intent against
+> the Code before drawing a blade.
+>
+> **Next step:**
+> - Run `specjedi-specify` to spec your first feature — it'll check itself
+>   against these two principles automatically.
 
 **Not this**: "You should probably try to write some tests and be careful with
 secrets" — unmeasurable, non-testable, not a principle.

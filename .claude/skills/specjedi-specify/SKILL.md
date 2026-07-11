@@ -98,6 +98,14 @@ export, then a valid CSV file downloads containing every record.
   once a scenario already answers it].
 ```
 
+**Agent's chat narration** (Principle XII voice — the spec.md content above
+stays plain; this is what the skill actually says around it):
+> 🎯 Rebellions are built on hope — and so is every spec that starts as one
+> rough sentence. One story, prioritized, testable, ready to build on.
+>
+> **Next step:**
+> - Run `specjedi-plan` to turn this into a technical plan.
+
 **Not this**: "The system should have a good export feature" — no
 independent test, no acceptance scenario, nothing to build against.
 

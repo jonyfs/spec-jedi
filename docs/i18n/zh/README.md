@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@81a2538 lang=zh -->
+<!-- i18n-sync: source=README.md@fa82c3d lang=zh -->
 > 🌐 本文档由 AI 辅助翻译。**英文原文为权威版本**（[Principle I](../../../.specify/memory/constitution.md)）；如有出入，以英文为准。查看其他语言：[English](../../../README.md) · [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md)
 
 # 🗡️ Spec Jedi

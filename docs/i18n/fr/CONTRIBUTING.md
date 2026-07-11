@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=fr -->
+<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=fr -->
 > 🌐 Ce document est une traduction assistée par IA. **L'anglais est la source canonique** ([Principle I](../../../.specify/memory/constitution.md)) ; en cas de divergence, l'anglais prévaut. Voir d'autres langues : [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # Contribuer à Spec Jedi

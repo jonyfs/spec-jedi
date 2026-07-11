@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@fa82c3d lang=ar -->
+<!-- i18n-sync: source=README.md@01f83f5 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر
 > المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال
 > وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى:

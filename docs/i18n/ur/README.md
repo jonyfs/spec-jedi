@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@fa82c3d lang=ur -->
+<!-- i18n-sync: source=README.md@01f83f5 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:

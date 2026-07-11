@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@fa82c3d lang=ar -->
+<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # المساهمة في Spec Jedi

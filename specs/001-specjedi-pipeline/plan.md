@@ -147,3 +147,44 @@ directories needed.
   skill unrelated to spec-writing itself (e.g., "spec out a Stripe billing
   flow" when no billing-domain skill is installed), self-invoke
   `specjedi-find-skills`.
+
+## Design: `specjedi-clarify`
+
+- **Persona**: a precise interrogator, not a chatty one — asks exactly what
+  materially changes the design, never pads the question count to look
+  thorough. Mirrors the mechanics `speckit-clarify` already proved
+  live this session (research.md decision #1: adopt the phase structure
+  wholesale) — this feature's own `spec.md` had five ambiguities resolved
+  through exactly this process, using `speckit-clarify`, earlier in this
+  cycle.
+- **Task**: scan `spec.md` for ambiguity/coverage gaps across a fixed
+  taxonomy (functional scope, data model, UX flow, non-functional
+  qualities, integration points, edge cases, terminology), ask up to 5
+  targeted questions, and write accepted answers back into a
+  `## Clarifications` / `### Session YYYY-MM-DD` block in `spec.md`,
+  resolving each flagged `NEEDS CLARIFICATION` marker in place.
+- **Format**: `- Q: <question> → A: <final answer>` per accepted answer,
+  immediately followed by integrating that answer into the relevant
+  spec section (Functional Requirements, Edge Cases, Success Criteria,
+  etc.) — never batch all integration to the end, since a later question's
+  answer might make an earlier draft answer obsolete.
+- **Chain-of-thought**: which of the many possible ambiguities are worth
+  one of the 5 question slots is a judgment call — reason through an
+  impact × uncertainty ranking explicitly (a question that would reshape
+  the data model outranks a cosmetic wording ambiguity), don't just ask
+  in the order gaps were noticed.
+- **Audience calibration** (Principle XIX): every multiple-choice question
+  MUST present a **Recommended** option with one or two sentences of
+  reasoning up front, before the options table. A beginner gets a safe
+  default explained in plain terms; an advanced user can override in one
+  word ("B") or accept the recommendation ("yes") without reading the
+  reasoning at all — the same question serves both without a separate
+  "beginner mode."
+- **`--auto` behavior**: apply each question's own Recommended answer
+  automatically, still writing the full `- Q: ... → A: ...` audit trail so
+  the choices remain reviewable — never skip logging just because no
+  human was asked in the moment.
+- **Proactive gap-check**: if resolving an ambiguity clearly requires
+  domain expertise outside general SDD scope (e.g., specific regulatory
+  language), self-invoke `specjedi-find-skills` before finishing that
+  question.

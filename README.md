@@ -47,6 +47,7 @@ about what's actually shipped versus what's still roadmap.
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 | `specjedi-clarify` 🌀 | Scans a spec for real ambiguity and asks up to 5 prioritized questions — each with a Recommended answer so a beginner gets guidance and an expert can reply in one word — before you plan against a guess |
 | `specjedi-plan` 🛠️ | Turns a clarified spec into a technical `plan.md` — scans the actual codebase for existing conventions first, so implementation never has to stop and search for one |
+| `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (onboarding, migration from spec-kit, diagrams,
@@ -60,7 +61,6 @@ voice, and the rest — already baked into the skills shipped above):
 
 | Planned skill | Will replace |
 |---|---|
-| `specjedi-tasks` ✅ | `speckit-tasks` |
 | `specjedi-implement` 🤖 | `speckit-implement` |
 | `specjedi-analyze` 🔍 | `speckit-analyze` |
 | `specjedi-checklist` | `speckit-checklist` |
@@ -268,7 +268,11 @@ Never used an SDD tool before? Start with step 0.
    for existing conventions first, then turns the clarified spec into a
    technical `plan.md` — so implementation never has to stop and search
    for a pattern that already exists elsewhere in your project.
-6. Stuck on something outside this set? Just describe it — "how do I do X,"
+6. Ready to break it into work? `specjedi-tasks` ✅ turns the plan into an
+   ordered, dependency-aware `tasks.md` grouped by user story — a failing
+   test task sequenced before its implementation task wherever the plan
+   calls for code.
+7. Stuck on something outside this set? Just describe it — "how do I do X,"
    "is there a skill for X" — and `specjedi-find-skills` 🔍 triggers
    automatically, searches the open agent-skills ecosystem, and suggests a
    specific, verified skill. Never installs anything without asking first
@@ -277,14 +281,14 @@ Never used an SDD tool before? Start with step 0.
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just ran
 should tell you what to run next — you shouldn't need to come back to this
 list to figure it out. Today that chain runs `specjedi-constitution` →
-`specjedi-specify` → `specjedi-clarify` → `specjedi-plan`; the step after
-that (`specjedi-tasks`) is still roadmap.
+`specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks`;
+the step after that (`specjedi-implement`) is still roadmap.
 
-### The vision (roadmap — tasks onward isn't real yet)
+### The vision (roadmap — implement onward isn't real yet)
 
-Constitution, specify, clarify, and plan (steps 2-5 above) are live. The
-rest of the pipeline below is shown now so contributors and early adopters
-know what "done" looks like, not because you can run all of it yet:
+Constitution, specify, clarify, plan, and tasks (steps 2-6 above) are live.
+The rest of the pipeline below is shown now so contributors and early
+adopters know what "done" looks like, not because you can run all of it yet:
 
 ```mermaid
 flowchart TD
@@ -292,7 +296,7 @@ flowchart TD
     B --> C{"✅ specjedi-clarify 🌀<br/>ambiguity to resolve?"}
     C -->|yes| C2["✅ resolve, encode answers into spec.md"] --> D
     C -->|no| D["✅ specjedi-plan 🛠️<br/>spec.md → plan.md"]
-    D --> E["📋 specjedi-tasks ✅<br/>plan.md → tasks.md"]
+    D --> E["✅ specjedi-tasks ✅<br/>plan.md → tasks.md"]
     E --> F["📋 specjedi-implement 🤖<br/>execute tasks.md"]
     F --> G{"📋 specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
     G -->|gaps found| H["📋 specjedi-converge<br/>queue remaining work"] --> F

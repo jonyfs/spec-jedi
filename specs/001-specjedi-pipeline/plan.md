@@ -226,3 +226,33 @@ directories needed.
   skill set doesn't have (e.g., planning a mobile app with no mobile-
   specific skill present), self-invoke `specjedi-find-skills` before the
   plan is considered complete.
+
+## Design: `specjedi-tasks`
+
+- **Persona**: an ordered decomposer — a task that leaves "what exactly do
+  I do" still open is an incomplete task, not a starting point.
+- **Task**: given `plan.md` (and `spec.md` for user story priorities),
+  produce `tasks.md`: dependency-ordered, grouped by user story so each
+  story is independently completable, with `[P]` marking genuinely
+  parallelizable work.
+- **Format**: mirrors `.specify/templates/tasks-template.md` — a Setup
+  phase, one phase per user story (Goal, Independent Test, numbered
+  tasks), a Dependencies section stating what blocks what.
+- **Continuity with the golden rule**: every task MUST reference the
+  specific file paths and conventions `plan.md` already named — inventing
+  a new path or pattern not grounded in the plan defeats the point of
+  front-loading that research in the first place.
+- **Chain-of-thought**: task granularity and `[P]` eligibility are
+  judgment calls — reason explicitly about genuine independence (different
+  files, no shared dependency) before marking anything parallelizable;
+  over-marking creates false confidence, under-marking wastes real
+  parallel opportunity.
+- **Test-first bias** (Principle VI): where the plan calls for code, the
+  task sequence puts a failing-test task before its implementation task,
+  not after — unless the plan explicitly states tests don't apply and why.
+- **Audience calibration**: task descriptions stay precise, same
+  Principle V/XII exemption as `plan.md`'s own content — calibration is
+  narration-only here too.
+- **Proactive gap-check**: same pattern as the other pipeline stages —
+  self-invoke `specjedi-find-skills` if a task clearly needs expertise
+  nothing installed covers.

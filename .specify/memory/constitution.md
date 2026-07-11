@@ -1,17 +1,16 @@
 <!--
 Sync Impact Report
-- Version change: 1.10.1 → 1.11.0
-- Modified principles: Principle II strengthened — competitive research
-  MUST end in genuine innovation, not just an adopt/adapt/reject synthesis
-  of what competitors already do (directly requested: "não é uma copia de
-  speckit... contribuir com novas features... além das encontradas")
-- Added sections:
-  - Core Principle XX (AI Discipline: Grounded, Efficient, Honest Output)
-    — bundles three explicitly requested pillars: best-practice AI usage
-    (cross-referencing Principle XIX), operating token-efficiently by
-    default (not just suggesting external tools per Principle VIII), and
-    actively resisting hallucination (never presenting an unverified guess
-    as fact)
+- Version change: 1.11.0 → 1.12.0
+- Modified principles: Principle X materially expanded — auto-merge on
+  checks-alone is now scoped to the repository owner's own PRs only;
+  any other contributor's PR MUST receive an explicit approving review
+  from the owner before it can merge, automated or not (directly
+  requested: "só irá aceitar automerge do owner... outros devem ter
+  seus pulls requests aprovados pelo owner"). Repository & CI
+  Configuration Prerequisites updated to match — the prior text
+  incorrectly stated approving reviews were optional for all automated
+  PRs; that was only ever true for the owner's own.
+- Added sections: none (amendment to existing Principle X)
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ✅ compatible as-is
@@ -262,12 +261,29 @@ identity (its own account or GitHub App installation) that never opens the
 PRs it reviews — never from reusing the token/identity that authored the
 change.
 
+**Checks-only auto-merge is a privilege of the repository owner's own PRs,
+not a blanket policy.** A PR opened by the repository owner MAY auto-merge
+on the validation battery alone (Principle IX), exactly as described above.
+A PR opened by anyone else MUST additionally receive an explicit approving
+review from the owner before it can merge — auto-merge or manual — even if
+`ci-gate` is fully green. Passing CI proves the change doesn't break
+anything measurable; it proves nothing about whether an outside
+contribution should be trusted with what it's actually trying to do, and
+that judgment call belongs to the owner, not to `ci-gate`. This is a
+distinct, real reviewer (the owner) reviewing someone else's PR — not the
+self-approval spoofing the paragraph above forbids.
+
 **Rationale**: Directly requested: every commit ships through a PR that the
 project validates and merges itself. The constraint against self-approval
 spoofing exists because the alternative is a known privilege-escalation
 bypass — this project aims to be professional and trustworthy for
 thousands of downstream users, so its own CI cannot rely on a technique
-security researchers flag as a vulnerability.
+security researchers flag as a vulnerability. The owner/non-owner split
+exists because a project inviting outside contributions (Principle I's
+explicit goal of reaching "thousands of people") needs a real human
+checkpoint on what those contributions actually do, not just whether they
+happen to pass automated checks — CI catches breakage, not bad intent or
+poor judgment.
 
 ### XI. Semantic-Versioned Releases with Proactive Cut Suggestions
 
@@ -717,9 +733,19 @@ a maintainer rather than silently assumed:
 - **Branch protection on `main`**: require the aggregating `ci-gate` status
   check (Principle X) to pass before merging — not individual sub-checks,
   so the required-checks list in GitHub never needs to change as the
-  battery grows. Required *approving reviews* are OPTIONAL for bot-authored
-  PRs specifically because GitHub cannot let a PR self-approve; gating on
-  status checks alone is the supported pattern for fully automated merges.
+  battery grows. This applies to every PR regardless of author.
+- **Owner-approval ruleset**: a GitHub repository ruleset (not classic
+  branch protection's `bypass_pull_request_allowances`, which is
+  org-repositories-only and rejects personal accounts) requiring 1
+  approving review on `main`, with a bypass actor of
+  `actor_type: "RepositoryRole"`, `actor_id: 5` (the "Repository admin"
+  role — verify this value against current GitHub docs before reusing, as
+  well-known actor IDs are not exhaustively documented and could change).
+  This lets the owner's own PRs merge on `ci-gate` alone while every other
+  contributor's PR waits on an explicit owner approval, implementing the
+  owner/non-owner split above. Configured via
+  `POST /repos/{owner}/{repo}/rulesets`, not the classic
+  `PUT .../branches/{branch}/protection` endpoint.
 - **Repository setting "Allow auto-merge"**: MUST be enabled so a PR can
   be marked `gh pr merge --auto` (or equivalent) immediately on open and
   complete automatically once checks go green.
@@ -765,4 +791,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.11.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.12.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

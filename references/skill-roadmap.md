@@ -84,11 +84,23 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   [specs/007-specjedi-security/](../specs/007-specjedi-security/) for the
   full research/spec/plan.
 
+- **`specjedi-docs`** 📚 (feature 008, shipped 2026-07-11) — drafts a
+  README skill-table row, a Quickstart step, and a `CHANGELOG.md` entry
+  from a shipped feature's spec/plan, grounded in actual content, always
+  shown for confirmation before writing. Scoped deliberately to this
+  project's own bounded doc surfaces rather than open-ended generation.
+  The seventh and final item in this backlog's original list — its own
+  worked example documents itself, and its own shipment populated this
+  repo's first `CHANGELOG.md`. See
+  [specs/008-specjedi-docs/](../specs/008-specjedi-docs/) for the full
+  research/spec/plan.
+
 ## Proposed, not yet built (prioritized by expected impact)
 
-1. **`specjedi-docs`** 📚 — generates end-user-facing documentation (README
-   sections, changelog entries) from a shipped spec/plan, kept in sync instead
-   of drifting from what actually got built.
+None currently — every item from this backlog's original list (features
+002-008) has shipped. New proposals get added here as they're identified,
+each still needing its own research pass per Principle II before it's
+built.
 
 ## Not proposed (deliberately)
 

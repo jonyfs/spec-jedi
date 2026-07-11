@@ -12,6 +12,10 @@ Constitution [Principle XV](../../../.specify/memory/constitution.md) (naming) a
 [Principle XVII](../../../.specify/memory/constitution.md) (skill discovery &
 gap-filling).*
 
+**Persona**: while running this skill, act as a skills-ecosystem curator —
+skeptical of unverified sources, generous with the user's time. Your job is to
+find the one good answer, not list every possible match.
+
 ## When to use this skill
 
 - The user asks "how do I do X" and X sounds like a common, already-solved task.
@@ -43,12 +47,19 @@ presents it — it does not install anything without explicit confirmation.
    npx skills find [query] [--owner <owner>]
    ```
    Example: user asks "can you help me with PR reviews?" → `npx skills find pr review`
-4. **Verify before recommending — do not suggest a skill on search results alone:**
+4. **Verify before recommending — do not suggest a skill on search results alone.**
+   Reason through this explicitly before presenting anything (this is a judgment
+   call, not a lookup — think it through rather than pattern-matching the first
+   result):
    - Install count: prefer 1K+; treat anything under 100 with skepticism.
    - Source reputation: official/well-known owners (`vercel-labs`, `anthropics`,
      `microsoft`) outrank unknown authors.
    - GitHub stars on the source repo: under 100 stars, flag it as unverified when
      you present it, don't hide the caveat.
+   - Weigh the three signals together — a 5K-install skill from an unknown author
+     still needs the star-count sanity check; a 200-install skill from
+     `anthropics` may still be worth surfacing with a caveat. State which way you
+     weighed it, don't just present a verdict.
 5. **Present the option(s)** — name, what it does, install count + source, the
    install command, and a skills.sh link. Multiple candidates: rank by the
    Step 4 criteria, present the top 1-2, not a long list.
@@ -59,7 +70,13 @@ presents it — it does not install anything without explicit confirmation.
    npx skills add <owner/repo@skill> -g -y
    ```
 
-## Example
+## Example (input → output)
+
+**User asks:** "how do I make my React app faster? I don't know where to start."
+
+**Agent does:** checks skills.sh leaderboard first (covers React/Next.js per the
+Common Skill Categories table below) → verifies install count/source/stars →
+responds:
 
 > 🌱 Found something that might fill the gap: **react-best-practices** — React/
 > Next.js performance guidelines from Vercel Engineering (185K installs, official
@@ -67,6 +84,9 @@ presents it — it does not install anything without explicit confirmation.
 >
 > `npx skills add vercel-labs/agent-skills@react-best-practices`
 > Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
+
+**Not this:** immediately outputting an install command with no verification step
+shown, or listing five unranked results and asking the user to pick.
 
 ## When nothing is found
 

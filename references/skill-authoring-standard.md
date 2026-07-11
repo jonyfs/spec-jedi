@@ -1,8 +1,13 @@
-# Skill Authoring Standard (Constitution Principle XIX)
+# Skill Authoring & Prompt Engineering Standard (Constitution Principle XIX)
 
 The quality bar every `specjedi-*` `SKILL.md` MUST meet. This is the expanded
 reference behind Principle XIX's summary — read this before writing or reviewing a
 Spec Jedi skill.
+
+A `SKILL.md` is not documentation *about* a prompt — it IS a prompt. It gets loaded
+into an LLM's context and directly shapes what the model does next. Everything below
+follows from that: structure first, then the prompt-engineering craft that makes the
+structure actually work.
 
 ## Required structure
 
@@ -46,6 +51,40 @@ Spec Jedi skill.
   always autonomous; *installing, configuring, or publishing* something requires
   confirmation first (see Principle VIII, Principle X, Principle XI).
 
+## Prompt Engineering Discipline
+
+Beyond structure, every skill's instructional content must apply core prompt
+engineering technique — the same discipline that separates a precise prompt from a
+vague one that produces vague or hallucinated output.
+
+- **Context**: what situation is the agent walking into? Stated in the
+  context/domain section, not left for the agent to infer from the task alone.
+- **Persona**: who is the agent acting as while running this skill? Not every
+  skill needs an explicit persona, but when tone/depth matters (a security review
+  reads differently than a brainstorm), name the role directly: "act as a
+  security reviewer auditing for OWASP Top 10," not just "review this code."
+- **Task**: one clear, unambiguous directive, stated early — not something the
+  reader has to reconstruct from three paragraphs of background.
+- **Format**: when output consistency matters, specify the exact shape —
+  table columns, required headings, a JSON schema, a file layout. "Respond
+  helpfully" is not a format; "respond with a Markdown table with columns Name,
+  Status, Next Step" is.
+- **Few-shot examples**: show at least one real input → desired-output pair, not
+  a description of what a good pair would look like. A described example still
+  leaves the model guessing at the actual shape; a shown one doesn't.
+- **Chain-of-thought for judgment calls**: when a skill asks the agent to
+  classify, prioritize, weigh tradeoffs, or resolve ambiguity — anything short of
+  a deterministic "do X then Y" — instruct the agent to reason through the
+  decision explicitly before answering. This is not about padding output with
+  visible thinking for its own sake; it's about catching a wrong assumption
+  before it becomes a wrong answer, the same reason Principle V requires specs to
+  surface ambiguity rather than let an agent guess silently.
+
+**Anti-pattern to avoid**: a skill that reads like a product spec written for a
+human audience — background, motivation, philosophy — without ever stating, in one
+clear place, "when triggered, do exactly this, in this format, reasoning about X
+before you answer." That's documentation. A skill needs to be a prompt.
+
 ## Review checklist
 
 Before a `specjedi-*` skill ships (Principle IX validation, at minimum):
@@ -60,10 +99,17 @@ Before a `specjedi-*` skill ships (Principle IX validation, at minimum):
 - [ ] Every "don't" has a paired "instead, do this"
 - [ ] Success criteria are checkable, not just asserted
 - [ ] Autonomous vs. confirm-first actions are stated explicitly
+- [ ] Persona stated explicitly where tone/depth matters
+- [ ] Core task is a single clear directive, not buried in background
+- [ ] Output format specified wherever consistency matters
+- [ ] At least one example shows a full input → output pair, not just a description
+- [ ] Judgment-call skills instruct the agent to reason before answering
 
 ## Prior art
 
 Synthesized from widely-used agent-skill practices (Anthropic's own skills
 guidance, Vercel's `agent-skills`/`skills` CLI conventions, and similar
-practitioner patterns) rather than invented from scratch, per Principle II's
+practitioner patterns) and established prompt-engineering fundamentals (context,
+task, format, few-shot examples, chain-of-thought reasoning, persona/role
+assignment) rather than invented from scratch, per Principle II's
 research-before-creation discipline.

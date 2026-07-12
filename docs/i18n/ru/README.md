@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@4a3486c lang=ru -->
+<!-- i18n-sync: source=README.md@52831c4 lang=ru -->
 > 🌐 Этот документ переведён с помощью ИИ. **Английский является
 > каноническим источником**
 > ([Principle I](../../../.specify/memory/constitution.md)); в случае

@@ -9,6 +9,25 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- Constitution Principle XXI (Session-Start Orientation & the Master
+  Yoda Greeting, v1.20.0, MINOR): policy for a three-part session-start
+  orientation (ASCII Spec Jedi banner, `specjedi-status`-derived project
+  summary, rotating Master Yoda greeting line). Precisely documents the
+  real Claude Code `SessionStart` hook mechanism (stdout becomes
+  `additionalContext`, not a direct terminal print — verified against
+  official docs before writing) and requires both a hook and a
+  `CLAUDE.md` render instruction, not a hook alone. Explicitly defers
+  the actual build to a Principle II-gated feature cycle, tracked as
+  `TODO(SESSION_START_HOOK)` / feature 015 — not built ad hoc under this
+  amendment.
+- `references/star-wars-lexicon.md` gained a dedicated Master Yoda
+  Persona section: speech patterns (inverted object-subject-verb
+  construction, terse aphorisms) and a starter rotation pool of lines,
+  scoped narrowly to the session-start greeting rather than general
+  end-user dialogue.
+
 ### Changed
 
 - Constitution Principle XVI renamed "Mermaid-First Process Documentation"

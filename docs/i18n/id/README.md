@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@4a3486c lang=id -->
+<!-- i18n-sync: source=README.md@52831c4 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:

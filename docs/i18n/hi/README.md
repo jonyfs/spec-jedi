@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@4a3486c lang=hi -->
+<!-- i18n-sync: source=README.md@52831c4 lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:

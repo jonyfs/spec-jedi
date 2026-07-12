@@ -1,5 +1,41 @@
 <!--
 Sync Impact Report
+- Version change: 1.18.2 → 1.18.3
+- Modified principles: none — PATCH bump for a `/speckit-constitution`
+  compliance audit ("verifique se tudo esperado foi implementado e está
+  conforme esperado") that found and fixed one real, concrete gap: no
+  principle text changed.
+  - `references/principle-traceability.md` had gone stale: five of its
+    rows (Principles I, VI, XVII, XX, and the Distribution & Ecosystem
+    Standards cross-cutting row) still read 🟡 Partial and cited
+    CHK002/007/011/015/018, all five of which the v1.18.2 PR (#58) had
+    already resolved — but that PR never updated this file, despite its
+    own stated Maintenance instruction to do so in the same PR. Corrected
+    all five rows to their actual current status; only Principle III
+    remains genuinely 🟡 Partial (19 of 20 harnesses still lack a built,
+    tested install path — real future work, not a documentation gap).
+    Strengthened the file's own Maintenance note to name this exact
+    failure mode explicitly, so a future checklist-closing PR is less
+    likely to repeat it.
+  - Also shipped in the same audit: feature 014
+    (`references/competitive-comparison.md`, an 11-row table comparing
+    Spec Jedi against spec-kit and the ten other Principle II-researched
+    tools, grounded entirely in `specs/001-specjedi-pipeline/research.md`
+    — no new competitor research performed), built via the literal
+    `speckit-specify` → `speckit-plan` → `speckit-tasks` →
+    `speckit-implement` pipeline per this project's established
+    discipline (PR #59).
+  - No other gap was found: `checklists/project-completeness.md` remains
+    19/19 resolved; no `TODO(...)` markers or placeholder tokens remain
+    unexplained in this document.
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.18.1 → 1.18.2
 - Modified principles: none — PATCH bump for mechanism/documentation
   additions closing the final five open items in
@@ -1198,4 +1234,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.18.2 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.18.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

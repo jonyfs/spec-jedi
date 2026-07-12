@@ -9,6 +9,23 @@ this file directly.
 
 ## Unreleased
 
+### Fixed
+
+- `references/principle-traceability.md` had gone stale: five rows
+  (Principles I, VI, XVII, XX, and the Distribution & Ecosystem Standards
+  cross-cutting row) still cited CHK002/007/011/015/018 as open gaps,
+  even though PR #58 had already resolved all five — that PR never
+  updated this file despite its own Maintenance instruction to do so.
+  Found via a `/speckit-constitution` compliance audit; corrected all
+  five rows, and strengthened the Maintenance note to name this exact
+  failure mode. Only Principle III remains genuinely 🟡 Partial (19 of 20
+  harnesses still lack a built, tested install path).
+- Localized `docs/i18n/<lang>/README.md` files (all 10 languages) had
+  fallen one commit behind English after feature 014's README edit — the
+  drift-check correctly flagged it (non-blocking WARN). Translated the
+  two new sentences into all 10 languages and updated each file's
+  `i18n-sync` marker to the current source commit.
+
 ### Added
 
 - `references/competitive-comparison.md` — an 11-row table comparing Spec

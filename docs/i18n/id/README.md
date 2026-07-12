@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@01f83f5 lang=id -->
+<!-- i18n-sync: source=README.md@402bb58 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -324,7 +324,13 @@ Jika harness Anda belum terdaftar sebagai didukung, file `SKILL.md`
 adalah Markdown biasa dengan frontmatter YAML — banyak harness yang
 mendukung instruksi/prompt kustom sudah dapat membacanya secara
 langsung bahkan tanpa jalur instalasi khusus, tetapi ini belum
-diverifikasi atau didokumentasikan per-harness.
+diverifikasi atau didokumentasikan per-harness. Lihat
+[`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
+untuk catatan kapabilitas per-harness berbasis riset literatur.
+
+Penasaran bagaimana Spec Jedi dibandingkan dengan spec-kit dan sepuluh
+alat SDD lain yang menjadi tolok ukurnya? Lihat
+[`references/competitive-comparison.md`](../../../references/competitive-comparison.md).
 
 ## Mulai cepat
 

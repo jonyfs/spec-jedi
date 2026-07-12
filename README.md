@@ -251,15 +251,18 @@ other value is reported as not-yet-supported rather than silently attempted
 
 Spec Jedi's constitution ([Principle III](.specify/memory/constitution.md)) commits
 this project to eventually supporting the twenty highest-usage LLM coding
-tools/harnesses in the market. Today, only the path above (Claude Code) has been
-built, tested, and documented end to end.
+tools/harnesses in the market. Today, two paths have been built, tested, and
+documented end to end: Claude Code (see steps above) and Codex CLI
+(`./scripts/install.sh --harness codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`,
+installing to `.agents/skills/` — verified against Codex CLI's own
+documented skill-discovery convention).
 
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Supported — see steps above |
 | Cursor | 📋 Planned — not yet installable |
 | GitHub Copilot (Chat/Workspace) | 📋 Planned — not yet installable |
-| Codex CLI (OpenAI) | 📋 Planned — not yet installable |
+| Codex CLI (OpenAI) | ✅ Supported — `./scripts/install.sh --harness codex-cli` (installs to `.agents/skills/`) |
 | Gemini CLI | 📋 Planned — not yet installable |
 | Antigravity (Google) | 📋 Planned — not yet installable |
 | Windsurf (Codeium) | 📋 Planned — not yet installable |

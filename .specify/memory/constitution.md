@@ -1,5 +1,49 @@
 <!--
 Sync Impact Report
+- Version change: 1.21.0 → 1.22.0
+- Modified principles: IV. Structured, Opinionated Elicitation (Ask, Don't
+  Assume) — MINOR bump, materially expanded guidance (no renaming, no
+  removal).
+  - Adds a project-wide clause (distinct from v1.21.0's `specjedi-onboard`-
+    specific paragraph, which stays as-is): whenever ANY `specjedi-*` skill
+    presents a genuine multiple-choice-style decision point, it MUST mark
+    one option as Recommended with a one-line reason, and wherever that
+    skill defines an `--auto` mode, `--auto` MUST auto-select the
+    Recommended option (while still recording the choice in whatever audit
+    trail already exists) — generalizing the pattern
+    `/superpowers:brainstorming` and this project's own `specjedi-clarify`
+    already demonstrated, to every skill going forward.
+  - Explicitly scoped to NOT force a fake multiple-choice structure onto
+    binary confirm/gate pauses, required-parameter asks, or
+    single-best-answer recommendations (`specjedi-find-skills` named as an
+    example already compliant in spirit without needing an artificial
+    menu) — avoiding the over-generalization trap of treating every skill
+    pause as the same shape of decision.
+  - Grounded in a real audit (not assumption) run before drafting this
+    amendment: all 23 `specjedi-*` skills already have an `--auto` mode
+    section, but a grep for lettered-option/multiple-choice patterns found
+    only 2 skills (`specjedi-clarify`, `specjedi-onboard`) with genuine
+    multi-option elicitation today — both already compliant. This means
+    the amendment codifies an existing, working pattern as a permanent
+    standard rather than requiring a retrofit across skills whose pauses
+    are a different shape of interaction (gates, single-recommendation
+    findings, required parameters) — a category error the amendment's own
+    scoping clause exists specifically to prevent.
+- Added sections: none (extends an existing principle, not a new one)
+- Removed sections: none
+- Templates requiring updates: none — elicitation-interaction-shape
+  guidance, not a new mandatory artifact section.
+- Paired mechanism updates (this same session, propagating this
+  amendment): `references/skill-authoring-standard.md`'s Quality Bar and
+  Review checklist gain an explicit Recommended-option/`--auto` item, so
+  `specjedi-new-skill`'s scaffold and `specjedi-skill-review`'s audits both
+  structurally reinforce this for every future skill.
+- Follow-up TODOs: none — no skill content retrofit needed per the audit
+  above; the paired reference-doc update ships in the same session.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.20.1 → 1.21.0
 - Modified principles: IV. Structured, Opinionated Elicitation (Ask, Don't
   Assume) — MINOR bump, materially expanded guidance (no renaming, no
@@ -677,13 +721,36 @@ requirement gathering or `specjedi-clarify`'s downstream ambiguity-resolution
 loop, and MUST NOT produce a standalone design document —
 `specjedi-onboard` hands off a crystallized idea, not a spec.
 
+Project-wide, not scoped to any single skill: whenever a `specjedi-*` skill
+presents a genuine multiple-choice-style decision point — two or more
+reasonable options exist and the skill has a defensible preference among
+them — the skill MUST mark one option as **Recommended**, with a one-line
+reason, in the style `/superpowers:brainstorming` and this project's own
+`specjedi-clarify`/`specjedi-onboard` already establish. Wherever that same
+skill defines an `--auto` mode, `--auto` MUST resolve any such
+Recommended-marked question by automatically selecting the Recommended
+option and proceeding — while still recording the choice in whatever audit
+trail the skill already produces, so an automated run stays reviewable
+after the fact, exactly as `specjedi-clarify`'s existing `--auto` mode
+already does. This requirement applies only to genuine multi-option
+elicitation — it does NOT require a skill to invent a fake multiple-choice
+structure around a binary confirm/proceed gate, a required-parameter ask,
+or a single-best-answer recommendation (e.g. `specjedi-find-skills`
+presenting exactly one recommended skill is already compliant in spirit
+without needing an artificial menu of alternatives).
+
 **Rationale**: This is what distinguishes a professional collaborator from
 an order-taker; the user explicitly requires skills that don't always agree
 and keep asking until the result is right. A total beginner arriving with
 only a vague notion — not yet a real one-sentence idea — is exactly the
 user `specjedi-onboard`'s own persona commits to meeting where they are;
 gating on "give me one sentence" without helping shape that sentence first
-leaves the person who most needs guidance with none.
+leaves the person who most needs guidance with none. A named recommendation
+with a reason is also what makes `--auto` mode trustworthy: an automated
+run that silently picked *something* is not auditable, but one that
+predictably picked the same option a human reviewing the choice would
+also see recommended is — this is the difference between automation and
+guessing with extra steps.
 
 ### V. Specification Completeness for Autonomous Execution
 
@@ -1477,4 +1544,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.21.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12
+**Version**: 1.22.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12

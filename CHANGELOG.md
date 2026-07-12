@@ -11,6 +11,20 @@ this file directly.
 
 ### Added
 
+- **Trae harness support** (feature 019) — the fifth real, CI-proven
+  supported harness, and the second (after Codex CLI) requiring a
+  genuinely new installer branch. Verified via Trae's official Skills
+  documentation, community documentation, and authoritatively via
+  Vercel's own `skills` CLI source (`vercel-labs/skills`, hardcoding
+  `skillsDir: '.trae/skills'` for the `trae` target) that Trae discovers
+  skills from a project-local `.trae/skills/<name>/SKILL.md` convention,
+  distinct from its `.trae/rules/` Rules mechanism. A contradictory
+  GitHub bug report (Trae-AI/TRAE#2253) was investigated and traced to a
+  path mismatch in the report's own reproduction steps, not a real gap
+  in this convention — documented rather than silently discarded. New
+  `--harness trae` branch in `scripts/install.sh`/`.ps1`, plus a new
+  `install-test-trae`/`install-test-trae-windows-native` CI job pair
+  mirroring the existing `install-test-codex-cli` pattern.
 - **Warp harness support** (feature 018) — the fourth real, CI-proven
   supported harness, and the second requiring zero new installer code.
   Verified via Warp's own official Skills documentation

@@ -8,18 +8,26 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 target_dir="."
-harness="claude-code"
+harness=""
+auto_mode=0
 
 usage() {
   cat <<'EOF'
-Usage: install.sh [TARGET_DIR] [--harness HARNESS]
+Usage: install.sh [TARGET_DIR] [--harness HARNESS] [--auto]
 
   TARGET_DIR   Project to install Spec Jedi's specjedi-* skills into.
                Defaults to the current directory.
   --harness    Which coding agent to configure for. "claude-code",
                "codex-cli", and "trae" are built and tested today
                (Constitution Principle III); any other value is reported
-               as not-yet-supported rather than silently attempted.
+               as not-yet-supported rather than silently attempted. If
+               omitted, the installer attempts harness auto-detection
+               (specs/021-harness-auto-detection).
+  --auto       When --harness is omitted and detection finds more than
+               one plausible harness, automatically select the
+               Recommended one instead of prompting interactively
+               (Constitution Principle IV's Recommended-option standard).
+               Ignored when --harness is given explicitly.
 
 Copies only the specjedi-* product skills (never the vendored speckit-*
 bootstrap tooling this repo uses to build itself) plus the four
@@ -33,6 +41,10 @@ while [ "$#" -gt 0 ]; do
       harness="${2:-}"
       shift 2
       ;;
+    --auto)
+      auto_mode=1
+      shift
+      ;;
     -h|--help)
       usage
       exit 0
@@ -43,6 +55,164 @@ while [ "$#" -gt 0 ]; do
       ;;
   esac
 done
+
+mkdir -p "$target_dir"
+target_dir="$(cd "$target_dir" && pwd)"
+
+# Harness auto-detection (specs/021-harness-auto-detection): only runs
+# when --harness was omitted. Any explicit --harness value bypasses all
+# of this entirely -- zero behavior change for existing scripted/CI usage.
+if [ -z "$harness" ]; then
+  signals=()
+
+  if [ -d "$target_dir/.claude" ]; then
+    signals+=("claude-code:1:target directory ($target_dir/.claude)")
+  fi
+  if command -v claude >/dev/null 2>&1; then
+    signals+=("claude-code:2:PATH binary (claude)")
+  fi
+  if [ -d "${HOME:-}/.claude" ]; then
+    signals+=("claude-code:3:global config (~/.claude)")
+  fi
+
+  if [ -d "$target_dir/.agents" ]; then
+    signals+=("codex-cli:1:target directory ($target_dir/.agents)")
+  fi
+  if command -v codex >/dev/null 2>&1; then
+    signals+=("codex-cli:2:PATH binary (codex)")
+  fi
+  if [ -d "${HOME:-}/.codex" ]; then
+    signals+=("codex-cli:3:global config (~/.codex)")
+  fi
+
+  if [ -d "$target_dir/.trae" ]; then
+    signals+=("trae:1:target directory ($target_dir/.trae)")
+  fi
+  # trae has no established cross-platform PATH binary to check
+  # (it's a GUI-first IDE) -- see specs/021-harness-auto-detection/research.md
+  if [ -d "${HOME:-}/.trae" ]; then
+    signals+=("trae:3:global config (~/.trae)")
+  fi
+
+  claude_rank=""
+  claude_evidence=""
+  codex_rank=""
+  codex_evidence=""
+  trae_rank=""
+  trae_evidence=""
+
+  if [ "${#signals[@]}" -gt 0 ]; then
+    for sig in "${signals[@]}"; do
+      sig_harness="${sig%%:*}"
+      sig_rest="${sig#*:}"
+      sig_rank="${sig_rest%%:*}"
+      sig_evidence="${sig_rest#*:}"
+      case "$sig_harness" in
+        claude-code)
+          if [ -z "$claude_rank" ] || [ "$sig_rank" -lt "$claude_rank" ]; then
+            claude_rank="$sig_rank"
+            claude_evidence="$sig_evidence"
+          fi
+          ;;
+        codex-cli)
+          if [ -z "$codex_rank" ] || [ "$sig_rank" -lt "$codex_rank" ]; then
+            codex_rank="$sig_rank"
+            codex_evidence="$sig_evidence"
+          fi
+          ;;
+        trae)
+          if [ -z "$trae_rank" ] || [ "$sig_rank" -lt "$trae_rank" ]; then
+            trae_rank="$sig_rank"
+            trae_evidence="$sig_evidence"
+          fi
+          ;;
+      esac
+    done
+  fi
+
+  match_count=0
+  [ -n "$claude_rank" ] && match_count=$((match_count + 1))
+  [ -n "$codex_rank" ] && match_count=$((match_count + 1))
+  [ -n "$trae_rank" ] && match_count=$((match_count + 1))
+
+  if [ "$match_count" -eq 0 ]; then
+    harness="claude-code"
+    echo "🔭 No harness detected on this machine/target directory — falling"
+    echo "back to the default: claude-code (this is a fallback, not a"
+    echo "detected match)."
+  elif [ "$match_count" -eq 1 ]; then
+    if [ -n "$claude_rank" ]; then
+      harness="claude-code"
+      echo "🔭 Detected claude-code (${claude_evidence}) — installing automatically."
+    elif [ -n "$codex_rank" ]; then
+      harness="codex-cli"
+      echo "🔭 Detected codex-cli (${codex_evidence}) — installing automatically."
+    else
+      harness="trae"
+      echo "🔭 Detected trae (${trae_evidence}) — installing automatically."
+    fi
+  else
+    recommended=""
+    recommended_rank=999
+    for cand in claude-code codex-cli trae; do
+      case "$cand" in
+        claude-code) cand_rank="$claude_rank" ;;
+        codex-cli) cand_rank="$codex_rank" ;;
+        trae) cand_rank="$trae_rank" ;;
+      esac
+      if [ -n "$cand_rank" ] && [ "$cand_rank" -lt "$recommended_rank" ]; then
+        recommended="$cand"
+        recommended_rank="$cand_rank"
+      fi
+    done
+
+    if [ "$auto_mode" -eq 1 ] || [ ! -t 0 ]; then
+      harness="$recommended"
+      echo "🔭 Multiple harnesses detected — auto-selecting Recommended:"
+      echo "$recommended (--auto passed, or no interactive terminal available)."
+    else
+      echo "🔭 Multiple harnesses detected on this machine/target directory:"
+      letters="ABC"
+      idx=0
+      letter_map=()
+      for cand in claude-code codex-cli trae; do
+        case "$cand" in
+          claude-code) cand_rank="$claude_rank"; cand_evidence="$claude_evidence" ;;
+          codex-cli) cand_rank="$codex_rank"; cand_evidence="$codex_evidence" ;;
+          trae) cand_rank="$trae_rank"; cand_evidence="$trae_evidence" ;;
+        esac
+        if [ -n "$cand_rank" ]; then
+          letter="${letters:$idx:1}"
+          letter_map+=("$letter:$cand")
+          if [ "$cand" = "$recommended" ]; then
+            echo "  $letter. $cand (Recommended — $cand_evidence)"
+          else
+            echo "  $letter. $cand ($cand_evidence)"
+          fi
+          idx=$((idx + 1))
+        fi
+      done
+      recommended_letter=""
+      for lm in "${letter_map[@]}"; do
+        lm_letter="${lm%%:*}"
+        lm_harness="${lm#*:}"
+        if [ "$lm_harness" = "$recommended" ]; then
+          recommended_letter="$lm_letter"
+        fi
+      done
+      read -r -p "Choice [$recommended_letter]: " choice
+      choice="${choice:-$recommended_letter}"
+      harness="$recommended"
+      for lm in "${letter_map[@]}"; do
+        lm_letter="${lm%%:*}"
+        lm_harness="${lm#*:}"
+        if [ "$choice" = "$lm_letter" ] || [ "$choice" = "$lm_harness" ]; then
+          harness="$lm_harness"
+        fi
+      done
+    fi
+  fi
+fi
 
 # Harness Target mapping (data-model.md): --harness value -> skill
 # install location. Both entries share the same source skills, the same
@@ -79,9 +249,6 @@ case "$harness" in
     exit 1
     ;;
 esac
-
-mkdir -p "$target_dir"
-target_dir="$(cd "$target_dir" && pwd)"
 
 echo "📜 Installing Spec Jedi's specjedi-* skills into: $target_dir"
 echo

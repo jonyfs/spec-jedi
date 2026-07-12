@@ -11,6 +11,21 @@ this file directly.
 
 ### Added
 
+- **Harness auto-detection** (feature 021) — Sub-Project C of the
+  release/installer decomposition identified during feature 020's
+  brainstorming. `scripts/install.sh`/`.ps1`'s `--harness` flag is now
+  optional: when omitted, the installer checks ranked signals (a
+  matching directory already in the target project, a matching CLI
+  binary on `PATH`, a matching global config directory) for each of the
+  three real harnesses, auto-installs on a single match, and resolves
+  multiple matches through Constitution v1.22.0's project-wide
+  Recommended-option standard — an interactive lettered prompt with a
+  real TTY, or an automatic Recommended-selection (stated explicitly)
+  otherwise or with the new `--auto` flag. Every existing explicit
+  `--harness` invocation is completely unaffected — proven by every
+  pre-existing `install-test*` CI job passing unmodified, plus a new
+  `harness-auto-detect` job pair proving the detection mechanism itself
+  on all three OSes.
 - **Release packaging & publishing workflow** (feature 020) — the first
   real, deliberate release-cutting mechanism this project has ever had.
   `.github/workflows/release.yml`, triggered only by `workflow_dispatch`

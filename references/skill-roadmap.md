@@ -181,30 +181,24 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
 
 ## Proposed, not yet built (prioritized by expected impact)
 
-Two items below are installer/CI infrastructure, not `specjedi-*` skills —
+One item below is installer/CI infrastructure, not a `specjedi-*` skill —
 tracked here anyway since this is the project's existing living backlog
-doc, and inventing a second one for two items would violate this
-project's own YAGNI discipline. Both were identified during feature
-020's `/superpowers:brainstorming` session as Sub-Projects B and C of a
-3-part decomposition (feature 020 itself shipped Sub-Project A: release
-packaging).
+doc, and inventing a second one for a single item would violate this
+project's own YAGNI discipline. Identified during feature 020's
+`/superpowers:brainstorming` session as Sub-Project B of a 3-part
+decomposition (Sub-Project A shipped as feature 020: release packaging;
+Sub-Project C shipped as feature 021: harness auto-detection).
 
 - **Standalone bootstrap installer script** (Sub-Project B) — a
   Homebrew/SDKMAN-style one-liner (e.g. `curl -fsSL .../install.sh |
   bash`) that a user runs *without cloning the repository first*: it
   fetches a chosen release artifact (feature 020's downloadable
   `spec-jedi-<version>.tar.gz`), lets the user pick from already-released
-  versions, and installs into the current or a new directory. Depends
-  entirely on feature 020 (needs real releases to exist to download from)
-  — cannot be usefully built before at least `v0.1.0` is cut for real.
-- **Harness auto-detection** (Sub-Project C) — scan the target machine/
-  directory for signals of which coding agent(s) are already present
-  (existing config directories like `.cursor/`, `.clinerules`, `.continue/`,
-  or global install markers), so a user isn't required to already know
-  and pass an explicit `--harness` value. `references/harness-capability-notes.md`'s
-  per-harness mechanism column is a starting point for what signals to
-  detect. Independent of Sub-Project B — could layer into either the
-  existing `scripts/install.sh` or the future bootstrap script.
+  versions, and installs into the current or a new directory (now with
+  feature 021's harness auto-detection available to it once it exists).
+  Depends entirely on feature 020 (needs real releases to exist to
+  download from) — cannot be usefully built before at least `v0.1.0` is
+  cut for real.
 
 New proposals get added here as they're identified, each still needing
 its own research pass per Principle II before it's built.

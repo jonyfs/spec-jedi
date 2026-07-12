@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@4a3486c lang=es -->
+<!-- i18n-sync: source=README.md@52831c4 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·

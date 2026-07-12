@@ -1,5 +1,43 @@
 <!--
 Sync Impact Report
+- Version change: 1.19.0 → 1.20.0
+- Modified principles: none renamed
+- Added: Principle XXI (Session-Start Orientation & the Master Yoda
+  Greeting) — MINOR bump, new principle.
+  - Establishes policy for a three-part session-start orientation: ASCII
+    Spec Jedi banner, a project status summary derived from
+    `specjedi-status`'s existing on-disk-artifact logic (no parallel
+    tracking system), and a rotating Master Yoda-styled greeting line.
+  - States the real Claude Code `SessionStart` hook mechanism precisely
+    (verified via the official hooks documentation before writing this):
+    hook stdout becomes `additionalContext` for the agent, capped at
+    10,000 characters — it is NOT printed directly to the user's
+    terminal. The principle therefore requires both a hook (to emit the
+    context) AND a `CLAUDE.md` render instruction (to make the agent
+    actually display it) — a hook alone would not satisfy this
+    principle, and this Sync Impact Report says so explicitly rather
+    than letting a future reader assume the hook does more than it does.
+  - Scopes the Master Yoda persona narrowly (session-start greeting
+    only) as distinct from Principle XII's broad saga-wide rotation, to
+    avoid diluting either.
+  - Explicitly defers the actual build (hook script, CLAUDE.md wiring,
+    ASCII art asset) to its own Principle II-gated feature cycle — this
+    amendment sets policy, it does not itself satisfy the competitive-
+    research requirement a new structural pattern needs before shipping.
+- Added sections: none (new principle, not a new top-level section)
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: `TODO(SESSION_START_HOOK)` — the actual
+  `SessionStart` hook script, `CLAUDE.md` render-instruction wiring, and
+  `references/star-wars-lexicon.md`'s Master Yoda persona section (with
+  concrete example lines) are tracked as feature 015, to be built via
+  the literal `specjedi-specify` → `specjedi-plan` → `specjedi-tasks` →
+  `specjedi-implement` pipeline with real Principle II research, not
+  built ad hoc under this amendment alone.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.18.3 → 1.19.0
 - Modified principles: XVI (renamed "Mermaid-First Process Documentation"
   → "Efficient Documentation & Mermaid Diagram Literacy") — MINOR bump,
@@ -1142,6 +1180,78 @@ trustworthy about what it actually knows versus what it's inventing, and
 economical about the resources it spends finding out, or the "AI-first"
 positioning becomes a liability instead of the project's advantage.
 
+### XXI. Session-Start Orientation & the Master Yoda Greeting
+
+Every Claude Code session working in this project SHOULD open with a
+brief, three-part orientation rather than a blank prompt: (1) a small
+ASCII-art Spec Jedi banner, (2) a one-paragraph project status summary,
+and (3) one rotating line of Master Yoda-styled guidance. This is a
+policy commitment; the mechanism that delivers it is a
+`SessionStart`-hook-plus-agent-render contract, described precisely
+below rather than left to assumption.
+
+**The real mechanism, stated accurately**: Claude Code's `SessionStart`
+hook does not print text directly to the user's terminal — its stdout is
+injected as `additionalContext` for the agent to read on its next turn,
+capped at 10,000 characters (per Claude Code's own hook documentation,
+fetched and verified before this principle was written, not assumed).
+A `SessionStart` hook implementing this principle MUST therefore do two
+things, not one: (a) gather and emit the orientation content as
+`additionalContext`, and (b) this constitution's own project instructions
+(e.g. `CLAUDE.md`) MUST instruct the agent to actually render that
+content verbatim as its opening reply when a `SessionStart` context block
+is present — a hook alone cannot satisfy this principle; the render
+instruction is load-bearing, not optional.
+
+**No parallel status system**: the status-summary portion MUST derive
+from the exact same on-disk-artifact logic `specjedi-status` already
+uses (spec/plan/tasks presence and checkbox state) — never a second,
+separately-maintained tracking mechanism, per the same "avoid internal
+redundancy" discipline Principle II already requires when weighing a new
+mechanism against ones this project has already shipped. This principle
+is compatible with, not redundant with, `specjedi-status` (full
+on-demand dashboard) and `specjedi-onboard` (first-run-only walkthrough):
+this fires briefly on every session, not on demand and not only once.
+
+**The Master Yoda persona, scoped narrowly**: unlike Principle XII's
+broad, saga-wide rotating voice used across all end-user-facing skill
+output, the Master Yoda persona is reserved specifically for this
+session-start greeting moment — using it everywhere would dilute both
+the greeting's distinctiveness and Principle XII's own broad-rotation
+requirement. Canonical Yoda speech patterns (documented in
+`references/star-wars-lexicon.md`'s dedicated Master Yoda section,
+MUST be extended there rather than improvised ad hoc): inverted
+object-subject-verb sentence construction ("Ready, are you," not "Are
+you ready"), terse aphorisms over long explanations, wisdom framed as
+gentle challenge rather than flattery, warmth paired with discipline.
+Lines MUST rotate rather than repeat the same greeting verbatim every
+session, and MUST still satisfy Principle XII's core rule: understandable
+to someone who has never seen a single frame of Star Wars.
+
+**Branding art, not reproduced trademarks**: the ASCII banner MUST be an
+original Spec Jedi wordmark/lightsaber rendering — never a recreation of
+GitHub's actual `spec-kit` logo or any other real organization's
+trademark, per Principle XII's existing "no logos, no copyrighted
+artwork" guardrail applied here to a new asset type.
+
+**Principle II applies to building this, not to stating it**: this
+principle establishes policy; the `SessionStart` hook script, the
+`CLAUDE.md` render instruction, and the ASCII art asset are new
+structural pattern work and MUST go through Principle II's competitive
+research (does any researched tool already do a session-start
+status+greeting hook? what's the genuine contribution here?) before
+shipping, the same as any other new mechanism — a constitution amendment
+alone does not satisfy that gate.
+
+**Rationale**: Directly requested: a session should open with insight,
+not silence — a returning contributor immediately sees what's been done,
+a first-timer immediately sees this project has a distinct voice, and
+the specific choice of Master Yoda (rather than a generic Star Wars
+reference) gives the orientation moment its own recognizable texture,
+consistent with Principle XII's "recognizable by tone alone" goal but
+scoped tightly enough not to overwhelm every other interaction with the
+same inverted-syntax bit.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -1291,4 +1401,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.19.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.20.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

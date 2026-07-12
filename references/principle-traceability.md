@@ -38,11 +38,12 @@ index derived from it, and like any fact-bearing index in this project
 | XIII | Cross-Platform Support: Linux, macOS, Windows | ✅ Mechanized | Every `scripts/*.sh` ships with a `.ps1` counterpart; `.gitattributes` pins line endings; CI matrix covers `ubuntu-latest`/`macos-latest`/`windows-latest` plus a dedicated native-PowerShell job. |
 | XIV | Guided Next-Step Suggestion | ✅ Mechanized | Retrofitted across all shipped skills via the NEXT_STEP_PASS governance amendment (constitution v1.15.2); checked going forward by `specjedi-skill-review`. |
 | XV | `specjedi-` Skill Naming Convention | ✅ Mechanized | Convention + `scripts/validate.sh` structural lint; `specjedi-new-skill`'s collision-detection step. |
-| XVI | Mermaid-First Process Documentation | ✅ Mechanized | `specjedi-diagram` (feature 004) — render-verified Mermaid generation from spec/plan content. |
+| XVI | Efficient Documentation & Mermaid Diagram Literacy | ✅ Mechanized | `specjedi-diagram` (feature 004, expanded 2026-07-11 to cover 12 Core-tier Mermaid types); `references/mermaid-diagram-catalog.md` — canonical 30-type catalog, closing the original "just flowchart/sequence/ER" gap. |
 | XVII | Skill Discovery & Gap-Filling | ✅ Mechanized | `specjedi-find-skills` ships and is proactively wired into specific skills (e.g., `specjedi-plan`→`specjedi-security`, `specjedi-onboard`→`specjedi-tokencheck`). A systematic grep audit (closing CHK018) confirmed 20 of 22 then-shipped skills carry the self-invoke contract explicitly; the 2 that don't (`specjedi-release`, `specjedi-tokencheck`) each have a documented, reasoned exemption in their own `plan.md`. |
 | XVIII | Zero-Footprint Installer with Harness Selection | ✅ Mechanized | `scripts/install.sh`/`.ps1`; closed via the INSTALLER governance amendment (constitution v1.15.6). |
 | XIX | Skill Authoring & Prompt Engineering Standard | ✅ Mechanized (both directions) | `references/skill-authoring-standard.md` (the standard itself); `specjedi-new-skill` (feature 009, scaffolds compliant structure); `specjedi-skill-review` (feature 011, audits an existing skill against it). |
 | XX | AI Discipline: Grounded, Efficient, Honest Output | ✅ Mechanized | Retrofitted via the GROUNDING_PASS and PROMPT_ENG_PASS governance amendments (constitution v1.15.3/v1.15.5); `specjedi-skill-review`'s chain-of-thought dimension checks this at authoring time. CHK015's retrospective-audit question is answered rather than left open: git's own append-only commit/PR history already is the inspectable audit trail this principle needs — deliberately not duplicated into a second, easier-to-forget tracking ledger. `specjedi-govcheck`'s per-PR Principle XX row is the forward-looking half. |
+| XXI | Session-Start Orientation & the Master Yoda Greeting | 🔴 Not started | Policy established (constitution v1.20.0); the actual `SessionStart` hook script, `CLAUDE.md` render-instruction wiring, and ASCII art asset are **not yet built** — tracked as `TODO(SESSION_START_HOOK)`, scoped as feature 015 requiring real Principle II research before shipping. `references/star-wars-lexicon.md`'s Master Yoda persona section exists (speech patterns + a starter rotation pool); the mechanism to actually deliver it each session does not. |
 
 ## Cross-cutting (not a numbered principle)
 
@@ -59,5 +60,5 @@ index derived from it, and like any fact-bearing index in this project
 - 🟡 **Partial** — some mechanism exists, but the principle's mandate is not
   fully satisfied; the specific gap is named and cross-referenced to
   `checklists/project-completeness.md` where applicable.
-- 🔴 **Not started** — no mechanism exists yet (none currently; every
-  principle has at least a partial mechanism as of this entry).
+- 🔴 **Not started** — no mechanism exists yet (Principle XXI, as of this
+  entry: policy is ratified but nothing has shipped to implement it yet).

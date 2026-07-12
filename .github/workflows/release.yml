@@ -1,0 +1,119 @@
+name: release
+
+# specs/020-release-packaging: a deliberate, manually-triggered release
+# mechanism (Constitution Principle XI — "cutting a release is always a
+# deliberate, maintainer-driven step"). Never triggered by push/merge.
+# dry_run defaults to true so an accidental trigger can never publish.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (vX.Y.Z)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Validate and package only -- no tag, release, or commit'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: release (dry_run=${{ inputs.dry_run }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Validate version format and uniqueness
+        run: |
+          version="${{ inputs.version }}"
+          if ! echo "$version" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "FAIL: '$version' is not a valid vMAJOR.MINOR.PATCH version string"
+            exit 1
+          fi
+          if git tag -l "$version" | grep -q .; then
+            echo "FAIL: tag '$version' already exists -- versions are never reused"
+            exit 1
+          fi
+          echo "OK: '$version' is well-formed and unused"
+
+      - name: Run scripts/validate.sh (hard gate before any packaging)
+        run: bash scripts/validate.sh
+
+      - name: Extract Unreleased changelog section as release notes
+        run: |
+          awk '/^## Unreleased$/{flag=1; next} /^## /{flag=0} flag' CHANGELOG.md > /tmp/release-notes.md
+          if [ ! -s /tmp/release-notes.md ] || ! grep -qE '\S' /tmp/release-notes.md; then
+            echo "FAIL: CHANGELOG.md's ## Unreleased section is empty -- nothing to release"
+            exit 1
+          fi
+          echo "== Release notes to be used =="
+          cat /tmp/release-notes.md
+
+      - name: Package the release artifact
+        run: |
+          mkdir -p /tmp/release-artifact
+          bash scripts/package-release.sh "${{ inputs.version }}" /tmp/release-artifact
+
+      - name: Upload artifact for inspection (dry run)
+        if: ${{ inputs.dry_run }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: spec-jedi-${{ inputs.version }}-dry-run
+          path: /tmp/release-artifact/spec-jedi-${{ inputs.version }}.tar.gz
+          retention-days: 14
+
+      - name: Dry run summary (no durable side effects)
+        if: ${{ inputs.dry_run }}
+        run: |
+          echo "## dry_run: true -- rehearsal complete, nothing published" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Version validated: ${{ inputs.version }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifact built and uploaded as a workflow-run artifact (see above)." >> "$GITHUB_STEP_SUMMARY"
+          echo "No git tag, GitHub Release, or commit was created." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Release notes that would be published" >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/release-notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create GitHub Release (real run only)
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ inputs.version }}" \
+            /tmp/release-artifact/spec-jedi-${{ inputs.version }}.tar.gz \
+            --title "${{ inputs.version }}" \
+            --notes-file /tmp/release-notes.md \
+            --target main
+
+      - name: Rewrite CHANGELOG.md (real run only)
+        if: ${{ !inputs.dry_run }}
+        run: |
+          release_date="$(date +%Y-%m-%d)"
+          awk -v ver="${{ inputs.version }}" -v date="$release_date" '
+            /^## Unreleased$/ && !done {
+              print
+              print ""
+              print "## [" ver "] - " date
+              done=1
+              next
+            }
+            { print }
+          ' CHANGELOG.md > CHANGELOG.md.new
+          mv CHANGELOG.md.new CHANGELOG.md
+
+      - name: Commit CHANGELOG.md (real run only)
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: release ${{ inputs.version }}"
+          git push origin HEAD:main

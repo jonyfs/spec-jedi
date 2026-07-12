@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@620b1d9 lang=fr -->
+<!-- i18n-sync: source=README.md@e0a1fb8 lang=fr -->
 > 🌐 Ce document est une traduction assistée par IA. **L'anglais est la
 > source canonique** ([Principle I](../../../.specify/memory/constitution.md)) ;
 > en cas de divergence, l'anglais prévaut. Voir d'autres langues :
@@ -7,7 +7,7 @@
 > [Français](../fr/README.md) · [العربية](../ar/README.md) ·
 > [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# 🗡️ Spec Jedi
+# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -42,7 +42,8 @@ vibe-coding ici. 🚫🖤
 
 *(Image de marque non officielle, inspirée par des fans — Spec Jedi n'est
 affilié, approuvé ni sponsorisé par Lucasfilm/Disney. Que la Spec soit
-avec vous. 🌌)*
+avec vous. 🌌 Icône « sabre laser » par Carlos von Dessauer, provenant de
+[Noun Project](https://thenounproject.com), utilisée sous licence CC BY 3.0.)*
 
 ## Pour qui
 
@@ -276,12 +277,17 @@ résultat avant de terminer :
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-Seul `-harness claude-code` (la valeur par défaut) est construit et
-testé aujourd'hui ; toute autre valeur est signalée comme non encore
-supportée plutôt que tentée silencieusement — voir
-[Environnements supportés](#environnements-supportés) ci-dessous.
+`--harness` est désormais optionnel — s'il est omis, l'installateur
+tente de détecter quel agent de codage vous utilisez (un répertoire de
+projet déjà présent, un binaire sur `PATH`, ou un répertoire de
+configuration global déjà présent) et installe automatiquement pour
+celui-ci — il ne demande que si la détection trouve plusieurs
+correspondances plausibles. `claude-code`, `codex-cli` et `trae` sont
+construits et testés aujourd'hui ; toute autre valeur explicite est
+signalée comme non encore supportée plutôt que tentée silencieusement —
+voir [Environnements supportés](#environnements-supportés) ci-dessous.
 Exécutez `./scripts/install.sh --help` (ou `.\scripts\install.ps1 -Help`)
-pour la liste complète des options.
+pour la liste complète des options, y compris `--auto`.
 
 ### Environnements supportés
 
@@ -316,7 +322,7 @@ skills documentée par Codex CLI lui-même).
 | Devin (Cognition) | 📋 Prévu — pas encore installable |
 | Tabnine | 📋 Prévu — pas encore installable |
 | Sourcegraph Cody | 📋 Prévu — pas encore installable |
-| Trae | 📋 Prévu — pas encore installable |
+| Trae | ✅ Supporté — `./scripts/install.sh --harness trae` (installe dans `.trae/skills/`) |
 
 Vingt environnements nommés individuellement selon le mandat "au moins
 vingt" du Principle III — statut uniquement (✅ supporté / 📋 prévu),

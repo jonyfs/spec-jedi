@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@620b1d9 lang=hi -->
+<!-- i18n-sync: source=README.md@e0a1fb8 lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:
@@ -7,7 +7,7 @@
 > [Français](../fr/README.md) · [العربية](../ar/README.md) ·
 > [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# 🗡️ Spec Jedi
+# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -39,7 +39,9 @@ merge होते हैं, शामिल है। यहाँ vibe-coding
 शॉर्टकट नहीं है। 🚫🖤
 
 *(यह गैर-आधिकारिक, फैन-प्रेरित branding है — Spec Jedi का Lucasfilm/Disney
-से कोई संबंध, समर्थन या प्रायोजन नहीं है। Spec आपके साथ रहे। 🌌)*
+से कोई संबंध, समर्थन या प्रायोजन नहीं है। Spec आपके साथ रहे। 🌌 "Lightsaber"
+आइकन Carlos von Dessauer द्वारा, [Noun Project](https://thenounproject.com)
+से, CC BY 3.0 के तहत उपयोग किया गया।)*
 
 ## यह किसके लिए है
 
@@ -262,11 +264,16 @@ Installer चलाएँ (Constitution
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-आज केवल `-harness claude-code` (default) ही बनाया और test किया गया है;
-कोई भी दूसरी value को चुपचाप try करने के बजाय not-yet-supported के रूप में
-रिपोर्ट किया जाता है — नीचे
-[Supported harnesses](#समर्थित-harnesses) देखें। पूरी option list के लिए
-`./scripts/install.sh --help` (या `.\scripts\install.ps1 -Help`) चलाएँ।
+`--harness` अब optional है — अगर छोड़ दिया जाए, तो installer यह पता लगाने
+की कोशिश करता है कि आप कौन सा coding agent इस्तेमाल कर रहे हैं (पहले से
+मौजूद project directory, `PATH` पर मौजूद binary, या पहले से मौजूद global
+config directory), और अपने-आप उसके लिए install करता है — सिर्फ तभी पूछता
+है जब एक से ज़्यादा संभावित match मिलें। `claude-code`, `codex-cli`, और
+`trae` आज बनाए और test किए जा चुके हैं; कोई भी दूसरी explicit value को
+चुपचाप try करने के बजाय not-yet-supported के रूप में रिपोर्ट किया जाता
+है — नीचे [Supported harnesses](#समर्थित-harnesses) देखें। पूरी option
+list के लिए `./scripts/install.sh --help` (या `.\scripts\install.ps1
+-Help`) चलाएँ, जिसमें `--auto` भी शामिल है।
 
 ### समर्थित harnesses
 
@@ -301,7 +308,7 @@ convention के विरुद्ध verify किया गया)।
 | Devin (Cognition) | 📋 Planned — अभी installable नहीं |
 | Tabnine | 📋 Planned — अभी installable नहीं |
 | Sourcegraph Cody | 📋 Planned — अभी installable नहीं |
-| Trae | 📋 Planned — अभी installable नहीं |
+| Trae | ✅ Supported — `./scripts/install.sh --harness trae` (`.trae/skills/` में install करता है) |
 
 Principle III के "कम से कम बीस" mandate के अनुसार बीस harnesses अलग-अलग
 नाम से सूचीबद्ध किए गए हैं — केवल status (✅ supported / 📋 planned), किसी

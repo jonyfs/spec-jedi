@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@620b1d9 lang=ur -->
+<!-- i18n-sync: source=README.md@e0a1fb8 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:
@@ -9,7 +9,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# 🗡️ Spec Jedi
+# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -40,7 +40,9 @@ releases کا ورژن کیسے طے ہوتا ہے اور pull requests کیسے
 کیے جاتے ہیں۔ یہاں vibe-coding کی تاریک جانب کوئی شارٹ کٹ نہیں ہے۔ 🚫🖤
 
 *(یہ غیر سرکاری، فین سے متاثر برانڈنگ ہے — Spec Jedi کا Lucasfilm/Disney
-سے کوئی تعلق، توثیق یا سرپرستی نہیں ہے۔ Spec آپ کے ساتھ رہے۔ 🌌)*
+سے کوئی تعلق، توثیق یا سرپرستی نہیں ہے۔ Spec آپ کے ساتھ رہے۔ 🌌 "لائٹ
+سیبر" آئیکن Carlos von Dessauer کا بنایا ہوا ہے، [Noun Project](https://thenounproject.com)
+سے، CC BY 3.0 کے تحت استعمال کیا گیا۔)*
 
 ## یہ کس کے لیے ہے
 
@@ -266,11 +268,17 @@ PowerShell میں `scripts/*.ps1`)؛ skills خود دونوں طرح یکساں 
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-آج صرف `-harness claude-code` (default) بنائی اور test کی گئی ہے؛ کوئی
-بھی دوسری value کو خاموشی سے try کرنے کے بجائے not-yet-supported کے طور
-پر رپورٹ کیا جاتا ہے — نیچے [معاون harnesses](#معاون-harnesses) دیکھیں۔
-مکمل option list کے لیے `./scripts/install.sh --help` (یا
-`.\scripts\install.ps1 -Help`) چلائیں۔
+`--harness` اب optional ہے — اگر چھوڑ دیا جائے، تو installer یہ پتہ
+لگانے کی کوشش کرتا ہے کہ آپ کون سا coding agent استعمال کر رہے ہیں
+(پہلے سے موجود project directory، `PATH` پر موجود binary، یا پہلے سے
+موجود global config directory)، اور خودکار طور پر اس کے لیے install
+کرتا ہے — صرف اس وقت پوچھتا ہے جب detection کو ایک سے زیادہ ممکنہ match
+ملے۔ `claude-code`، `codex-cli`، اور `trae` آج بنائی اور test کی جا چکی
+ہیں؛ کوئی بھی دوسری واضح value کو خاموشی سے try کرنے کے بجائے
+not-yet-supported کے طور پر رپورٹ کیا جاتا ہے — نیچے [معاون
+harnesses](#معاون-harnesses) دیکھیں۔ مکمل option list کے لیے
+`./scripts/install.sh --help` (یا `.\scripts\install.ps1 -Help`)
+چلائیں، جس میں `--auto` بھی شامل ہے۔
 
 ### معاون harnesses
 
@@ -305,7 +313,7 @@ convention کے خلاف verify کیا گیا)۔
 | Devin (Cognition) | 📋 منصوبہ بند — ابھی installable نہیں |
 | Tabnine | 📋 منصوبہ بند — ابھی installable نہیں |
 | Sourcegraph Cody | 📋 منصوبہ بند — ابھی installable نہیں |
-| Trae | 📋 منصوبہ بند — ابھی installable نہیں |
+| Trae | ✅ Supported — `./scripts/install.sh --harness trae` (`.trae/skills/` میں install کرتا ہے) |
 
 Principle III کے "کم از کم بیس" حکم کے مطابق بیس harnesses انفرادی طور
 پر نامزد کیے گئے ہیں — صرف status (✅ معاون / 📋 منصوبہ بند)، کسی بھی

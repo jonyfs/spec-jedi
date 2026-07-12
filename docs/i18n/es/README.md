@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@01f83f5 lang=es -->
+<!-- i18n-sync: source=README.md@402bb58 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
@@ -309,7 +309,13 @@ Si tu entorno aún no aparece como soportado, los archivos `SKILL.md` son
 Markdown plano con frontmatter YAML — muchos entornos que soportan
 instrucciones/prompts personalizados ya pueden leerlos directamente
 incluso sin una ruta de instalación dedicada, pero esto aún no ha sido
-verificado ni documentado entorno por entorno.
+verificado ni documentado entorno por entorno. Consulta
+[`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
+para notas de capacidad por entorno basadas en investigación documental.
+
+¿Curiosidad por saber cómo se compara Spec Jedi con spec-kit y las otras
+diez herramientas SDD contra las que fue evaluado? Consulta
+[`references/competitive-comparison.md`](../../../references/competitive-comparison.md).
 
 ## Guía rápida
 

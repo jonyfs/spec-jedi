@@ -38,6 +38,18 @@ or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌 "Lightsaber" ic
 Carlos von Dessauer, from [Noun Project](https://thenounproject.com), used under
 CC BY 3.0.)*
 
+```mermaid
+flowchart TD
+    Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>7 skills"]
+```
+
+Every skill checks its own output against the constitution — not the other
+way around. Change the rules, and every skill downstream feels it on its
+next run.
+
 ## Who this is for
 
 Anyone using an AI coding agent who wants specs, plans, and tasks to be first-class,
@@ -53,6 +65,44 @@ The full `specjedi-*` SDD pipeline — constitution through convergence — is
 **complete and shipped**: all 9 stages, built one rigorous story at a time
 per [research.md](specs/001-specjedi-pipeline/research.md)'s competitive
 research discipline (Principle II), never rushed.
+
+> *"A Jedi's strength flows from the Force. So too does a project's, from
+> its skills."* — a wise Master, probably.
+
+Twenty-three strong, this Order is — trained not for combat, but for
+Spec-Driven Development. Four disciplines it keeps:
+
+```mermaid
+mindmap
+  root(("Spec Jedi — 23 skills"))
+    Core Pipeline - 9
+      constitution
+      specify
+      clarify
+      plan
+      tasks
+      implement
+      analyze
+      checklist
+      converge
+    Onboarding and Guidance - 3
+      onboard
+      explain
+      find-skills
+    Quality and Review - 4
+      security
+      skill-review
+      govcheck
+      retro
+    Meta and Tooling - 7
+      diagram
+      status
+      docs
+      migrate
+      new-skill
+      release
+      tokencheck
+```
 
 **Ships today, install and use now:**
 
@@ -211,6 +261,13 @@ The only place it matters going forward is which helper script you run
 (`scripts/*.sh` in a POSIX shell, `scripts/*.ps1` in native PowerShell); the
 skills themselves work identically either way.
 
+```mermaid
+flowchart TD
+    A[Clone the repo] --> B[Open the folder in Claude Code]
+    B --> C["Confirm skills loaded: type / in the prompt"]
+    C --> D[Run specjedi-onboard for a guided first run]
+```
+
 1. Clone the repository using the block above for your OS.
 
 2. Open the folder in [Claude Code](https://claude.com/claude-code). Claude Code
@@ -258,11 +315,41 @@ below. Run `./scripts/install.sh --help` (or `.\scripts\install.ps1
 
 Spec Jedi's constitution ([Principle III](.specify/memory/constitution.md)) commits
 this project to eventually supporting the twenty highest-usage LLM coding
-tools/harnesses in the market. Today, two paths have been built, tested, and
-documented end to end: Claude Code (see steps above) and Codex CLI
-(`./scripts/install.sh --harness codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`,
-installing to `.agents/skills/` — verified against Codex CLI's own
-documented skill-discovery convention).
+tools/harnesses in the market. Today, five are real, tested, and CI-proven —
+three via a dedicated installer branch (Claude Code, Codex CLI, Trae) and two
+more (OpenCode, Warp) satisfied by those same install paths with zero extra
+code, since both natively scan the exact directories the installer already
+writes to.
+
+```mermaid
+flowchart LR
+    subgraph Supported["✅ Supported — 5"]
+        direction TB
+        CC[Claude Code]
+        CX[Codex CLI]
+        OC[OpenCode]
+        WA[Warp]
+        TR[Trae]
+    end
+    subgraph Planned["📋 Planned — 15"]
+        direction TB
+        CU[Cursor]
+        GC[GitHub Copilot]
+        GM[Gemini CLI]
+        AG[Antigravity]
+        WS[Windsurf]
+        CL[Cline]
+        CN[Continue]
+        AI[Aider]
+        AQ[Amazon Q]
+        JB[JetBrains AI]
+        ZD[Zed]
+        RA[Replit Agent]
+        DV[Devin]
+        TB2[Tabnine]
+        SC[Sourcegraph Cody]
+    end
+```
 
 | Harness | Status |
 |---|---|

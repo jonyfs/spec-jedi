@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@402bb58 lang=id -->
+<!-- i18n-sync: source=README.md@4a3486c lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -82,7 +82,7 @@ ketat dalam satu waktu mengikuti disiplin riset kompetitif dari
 | `specjedi-find-skills` 🔍 | Menyarankan skill spesifik yang terverifikasi ketika permintaan Anda menyentuh domain yang tidak dicakup baik oleh set yang terinstal — tidak pernah menginstal tanpa bertanya dulu ([Principle XVII](../../../.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Menjelaskan konsep atau perintah SDD apa pun, dikalibrasi sesuai seberapa berpengalaman Anda terdengar — dari pemula total hingga praktisi harian, tidak pernah memberikan jawaban kalengan yang sama untuk keduanya ([Principle XIX](../../../.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | Menulis ulang referensi tooling `/speckit-*` literal dalam constitution/spec/plan/tasks Anda sendiri ke padanan `specjedi-*`-nya — tidak pernah menyentuh konten principle atau requirement, hanya atas permintaan eksplisit |
-| `specjedi-diagram` 📊 | Menghasilkan diagram Mermaid yang terverifikasi render (flowchart, sequence, atau ER — disimpulkan dari konten) dari `spec.md`/`plan.md` yang sudah ada — selalu pelengkap prosa sumber, tidak pernah pengganti |
+| `specjedi-diagram` 📊 | Menghasilkan diagram Mermaid yang terverifikasi render — tipe yang tepat dipilih dari katalog Mermaid lengkap (flowchart, sequence, ER, class, state, Gantt, timeline, user journey, kanban, mindmap, quadrant, pie, dan lainnya) — dari `spec.md`/`plan.md` yang sudah ada — selalu pelengkap prosa sumber, tidak pernah pengganti |
 | `specjedi-status` 🧭 | Dashboard seluruh proyek yang menunjukkan status setiap fitur, sepenuhnya diturunkan dari artefak `spec.md`/`plan.md`/`tasks.md` di disk — nol sistem pelacakan yang dikelola terpisah, tidak pernah menyatakan "macet" sebagai fakta |
 | `specjedi-retro` 🪞 | Retrospektif yang murni read-only membandingkan implementasi aktual fitur yang selesai dengan `plan.md`-nya — mendasarkan penyebab penyimpangan apa pun pada riwayat git yang nyata, tidak pernah mengarang satu, mencatat entri bertanggal yang tahan lama |
 | `specjedi-security` 🛡️ | Prompt ringan dan proaktif seperti "apakah kita sudah memikirkan X" untuk kesenjangan otentikasi/validasi input/rahasia/privasi data — di-invoke sendiri oleh `specjedi-plan`, tidak pernah mengklaim sebagai tinjauan keamanan lengkap |
@@ -414,8 +414,10 @@ alat SDD sebelumnya? Mulai dari langkah 0.
     requirement, hanya atas permintaan eksplisit.
 14. Ingin gambar alih-alih tembok prosa? `specjedi-diagram` 📊
     mengubah spec atau plan menjadi diagram Mermaid yang terverifikasi
-    render — flowchart, sequence, atau ER, apa pun yang diminta konten
-    aktual — selalu berdampingan dengan prosa sumber, tidak pernah
+    render — memilih tipe dari katalog lengkap (lihat
+    [`references/mermaid-diagram-catalog.md`](../../../references/mermaid-diagram-catalog.md))
+    sesuai apa pun yang diminta konten aktual — selalu berdampingan
+    dengan prosa sumber, tidak pernah
     menggantikannya.
 15. Menangani lebih dari satu atau dua fitur? `specjedi-status` 🧭
     menampilkan dashboard seluruh proyek — fitur mana yang

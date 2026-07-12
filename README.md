@@ -69,7 +69,7 @@ research discipline (Principle II), never rushed.
 | `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
-| `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
+| `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram — the right type inferred from content across the full Mermaid catalog (flowchart, sequence, ER, class, state, Gantt, timeline, user journey, kanban, mindmap, quadrant, pie, and more) — from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
 | `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
 | `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
 | `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
@@ -362,9 +362,11 @@ before? Start with step 0.
     `specjedi-*` equivalents — never touches a principle or requirement,
     explicit request only.
 14. Want a picture instead of a wall of prose? `specjedi-diagram` 📊 turns
-    a spec or plan into a render-verified Mermaid diagram — flowchart,
-    sequence, or ER, whichever the actual content calls for — always
-    alongside the source prose, never in place of it.
+    a spec or plan into a render-verified Mermaid diagram — chosen from
+    Mermaid's full diagram catalog (see
+    [`references/mermaid-diagram-catalog.md`](references/mermaid-diagram-catalog.md)),
+    whichever type the actual content calls for — always alongside the
+    source prose, never in place of it.
 15. Juggling more than one or two features? `specjedi-status` 🧭 shows a
     project-wide dashboard — which features are specified, planned, in
     progress, or complete — derived entirely from what's actually on

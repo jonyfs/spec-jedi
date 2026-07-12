@@ -1,5 +1,37 @@
 <!--
 Sync Impact Report
+- Version change: 1.18.3 → 1.19.0
+- Modified principles: XVI (renamed "Mermaid-First Process Documentation"
+  → "Efficient Documentation & Mermaid Diagram Literacy") — MINOR bump,
+  materially expanded guidance, not just clarification:
+  - New: every `specjedi-*` skill MUST actively evaluate the most
+    efficient documentation format (prose/table/list/diagram) for given
+    content, rather than defaulting to a diagram out of habit or padding
+    either format past what the content needs.
+  - New: any diagram-generating/recommending skill MUST know Mermaid's
+    full current diagram-type catalog (30 types as of this amendment),
+    not just flowchart/sequence/ER, grounded in a new canonical reference
+    `references/mermaid-diagram-catalog.md` (mirrors Principle XII's
+    `star-wars-lexicon.md` pattern) — built from two independently
+    cross-checked fetches of mermaid.js.org's own syntax reference, per
+    Principle XX's grounding discipline.
+  - Retained unchanged: the existing "prefer Mermaid over ASCII art,
+    prose stays required alongside it, never diagram-only" requirements.
+  - Propagated in the same PR: `specjedi-diagram`'s `SKILL.md` (feature
+    004) broadened its active type-inference step from 3 types
+    (flowchart/sequence/ER) to the 12 types in the new catalog's "Core"
+    tier most likely to apply to spec/plan content, and now names a
+    Specialized-tier type explicitly (sourced from the catalog) instead
+    of only ever falling back to `specjedi-find-skills` for anything
+    beyond its original three.
+- Added sections: none (new reference file, not a constitution section)
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.18.2 → 1.18.3
 - Modified principles: none — PATCH bump for a `/speckit-constitution`
   compliance audit ("verifique se tudo esperado foi implementado e está
@@ -896,19 +928,44 @@ to spec-kit rather than a Star Wars-flavored wrapper around it — the
 project's stated ambition (Principle II) doesn't hold if its own README
 teaches newcomers the incumbent's command surface instead of its own.
 
-### XVI. Mermaid-First Process Documentation
+### XVI. Efficient Documentation & Mermaid Diagram Literacy
 
-Whenever a skill or doc needs to explain a process, flow, decision tree,
-or sequence of steps, it MUST prefer a Mermaid diagram over a prose wall
-or hand-drawn ASCII art, wherever the target rendering surface supports it
-(GitHub, most IDEs, and many agent harnesses render Mermaid natively).
-Prose remains required alongside the diagram for surfaces that don't
-render Mermaid and for accessibility (a diagram is a supplement, not a
-replacement, per the same spirit as Principle XII's decorative-emoji
+Every `specjedi-*` skill MUST know how to produce efficient
+documentation — choosing the format that conveys the content most
+directly (prose, a table, a list, or a diagram) rather than defaulting to
+whichever format is most familiar. This is an active evaluation, not a
+passive default: a tool×dimension comparison (e.g.
+`references/competitive-comparison.md`) is more efficient as a table than
+forced into a diagram; a multi-step process with branches is more
+efficient as a diagram than a prose wall describing the same flow. Padding
+either format past what the content actually needs is itself an
+inefficiency this principle forbids, in the same spirit as Principle XX's
+token-economy requirement.
+
+When the evaluation favors a diagram, a skill or doc MUST prefer a Mermaid
+diagram over hand-drawn ASCII art, wherever the target rendering surface
+supports it (GitHub, most IDEs, and many agent harnesses render Mermaid
+natively). Prose remains required alongside the diagram for surfaces that
+don't render Mermaid and for accessibility (a diagram is a supplement, not
+a replacement, per the same spirit as Principle XII's decorative-emoji
 rule) — never diagram-only documentation of a process.
 
+Any `specjedi-*` skill that generates or recommends diagrams MUST be able
+to select the correct Mermaid diagram type from Mermaid's full current
+catalog — not just flowchart, sequence, and ER — grounded in
+`references/mermaid-diagram-catalog.md`, the canonical, extensible
+reference this principle requires (mirroring Principle XII's
+`star-wars-lexicon.md` pattern: know the whole field, don't reach for the
+same three familiar options by default). That catalog MUST be re-verified
+against Mermaid's own current documentation whenever a diagram-producing
+skill is meaningfully revised, since Mermaid adds new diagram types over
+time.
+
 **Rationale**: Directly requested: visual process explanations read faster
-and stay accurate longer than prose walls describing the same flow.
+and stay accurate longer than prose walls describing the same flow — but
+only when a diagram is actually the right tool, and only when the skill
+choosing it knows the full range of grammars available rather than
+forcing content into one of a handful of familiar shapes.
 
 ### XVII. Skill Discovery & Gap-Filling (`specjedi-find-skills`)
 
@@ -1234,4 +1291,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.18.3 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.19.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11

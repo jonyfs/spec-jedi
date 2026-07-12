@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@402bb58 lang=pt -->
+<!-- i18n-sync: source=README.md@4a3486c lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:
@@ -82,7 +82,7 @@ pesquisa competitiva do
 | `specjedi-find-skills` 🔍 | Sugere uma skill específica e verificada quando seu pedido toca um domínio que o conjunto instalado não cobre bem — nunca instala sem perguntar antes ([Principle XVII](../../../.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | Explica qualquer conceito ou comando de SDD, calibrado conforme o quão experiente você soa — de iniciante total a praticante diário, nunca a mesma resposta engessada para ambos ([Principle XIX](../../../.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | Reescreve referências literais a ferramentas `/speckit-*` na sua própria constitution/spec/plan/tasks para seus equivalentes `specjedi-*` — nunca toca em conteúdo de princípio ou requisito, só a pedido explícito |
-| `specjedi-diagram` 📊 | Gera um diagrama Mermaid verificado por renderização (flowchart, sequência ou ER — inferido do conteúdo) a partir de um `spec.md`/`plan.md` existente — sempre um complemento à prosa fonte, nunca um substituto |
+| `specjedi-diagram` 📊 | Gera um diagrama Mermaid verificado por renderização — o tipo correto escolhido de todo o catálogo Mermaid (flowchart, sequência, ER, classe, estado, Gantt, linha do tempo, jornada do usuário, kanban, mapa mental, quadrante, pizza, e mais) — a partir de um `spec.md`/`plan.md` existente — sempre um complemento à prosa fonte, nunca um substituto |
 | `specjedi-status` 🧭 | Dashboard de todo o projeto mostrando o status de cada feature, derivado inteiramente dos artefatos `spec.md`/`plan.md`/`tasks.md` em disco — zero sistema de rastreamento mantido separadamente, nunca afirma "parado" como um fato |
 | `specjedi-retro` 🪞 | Retrospectiva estritamente somente-leitura comparando a implementação real de uma feature concluída com seu `plan.md` — fundamenta a causa de qualquer desvio no histórico real do git, nunca inventa uma, registra uma entrada durável e datada |
 | `specjedi-security` 🛡️ | Aviso leve e proativo do tipo "pensamos em X" para lacunas de autenticação/validação de entrada/segredos/privacidade de dados — auto-invocado por `specjedi-plan`, nunca afirma ser uma revisão de segurança completa |
@@ -410,8 +410,10 @@ pelo passo 0.
     princípio ou requisito, só a pedido explícito.
 14. Quer uma imagem em vez de uma parede de prosa? `specjedi-diagram`
     📊 transforma uma spec ou plano em um diagrama Mermaid verificado
-    por renderização — flowchart, sequência, ou ER, o que quer que o
-    conteúdo real exija — sempre ao lado da prosa fonte, nunca no lugar
+    por renderização — escolhendo o tipo de todo o catálogo (veja
+    [`references/mermaid-diagram-catalog.md`](../../../references/mermaid-diagram-catalog.md))
+    conforme o que o conteúdo real exija — sempre ao lado da prosa
+    fonte, nunca no lugar
     dela.
 15. Lidando com mais de uma ou duas features? `specjedi-status` 🧭
     mostra um dashboard de todo o projeto — quais features estão

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@402bb58 lang=hi -->
+<!-- i18n-sync: source=README.md@4a3486c lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:
@@ -77,7 +77,7 @@ competitive research अनुशासन (Principle II) के अनुसा
 | `specjedi-find-skills` 🔍 | जब आपका अनुरोध किसी ऐसे domain को छूता है जिसे installed set अच्छी तरह कवर नहीं करता, तो एक specific, verified skill सुझाती है — पहले पूछे बिना कभी इंस्टॉल नहीं करती ([Principle XVII](../../../.specify/memory/constitution.md)) |
 | `specjedi-explain` 🎓 | किसी भी SDD अवधारणा या command को समझाती है, आप कितने अनुभवी लगते हैं उसके अनुसार कैलिब्रेट करके — पूर्ण beginner से लेकर रोज़ाना अभ्यास करने वाले तक, कभी दोनों को एक जैसा जवाब नहीं देती ([Principle XIX](../../../.specify/memory/constitution.md)) |
 | `specjedi-migrate` 🔄 | आपके अपने constitution/spec/plan/tasks में मौजूद literal `/speckit-*` tooling references को उनके `specjedi-*` समकक्षों में बदलती है — कभी principle या requirement content को नहीं छूती, केवल स्पष्ट अनुरोध पर |
-| `specjedi-diagram` 📊 | किसी मौजूदा `spec.md`/`plan.md` से render-verified Mermaid diagram बनाती है (flowchart, sequence, या ER — content से अनुमानित) — हमेशा मूल प्रोज़ का पूरक, कभी उसकी जगह नहीं |
+| `specjedi-diagram` 📊 | किसी मौजूदा `spec.md`/`plan.md` से render-verified Mermaid diagram बनाती है — पूरे Mermaid catalog से सही type चुनकर (flowchart, sequence, ER, class, state, Gantt, timeline, user journey, kanban, mindmap, quadrant, pie, और अधिक) — हमेशा मूल प्रोज़ का पूरक, कभी उसकी जगह नहीं |
 | `specjedi-status` 🧭 | project-wide dashboard जो हर feature की स्थिति दिखाता है, पूरी तरह डिस्क पर मौजूद `spec.md`/`plan.md`/`tasks.md` artifacts से derived — कोई अलग से maintain किया गया tracking system नहीं, कभी "stalled" को तथ्य के रूप में नहीं बताती |
 | `specjedi-retro` 🪞 | सख्ती से केवल-पढ़ने योग्य retrospective जो किसी पूर्ण हुए feature के वास्तविक implementation की तुलना उसके `plan.md` से करती है — किसी भी deviation के कारण को वास्तविक git history में आधार देती है, कभी कोई कारण नहीं गढ़ती, एक स्थायी dated entry लॉग करती है |
 | `specjedi-security` 🛡️ | auth/input validation/secrets/data-privacy gaps के लिए हल्का, proactive "क्या हमने X के बारे में सोचा" prompt — `specjedi-plan` द्वारा self-invoked, कभी पूर्ण security review होने का दावा नहीं करती |
@@ -391,8 +391,9 @@ pipeline पूरा हो चुका है। पहले कभी SDD t
     requirement को नहीं छूती, केवल स्पष्ट अनुरोध पर।
 14. prose की दीवार के बजाय एक picture चाहिए? `specjedi-diagram` 📊 किसी
     spec या plan को render-verified Mermaid diagram में बदलती है —
-    flowchart, sequence, या ER, जो भी वास्तविक content माँगे — हमेशा
-    source प्रोज़ के साथ, कभी उसकी जगह नहीं।
+    पूरे catalog से वास्तविक content के अनुरूप type चुनकर (देखें
+    [`references/mermaid-diagram-catalog.md`](../../../references/mermaid-diagram-catalog.md))
+    — हमेशा source प्रोज़ के साथ, कभी उसकी जगह नहीं।
 15. एक-दो से ज़्यादा features को एक साथ संभाल रहे हैं? `specjedi-status`
     🧭 एक project-wide dashboard दिखाती है — कौन-से features specified,
     planned, in progress, या complete हैं — पूरी तरह disk पर वास्तव में

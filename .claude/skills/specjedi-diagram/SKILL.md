@@ -1,7 +1,7 @@
 ---
 name: specjedi-diagram
-description: Generates a render-verified Mermaid diagram (flowchart, sequence, or ER — inferred from content) from an existing spec.md/plan.md, presented as a supplement to the source prose, never a replacement. Triggers on a request for a diagram, visual, or flow chart of an existing feature.
-compatibility: Render-verification uses the harness's Mermaid validation mechanism when available (this environment: mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram); falls back to an explicit unverified-caveat path when absent. Reads the target spec.md/plan.md; writes nothing by default.
+description: Generates a render-verified Mermaid diagram (the correct type inferred from content — flowchart, sequence, ER, class, state, Gantt, timeline, user journey, kanban, mindmap, quadrant, or pie — chosen from the full Mermaid catalog, not just the three most familiar) from an existing spec.md/plan.md, presented as a supplement to the source prose, never a replacement. Triggers on a request for a diagram, visual, or flow chart of an existing feature.
+compatibility: Render-verification uses the harness's Mermaid validation mechanism when available (this environment: mcp__claude_ai_Mermaid_Chart__validate_and_render_mermaid_diagram); falls back to an explicit unverified-caveat path when absent. Reads the target spec.md/plan.md and references/mermaid-diagram-catalog.md; writes nothing by default.
 ---
 
 # 📊 Spec Jedi Diagram
@@ -16,15 +16,30 @@ it, render-verify the result, and present it alongside the source prose.
 
 ## Step-by-step
 
-1. **Read the source spec/plan.** Identify what it's actually describing:
-   a sequence of prioritized stories or steps, a set of entities and their
-   relationships, or an interaction between actors/systems over time.
-2. **Infer the diagram type, reasoning through three signals
-   explicitly** — every request, not just ambiguous ones: story/step
-   sequence → flowchart; entities and relationships → ER diagram;
-   actor/system interaction over time → sequence diagram. If two signals
-   are comparably present with no clear majority, ask which type is
-   wanted rather than guessing — even in `--auto` mode.
+1. **Read the source spec/plan.** Identify what it's actually describing,
+   and first ask whether a diagram is even the right call (Principle
+   XVI) — a simple fact list or a tool×dimension comparison is more
+   efficient as prose or a table; don't generate a diagram just because
+   this skill was invoked.
+2. **Infer the diagram type against the full catalog, reasoning
+   explicitly** — every request, not just ambiguous ones. Consult
+   `references/mermaid-diagram-catalog.md`'s "when it's the right choice"
+   column rather than defaulting to flowchart out of habit. Common
+   matches for spec/plan content: story/step sequence → flowchart;
+   entities+relationships without behavior → ER diagram; entities with
+   methods/inheritance → class diagram; actor/system interaction over
+   time → sequence diagram; an entity's named states and transitions →
+   state diagram; dated/sequenced milestones → Gantt or timeline; a
+   `tasks.md` phase breakdown as a board → kanban; a prioritization
+   decision on two axes (e.g. impact × effort) → quadrant chart; a UX
+   narrative with satisfaction beats → user journey; unstructured
+   scoping/brainstorm content → mindmap; a simple share breakdown → pie
+   chart (sparingly — a table is often more precise). If the content
+   matches a Specialized-tier type from the catalog (e.g. Gantt-adjacent
+   but really a C4 architecture view, or a Sankey flow), name that type
+   explicitly rather than forcing it into a Core-tier shape. If two
+   signals are comparably present with no clear majority, ask which type
+   is wanted rather than guessing — even in `--auto` mode.
 3. **Generate Mermaid source grounded in the actual content.** Every node
    and edge MUST trace to something the spec/plan actually states — the
    same "does this trace to the source" discipline `specjedi-checklist`
@@ -44,10 +59,11 @@ it, render-verify the result, and present it alongside the source prose.
    revisit the source spec/plan if the diagram surfaced a gap, or continue
    with whatever pipeline stage comes next.
 
-If the request needs a diagram grammar this skill doesn't cover (a Gantt
-chart, an unusual state-machine notation), self-invoke
-`specjedi-find-skills` rather than forcing an ill-fitting flowchart/
-sequence/ER shape onto it (Principle XVII).
+If the request needs a diagram grammar even the catalog's Specialized
+tier doesn't cover well, or genuinely requires generation tooling beyond
+this skill's own Mermaid-source-writing capability, self-invoke
+`specjedi-find-skills` rather than forcing an ill-fitting Core-tier shape
+onto it (Principle XVII).
 
 ## Autonomous vs. confirm-first
 
@@ -119,11 +135,15 @@ step.
   state explicitly that verification wasn't available.
 - **Always** ground every node/edge in something the source spec/plan
   actually states.
+- **Always** weigh whether a diagram is actually more efficient than
+  prose/a table for this content before generating one (Principle XVI).
 - **Never** present a diagram known to fail render-verification.
 - **Never** present a diagram as a replacement for the source prose —
   always a supplement, alongside it.
 - **Never** write a diagram into a target file without the user's
   explicit confirmation.
+- **Never** default to flowchart out of habit when the content actually
+  matches a different type in `references/mermaid-diagram-catalog.md`.
 
 ## Verifiable success criteria
 

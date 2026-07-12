@@ -9,6 +9,22 @@ this file directly.
 
 ## Unreleased
 
+### Changed
+
+- Constitution Principle XVI renamed "Mermaid-First Process Documentation"
+  → "Efficient Documentation & Mermaid Diagram Literacy" (v1.19.0, MINOR):
+  every `specjedi-*` skill must now actively evaluate the most efficient
+  documentation format (prose/table/list/diagram) rather than defaulting
+  to a diagram out of habit, and any diagram-producing skill must know
+  Mermaid's full current diagram-type catalog, not just flowchart/
+  sequence/ER. New canonical reference
+  `references/mermaid-diagram-catalog.md` (30 diagram types, grounded in
+  two independently cross-checked fetches of mermaid.js.org's syntax
+  reference). `specjedi-diagram` (feature 004) updated in the same PR:
+  active type-inference broadened from 3 to 12 Core-tier types, and it
+  now names Specialized-tier types explicitly instead of always falling
+  back to `specjedi-find-skills`.
+
 ### Fixed
 
 - `references/principle-traceability.md` had gone stale: five rows

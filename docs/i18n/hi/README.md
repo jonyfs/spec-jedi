@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@539aec6 lang=hi -->
+<!-- i18n-sync: source=README.md@f153602 lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:
@@ -295,7 +295,7 @@ convention के विरुद्ध verify किया गया)।
 | Amazon Q Developer | 📋 Planned — अभी installable नहीं |
 | JetBrains AI Assistant | 📋 Planned — अभी installable नहीं |
 | Zed | 📋 Planned — अभी installable नहीं |
-| OpenCode | 📋 Planned — अभी installable नहीं |
+| OpenCode | ✅ Supported — `claude-code` या `codex-cli` install में से कोई भी पर्याप्त है (OpenCode स्वाभाविक रूप से `.claude/skills/` और `.agents/skills/` दोनों को scan करता है), अलग flag की ज़रूरत नहीं |
 | Warp (Agent Mode) | 📋 Planned — अभी installable नहीं |
 | Replit Agent | 📋 Planned — अभी installable नहीं |
 | Devin (Cognition) | 📋 Planned — अभी installable नहीं |

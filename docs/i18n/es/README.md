@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@539aec6 lang=es -->
+<!-- i18n-sync: source=README.md@f153602 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
@@ -294,7 +294,7 @@ de skills documentada por el propio Codex CLI).
 | Amazon Q Developer | 📋 Planeado — aún no instalable |
 | JetBrains AI Assistant | 📋 Planeado — aún no instalable |
 | Zed | 📋 Planeado — aún no instalable |
-| OpenCode | 📋 Planeado — aún no instalable |
+| OpenCode | ✅ Soportado — satisfecho por la instalación de `claude-code` o `codex-cli` (OpenCode escanea nativamente tanto `.claude/skills/` como `.agents/skills/`), sin necesidad de un flag separado |
 | Warp (Agent Mode) | 📋 Planeado — aún no instalable |
 | Replit Agent | 📋 Planeado — aún no instalable |
 | Devin (Cognition) | 📋 Planeado — aún no instalable |

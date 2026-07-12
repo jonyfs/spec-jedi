@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@539aec6 lang=ru -->
+<!-- i18n-sync: source=README.md@f153602 lang=ru -->
 > 🌐 Этот документ переведён с помощью ИИ. **Английский является
 > каноническим источником**
 > ([Principle I](../../../.specify/memory/constitution.md)); в случае
@@ -309,7 +309,7 @@ codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, установка в
 | Amazon Q Developer | 📋 Запланировано — пока не устанавливается |
 | JetBrains AI Assistant | 📋 Запланировано — пока не устанавливается |
 | Zed | 📋 Запланировано — пока не устанавливается |
-| OpenCode | 📋 Запланировано — пока не устанавливается |
+| OpenCode | ✅ Поддерживается — удовлетворяется установкой `claude-code` или `codex-cli` (OpenCode нативно сканирует как `.claude/skills/`, так и `.agents/skills/`), отдельный флаг не нужен |
 | Warp (Agent Mode) | 📋 Запланировано — пока не устанавливается |
 | Replit Agent | 📋 Запланировано — пока не устанавливается |
 | Devin (Cognition) | 📋 Запланировано — пока не устанавливается |

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@52831c4 lang=zh -->
+<!-- i18n-sync: source=README.md@539aec6 lang=zh -->
 > 🌐 本文档由 AI 辅助翻译。**英文原文为权威版本**（[Principle I](../../../.specify/memory/constitution.md)）；如有出入，以英文为准。查看其他语言：[English](../../../README.md) · [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
 # 🗡️ Spec Jedi
@@ -221,15 +221,17 @@ cd spec-jedi
 ### 受支持的宿主环境
 
 Spec Jedi 的章程（[Principle III](../../../.specify/memory/constitution.md)）承诺该项目最终会支持
-市场上使用率最高的二十种 LLM 编码工具/宿主环境。今天，只有上面这条路径（Claude Code）已经过
-完整构建、测试和文档化。
+市场上使用率最高的二十种 LLM 编码工具/宿主环境。今天，已有两条路径完整构建、测试并文档化：
+Claude Code（见上文步骤）和 Codex CLI（`./scripts/install.sh --harness codex-cli` /
+`.\scripts\install.ps1 -Harness codex-cli`，安装到 `.agents/skills/`——已对照 Codex CLI
+自身文档化的技能发现约定进行验证）。
 
 | 宿主环境 | 状态 |
 |---|---|
 | Claude Code | ✅ 已支持——见上方步骤 |
 | Cursor | 📋 计划中——尚不可安装 |
 | GitHub Copilot（Chat/Workspace） | 📋 计划中——尚不可安装 |
-| Codex CLI（OpenAI） | 📋 计划中——尚不可安装 |
+| Codex CLI（OpenAI） | ✅ 已支持——`./scripts/install.sh --harness codex-cli`（安装到 `.agents/skills/`） |
 | Gemini CLI | 📋 计划中——尚不可安装 |
 | Antigravity（Google） | 📋 计划中——尚不可安装 |
 | Windsurf（Codeium） | 📋 计划中——尚不可安装 |

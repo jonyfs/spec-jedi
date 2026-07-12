@@ -1,5 +1,25 @@
 <!--
 Sync Impact Report
+- Version change: 1.20.0 → 1.20.1
+- Modified principles: none
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: `TODO(SESSION_START_HOOK)` is now **CLOSED** — a
+  `/speckit-constitution` audit found it still listed as open below even
+  though feature 015 (`scripts/session-start.sh`/`.ps1`, the
+  `.claude/settings.json` `SessionStart` registration, and the
+  `CLAUDE.md` render instruction) actually shipped and merged
+  (2026-07-12). The mechanism this TODO tracked is built; the one
+  genuinely separate item that remains — an actual live session
+  confirming the greeting renders end to end (SC-003) — is tracked in
+  `references/principle-traceability.md`'s Principle XXI row (🟡
+  Partial), not as a constitution-level TODO, since it's a one-time
+  confirmation step rather than unbuilt work.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.19.0 → 1.20.0
 - Modified principles: none renamed
 - Added: Principle XXI (Session-Start Orientation & the Master Yoda
@@ -1401,4 +1421,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.20.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-11
+**Version**: 1.20.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12

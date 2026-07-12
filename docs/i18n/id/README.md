@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@52831c4 lang=id -->
+<!-- i18n-sync: source=README.md@539aec6 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -286,16 +286,19 @@ untuk daftar opsi lengkap.
 Constitution Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) mengikat
 proyek ini untuk pada akhirnya mendukung dua puluh alat/harness coding
-LLM yang paling banyak digunakan di pasar. Hari ini, hanya jalur di
-atas (Claude Code) yang telah dibangun, diuji, dan didokumentasikan
-secara menyeluruh.
+LLM yang paling banyak digunakan di pasar. Hari ini, dua jalur telah
+dibangun, diuji, dan didokumentasikan secara menyeluruh: Claude Code
+(lihat langkah di atas) dan Codex CLI (`./scripts/install.sh --harness
+codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, menginstal ke
+`.agents/skills/` — diverifikasi terhadap konvensi penemuan skill yang
+didokumentasikan Codex CLI sendiri).
 
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Didukung — lihat langkah di atas |
 | Cursor | 📋 Direncanakan — belum dapat diinstal |
 | GitHub Copilot (Chat/Workspace) | 📋 Direncanakan — belum dapat diinstal |
-| Codex CLI (OpenAI) | 📋 Direncanakan — belum dapat diinstal |
+| Codex CLI (OpenAI) | ✅ Didukung — `./scripts/install.sh --harness codex-cli` (menginstal ke `.agents/skills/`) |
 | Gemini CLI | 📋 Direncanakan — belum dapat diinstal |
 | Antigravity (Google) | 📋 Direncanakan — belum dapat diinstal |
 | Windsurf (Codeium) | 📋 Direncanakan — belum dapat diinstal |

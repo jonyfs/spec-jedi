@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@52831c4 lang=hi -->
+<!-- i18n-sync: source=README.md@539aec6 lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:
@@ -273,15 +273,19 @@ Installer चलाएँ (Constitution
 Spec Jedi का constitution
 ([Principle III](../../../.specify/memory/constitution.md)) इस project
 को अंततः market के बीस सबसे ज़्यादा इस्तेमाल किए जाने वाले LLM coding
-tools/harnesses को support करने के लिए प्रतिबद्ध करता है। आज, केवल ऊपर
-वाला रास्ता (Claude Code) पूरी तरह build, test, और document किया गया है।
+tools/harnesses को support करने के लिए प्रतिबद्ध करता है। आज, दो रास्ते
+पूरी तरह build, test, और document किए जा चुके हैं: Claude Code (ऊपर
+देखें) और Codex CLI (`./scripts/install.sh --harness codex-cli` /
+`.\scripts\install.ps1 -Harness codex-cli`, `.agents/skills/` में
+install होता है — Codex CLI के अपने documented skill-discovery
+convention के विरुद्ध verify किया गया)।
 
 | Harness | स्थिति |
 |---|---|
 | Claude Code | ✅ Supported — ऊपर दिए गए steps देखें |
 | Cursor | 📋 Planned — अभी installable नहीं |
 | GitHub Copilot (Chat/Workspace) | 📋 Planned — अभी installable नहीं |
-| Codex CLI (OpenAI) | 📋 Planned — अभी installable नहीं |
+| Codex CLI (OpenAI) | ✅ Supported — `./scripts/install.sh --harness codex-cli` (`.agents/skills/` में install होता है) |
 | Gemini CLI | 📋 Planned — अभी installable नहीं |
 | Antigravity (Google) | 📋 Planned — अभी installable नहीं |
 | Windsurf (Codeium) | 📋 Planned — अभी installable नहीं |

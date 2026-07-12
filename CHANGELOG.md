@@ -9,6 +9,19 @@ this file directly.
 
 ## Unreleased
 
+### Fixed
+
+- Constitution `TODO(SESSION_START_HOOK)` was still listed as open even
+  though feature 015 actually shipped and merged the mechanism it
+  tracked — a `/speckit-constitution` audit caught the stale bookkeeping
+  and closed it (v1.20.1, PATCH). The one genuinely separate open item
+  (a live session confirming the greeting renders end to end) stays
+  tracked in `references/principle-traceability.md`, not as a
+  constitution-level TODO.
+- All 10 localized `docs/i18n/<lang>/README.md` files had drifted after
+  feature 016's README edit (Codex CLI's intro paragraph + table row) —
+  translated and resynced.
+
 ### Added
 
 - **Codex CLI (OpenAI) install path** (feature 016) — `scripts/install.sh`/

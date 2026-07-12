@@ -11,6 +11,17 @@ this file directly.
 
 ### Added
 
+- **Warp harness support** (feature 018) — the fourth real, CI-proven
+  supported harness, and the second requiring zero new installer code.
+  Verified via Warp's own official Skills documentation
+  (docs.warp.dev/agent-platform/capabilities/skills/) that Agent Mode
+  scans ten directory names including `.claude/skills/` and
+  `.agents/skills/` directly — a separate capability from Warp's
+  `AGENTS.md`/`WARP.md` Rules mechanism, which an initial (incomplete)
+  research pass had mistakenly treated as Warp's only convention. New
+  `warp-compatibility` CI job asserts both existing install paths
+  against Warp's specific documented rules. `scripts/install.sh`/`.ps1`
+  unchanged.
 - **OpenCode harness support** (feature 017) — the third real, CI-proven
   supported harness, and the first requiring **zero new installer code**:
   verified via OpenCode's own official docs that it natively scans both

@@ -19,10 +19,11 @@ if ($Help) {
     Write-Host ""
     Write-Host "  -TargetDir   Project to install Spec Jedi's specjedi-* skills into."
     Write-Host "               Defaults to the current directory."
-    Write-Host "  -Harness     Which coding agent to configure for. 'claude-code' and"
-    Write-Host "               'codex-cli' are built and tested today (Constitution"
-    Write-Host "               Principle III); any other value is reported as"
-    Write-Host "               not-yet-supported rather than silently attempted."
+    Write-Host "  -Harness     Which coding agent to configure for. 'claude-code',"
+    Write-Host "               'codex-cli', and 'trae' are built and tested today"
+    Write-Host "               (Constitution Principle III); any other value is"
+    Write-Host "               reported as not-yet-supported rather than silently"
+    Write-Host "               attempted."
     exit 0
 }
 
@@ -41,13 +42,22 @@ switch ($Harness) {
         # specjedi-* skills already carry (specs/016-codex-cli-install/research.md).
         $skillsDstRel = ".agents/skills"
     }
+    "trae" {
+        # Verified against Trae's official Skills docs, community docs,
+        # and Vercel's own `skills` CLI source (skillsDir: '.trae/skills'
+        # for the trae agent target): project-local skills are scanned
+        # from .trae/skills, same name/description frontmatter
+        # (specs/019-trae-support/research.md).
+        $skillsDstRel = ".trae/skills"
+    }
     default {
-        Write-Host "🔭 '$Harness' isn't built and tested yet — only 'claude-code' and"
-        Write-Host "'codex-cli' are fully supported today (Constitution Principle III's"
-        Write-Host "compatibility matrix). The SKILL.md files are plain Markdown with"
-        Write-Host "YAML frontmatter, so many harnesses that read custom instructions"
-        Write-Host "can already use them directly even without a dedicated install"
-        Write-Host "path — but this installer won't claim to have set that up for you."
+        Write-Host "🔭 '$Harness' isn't built and tested yet — only 'claude-code',"
+        Write-Host "'codex-cli', and 'trae' are fully supported today (Constitution"
+        Write-Host "Principle III's compatibility matrix). The SKILL.md files are plain"
+        Write-Host "Markdown with YAML frontmatter, so many harnesses that read custom"
+        Write-Host "instructions can already use them directly even without a dedicated"
+        Write-Host "install path — but this installer won't claim to have set that up"
+        Write-Host "for you."
         exit 1
     }
 }

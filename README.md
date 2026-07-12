@@ -278,7 +278,7 @@ documented skill-discovery convention).
 | Devin (Cognition) | 📋 Planned — not yet installable |
 | Tabnine | 📋 Planned — not yet installable |
 | Sourcegraph Cody | 📋 Planned — not yet installable |
-| Trae | 📋 Planned — not yet installable |
+| Trae | ✅ Supported — `./scripts/install.sh --harness trae` (installs to `.trae/skills/`) |
 
 Twenty harnesses named individually per Principle III's "at least twenty"
 mandate — status only (✅ supported / 📋 planned), no capability claims for

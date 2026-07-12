@@ -16,10 +16,10 @@ Usage: install.sh [TARGET_DIR] [--harness HARNESS]
 
   TARGET_DIR   Project to install Spec Jedi's specjedi-* skills into.
                Defaults to the current directory.
-  --harness    Which coding agent to configure for. "claude-code" and
-               "codex-cli" are built and tested today (Constitution
-               Principle III); any other value is reported as
-               not-yet-supported rather than silently attempted.
+  --harness    Which coding agent to configure for. "claude-code",
+               "codex-cli", and "trae" are built and tested today
+               (Constitution Principle III); any other value is reported
+               as not-yet-supported rather than silently attempted.
 
 Copies only the specjedi-* product skills (never the vendored speckit-*
 bootstrap tooling this repo uses to build itself) plus the four
@@ -60,13 +60,22 @@ case "$harness" in
     # already carry -- no content rewrite needed (specs/016-codex-cli-install/research.md).
     skills_dst_rel=".agents/skills"
     ;;
+  trae)
+    # Verified against Trae's official Skills docs, community docs, and
+    # Vercel's own `skills` CLI source (skillsDir: '.trae/skills' for the
+    # trae agent target): project-local skills are scanned from
+    # .trae/skills, same name/description frontmatter -- no content
+    # rewrite needed (specs/019-trae-support/research.md).
+    skills_dst_rel=".trae/skills"
+    ;;
   *)
-    echo "🔭 '$harness' isn't built and tested yet — only 'claude-code' and"
-    echo "'codex-cli' are fully supported today (Constitution Principle III's"
-    echo "compatibility matrix). The SKILL.md files are plain Markdown with"
-    echo "YAML frontmatter, so many harnesses that read custom instructions"
-    echo "can already use them directly even without a dedicated install"
-    echo "path — but this installer won't claim to have set that up for you."
+    echo "🔭 '$harness' isn't built and tested yet — only 'claude-code',"
+    echo "'codex-cli', and 'trae' are fully supported today (Constitution"
+    echo "Principle III's compatibility matrix). The SKILL.md files are plain"
+    echo "Markdown with YAML frontmatter, so many harnesses that read custom"
+    echo "instructions can already use them directly even without a dedicated"
+    echo "install path — but this installer won't claim to have set that up"
+    echo "for you."
     exit 1
     ;;
 esac

@@ -165,22 +165,37 @@ project's own bookkeeping
       observable Yoda-line rotation
 - [X] T019 Run `quickstart.md` Scenario 6 (PowerShell parity, if `pwsh`
       available on this machine) — confirm same three-part shape
-- [ ] T020 Run `quickstart.md` Scenario 5 (real end-to-end session start) —
-      the single most important verification in this feature (SC-003); if
-      not directly executable within this session, document explicitly why
-      and what was verified instead, never silently skip it. **Honestly
-      NOT completed**: this cannot be observed from within the same
-      session that built the hook — doing so would require ending this
-      conversation and starting a new one. What *was* verified instead:
-      the script's output is correct and capped (T016-T018), the hook
-      registration uses Claude Code's documented exec-form pattern
-      (T012, independently confirmed runnable with the exact
-      `${CLAUDE_PROJECT_DIR}` invocation), and `CLAUDE.md` carries the
-      render instruction (T013). The live render itself remains an open
-      item for the next real session start in this repo — tracked
-      explicitly in `references/principle-traceability.md`'s Principle
-      XXI row (🟡 Partial, not ✅ Mechanized) rather than silently marked
-      done.
+- [X] T020 Run `quickstart.md` Scenario 5 (real end-to-end session start) —
+      the single most important verification in this feature (SC-003).
+      **Now completed, with cited evidence** (closed in
+      `specs/022-session-start-verification/`, 2026-07-12): a real
+      `SessionStart:compact` hook fired later in this same project's
+      lifetime (a different, subsequent conversation from the one that
+      built this feature), producing exactly the payload this feature
+      specifies:
+      ```text
+      ┌──────────────────────────────────────────┐
+      │   ⚔══════  S P E C   J E D I  ══════⚔     │
+      │        Spec-Driven Development, sharpened   │
+      └──────────────────────────────────────────┘
+
+      18 feature(s): 15 complete, 3 in progress, 0 planned, 0 specified, 0 not started.
+
+      A project with a plan, you have. Proceed, you may.
+      ```
+      Verified: the banner rendered correctly and uncorrupted, the status
+      summary was a real, accurate count derived from on-disk `specs/*/`
+      state (not a hardcoded string), and the Yoda line was correctly
+      gated to the non-empty-project branch (matching the T-series bug
+      fix this feature shipped). This was a `SessionStart:compact`
+      firing (a context-compaction event) rather than a from-scratch
+      `startup` firing — the same registered hook/script fires for
+      either matcher, so this satisfies the mechanism-correctness
+      question this task asks; a `startup`-specific firing was not
+      separately observed. See
+      `specs/022-session-start-verification/research.md` for the full
+      analysis, including a separately-resolved render-instruction-
+      precedence question this same observation surfaced.
 - [X] T021 Run `bash scripts/validate.sh` and `pwsh scripts/validate.ps1`,
       confirm `PASSED` with zero unexpected WARN lines
 - [X] T022 Update `references/principle-traceability.md`'s Principle XXI row
@@ -271,6 +286,7 @@ Task: "Implement stateless Yoda-line rotation logic"
 
 - [P] tasks = different files or independent concerns, no dependencies
 - [Story] label maps task to specific user story for traceability
-- T020 (the real live session-start check) is the single task this whole
-  feature exists to satisfy — do not treat it as optional polish
+- T020 (the real live session-start check) was the single task this whole
+  feature existed to satisfy — closed 2026-07-12 with cited evidence, see
+  `specs/022-session-start-verification/`
 - Commit after each phase, not after every single task

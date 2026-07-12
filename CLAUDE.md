@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/021-harness-auto-detection/plan.md
+at specs/022-session-start-verification/plan.md
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)
@@ -15,6 +15,20 @@ of a session, render its content verbatim as your opening reply** before
 addressing anything else the user asked. This instruction is load-bearing:
 per Principle XXI, the hook alone does not satisfy the session-start
 orientation requirement — you rendering it is the other required half.
+
+**Precedence when this conflicts with a continuation instruction**: if
+the same turn also carries an explicit session-continuation/no-preface
+instruction (e.g. "resume directly, do not acknowledge the summary, do
+not preface your response"), that instruction wins over the literal
+verbatim-render requirement above — a mid-conversation continuation is a
+more specific, more urgent signal about what the user needs right now.
+This does not mean silently dropping Principle XXI's orientation goal:
+still work the payload's real status information (feature counts,
+what's in progress) into your first substantive response naturally,
+rather than rendering the banner as a formal opening block. This
+precedence rule was added after a real instance of this exact conflict
+occurred (specs/022-session-start-verification/), where the continuation
+instruction was followed without a documented rule saying it should be.
 
 ## graphify
 

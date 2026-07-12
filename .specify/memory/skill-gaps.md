@@ -16,7 +16,12 @@ across sessions is a signal Spec Jedi itself should eventually cover it
   field on the repo, and tied to a commercial i18n SaaS product
   (docs.better-i18n.com). Doesn't clear this skill's own verification bar
   ("under 100 stars needs real justification"). No stronger candidate
-  found this pass.
+  found this pass. **Update (2026-07-11, later same day): CLOSED** — no
+  external skill was ever installed for this; `TODO(LOCALIZATION)` was
+  resolved by direct implementation instead (10-language `docs/i18n/`
+  rollout + `scripts/validate.sh`/`.ps1` sync-drift check, constitution
+  v1.17.0→v1.18.0). Left here as a record that the search happened and
+  came up empty, not as a still-open gap.
 - 2026-07-11 — **CI/CD authoring depth** (maintaining/extending
   `.github/workflows/validate.yml` as Principle IX's validation battery
   grows to include unit/integration/Playwright jobs). Searched: web

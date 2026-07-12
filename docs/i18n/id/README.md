@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@e0a1fb8 lang=id -->
+<!-- i18n-sync: source=README.md@5e179bb lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -48,6 +48,18 @@ Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌 Ikon "lightsaber" oleh
 Carlos von Dessauer, dari [Noun Project](https://thenounproject.com),
 digunakan di bawah lisensi CC BY 3.0.)*
 
+```mermaid
+flowchart TD
+    Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>7 skills"]
+```
+
+Setiap skill memverifikasi hasilnya sendiri terhadap constitution — bukan
+sebaliknya. Ubah aturannya, dan setiap skill di hilir akan merasakannya
+pada eksekusi berikutnya.
+
 ## Untuk siapa ini
 
 Siapa pun yang menggunakan agen coding AI yang ingin specs, plans, dan
@@ -66,6 +78,45 @@ SDD `specjedi-*` lengkap — dari constitution hingga convergence —
 ketat dalam satu waktu mengikuti disiplin riset kompetitif dari
 [research.md](../../../specs/001-specjedi-pipeline/research.md)
 (Principle II), tidak pernah terburu-buru.
+
+> *"Kekuatan seorang Jedi mengalir dari Force. Begitu pula kekuatan
+> sebuah proyek, mengalir dari skill-skillnya."* — seorang Master yang
+> bijak, mungkin.
+
+Berjumlah dua puluh tiga, inilah Ordo ini — dilatih bukan untuk
+pertempuran, tetapi untuk Spec-Driven Development. Empat disiplin ia jaga:
+
+```mermaid
+mindmap
+  root(("Spec Jedi — 23 skills"))
+    Core Pipeline - 9
+      constitution
+      specify
+      clarify
+      plan
+      tasks
+      implement
+      analyze
+      checklist
+      converge
+    Onboarding and Guidance - 3
+      onboard
+      explain
+      find-skills
+    Quality and Review - 4
+      security
+      skill-review
+      govcheck
+      retro
+    Meta and Tooling - 7
+      diagram
+      status
+      docs
+      migrate
+      new-skill
+      release
+      tokencheck
+```
 
 **Tersedia hari ini, instal dan gunakan sekarang:**
 
@@ -238,6 +289,13 @@ skrip pembantu mana yang Anda jalankan (`scripts/*.sh` di POSIX shell,
 `scripts/*.ps1` di PowerShell native); skill itu sendiri bekerja secara
 identik di kedua cara.
 
+```mermaid
+flowchart TD
+    A[Clone the repo] --> B[Open the folder in Claude Code]
+    B --> C["Confirm skills loaded: type / in the prompt"]
+    C --> D[Run specjedi-onboard for a guided first run]
+```
+
 1. Clone repositori menggunakan blok di atas untuk OS Anda.
 
 2. Buka folder di [Claude Code](https://claude.com/claude-code). Claude
@@ -293,12 +351,42 @@ untuk daftar opsi lengkap, termasuk `--auto`.
 Constitution Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) mengikat
 proyek ini untuk pada akhirnya mendukung dua puluh alat/harness coding
-LLM yang paling banyak digunakan di pasar. Hari ini, dua jalur telah
-dibangun, diuji, dan didokumentasikan secara menyeluruh: Claude Code
-(lihat langkah di atas) dan Codex CLI (`./scripts/install.sh --harness
-codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, menginstal ke
-`.agents/skills/` — diverifikasi terhadap konvensi penemuan skill yang
-didokumentasikan Codex CLI sendiri).
+LLM yang paling banyak digunakan di pasar. Hari ini, lima sudah nyata,
+teruji, dan terbukti oleh CI — tiga melalui branch installer khusus
+(Claude Code, Codex CLI, Trae) dan dua lagi (OpenCode, Warp) terpenuhi
+oleh jalur instalasi yang sama tanpa kode tambahan, karena keduanya
+secara native memindai direktori persis yang sudah ditulis oleh
+installer.
+
+```mermaid
+flowchart LR
+    subgraph Supported["✅ Supported — 5"]
+        direction TB
+        CC[Claude Code]
+        CX[Codex CLI]
+        OC[OpenCode]
+        WA[Warp]
+        TR[Trae]
+    end
+    subgraph Planned["📋 Planned — 15"]
+        direction TB
+        CU[Cursor]
+        GC[GitHub Copilot]
+        GM[Gemini CLI]
+        AG[Antigravity]
+        WS[Windsurf]
+        CL[Cline]
+        CN[Continue]
+        AI[Aider]
+        AQ[Amazon Q]
+        JB[JetBrains AI]
+        ZD[Zed]
+        RA[Replit Agent]
+        DV[Devin]
+        TB2[Tabnine]
+        SC[Sourcegraph Cody]
+    end
+```
 
 | Harness | Status |
 |---|---|

@@ -72,13 +72,25 @@ to ship.
 
 ## Phase 4: Documentation & Ship
 
-- [ ] T030 Update README.md's skill table to add `specjedi-release`;
+- [X] T030 Update README.md's skill table to add `specjedi-release`;
   update `references/skill-roadmap.md`'s "Shipped (second wave)" section.
-- [ ] T031 Update `.specify/memory/constitution.md`'s Sync Impact Report
+  **Stale checkbox, corrected 2026-07-12** (project-wide `/speckit-converge`
+  sweep): verified done — `specjedi-release` is present in README.md's
+  skill table (and Quickstart) and `references/skill-roadmap.md`'s
+  Shipped section ("feature 010, shipped 2026-07-11"); the checkbox was
+  simply never ticked at the time.
+- [X] T031 Update `.specify/memory/constitution.md`'s Sync Impact Report
   noting `specjedi-release` shipped (feature 010, second second-wave
   addition).
-- [ ] T032 Validate full repo (`scripts/validate.sh`), commit on this
+  **Stale checkbox, corrected 2026-07-12**: verified done — the
+  constitution's Sync Impact Report history records `specjedi-release`
+  shipping (feature 010-specjedi-release, 2026-07-11).
+- [X] T032 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
+  **Stale checkbox, corrected 2026-07-12**: verified done — the feature
+  is live on `main` today (skill ships, referenced throughout the
+  codebase), confirming the original PR merged; only the checkbox itself
+  was never updated.
 
 ## Dependencies
 

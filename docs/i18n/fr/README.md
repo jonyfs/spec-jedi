@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@e0a1fb8 lang=fr -->
+<!-- i18n-sync: source=README.md@5e179bb lang=fr -->
 > 🌐 Ce document est une traduction assistée par IA. **L'anglais est la
 > source canonique** ([Principle I](../../../.specify/memory/constitution.md)) ;
 > en cas de divergence, l'anglais prévaut. Voir d'autres langues :
@@ -45,6 +45,18 @@ affilié, approuvé ni sponsorisé par Lucasfilm/Disney. Que la Spec soit
 avec vous. 🌌 Icône « sabre laser » par Carlos von Dessauer, provenant de
 [Noun Project](https://thenounproject.com), utilisée sous licence CC BY 3.0.)*
 
+```mermaid
+flowchart TD
+    Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>7 skills"]
+```
+
+Chaque skill vérifie son propre résultat par rapport à la constitution —
+jamais l'inverse. Changez les règles, et chaque skill en aval le ressent
+dès sa prochaine exécution.
+
 ## Pour qui
 
 Toute personne utilisant un agent de codage IA qui souhaite que les
@@ -65,6 +77,44 @@ SDD `specjedi-*` complet — de la constitution à la convergence — est
 à la fois selon la discipline de recherche concurrentielle de
 [research.md](../../../specs/001-specjedi-pipeline/research.md)
 (Principle II), jamais précipitées.
+
+> *"La force d'un Jedi vient de la Force. Celle d'un projet, de même,
+> vient de ses skills."* — un sage Maître, probablement.
+
+Vingt-trois, cet Ordre compte — entraîné non pour le combat, mais pour le
+Développement Guidé par les Spécifications. Quatre disciplines il maintient :
+
+```mermaid
+mindmap
+  root(("Spec Jedi — 23 skills"))
+    Core Pipeline - 9
+      constitution
+      specify
+      clarify
+      plan
+      tasks
+      implement
+      analyze
+      checklist
+      converge
+    Onboarding and Guidance - 3
+      onboard
+      explain
+      find-skills
+    Quality and Review - 4
+      security
+      skill-review
+      govcheck
+      retro
+    Meta and Tooling - 7
+      diagram
+      status
+      docs
+      migrate
+      new-skill
+      release
+      tokencheck
+```
 
 **Disponible dès aujourd'hui, installez et utilisez maintenant :**
 
@@ -238,6 +288,13 @@ est le script d'aide que vous exécutez (`scripts/*.sh` dans un shell
 POSIX, `scripts/*.ps1` en PowerShell natif) ; les skills elles-mêmes
 fonctionnent de manière identique dans les deux cas.
 
+```mermaid
+flowchart TD
+    A[Clone the repo] --> B[Open the folder in Claude Code]
+    B --> C["Confirm skills loaded: type / in the prompt"]
+    C --> D[Run specjedi-onboard for a guided first run]
+```
+
 1. Clonez le dépôt en utilisant le bloc ci-dessus pour votre OS.
 
 2. Ouvrez le dossier dans [Claude Code](https://claude.com/claude-code).
@@ -294,12 +351,41 @@ pour la liste complète des options, y compris `--auto`.
 La constitution de Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) engage ce
 projet à finalement supporter les vingt outils/environnements de codage
-LLM les plus utilisés du marché. Aujourd'hui, deux chemins ont été
-construits, testés et documentés de bout en bout : Claude Code (voir les
-étapes ci-dessus) et Codex CLI (`./scripts/install.sh --harness
-codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, installant dans
-`.agents/skills/` — vérifié par rapport à la convention de découverte de
-skills documentée par Codex CLI lui-même).
+LLM les plus utilisés du marché. Aujourd'hui, cinq sont réels, testés et
+prouvés par CI — trois via une branche d'installateur dédiée (Claude
+Code, Codex CLI, Trae) et deux autres (OpenCode, Warp) satisfaits par ces
+mêmes chemins d'installation sans code supplémentaire, puisque les deux
+scannent nativement les répertoires exacts où l'installateur écrit déjà.
+
+```mermaid
+flowchart LR
+    subgraph Supported["✅ Supported — 5"]
+        direction TB
+        CC[Claude Code]
+        CX[Codex CLI]
+        OC[OpenCode]
+        WA[Warp]
+        TR[Trae]
+    end
+    subgraph Planned["📋 Planned — 15"]
+        direction TB
+        CU[Cursor]
+        GC[GitHub Copilot]
+        GM[Gemini CLI]
+        AG[Antigravity]
+        WS[Windsurf]
+        CL[Cline]
+        CN[Continue]
+        AI[Aider]
+        AQ[Amazon Q]
+        JB[JetBrains AI]
+        ZD[Zed]
+        RA[Replit Agent]
+        DV[Devin]
+        TB2[Tabnine]
+        SC[Sourcegraph Cody]
+    end
+```
 
 | Environnement | Statut |
 |---|---|

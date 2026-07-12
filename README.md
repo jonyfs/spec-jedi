@@ -242,10 +242,15 @@ the result before finishing:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-Only `-harness claude-code` (the default) is built and tested today; any
-other value is reported as not-yet-supported rather than silently attempted
-— see [Supported harnesses](#supported-harnesses) below. Run `./scripts/install.sh --help`
-(or `.\scripts\install.ps1 -Help`) for the full option list.
+`--harness` is optional — if omitted, the installer attempts to detect
+which coding agent you're using (a project directory, a `PATH` binary, or
+a global config directory already present) and installs for it
+automatically, asking only if detection finds more than one plausible
+match. `claude-code`, `codex-cli`, and `trae` are built and tested today;
+any other explicit value is reported as not-yet-supported rather than
+silently attempted — see [Supported harnesses](#supported-harnesses)
+below. Run `./scripts/install.sh --help` (or `.\scripts\install.ps1
+-Help`) for the full option list, including `--auto`.
 
 ### Supported harnesses
 

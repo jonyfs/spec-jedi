@@ -8,14 +8,15 @@
 
 param(
     [string]$TargetDir = ".",
-    [string]$Harness = "claude-code",
+    [string]$Harness = "",
+    [switch]$Auto,
     [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
 
 if ($Help) {
-    Write-Host "Usage: install.ps1 [-TargetDir DIR] [-Harness HARNESS]"
+    Write-Host "Usage: install.ps1 [-TargetDir DIR] [-Harness HARNESS] [-Auto]"
     Write-Host ""
     Write-Host "  -TargetDir   Project to install Spec Jedi's specjedi-* skills into."
     Write-Host "               Defaults to the current directory."
@@ -23,11 +24,127 @@ if ($Help) {
     Write-Host "               'codex-cli', and 'trae' are built and tested today"
     Write-Host "               (Constitution Principle III); any other value is"
     Write-Host "               reported as not-yet-supported rather than silently"
-    Write-Host "               attempted."
+    Write-Host "               attempted. If omitted, the installer attempts harness"
+    Write-Host "               auto-detection (specs/021-harness-auto-detection)."
+    Write-Host "  -Auto        When -Harness is omitted and detection finds more than"
+    Write-Host "               one plausible harness, automatically select the"
+    Write-Host "               Recommended one instead of prompting interactively"
+    Write-Host "               (Constitution Principle IV's Recommended-option standard)."
     exit 0
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
+
+New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
+$TargetDir = (Resolve-Path $TargetDir).Path
+
+# Harness auto-detection (specs/021-harness-auto-detection): only runs
+# when -Harness was omitted. Any explicit -Harness value bypasses all of
+# this entirely -- zero behavior change for existing scripted/CI usage.
+if (-not $Harness) {
+    $signals = @()
+
+    if (Test-Path (Join-Path $TargetDir ".claude")) {
+        $signals += "claude-code:1:target directory ($TargetDir\.claude)"
+    }
+    if (Get-Command claude -ErrorAction SilentlyContinue) {
+        $signals += "claude-code:2:PATH binary (claude)"
+    }
+    if (Test-Path (Join-Path $env:USERPROFILE ".claude")) {
+        $signals += "claude-code:3:global config (~\.claude)"
+    }
+
+    if (Test-Path (Join-Path $TargetDir ".agents")) {
+        $signals += "codex-cli:1:target directory ($TargetDir\.agents)"
+    }
+    if (Get-Command codex -ErrorAction SilentlyContinue) {
+        $signals += "codex-cli:2:PATH binary (codex)"
+    }
+    if (Test-Path (Join-Path $env:USERPROFILE ".codex")) {
+        $signals += "codex-cli:3:global config (~\.codex)"
+    }
+
+    if (Test-Path (Join-Path $TargetDir ".trae")) {
+        $signals += "trae:1:target directory ($TargetDir\.trae)"
+    }
+    # trae has no established cross-platform PATH binary to check
+    # (it's a GUI-first IDE) -- see specs/021-harness-auto-detection/research.md
+    if (Test-Path (Join-Path $env:USERPROFILE ".trae")) {
+        $signals += "trae:3:global config (~\.trae)"
+    }
+
+    $ranks = @{ "claude-code" = $null; "codex-cli" = $null; "trae" = $null }
+    $evidence = @{ "claude-code" = $null; "codex-cli" = $null; "trae" = $null }
+
+    foreach ($sig in $signals) {
+        $parts = $sig -split ":", 3
+        $sigHarness = $parts[0]
+        $sigRank = [int]$parts[1]
+        $sigEvidence = $parts[2]
+        if ($null -eq $ranks[$sigHarness] -or $sigRank -lt $ranks[$sigHarness]) {
+            $ranks[$sigHarness] = $sigRank
+            $evidence[$sigHarness] = $sigEvidence
+        }
+    }
+
+    $matched = @($ranks.Keys | Where-Object { $null -ne $ranks[$_] })
+
+    if ($matched.Count -eq 0) {
+        $Harness = "claude-code"
+        Write-Host "🔭 No harness detected on this machine/target directory — falling"
+        Write-Host "back to the default: claude-code (this is a fallback, not a"
+        Write-Host "detected match)."
+    }
+    elseif ($matched.Count -eq 1) {
+        $Harness = $matched[0]
+        Write-Host "🔭 Detected $Harness ($($evidence[$Harness])) — installing automatically."
+    }
+    else {
+        $priorityOrder = @("claude-code", "codex-cli", "trae")
+        $recommended = $null
+        $recommendedRank = 999
+        foreach ($cand in $priorityOrder) {
+            if ($null -ne $ranks[$cand] -and $ranks[$cand] -lt $recommendedRank) {
+                $recommended = $cand
+                $recommendedRank = $ranks[$cand]
+            }
+        }
+
+        if ($Auto -or [Console]::IsInputRedirected) {
+            $Harness = $recommended
+            Write-Host "🔭 Multiple harnesses detected — auto-selecting Recommended:"
+            Write-Host "$recommended (-Auto passed, or no interactive terminal available)."
+        }
+        else {
+            Write-Host "🔭 Multiple harnesses detected on this machine/target directory:"
+            $letters = @("A", "B", "C")
+            $idx = 0
+            $letterMap = @{}
+            foreach ($cand in $priorityOrder) {
+                if ($null -ne $ranks[$cand]) {
+                    $letter = $letters[$idx]
+                    $letterMap[$letter] = $cand
+                    if ($cand -eq $recommended) {
+                        Write-Host "  $letter. $cand (Recommended — $($evidence[$cand]))"
+                    }
+                    else {
+                        Write-Host "  $letter. $cand ($($evidence[$cand]))"
+                    }
+                    $idx++
+                }
+            }
+            $recommendedLetter = ($letterMap.Keys | Where-Object { $letterMap[$_] -eq $recommended })
+            $choice = Read-Host "Choice [$recommendedLetter]"
+            if (-not $choice) { $choice = $recommendedLetter }
+            $Harness = $recommended
+            foreach ($letter in $letterMap.Keys) {
+                if ($choice -eq $letter -or $choice -eq $letterMap[$letter]) {
+                    $Harness = $letterMap[$letter]
+                }
+            }
+        }
+    }
+}
 
 # Harness Target mapping (data-model.md): both entries share the same
 # source skills, runtime templates, and post-copy validation below --
@@ -61,9 +178,6 @@ switch ($Harness) {
         exit 1
     }
 }
-
-New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
-$TargetDir = (Resolve-Path $TargetDir).Path
 
 Write-Host "📜 Installing Spec Jedi's specjedi-* skills into: $TargetDir"
 Write-Host ""

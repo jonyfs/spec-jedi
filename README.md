@@ -272,7 +272,7 @@ documented skill-discovery convention).
 | Amazon Q Developer | 📋 Planned — not yet installable |
 | JetBrains AI Assistant | 📋 Planned — not yet installable |
 | Zed | 📋 Planned — not yet installable |
-| OpenCode | 📋 Planned — not yet installable |
+| OpenCode | ✅ Supported — satisfied by either the `claude-code` or `codex-cli` install (OpenCode natively scans both `.claude/skills/` and `.agents/skills/`), no separate flag needed |
 | Warp (Agent Mode) | 📋 Planned — not yet installable |
 | Replit Agent | 📋 Planned — not yet installable |
 | Devin (Cognition) | 📋 Planned — not yet installable |

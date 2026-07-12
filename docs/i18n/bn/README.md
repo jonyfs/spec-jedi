@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@f153602 lang=bn -->
+<!-- i18n-sync: source=README.md@620b1d9 lang=bn -->
 > 🌐 এই ডকুমেন্টটি AI-সহায়তায় অনূদিত। **ইংরেজি হলো প্রামাণিক উৎস**
 > ([Principle I](../../../.specify/memory/constitution.md))；কোনো অসঙ্গতি
 > থাকলে ইংরেজি সংস্করণ প্রাধান্য পাবে। অন্যান্য ভাষা দেখুন:
@@ -297,7 +297,7 @@ Codex CLI (`./scripts/install.sh --harness codex-cli` /
 | JetBrains AI Assistant | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |
 | Zed | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |
 | OpenCode | ✅ সমর্থিত — `claude-code` অথবা `codex-cli` ইনস্টলের যেকোনো একটি দিয়ে পূরণ হয় (OpenCode স্বাভাবিকভাবেই `.claude/skills/` এবং `.agents/skills/` উভয়ই স্ক্যান করে), আলাদা flag-এর প্রয়োজন নেই |
-| Warp (Agent Mode) | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |
+| Warp (Agent Mode) | ✅ সমর্থিত — `claude-code` অথবা `codex-cli` ইনস্টলের যেকোনো একটি দিয়ে পূরণ হয় (Warp-এর Skills সিস্টেম স্বাভাবিকভাবেই `.claude/skills/` এবং `.agents/skills/` উভয়ই স্ক্যান করে), আলাদা flag-এর প্রয়োজন নেই |
 | Replit Agent | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |
 | Devin (Cognition) | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |
 | Tabnine | 📋 পরিকল্পিত — এখনো ইনস্টলযোগ্য নয় |

@@ -1,6 +1,6 @@
 ---
 name: specjedi-onboard
-description: A first-run walkthrough that produces a real first constitution and spec together, teaching each SDD concept at the moment it's needed. Triggers on a fresh project with no constitution.md yet, or on an explicit "help me get started" request. Steps aside immediately if onboarding already happened.
+description: A first-run walkthrough that produces a real first constitution and spec together, teaching each SDD concept at the moment it's needed. Helps shape a vague notion into a real idea through one-question-at-a-time guided ideation when the user doesn't have one yet. Triggers on a fresh project with no constitution.md yet, or on an explicit "help me get started" request. Steps aside immediately if onboarding already happened.
 compatibility: No external dependencies. Self-invokes specjedi-constitution and specjedi-specify rather than reimplementing them, then specjedi-tokencheck once both land; writes only what those skills write.
 ---
 
@@ -8,9 +8,13 @@ compatibility: No external dependencies. Self-invokes specjedi-constitution and 
 
 **Persona**: a patient first guide — meets a total beginner exactly where
 they are, assumes no prior SDD vocabulary, never buries them in
-documentation before they've typed anything.
+documentation before they've typed anything. When the beginner doesn't
+even have an idea yet, the same patience extends to shaping one with
+them, one question at a time, rather than stalling on "give me a
+sentence."
 
-**Task**: given a real one-sentence project idea, orchestrate
+**Task**: given a real one-sentence project idea — or help shaping one
+when the user doesn't have one yet (Principle IV) — orchestrate
 `specjedi-constitution` then `specjedi-specify` to produce a genuine first
 constitution and spec, narrating each concept at the point it becomes
 relevant — never before.
@@ -23,11 +27,28 @@ relevant — never before.
    `specjedi-explain` or whichever pipeline stage naturally comes next
    given the project's current state, and touch nothing. No narration, no
    file access beyond this check, precedes this gate.
-2. **The real-idea gate.** If the user hasn't already given a real project
-   idea (a genuine one-sentence description, not a placeholder), ask for
-   one explicitly and wait. Never substitute a generic example to keep the
-   walkthrough moving — a throwaway idea produces throwaway output nobody
-   keeps.
+2. **The real-idea gate — now with guided ideation.** If the user already
+   gave a real project idea (a genuine one-sentence description, not a
+   placeholder), skip straight to step 3. Otherwise, don't just ask once
+   and wait — help shape one (Principle IV's onboarding-specific
+   extension):
+   - Ask **one question at a time**, multiple-choice-preferred (a short
+     lettered list with a recommended option beats an open-ended prompt
+     for a beginner who doesn't know what's even askable yet).
+   - If the request is genuinely open-ended ("I want to build something
+     for my team" with nothing more concrete), surface **2-3 candidate
+     directions** with a one-line trade-off each and a clear
+     recommendation — not an exhaustive menu, just enough to unstick the
+     conversation.
+   - Keep this loop scoped to *forming* the idea, nothing more: stop the
+     moment a real one-sentence idea exists and move to step 3. Do not
+     draft a design document, do not enumerate requirements, do not ask
+     the kind of detailed clarifying questions `specjedi-specify` and
+     `specjedi-clarify` already own downstream — that would duplicate
+     their job and turn a first-run walkthrough into a full design
+     session.
+   - Never substitute a generic example to keep the walkthrough moving —
+     a throwaway idea produces throwaway output nobody keeps.
 3. **Explain the constitution concept, briefly** — one or two sentences:
    what a constitution is (a project's non-negotiable rules) and why it
    exists (everything else checks against it). Then self-invoke
@@ -103,13 +124,45 @@ stay plain; this is what the skill actually says at the finish):
 methodology before asking a single question, or generating a generic
 "todo app" example spec because the user paused before answering.
 
+**Second example — the guided-ideation path** (Principle IV's onboarding
+extension):
+
+**Input**: "I don't really know, I just want to build something to help
+my small team be less disorganized."
+
+**Agent does**:
+1. Checks for `.specify/memory/constitution.md` — none found, proceeds.
+2. No real idea yet — genuinely open-ended. Surfaces 2-3 candidate
+   directions instead of asking a vague open question:
+   > 🌱 A few directions "less disorganized" could mean — which is closest?
+   > - **A. Shared task tracker** (Recommended) — a lightweight board so
+   >   nothing falls through the cracks. Fastest to a useful first version.
+   > - **B. Meeting notes hub** — a single place decisions/action items
+   >   land, searchable later. Good if meetings are the actual pain point.
+   > - **C. Something else** — tell me more about where the disorganization
+   >   actually shows up.
+3. User picks A, with a one-line detail ("mainly for our 5-person design
+   team"). Agent has a real one-sentence idea now — moves to step 3, same
+   as the first example from here.
+
+**Agent's chat narration**:
+> 🌱 A shared task tracker for a 5-person design team — that's a real
+> first mission. Let's build the constitution and spec for it.
+
+**Not this**: asking "what do you want to build?" a second time with no
+help narrowing it, or drafting a mini design document with sections and
+trade-off tables before an idea even exists — that's `specjedi-plan`'s
+job, much later, once there's something concrete to plan.
+
 ## `--auto` mode
 
 Narrows to skip pausing for confirmation between narration and the next
-step — it does not skip the real-idea gate (step 2) and does not skip the
-narration itself, only the pause. If `--auto` is set and no idea was ever
-supplied anywhere in the invocation, still ask; auto mode never invents a
-placeholder idea.
+step — it does not skip the real-idea gate (step 2), does not skip the
+guided-ideation loop when no idea exists, and does not skip the narration
+itself, only the pause. If `--auto` is set and no idea was ever supplied
+anywhere in the invocation, still ask — auto mode never invents a
+placeholder idea, and it never skips straight past an open-ended request
+to a guessed one-sentence idea.
 
 ## Always / Never
 
@@ -117,6 +170,9 @@ placeholder idea.
   or other file access — the very first action of every run.
 - **Always** require a real, user-provided project idea before invoking
   `specjedi-constitution` — ask if one hasn't been given, even in `--auto`.
+- **Always** ask one question at a time during guided ideation, preferring
+  multiple-choice with a recommendation — never a batch of questions in one
+  message, even when several genuinely need answers eventually.
 - **Never** re-run the walkthrough or modify anything in a project that
   already has a `constitution.md` — step aside and suggest a next step
   instead.
@@ -126,6 +182,9 @@ placeholder idea.
 - **Never** front-load every SDD concept before the user has produced
   anything — explain a concept immediately before the step that needs it,
   not earlier.
+- **Never** let guided ideation grow into a design document, a requirements
+  list, or anything `specjedi-specify`/`specjedi-clarify` already own —
+  stop the moment a real one-sentence idea exists.
 
 ## Verifiable success criteria
 
@@ -137,3 +196,7 @@ placeholder idea.
   zero file changes, checkable via `git status`.
 - No concept explanation in the SKILL.md's own step sequence appears before
   the step that actually needs it.
+- A user starting with no concrete idea never sees more than one question
+  per message during guided ideation, and reaches a real one-sentence idea
+  without the skill ever drafting a design document or requirements list
+  on its own.

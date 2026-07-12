@@ -1,5 +1,43 @@
 <!--
 Sync Impact Report
+- Version change: 1.20.1 → 1.21.0
+- Modified principles: IV. Structured, Opinionated Elicitation (Ask, Don't
+  Assume) — MINOR bump, materially expanded guidance (no renaming, no
+  removal).
+  - Adds a fourth paragraph scoping a brainstorming-inspired guided-ideation
+    duty specifically to `specjedi-onboard`, the project's first-run entry
+    point: when a user arrives with no concrete idea yet, or explicitly asks
+    for help figuring out what to build, the skill MUST engage in
+    one-question-at-a-time, multiple-choice-preferred ideation — optionally
+    surfacing 2-3 candidate directions with trade-offs and a recommendation
+    for genuinely open-ended requests — before locking in the one-sentence
+    idea handed downstream to `specjedi-constitution`/`specjedi-specify`.
+  - Explicitly scoped to NOT duplicate `specjedi-specify`'s own requirement
+    gathering or `specjedi-clarify`'s ambiguity-resolution loop, and to NOT
+    produce a standalone design document — onboarding hands off a
+    crystallized idea, not a spec. This keeps the extension proportionate to
+    a first-run walkthrough rather than importing the full weight of a
+    heavier, general-purpose brainstorming workflow.
+  - Origin: this session's `/superpowers:brainstorming` skill demonstrated
+    exactly the interaction shape (one question at a time, propose 2-3
+    approaches with trade-offs, incremental section-by-section approval)
+    that a total-beginner-calibrated onboarding flow was missing — today's
+    `specjedi-onboard` only ever asked once for "a real one-sentence idea"
+    with no help shaping one. This amendment names that gap and closes it
+    at the principle level; the paired `specjedi-onboard/SKILL.md` edit
+    (this same session) is the mechanism.
+- Added sections: none (extends an existing principle, not a new one)
+- Removed sections: none
+- Templates requiring updates: none — this is elicitation-interaction-shape
+  guidance for one specific skill, not a new mandatory artifact section; no
+  `plan-template.md`/`spec-template.md`/`tasks-template.md` structural
+  change follows from it.
+- Follow-up TODOs: none — the paired `specjedi-onboard/SKILL.md` change
+  ships in the same session as this amendment, not deferred.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.20.0 → 1.20.1
 - Modified principles: none
 - Added sections: none
@@ -625,9 +663,27 @@ questions until the produced artifact is a faithful, technically sound
 representation of what the user actually needs — not merely what they
 initially typed.
 
+For the project's first-run entry point (`specjedi-onboard`), this
+elicitation discipline extends to idea formation itself, not just artifact
+content: when a user has no concrete idea yet, or explicitly asks for help
+figuring out what to build, the skill MUST engage in one-question-at-a-time,
+multiple-choice-preferred guided ideation — optionally surfacing 2-3
+candidate directions with trade-offs and a recommendation when the request
+is genuinely open-ended — before locking in the one-sentence idea handed to
+`specjedi-constitution`/`specjedi-specify`. This borrows its interaction
+shape from established brainstorming-style guided-ideation patterns, scoped
+narrowly to idea formation: it MUST NOT duplicate `specjedi-specify`'s own
+requirement gathering or `specjedi-clarify`'s downstream ambiguity-resolution
+loop, and MUST NOT produce a standalone design document —
+`specjedi-onboard` hands off a crystallized idea, not a spec.
+
 **Rationale**: This is what distinguishes a professional collaborator from
 an order-taker; the user explicitly requires skills that don't always agree
-and keep asking until the result is right.
+and keep asking until the result is right. A total beginner arriving with
+only a vague notion — not yet a real one-sentence idea — is exactly the
+user `specjedi-onboard`'s own persona commits to meeting where they are;
+gating on "give me one sentence" without helping shape that sentence first
+leaves the person who most needs guidance with none.
 
 ### V. Specification Completeness for Autonomous Execution
 
@@ -1421,4 +1477,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.20.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12
+**Version**: 1.21.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12

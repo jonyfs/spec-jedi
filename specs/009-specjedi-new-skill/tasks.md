@@ -79,16 +79,28 @@ to ship.
 
 ## Phase 4: Documentation & Ship
 
-- [ ] T030 Update README.md's skill table to add `specjedi-new-skill`;
+- [X] T030 Update README.md's skill table to add `specjedi-new-skill`;
   update `references/skill-roadmap.md` to add it under a new "Shipped
   (second wave)" grouping, since the original backlog's "Proposed, not
   yet built" section was already empty when this feature was proposed.
-- [ ] T031 Update `.specify/memory/constitution.md`'s Sync Impact Report
+  **Stale checkbox, corrected 2026-07-12** (project-wide `/speckit-converge`
+  sweep): verified done — `specjedi-new-skill` is present in README.md's
+  skill table and `references/skill-roadmap.md`'s Shipped section
+  ("feature 009, shipped 2026-07-11"); the checkbox was simply never
+  ticked at the time.
+- [X] T031 Update `.specify/memory/constitution.md`'s Sync Impact Report
   noting `specjedi-new-skill` shipped (feature 009, first second-wave
   addition, and the first feature built via literal `/speckit-*`
   invocation rather than hand-authored matching artifacts).
-- [ ] T032 Validate full repo (`scripts/validate.sh`), commit on this
+  **Stale checkbox, corrected 2026-07-12**: verified done — the
+  constitution's Sync Impact Report history records "`specjedi-new-skill`
+  shipped at v1.16.0."
+- [X] T032 Validate full repo (`scripts/validate.sh`), commit on this
   feature branch, open PR, verify `ci-gate` green, confirm auto-merge.
+  **Stale checkbox, corrected 2026-07-12**: verified done — the feature
+  is live on `main` today (skill ships, referenced throughout the
+  codebase), confirming the original PR merged; only the checkbox itself
+  was never updated.
 
 ## Dependencies
 

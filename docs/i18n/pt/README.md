@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@e0a1fb8 lang=pt -->
+<!-- i18n-sync: source=README.md@5e179bb lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:
@@ -46,6 +46,18 @@ endossado ou patrocinado por Lucasfilm/Disney. Que a Spec esteja com
 você. 🌌 Ícone de "sabre de luz" por Carlos von Dessauer, do
 [Noun Project](https://thenounproject.com), usado sob licença CC BY 3.0.)*
 
+```mermaid
+flowchart TD
+    Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>7 skills"]
+```
+
+Toda skill verifica seu próprio resultado contra a constitution — nunca
+o contrário. Mude as regras, e toda skill downstream sente isso na sua
+próxima execução.
+
 ## Para quem é isso
 
 Qualquer pessoa que use um agente de codificação com IA e queira que
@@ -65,6 +77,44 @@ construídos uma história rigorosa de cada vez seguindo a disciplina de
 pesquisa competitiva do
 [research.md](../../../specs/001-specjedi-pipeline/research.md)
 (Principle II), nunca apressado.
+
+> *"A força de um Jedi flui da Força. A de um projeto, da mesma forma,
+> flui das suas skills."* — um Mestre sábio, provavelmente.
+
+Vinte e três, em número, é esta Ordem — treinada não para o combate, mas
+para o Desenvolvimento Guiado por Especificações. Quatro disciplinas ela mantém:
+
+```mermaid
+mindmap
+  root(("Spec Jedi — 23 skills"))
+    Core Pipeline - 9
+      constitution
+      specify
+      clarify
+      plan
+      tasks
+      implement
+      analyze
+      checklist
+      converge
+    Onboarding and Guidance - 3
+      onboard
+      explain
+      find-skills
+    Quality and Review - 4
+      security
+      skill-review
+      govcheck
+      retro
+    Meta and Tooling - 7
+      diagram
+      status
+      docs
+      migrate
+      new-skill
+      release
+      tokencheck
+```
 
 **Disponível hoje, instale e use agora:**
 
@@ -237,6 +287,13 @@ auxiliar você roda (`scripts/*.sh` em um shell POSIX, `scripts/*.ps1` em
 PowerShell nativo); as skills em si funcionam de forma idêntica em
 ambos os casos.
 
+```mermaid
+flowchart TD
+    A[Clone the repo] --> B[Open the folder in Claude Code]
+    B --> C["Confirm skills loaded: type / in the prompt"]
+    C --> D[Run specjedi-onboard for a guided first run]
+```
+
 1. Clone o repositório usando o bloco acima para o seu SO.
 
 2. Abra a pasta no [Claude Code](https://claude.com/claude-code). O
@@ -292,12 +349,42 @@ abaixo. Rode `./scripts/install.sh --help` (ou `.\scripts\install.ps1
 A constitution do Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) compromete
 este projeto a eventualmente suportar as vinte ferramentas/ambientes de
-codificação com LLM mais usados no mercado. Hoje, dois caminhos foram
-construídos, testados e documentados de ponta a ponta: Claude Code (veja
-os passos acima) e Codex CLI (`./scripts/install.sh --harness
-codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, instalando em
-`.agents/skills/` — verificado contra a própria convenção documentada de
-descoberta de skills do Codex CLI).
+codificação com LLM mais usados no mercado. Hoje, cinco são reais,
+testados e comprovados por CI — três via uma branch dedicada do
+instalador (Claude Code, Codex CLI, Trae) e mais dois (OpenCode, Warp)
+satisfeitos por esses mesmos caminhos de instalação sem código extra,
+já que ambos escaneiam nativamente os diretórios exatos onde o
+instalador já escreve.
+
+```mermaid
+flowchart LR
+    subgraph Supported["✅ Supported — 5"]
+        direction TB
+        CC[Claude Code]
+        CX[Codex CLI]
+        OC[OpenCode]
+        WA[Warp]
+        TR[Trae]
+    end
+    subgraph Planned["📋 Planned — 15"]
+        direction TB
+        CU[Cursor]
+        GC[GitHub Copilot]
+        GM[Gemini CLI]
+        AG[Antigravity]
+        WS[Windsurf]
+        CL[Cline]
+        CN[Continue]
+        AI[Aider]
+        AQ[Amazon Q]
+        JB[JetBrains AI]
+        ZD[Zed]
+        RA[Replit Agent]
+        DV[Devin]
+        TB2[Tabnine]
+        SC[Sourcegraph Cody]
+    end
+```
 
 | Ambiente | Status |
 |---|---|

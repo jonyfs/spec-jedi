@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@e0a1fb8 lang=hi -->
+<!-- i18n-sync: source=README.md@5e179bb lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है**
 > ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की
 > स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें:
@@ -43,6 +43,18 @@ merge होते हैं, शामिल है। यहाँ vibe-coding
 आइकन Carlos von Dessauer द्वारा, [Noun Project](https://thenounproject.com)
 से, CC BY 3.0 के तहत उपयोग किया गया।)*
 
+```mermaid
+flowchart TD
+    Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>7 skills"]
+```
+
+हर skill अपने ही output को constitution के आधार पर verify करती है — उल्टा
+नहीं। नियम बदलते ही, नीचे की हर skill को अपनी अगली run में इसका असर महसूस
+होता है।
+
 ## यह किसके लिए है
 
 कोई भी व्यक्ति जो AI कोडिंग एजेंट का उपयोग करता है और चाहता है कि specs,
@@ -61,6 +73,44 @@ Spec Jedi, [spec-kit](https://github.com/github/spec-kit) का असली
 [research.md](../../../specs/001-specjedi-pipeline/research.md) के
 competitive research अनुशासन (Principle II) के अनुसार, एक-एक करके सावधानी
 से बनाए गए, कभी जल्दबाज़ी में नहीं।
+
+> *"एक Jedi की ताकत Force से बहती है। एक project की ताकत भी वैसे ही, उसकी
+> skills से बहती है।"* — एक बुद्धिमान Master, शायद।
+
+तेईस के संख्या में यह Order है — लड़ाई के लिए नहीं, बल्कि Spec-Driven
+Development के लिए trained। इसमें चार अनुशासन हैं:
+
+```mermaid
+mindmap
+  root(("Spec Jedi — 23 skills"))
+    Core Pipeline - 9
+      constitution
+      specify
+      clarify
+      plan
+      tasks
+      implement
+      analyze
+      checklist
+      converge
+    Onboarding and Guidance - 3
+      onboard
+      explain
+      find-skills
+    Quality and Review - 4
+      security
+      skill-review
+      govcheck
+      retro
+    Meta and Tooling - 7
+      diagram
+      status
+      docs
+      migrate
+      new-skill
+      release
+      tokencheck
+```
 
 **आज ही उपलब्ध, इंस्टॉल करें और इस्तेमाल करें:**
 
@@ -228,6 +278,13 @@ helper script चलाते हैं (POSIX shell में `scripts/*.sh`, n
 PowerShell में `scripts/*.ps1`); skills खुद दोनों तरह से identical काम
 करती हैं।
 
+```mermaid
+flowchart TD
+    A[Clone the repo] --> B[Open the folder in Claude Code]
+    B --> C["Confirm skills loaded: type / in the prompt"]
+    C --> D[Run specjedi-onboard for a guided first run]
+```
+
 1. अपने OS के लिए ऊपर दिए गए block का उपयोग करके repository clone करें।
 
 2. [Claude Code](https://claude.com/claude-code) में folder खोलें। Claude
@@ -280,12 +337,42 @@ list के लिए `./scripts/install.sh --help` (या `.\scripts\install.p
 Spec Jedi का constitution
 ([Principle III](../../../.specify/memory/constitution.md)) इस project
 को अंततः market के बीस सबसे ज़्यादा इस्तेमाल किए जाने वाले LLM coding
-tools/harnesses को support करने के लिए प्रतिबद्ध करता है। आज, दो रास्ते
-पूरी तरह build, test, और document किए जा चुके हैं: Claude Code (ऊपर
-देखें) और Codex CLI (`./scripts/install.sh --harness codex-cli` /
-`.\scripts\install.ps1 -Harness codex-cli`, `.agents/skills/` में
-install होता है — Codex CLI के अपने documented skill-discovery
-convention के विरुद्ध verify किया गया)।
+tools/harnesses को support करने के लिए प्रतिबद्ध करता है। आज, पाँच
+harnesses असली, test किए गए, और CI-proven हैं — तीन एक dedicated
+installer branch के ज़रिए (Claude Code, Codex CLI, Trae), और दो और
+(OpenCode, Warp) उन्हीं install paths से बिना किसी अतिरिक्त code के
+satisfy हो जाते हैं, क्योंकि दोनों उन्हीं directories को natively scan
+करते हैं जिनमें installer पहले से लिखता है।
+
+```mermaid
+flowchart LR
+    subgraph Supported["✅ Supported — 5"]
+        direction TB
+        CC[Claude Code]
+        CX[Codex CLI]
+        OC[OpenCode]
+        WA[Warp]
+        TR[Trae]
+    end
+    subgraph Planned["📋 Planned — 15"]
+        direction TB
+        CU[Cursor]
+        GC[GitHub Copilot]
+        GM[Gemini CLI]
+        AG[Antigravity]
+        WS[Windsurf]
+        CL[Cline]
+        CN[Continue]
+        AI[Aider]
+        AQ[Amazon Q]
+        JB[JetBrains AI]
+        ZD[Zed]
+        RA[Replit Agent]
+        DV[Devin]
+        TB2[Tabnine]
+        SC[Sourcegraph Cody]
+    end
+```
 
 | Harness | स्थिति |
 |---|---|

@@ -1,11 +1,11 @@
-<!-- i18n-sync: source=README.md@620b1d9 lang=es -->
+<!-- i18n-sync: source=README.md@e0a1fb8 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
 > [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) ·
 > [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# 🗡️ Spec Jedi
+# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -36,7 +36,9 @@ versionan las releases y cómo se validan y fusionan los pull requests. Sin
 atajos hacia el Lado Oscuro del vibe-coding aquí. 🚫🖤
 
 *(Branding no oficial, inspirado por fans — Spec Jedi no está afiliado, avalado
-ni patrocinado por Lucasfilm/Disney. Que la Especificación te acompañe. 🌌)*
+ni patrocinado por Lucasfilm/Disney. Que la Especificación te acompañe. 🌌 Icono
+de "sable de luz" por Carlos von Dessauer, de [Noun Project](https://thenounproject.com),
+usado bajo CC BY 3.0.)*
 
 ## Para quién es esto
 
@@ -260,12 +262,16 @@ resultado antes de terminar:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-Solo `-harness claude-code` (el predeterminado) está construido y probado
-hoy; cualquier otro valor se reporta como aún no soportado en lugar de
-intentarse silenciosamente — ver
-[Entornos soportados](#entornos-soportados) abajo. Ejecuta
-`./scripts/install.sh --help` (o `.\scripts\install.ps1 -Help`) para la
-lista completa de opciones.
+`--harness` es opcional — si se omite, el instalador intenta detectar qué
+agente de codificación estás usando (un directorio del proyecto ya
+existente, un binario en `PATH`, o un directorio de configuración global
+ya existente) e instala automáticamente para ese — solo pregunta si la
+detección encuentra más de una coincidencia plausible. `claude-code`,
+`codex-cli` y `trae` están construidos y probados hoy; cualquier otro
+valor explícito se reporta como aún no soportado en lugar de intentarse
+silenciosamente — ver [Entornos soportados](#entornos-soportados) abajo.
+Ejecuta `./scripts/install.sh --help` (o `.\scripts\install.ps1 -Help`)
+para la lista completa de opciones, incluyendo `--auto`.
 
 ### Entornos soportados
 
@@ -300,7 +306,7 @@ de skills documentada por el propio Codex CLI).
 | Devin (Cognition) | 📋 Planeado — aún no instalable |
 | Tabnine | 📋 Planeado — aún no instalable |
 | Sourcegraph Cody | 📋 Planeado — aún no instalable |
-| Trae | 📋 Planeado — aún no instalable |
+| Trae | ✅ Soportado — `./scripts/install.sh --harness trae` (instala en `.trae/skills/`) |
 
 Veinte entornos nombrados individualmente según el mandato de "al menos
 veinte" del Principle III — solo estado (✅ soportado / 📋 planeado), sin

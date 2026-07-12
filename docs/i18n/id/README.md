@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@620b1d9 lang=id -->
+<!-- i18n-sync: source=README.md@e0a1fb8 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -9,7 +9,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# 🗡️ Spec Jedi
+# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -44,7 +44,9 @@ Gelap vibe-coding di sini. 🚫🖤
 
 *(Branding tidak resmi, terinspirasi penggemar — Spec Jedi tidak
 berafiliasi dengan, didukung oleh, atau disponsori oleh
-Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌)*
+Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌 Ikon "lightsaber" oleh
+Carlos von Dessauer, dari [Noun Project](https://thenounproject.com),
+digunakan di bawah lisensi CC BY 3.0.)*
 
 ## Untuk siapa ini
 
@@ -274,12 +276,17 @@ selesai:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-Hanya `-harness claude-code` (default) yang dibangun dan diuji hari
-ini; nilai lain apa pun dilaporkan sebagai belum-didukung alih-alih
-dicoba secara diam-diam — lihat
-[Harness yang didukung](#harness-yang-didukung) di bawah. Jalankan
+`--harness` sekarang opsional — jika dihilangkan, installer mencoba
+mendeteksi agen coding mana yang Anda gunakan (direktori proyek yang
+sudah ada, binary di `PATH`, atau direktori konfigurasi global yang
+sudah ada) dan menginstal secara otomatis untuk itu — hanya bertanya
+jika deteksi menemukan lebih dari satu kemungkinan yang cocok.
+`claude-code`, `codex-cli`, dan `trae` sudah dibangun dan diuji hari
+ini; nilai eksplisit lain apa pun dilaporkan sebagai belum-didukung
+alih-alih dicoba secara diam-diam — lihat [Harness yang
+didukung](#harness-yang-didukung) di bawah. Jalankan
 `./scripts/install.sh --help` (atau `.\scripts\install.ps1 -Help`)
-untuk daftar opsi lengkap.
+untuk daftar opsi lengkap, termasuk `--auto`.
 
 ### Harness yang didukung
 
@@ -314,7 +321,7 @@ didokumentasikan Codex CLI sendiri).
 | Devin (Cognition) | 📋 Direncanakan — belum dapat diinstal |
 | Tabnine | 📋 Direncanakan — belum dapat diinstal |
 | Sourcegraph Cody | 📋 Direncanakan — belum dapat diinstal |
-| Trae | 📋 Direncanakan — belum dapat diinstal |
+| Trae | ✅ Didukung — `./scripts/install.sh --harness trae` (menginstal ke `.trae/skills/`) |
 
 Dua puluh harness disebutkan satu per satu sesuai mandat "setidaknya
 dua puluh" dari Principle III — hanya status (✅ didukung / 📋

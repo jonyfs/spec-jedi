@@ -1,8 +1,20 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/014-competitive-comparison/plan.md
+at specs/015-session-start-hook/plan.md
 <!-- SPECKIT END -->
+
+## Session-start orientation (Constitution Principle XXI)
+
+A `SessionStart` hook (`scripts/session-start.sh`/`.ps1`) runs at the
+start of every session and injects an ASCII banner, a project status
+summary, and a rotating Master Yoda greeting line as `additionalContext`
+— this is context for you to read, not something the terminal displays
+directly to the user. **When that context block is present at the start
+of a session, render its content verbatim as your opening reply** before
+addressing anything else the user asked. This instruction is load-bearing:
+per Principle XXI, the hook alone does not satisfy the session-start
+orientation requirement — you rendering it is the other required half.
 
 ## graphify
 

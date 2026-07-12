@@ -43,7 +43,7 @@ index derived from it, and like any fact-bearing index in this project
 | XVIII | Zero-Footprint Installer with Harness Selection | ✅ Mechanized | `scripts/install.sh`/`.ps1`; closed via the INSTALLER governance amendment (constitution v1.15.6). |
 | XIX | Skill Authoring & Prompt Engineering Standard | ✅ Mechanized (both directions) | `references/skill-authoring-standard.md` (the standard itself); `specjedi-new-skill` (feature 009, scaffolds compliant structure); `specjedi-skill-review` (feature 011, audits an existing skill against it). |
 | XX | AI Discipline: Grounded, Efficient, Honest Output | ✅ Mechanized | Retrofitted via the GROUNDING_PASS and PROMPT_ENG_PASS governance amendments (constitution v1.15.3/v1.15.5); `specjedi-skill-review`'s chain-of-thought dimension checks this at authoring time. CHK015's retrospective-audit question is answered rather than left open: git's own append-only commit/PR history already is the inspectable audit trail this principle needs — deliberately not duplicated into a second, easier-to-forget tracking ledger. `specjedi-govcheck`'s per-PR Principle XX row is the forward-looking half. |
-| XXI | Session-Start Orientation & the Master Yoda Greeting | 🔴 Not started | Policy established (constitution v1.20.0); the actual `SessionStart` hook script, `CLAUDE.md` render-instruction wiring, and ASCII art asset are **not yet built** — tracked as `TODO(SESSION_START_HOOK)`, scoped as feature 015 requiring real Principle II research before shipping. `references/star-wars-lexicon.md`'s Master Yoda persona section exists (speech patterns + a starter rotation pool); the mechanism to actually deliver it each session does not. |
+| XXI | Session-Start Orientation & the Master Yoda Greeting | 🟡 Partial | `scripts/session-start.sh`/`.ps1` (feature 015) implement the full three-part payload and are registered under `SessionStart` in `.claude/settings.json`; `CLAUDE.md` carries the render instruction. Both scripts real-dry-run tested (character cap, rotation, graceful degradation on a missing lexicon file and on a zero-feature project all verified). What remains unverified: an actual live Claude Code session start rendering the greeting end to end (SC-003) — not observable from within the same session that built it; needs confirmation the next time a fresh session opens in this repo. |
 
 ## Cross-cutting (not a numbered principle)
 
@@ -60,5 +60,5 @@ index derived from it, and like any fact-bearing index in this project
 - 🟡 **Partial** — some mechanism exists, but the principle's mandate is not
   fully satisfied; the specific gap is named and cross-referenced to
   `checklists/project-completeness.md` where applicable.
-- 🔴 **Not started** — no mechanism exists yet (Principle XXI, as of this
-  entry: policy is ratified but nothing has shipped to implement it yet).
+- 🔴 **Not started** — no mechanism exists yet (none currently, as of this
+  entry).

@@ -11,6 +11,19 @@ this file directly.
 
 ### Added
 
+- `scripts/session-start.sh`/`.ps1` (feature 015) — implements Principle
+  XXI's `SessionStart` hook: an ASCII Spec Jedi banner, a project status
+  summary derived from `specjedi-status`'s own on-disk logic, and a
+  context-aware rotating Master Yoda greeting line, registered in
+  `.claude/settings.json` and paired with the required `CLAUDE.md` render
+  instruction. Real dry runs caught and fixed two genuine bugs before
+  shipping: a `grep -c`/`|| echo 0` double-counting bug, and a Yoda-line
+  selector that could pick the "empty project" line for a 15-feature
+  project (now filtered by actual on-disk state) — plus a word-wrapped
+  quote extraction bug in the PowerShell/bash line-parsing logic. The one
+  remaining unverified item is a live, real Claude Code session actually
+  rendering the greeting end to end — not observable from within the same
+  session that built it.
 - Constitution Principle XXI (Session-Start Orientation & the Master
   Yoda Greeting, v1.20.0, MINOR): policy for a three-part session-start
   orientation (ASCII Spec Jedi banner, `specjedi-status`-derived project

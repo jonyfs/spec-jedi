@@ -287,6 +287,12 @@ If your harness isn't listed as supported yet, the `SKILL.md` files are plain
 Markdown with YAML frontmatter — many harnesses that support custom
 instructions/prompts can already read them directly even without a dedicated
 install path, but this hasn't been verified or documented per-harness yet.
+See [`references/harness-capability-notes.md`](references/harness-capability-notes.md)
+for desk-research capability notes per harness.
+
+Curious how Spec Jedi stacks up against spec-kit and the ten other SDD tools
+it was benchmarked against? See
+[`references/competitive-comparison.md`](references/competitive-comparison.md).
 
 ## Quickstart
 

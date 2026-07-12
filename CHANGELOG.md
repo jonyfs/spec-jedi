@@ -11,6 +11,12 @@ this file directly.
 
 ### Added
 
+- `references/competitive-comparison.md` — an 11-row table comparing Spec
+  Jedi to spec-kit and the ten other researched SDD/agent-skill tools,
+  reusing `specs/001-specjedi-pipeline/research.md`'s existing citations
+  rather than performing new competitor research; linked from `README.md`
+  (feature 014, shipped via the literal `speckit-specify` →
+  `speckit-plan` → `speckit-tasks` → `speckit-implement` pipeline).
 - `references/harness-capability-notes.md` — desk-research capability
   matrix for all 19 non-Claude-Code harnesses in Principle III's
   compatibility table (mechanism, cited source, Yes/Unclear call per

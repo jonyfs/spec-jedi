@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@539aec6 lang=zh -->
+<!-- i18n-sync: source=README.md@f153602 lang=zh -->
 > 🌐 本文档由 AI 辅助翻译。**英文原文为权威版本**（[Principle I](../../../.specify/memory/constitution.md)）；如有出入，以英文为准。查看其他语言：[English](../../../README.md) · [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) · [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
 # 🗡️ Spec Jedi
@@ -241,7 +241,7 @@ Claude Code（见上文步骤）和 Codex CLI（`./scripts/install.sh --harness 
 | Amazon Q Developer | 📋 计划中——尚不可安装 |
 | JetBrains AI Assistant | 📋 计划中——尚不可安装 |
 | Zed | 📋 计划中——尚不可安装 |
-| OpenCode | 📋 计划中——尚不可安装 |
+| OpenCode | ✅ 已支持——通过 `claude-code` 或 `codex-cli` 安装均可满足（OpenCode 会原生扫描 `.claude/skills/` 和 `.agents/skills/`），无需单独的标志 |
 | Warp（Agent Mode） | 📋 计划中——尚不可安装 |
 | Replit Agent | 📋 计划中——尚不可安装 |
 | Devin（Cognition） | 📋 计划中——尚不可安装 |

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@539aec6 lang=id -->
+<!-- i18n-sync: source=README.md@f153602 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -308,7 +308,7 @@ didokumentasikan Codex CLI sendiri).
 | Amazon Q Developer | 📋 Direncanakan — belum dapat diinstal |
 | JetBrains AI Assistant | 📋 Direncanakan — belum dapat diinstal |
 | Zed | 📋 Direncanakan — belum dapat diinstal |
-| OpenCode | 📋 Direncanakan — belum dapat diinstal |
+| OpenCode | ✅ Didukung — dipenuhi oleh instalasi `claude-code` atau `codex-cli` (OpenCode secara native memindai baik `.claude/skills/` maupun `.agents/skills/`), tidak perlu flag terpisah |
 | Warp (Agent Mode) | 📋 Direncanakan — belum dapat diinstal |
 | Replit Agent | 📋 Direncanakan — belum dapat diinstal |
 | Devin (Cognition) | 📋 Direncanakan — belum dapat diinstal |

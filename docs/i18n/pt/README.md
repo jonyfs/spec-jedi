@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@52831c4 lang=pt -->
+<!-- i18n-sync: source=README.md@539aec6 lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:
@@ -287,15 +287,19 @@ lista completa de opções.
 A constitution do Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) compromete
 este projeto a eventualmente suportar as vinte ferramentas/ambientes de
-codificação com LLM mais usados no mercado. Hoje, apenas o caminho acima
-(Claude Code) foi construído, testado e documentado de ponta a ponta.
+codificação com LLM mais usados no mercado. Hoje, dois caminhos foram
+construídos, testados e documentados de ponta a ponta: Claude Code (veja
+os passos acima) e Codex CLI (`./scripts/install.sh --harness
+codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, instalando em
+`.agents/skills/` — verificado contra a própria convenção documentada de
+descoberta de skills do Codex CLI).
 
 | Ambiente | Status |
 |---|---|
 | Claude Code | ✅ Suportado — veja os passos acima |
 | Cursor | 📋 Planejado — ainda não instalável |
 | GitHub Copilot (Chat/Workspace) | 📋 Planejado — ainda não instalável |
-| Codex CLI (OpenAI) | 📋 Planejado — ainda não instalável |
+| Codex CLI (OpenAI) | ✅ Suportado — `./scripts/install.sh --harness codex-cli` (instala em `.agents/skills/`) |
 | Gemini CLI | 📋 Planejado — ainda não instalável |
 | Antigravity (Google) | 📋 Planejado — ainda não instalável |
 | Windsurf (Codeium) | 📋 Planejado — ainda não instalável |

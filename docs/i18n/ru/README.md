@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@52831c4 lang=ru -->
+<!-- i18n-sync: source=README.md@539aec6 lang=ru -->
 > 🌐 Этот документ переведён с помощью ИИ. **Английский является
 > каноническим источником**
 > ([Principle I](../../../.specify/memory/constitution.md)); в случае
@@ -287,15 +287,19 @@ bootstrap `speckit-*`, плюс четыре файла `.specify/templates/*.md
 Constitution Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) обязывает
 этот проект в конечном итоге поддерживать двадцать самых используемых
-на рынке инструментов/окружений кодирования с LLM. Сегодня только путь
-выше (Claude Code) полностью построен, протестирован и задокументирован.
+на рынке инструментов/окружений кодирования с LLM. Сегодня два пути
+полностью построены, протестированы и задокументированы: Claude Code
+(см. шаги выше) и Codex CLI (`./scripts/install.sh --harness
+codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`, установка в
+`.agents/skills/` — проверено по собственной задокументированной
+конвенции обнаружения навыков Codex CLI).
 
 | Окружение | Статус |
 |---|---|
 | Claude Code | ✅ Поддерживается — см. шаги выше |
 | Cursor | 📋 Запланировано — пока не устанавливается |
 | GitHub Copilot (Chat/Workspace) | 📋 Запланировано — пока не устанавливается |
-| Codex CLI (OpenAI) | 📋 Запланировано — пока не устанавливается |
+| Codex CLI (OpenAI) | ✅ Поддерживается — `./scripts/install.sh --harness codex-cli` (устанавливает в `.agents/skills/`) |
 | Gemini CLI | 📋 Запланировано — пока не устанавливается |
 | Antigravity (Google) | 📋 Запланировано — пока не устанавливается |
 | Windsurf (Codeium) | 📋 Запланировано — пока не устанавливается |

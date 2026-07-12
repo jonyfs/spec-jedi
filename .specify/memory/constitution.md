@@ -1,5 +1,40 @@
 <!--
 Sync Impact Report
+- Version change: 1.22.0 → 1.23.0
+- Modified principles: XXI. Session-Start Orientation & the Master Yoda
+  Greeting — MINOR bump, materially expanded guidance (no renaming, no
+  removal).
+  - Closes this principle's own last remaining gap: feature 015's T020
+    ("an actual live Claude Code session start rendering the greeting
+    end to end — not observable from within the same session that built
+    it") is now satisfied with real, cited evidence — a genuine
+    `SessionStart:compact` firing later in this project's lifetime
+    produced the correct three-part payload (banner, accurate on-disk-
+    derived status, correctly-gated Yoda line), quoted verbatim in
+    `specs/015-session-start-hook/tasks.md`'s T020 and
+    `specs/022-session-start-verification/research.md`. This was a
+    `compact` firing, not a from-scratch `startup` firing — the same
+    registered hook/script either way, stated precisely rather than
+    overclaimed.
+  - Adds a new precedence clause resolving a real, previously-
+    undocumented conflict the same observation surfaced: this
+    principle's own render-verbatim instruction versus an explicit
+    session-continuation/no-preface instruction, both applying to the
+    same turn. Resolution: continuation instructions win, but the
+    orientation goal isn't dropped — the agent still surfaces real
+    status naturally. `CLAUDE.md` carries the paired operative
+    instruction (this same session).
+  - `references/principle-traceability.md`'s Principle XXI row updated
+    from 🟡 Partial to ✅ Mechanized to reflect the closure.
+- Added sections: none (extends an existing principle, not a new one)
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none — this closes the principle's last named gap
+  rather than opening a new one.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.21.0 → 1.22.0
 - Modified principles: IV. Structured, Opinionated Elicitation (Ask, Don't
   Assume) — MINOR bump, materially expanded guidance (no renaming, no
@@ -1386,6 +1421,20 @@ status+greeting hook? what's the genuine contribution here?) before
 shipping, the same as any other new mechanism — a constitution amendment
 alone does not satisfy that gate.
 
+**Precedence when the render instruction conflicts with a continuation
+directive**: a real instance of exactly this conflict occurred and is
+resolved here rather than left to accidental precedent. When the same
+turn carries both a `SessionStart` context block AND an explicit
+session-continuation/no-preface instruction (e.g. "resume directly, do
+not preface your response"), the continuation instruction MUST take
+precedence over rendering the payload verbatim as a formal opening
+block — it is the more specific, more urgent signal about what's needed
+in that moment. This MUST NOT be read as license to drop this
+principle's orientation goal entirely: the agent MUST still work the
+payload's real status information into its first substantive response
+naturally. `CLAUDE.md` carries the operative instruction; this
+constitution entry is the policy source it implements.
+
 **Rationale**: Directly requested: a session should open with insight,
 not silence — a returning contributor immediately sees what's been done,
 a first-timer immediately sees this project has a distinct voice, and
@@ -1544,4 +1593,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.22.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12
+**Version**: 1.23.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12

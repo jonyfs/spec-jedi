@@ -11,6 +11,18 @@ this file directly.
 
 ### Added
 
+- **Session-start live-render verification closure** (feature 022) —
+  closes Constitution Principle XXI's last remaining gap: feature 015's
+  T020 (a real, live session-start firing was never observed). A genuine
+  `SessionStart:compact` event fired later in this project's lifetime
+  and produced the correct three-part payload — cited verbatim as
+  evidence in `specs/015-session-start-hook/tasks.md`. Also resolves a
+  real, previously-undocumented conflict the same observation surfaced:
+  the render-verbatim instruction versus an explicit session-
+  continuation/no-preface instruction — `CLAUDE.md` and Constitution
+  Principle XXI (v1.23.0) now state which one wins and why, without
+  dropping the orientation goal entirely. Principle XXI's traceability
+  status moves from 🟡 Partial to ✅ Mechanized.
 - **Harness auto-detection** (feature 021) — Sub-Project C of the
   release/installer decomposition identified during feature 020's
   brainstorming. `scripts/install.sh`/`.ps1`'s `--harness` flag is now

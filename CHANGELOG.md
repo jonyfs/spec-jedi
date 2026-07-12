@@ -9,6 +9,20 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **OpenCode harness support** (feature 017) — the third real, CI-proven
+  supported harness, and the first requiring **zero new installer code**:
+  verified via OpenCode's own official docs that it natively scans both
+  `.claude/skills/` and `.agents/skills/`, the exact paths the existing
+  `claude-code`/`codex-cli` install paths already write to, with an
+  identical `SKILL.md` frontmatter format. A direct audit confirmed all
+  23 `specjedi-*` skill names already satisfy OpenCode's exact naming
+  rule. New `opencode-compatibility` CI job asserts both existing install
+  paths against OpenCode's specific documented rules (not just reused
+  generic checks). README updated; `scripts/install.sh`/`.ps1` are
+  unchanged (confirmed via `git diff`).
+
 ### Fixed
 
 - Constitution `TODO(SESSION_START_HOOK)` was still listed as open even

@@ -50,6 +50,17 @@ structure actually work.
   precedent: proactively *suggesting* something (a tool, a next step, a skill) is
   always autonomous; *installing, configuring, or publishing* something requires
   confirmation first (see Principle VIII, Principle X, Principle XI).
+- **Recommended-option marking for genuine multi-choice questions** (Principle
+  IV). When a skill presents a real multiple-choice decision point — two or
+  more reasonable options, one defensibly preferred — mark it **Recommended**
+  with a one-line reason, matching `specjedi-clarify`'s and
+  `specjedi-onboard`'s existing pattern. If the skill defines an `--auto`
+  mode, that mode MUST auto-select the Recommended option for any such
+  question, logging the choice in whatever audit trail the skill already
+  produces. This does NOT apply to binary confirm/proceed gates, required-
+  parameter asks, or single-best-answer recommendations (e.g.
+  `specjedi-find-skills` presenting one recommended skill) — don't invent a
+  fake menu around a decision that isn't actually multi-option.
 
 ## Prompt Engineering Discipline
 
@@ -99,6 +110,9 @@ Before a `specjedi-*` skill ships (Principle IX validation, at minimum):
 - [ ] Every "don't" has a paired "instead, do this"
 - [ ] Success criteria are checkable, not just asserted
 - [ ] Autonomous vs. confirm-first actions are stated explicitly
+- [ ] Genuine multi-choice questions mark a Recommended option with a
+      reason, and `--auto` mode (if present) auto-selects it — N/A if the
+      skill has no genuine multi-option decision point (see Principle IV)
 - [ ] Persona stated explicitly where tone/depth matters
 - [ ] Core task is a single clear directive, not buried in background
 - [ ] Output format specified wherever consistency matters

@@ -19,23 +19,37 @@ if ($Help) {
     Write-Host ""
     Write-Host "  -TargetDir   Project to install Spec Jedi's specjedi-* skills into."
     Write-Host "               Defaults to the current directory."
-    Write-Host "  -Harness     Which coding agent to configure for. Only 'claude-code'"
-    Write-Host "               is built and tested today (Constitution Principle III);"
-    Write-Host "               any other value is reported as not-yet-supported rather"
-    Write-Host "               than silently attempted."
+    Write-Host "  -Harness     Which coding agent to configure for. 'claude-code' and"
+    Write-Host "               'codex-cli' are built and tested today (Constitution"
+    Write-Host "               Principle III); any other value is reported as"
+    Write-Host "               not-yet-supported rather than silently attempted."
     exit 0
 }
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
-if ($Harness -ne "claude-code") {
-    Write-Host "🔭 '$Harness' isn't built and tested yet — only 'claude-code' is fully"
-    Write-Host "supported today (Constitution Principle III's compatibility matrix)."
-    Write-Host "The SKILL.md files are plain Markdown with YAML frontmatter, so many"
-    Write-Host "harnesses that read custom instructions can already use them directly"
-    Write-Host "even without a dedicated install path — but this installer won't claim"
-    Write-Host "to have set that up for you."
-    exit 1
+# Harness Target mapping (data-model.md): both entries share the same
+# source skills, runtime templates, and post-copy validation below --
+# only the destination subdirectory name differs.
+switch ($Harness) {
+    "claude-code" { $skillsDstRel = ".claude/skills" }
+    "codex-cli" {
+        # Verified against Codex CLI's own official docs
+        # (learn.chatgpt.com/docs/build-skills): repository-level skills
+        # are scanned from .agents/skills, walking up to repo root;
+        # SKILL.md requires the same name/description frontmatter
+        # specjedi-* skills already carry (specs/016-codex-cli-install/research.md).
+        $skillsDstRel = ".agents/skills"
+    }
+    default {
+        Write-Host "🔭 '$Harness' isn't built and tested yet — only 'claude-code' and"
+        Write-Host "'codex-cli' are fully supported today (Constitution Principle III's"
+        Write-Host "compatibility matrix). The SKILL.md files are plain Markdown with"
+        Write-Host "YAML frontmatter, so many harnesses that read custom instructions"
+        Write-Host "can already use them directly even without a dedicated install"
+        Write-Host "path — but this installer won't claim to have set that up for you."
+        exit 1
+    }
 }
 
 New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
@@ -45,7 +59,7 @@ Write-Host "📜 Installing Spec Jedi's specjedi-* skills into: $TargetDir"
 Write-Host ""
 
 $skillsSrc = Join-Path $repoRoot ".claude/skills"
-$skillsDst = Join-Path $TargetDir ".claude/skills"
+$skillsDst = Join-Path $TargetDir $skillsDstRel
 New-Item -ItemType Directory -Force -Path $skillsDst | Out-Null
 
 $installed = 0

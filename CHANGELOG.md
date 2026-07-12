@@ -11,6 +11,18 @@ this file directly.
 
 ### Added
 
+- **Codex CLI (OpenAI) install path** (feature 016) — `scripts/install.sh`/
+  `.ps1 --harness codex-cli` now installs all 23 `specjedi-*` skills to
+  `.agents/skills/`, the second real, CI-proven harness beyond Claude
+  Code. Verified via Codex CLI's own official docs that its `SKILL.md`
+  frontmatter requirement (`name`, `description`) already matches this
+  project's own skills unmodified — a direct grep audit confirmed zero
+  skills hardcode Claude-Code-specific content, so no content rewrite
+  was needed, only a new install-target branch. New
+  `install-test-codex-cli`/`-windows-native` CI jobs mirror the existing
+  `install-test` job pattern exactly. README's compatibility table
+  updated; verification is honestly scoped as structural (file
+  placement, frontmatter validity), not an actual Codex CLI run.
 - `scripts/session-start.sh`/`.ps1` (feature 015) — implements Principle
   XXI's `SessionStart` hook: an ASCII Spec Jedi banner, a project status
   summary derived from `specjedi-status`'s own on-disk logic, and a

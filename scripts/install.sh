@@ -16,10 +16,10 @@ Usage: install.sh [TARGET_DIR] [--harness HARNESS]
 
   TARGET_DIR   Project to install Spec Jedi's specjedi-* skills into.
                Defaults to the current directory.
-  --harness    Which coding agent to configure for. Only "claude-code" is
-               built and tested today (Constitution Principle III); any
-               other value is reported as not-yet-supported rather than
-               silently attempted.
+  --harness    Which coding agent to configure for. "claude-code" and
+               "codex-cli" are built and tested today (Constitution
+               Principle III); any other value is reported as
+               not-yet-supported rather than silently attempted.
 
 Copies only the specjedi-* product skills (never the vendored speckit-*
 bootstrap tooling this repo uses to build itself) plus the four
@@ -44,15 +44,32 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ "$harness" != "claude-code" ]; then
-  echo "🔭 '$harness' isn't built and tested yet — only 'claude-code' is fully"
-  echo "supported today (Constitution Principle III's compatibility matrix)."
-  echo "The SKILL.md files are plain Markdown with YAML frontmatter, so many"
-  echo "harnesses that read custom instructions can already use them directly"
-  echo "even without a dedicated install path — but this installer won't claim"
-  echo "to have set that up for you."
-  exit 1
-fi
+# Harness Target mapping (data-model.md): --harness value -> skill
+# install location. Both entries share the same source skills, the same
+# runtime templates, and the same post-copy validation below -- only the
+# destination subdirectory name differs.
+case "$harness" in
+  claude-code)
+    skills_dst_rel=".claude/skills"
+    ;;
+  codex-cli)
+    # Verified against Codex CLI's own official docs
+    # (learn.chatgpt.com/docs/build-skills): repository-level skills are
+    # scanned from .agents/skills, walking up to repo root; SKILL.md
+    # requires the same name/description frontmatter specjedi-* skills
+    # already carry -- no content rewrite needed (specs/016-codex-cli-install/research.md).
+    skills_dst_rel=".agents/skills"
+    ;;
+  *)
+    echo "🔭 '$harness' isn't built and tested yet — only 'claude-code' and"
+    echo "'codex-cli' are fully supported today (Constitution Principle III's"
+    echo "compatibility matrix). The SKILL.md files are plain Markdown with"
+    echo "YAML frontmatter, so many harnesses that read custom instructions"
+    echo "can already use them directly even without a dedicated install"
+    echo "path — but this installer won't claim to have set that up for you."
+    exit 1
+    ;;
+esac
 
 mkdir -p "$target_dir"
 target_dir="$(cd "$target_dir" && pwd)"
@@ -61,7 +78,7 @@ echo "📜 Installing Spec Jedi's specjedi-* skills into: $target_dir"
 echo
 
 skills_src="$repo_root/.claude/skills"
-skills_dst="$target_dir/.claude/skills"
+skills_dst="$target_dir/$skills_dst_rel"
 mkdir -p "$skills_dst"
 
 installed=0

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@f153602 lang=ur -->
+<!-- i18n-sync: source=README.md@620b1d9 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:
@@ -300,7 +300,7 @@ convention کے خلاف verify کیا گیا)۔
 | JetBrains AI Assistant | 📋 منصوبہ بند — ابھی installable نہیں |
 | Zed | 📋 منصوبہ بند — ابھی installable نہیں |
 | OpenCode | ✅ Supported — `claude-code` یا `codex-cli` install میں سے کوئی بھی کافی ہے (OpenCode قدرتی طور پر `.claude/skills/` اور `.agents/skills/` دونوں کو scan کرتا ہے)، الگ flag کی ضرورت نہیں |
-| Warp (Agent Mode) | 📋 منصوبہ بند — ابھی installable نہیں |
+| Warp (Agent Mode) | ✅ Supported — `claude-code` یا `codex-cli` install میں سے کوئی بھی کافی ہے (Warp کا Skills نظام قدرتی طور پر `.claude/skills/` اور `.agents/skills/` دونوں کو scan کرتا ہے)، الگ flag کی ضرورت نہیں |
 | Replit Agent | 📋 منصوبہ بند — ابھی installable نہیں |
 | Devin (Cognition) | 📋 منصوبہ بند — ابھی installable نہیں |
 | Tabnine | 📋 منصوبہ بند — ابھی installable نہیں |

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@f153602 lang=ar -->
+<!-- i18n-sync: source=README.md@620b1d9 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر
 > المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال
 > وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى:
@@ -280,7 +280,7 @@ codex-cli` / `.\scripts\install.ps1 -Harness codex-cli`، مع التثبيت ف
 | JetBrains AI Assistant | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
 | Zed | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
 | OpenCode | ✅ مدعومة — تُلبّى عبر تثبيت `claude-code` أو `codex-cli` (يفحص OpenCode بشكل أصلي كلاً من `.claude/skills/` و `.agents/skills/`)، دون الحاجة لعلامة منفصلة |
-| Warp (Agent Mode) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
+| Warp (Agent Mode) | ✅ مدعومة — تُلبّى عبر تثبيت `claude-code` أو `codex-cli` (يفحص نظام Skills الخاص بـ Warp بشكل أصلي كلاً من `.claude/skills/` و `.agents/skills/`)، دون الحاجة لعلامة منفصلة |
 | Replit Agent | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
 | Devin (Cognition) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
 | Tabnine | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |

@@ -11,6 +11,24 @@ this file directly.
 
 ### Added
 
+- **Release packaging & publishing workflow** (feature 020) — the first
+  real, deliberate release-cutting mechanism this project has ever had.
+  `.github/workflows/release.yml`, triggered only by `workflow_dispatch`
+  (never automatically on push/merge, per Principle XI), with a
+  `dry_run` input defaulting to `true` so the entire mechanism —
+  version validation, `scripts/validate.sh` gate, empty-changelog gate,
+  artifact packaging — can be rehearsed with zero risk before a real
+  cut. New `scripts/package-release.sh`/`.ps1` build a single universal
+  downloadable artifact (verified to install identically to a full
+  clone, across all three currently-supported harnesses). A real run
+  (`dry_run: false`) tags, publishes a GitHub Release via `gh release
+  create` (which atomically creates the tag), and rewrites
+  `CHANGELOG.md`'s `## Unreleased` section into a versioned one. Built
+  via `/superpowers:brainstorming` as Sub-Project A of a 3-part
+  decomposition (release packaging → standalone bootstrap installer →
+  harness auto-detection); this project's actual first release
+  (`v0.1.0`) has not yet been cut — that remains a separate, deliberate
+  maintainer action.
 - **Trae harness support** (feature 019) — the fifth real, CI-proven
   supported harness, and the second (after Codex CLI) requiring a
   genuinely new installer branch. Verified via Trae's official Skills

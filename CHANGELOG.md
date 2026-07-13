@@ -11,6 +11,18 @@ this file directly.
 
 ### Added
 
+- **`specjedi-quick`** (feature 028) — a lightweight, one-artifact path
+  for small, well-understood changes, closing `references/honest-
+  assessment.md`'s top improvement point. Validated by BMAD-METHOD's
+  Quick Flow ("fits on one page of notes") and OpenSpec's three-command
+  model. Produces one `quick.md` instead of the full `spec.md`+
+  `research.md`+`plan.md`+`tasks.md` set, then implements directly —
+  test-first, `specjedi-govcheck`, and PR-only discipline never shorten,
+  only planning ceremony does. Declines unconditionally for anything
+  failing its five-criterion eligibility checklist, including any
+  request for a new `specjedi-*` skill. Paired with a small
+  `specjedi-status` compatibility extension so quick-path features
+  report correctly instead of appearing artifact-less.
 - **Standalone bootstrap installer** (feature 024, Sub-Project B) —
   `scripts/bootstrap-install.sh`/`.ps1` fetch a published GitHub Release's
   `spec-jedi-<version>.tar.gz` and run its bundled `install.sh`/`.ps1`,

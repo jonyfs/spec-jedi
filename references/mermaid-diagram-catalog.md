@@ -57,6 +57,50 @@ for the rest rather than silently ignoring them.
 | **Event Modeling** 🔥 | Events and sequences in domain-driven design |
 | **TreeView** 🔥 | Hierarchical structures as an expandable tree |
 
+## Theme Safety (Constitution Principle XVI, feature 025)
+
+Never emit explicit `style ...`, `classDef ...`, or `%%{init:
+{'theme': ...}}%%` directives in generated Mermaid source. GitHub (and
+most harnesses' own Mermaid rendering) auto-detects the viewer's
+light/dark preference and renders the *same* source as either theme —
+but only when the source itself sets no explicit theme or colors. The
+moment a diagram hardcodes colors, that auto-switching breaks, and there
+is no static, JS-free way to pick one hardcoded color pair that reads
+correctly in *both* a light and a dark background simultaneously
+(confirmed via Mermaid's own theming docs and multiple GitHub Community
+discussions of exactly this failure — see
+`specs/025-diagram-readability/research.md` for citations).
+
+When a distinction genuinely needs to be conveyed (e.g., status: done vs.
+blocked), encode it structurally instead of with color:
+- **Shape**: a different node shape (`[]` vs `{}` vs `(())` vs
+  stadium/subroutine) for a different category.
+- **Edge style**: a solid vs. dotted vs. thick edge for a different kind
+  of relationship.
+- **Label text/emoji**: `"Done ✅"` vs `"Blocked 🔴"` as the node's own
+  label — decorative emoji only, per Principle XII's own rule that emoji
+  never carry meaning alone (pair with the word).
+
+## Complexity Threshold (Constitution Principle XVI, feature 025)
+
+A diagram exceeding **20 nodes**, or one that can't be described in a
+single sentence, MUST be reconsidered as multiple smaller diagrams split
+along a natural seam in the source content (one per user story, one per
+phase, an overview + a detail diagram) rather than presented as one
+oversized diagram. 20 is the top of the cited "keep diagrams under 15–20
+nodes for readability when embedding in Markdown (GitHub, GitLab,
+Notion)" practitioner guidance — see
+`specs/025-diagram-readability/research.md` for the full citation and
+the 30–40-node "must split" reference point this threshold stays well
+clear of.
+
+This is a *trigger to reconsider*, not an unconditional hard cap: a
+tightly-coupled unit with no natural seam to split along (e.g., a
+4-state state diagram that happens to sit near the threshold) should not
+be artificially fragmented just to satisfy a node count. An explicit
+user request for "one big diagram anyway" also overrides this default —
+unlike the Theme Safety rule above, which has no legitimate override.
+
 ## How to use this
 
 When a `specjedi-*` skill needs to decide *whether* a diagram is the

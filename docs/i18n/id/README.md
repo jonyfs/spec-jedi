@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@5e179bb lang=id -->
+<!-- i18n-sync: source=README.md@bf963a8 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -15,7 +15,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#apa-yang-anda-dapatkan-hari-ini)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#apa-yang-anda-dapatkan-hari-ini)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#apa-yang-anda-dapatkan-hari-ini)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#instalasi)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -83,12 +83,12 @@ ketat dalam satu waktu mengikuti disiplin riset kompetitif dari
 > sebuah proyek, mengalir dari skill-skillnya."* — seorang Master yang
 > bijak, mungkin.
 
-Berjumlah dua puluh tiga, inilah Ordo ini — dilatih bukan untuk
+Berjumlah dua puluh empat, inilah Ordo ini — dilatih bukan untuk
 pertempuran, tetapi untuk Spec-Driven Development. Empat disiplin ia jaga:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 23 skills"))
+  root(("Spec Jedi — 24 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -108,7 +108,8 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 7
+    Meta and Tooling - 8
+      quick
       diagram
       status
       docs
@@ -129,6 +130,7 @@ mindmap
 | `specjedi-plan` 🛠️ | Mengubah spec yang sudah diklarifikasi menjadi `plan.md` teknis — terlebih dahulu memindai codebase aktual untuk konvensi yang sudah ada, sehingga implementasi tidak perlu berhenti dan mencari pola yang sudah ada |
 | `specjedi-tasks` ✅ | Memecah rencana menjadi `tasks.md` yang terurut dan sadar-dependensi, dikelompokkan berdasarkan user story — menempatkan test yang gagal sebelum task implementasinya di mana pun rencana memerlukan kode |
 | `specjedi-implement` 🔨 | Mengeksekusi `tasks.md` dalam urutan dependensi, test-first di mana rencana memerlukan kode — hanya commit melalui feature branch dan pull request, tidak pernah langsung ke `main` |
+| `specjedi-quick` ⚡ | Jalur ringan untuk perubahan kecil yang sudah dipahami dengan baik — satu `quick.md` alih-alih `spec.md`+`research.md`+`plan.md`+`tasks.md`, langsung ke implementasi. Quality gate (test-first, `specjedi-govcheck`, hanya-PR) tidak pernah dipersingkat, hanya seremoni perencanaan yang dipersingkat. Menolak dan mengarahkan ke `specjedi-specify` untuk apa pun yang lebih besar, ambigu, atau skill baru — lihat [Jalur mana yang harus saya gunakan?](#jalur-mana-yang-harus-saya-gunakan) |
 | `specjedi-analyze` 🔍 | Pemeriksaan silang yang murni read-only dari `spec.md`/`plan.md`/`tasks.md` (dan constitution) untuk kesenjangan, duplikasi, dan kontradiksi — melaporkan temuan, tidak pernah mengedit file |
 | `specjedi-checklist` ☑️ | Menghasilkan checklist khusus untuk area fokus tertentu (keamanan, aksesibilitas, performa...) yang sepenuhnya didasarkan pada `spec.md`/`plan.md` fitur ini sendiri — tidak pernah boilerplate generik |
 | `specjedi-converge` 🔁 | Mendeteksi penyimpangan antara codebase aktual dan `tasks.md` setelah perubahan manual, menambahkan kesenjangan apa pun sebagai task baru alih-alih mengabaikannya diam-diam — menutup loop kembali ke `specjedi-implement` |
@@ -218,6 +220,13 @@ masing-masing masih memerlukan riset sendiri sebelum dibangun.
 > 🚀 *"Terkirim."*
 > 🌌 *"Semoga Spec menyertaimu."*
 
+Ini bukan hipotetis — ini adalah proses literal dan berulang di balik
+pull request terbaru proyek ini sendiri (misalnya
+[#82](https://github.com/jonyfs/spec-jedi/pull/82),
+[#84](https://github.com/jonyfs/spec-jedi/pull/84),
+[#87](https://github.com/jonyfs/spec-jedi/pull/87)), masing-masing
+menjalankan delapan panel persis ini secara nyata.
+
 ### Cerita bootstrap internal yang sama, sebagai diagram
 
 ```mermaid
@@ -305,7 +314,7 @@ flowchart TD
    operasi.
 
 3. Konfirmasi skill sudah dimuat dengan mengetik `/` di prompt Claude
-   Code. Anda akan melihat semua 23 skill produk `specjedi-*` dan
+   Code. Anda akan melihat semua 24 skill produk `specjedi-*` dan
    perintah `speckit-*` (tooling bootstrap internal milik repositori
    ini sendiri — lihat
    [Apa yang Anda dapatkan hari ini](#apa-yang-anda-dapatkan-hari-ini))
@@ -334,46 +343,73 @@ selesai:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-`--harness` sekarang opsional — jika dihilangkan, installer mencoba
-mendeteksi agen coding mana yang Anda gunakan (direktori proyek yang
-sudah ada, binary di `PATH`, atau direktori konfigurasi global yang
-sudah ada) dan menginstal secara otomatis untuk itu — hanya bertanya
-jika deteksi menemukan lebih dari satu kemungkinan yang cocok.
-`claude-code`, `codex-cli`, dan `trae` sudah dibangun dan diuji hari
-ini; nilai eksplisit lain apa pun dilaporkan sebagai belum-didukung
-alih-alih dicoba secara diam-diam — lihat [Harness yang
-didukung](#harness-yang-didukung) di bawah. Jalankan
-`./scripts/install.sh --help` (atau `.\scripts\install.ps1 -Help`)
-untuk daftar opsi lengkap, termasuk `--auto`.
+**Tidak ingin clone repositori sama sekali?** `scripts/bootstrap-install.sh`/`.ps1`
+(specs/024-bootstrap-installer) mengambil GitHub Release yang
+dipublikasikan dan menjalankan installer yang disertakan untuk Anda —
+tidak perlu checkout lokal:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.sh \
+  | bash -s -- /path/to/your-project --harness cursor
+```
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1 | iex
+```
+
+⚠️ Rilis pertama proyek ini sendiri belum dipotong (Principle XI —
+memotong rilis selalu merupakan langkah maintainer yang disengaja,
+tidak pernah otomatis), jadi perintah satu baris di atas saat ini akan
+melaporkan "no release found" dengan perintah fallback git-clone. Ini
+sudah dikirim dan diuji-CI terhadap keadaan nyata saat ini itu; ia
+akan mulai benar-benar menginstal begitu sebuah rilis ada.
+
+`--harness` opsional — jika dihilangkan, installer mencoba mendeteksi
+agen coding mana yang Anda gunakan di antara `claude-code`/`codex-cli`/`trae`
+(direktori proyek yang sudah ada, binary di `PATH`, atau direktori
+konfigurasi global yang sudah ada) dan menginstal secara otomatis
+untuk itu — hanya bertanya jika deteksi menemukan lebih dari satu
+kemungkinan yang cocok. 17 harness lainnya (belum ada sinyal deteksi
+filesystem/PATH yang andal untuk mereka) memerlukan `--harness`
+eksplisit. Jalankan `./scripts/install.sh --help` (atau
+`.\scripts\install.ps1 -Help`) untuk daftar opsi lengkap, termasuk
+`--auto`.
 
 ### Harness yang didukung
 
 Constitution Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) mengikat
-proyek ini untuk pada akhirnya mendukung dua puluh alat/harness coding
-LLM yang paling banyak digunakan di pasar. Hari ini, lima sudah nyata,
-teruji, dan terbukti oleh CI — tiga melalui branch installer khusus
-(Claude Code, Codex CLI, Trae) dan dua lagi (OpenCode, Warp) terpenuhi
-oleh jalur instalasi yang sama tanpa kode tambahan, karena keduanya
-secara native memindai direktori persis yang sudah ditulis oleh
-installer.
+proyek ini untuk mendukung dua puluh alat/harness coding LLM yang
+paling banyak digunakan di pasar — sejak rilis ini, kedua puluhnya
+nyata, teruji, dan terbukti oleh CI. Empat menggunakan pemindaian
+direktori skills native (Claude Code, Codex CLI, Trae, Antigravity —
+tiga yang terakhir berbagi hanya dua direktori target fisik,
+`.agents/skills/` dan `.trae/skills/`, ditambah OpenCode dan Warp yang
+terpenuhi oleh jalur yang sama tanpa kode tambahan). Empat belas
+sisanya tidak memiliki konsep direktori skills native — hanya file
+aturan di root proyek, direktori aturan kecil, atau (Sourcegraph Cody)
+sebuah file JSON custom-commands — sehingga installer menghasilkan
+sebuah **bridge**: paket `specjedi-*` lengkap tetap mendarat di
+`.claude/skills/` yang kanonis, dan sebuah file adapter kecil (atau
+satu file per skill, untuk harness bergaya direktori) menunjuk ke
+sana menggunakan konvensi dokumentasi harness tersebut sendiri. Lihat
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+untuk sitasi yang mendasari mekanisme persis setiap harness.
 
 ```mermaid
 flowchart LR
-    subgraph Supported["✅ Supported — 5"]
+    subgraph Native["✅ Native skills-directory scan — 4"]
         direction TB
         CC[Claude Code]
         CX[Codex CLI]
-        OC[OpenCode]
-        WA[Warp]
+        AG[Antigravity]
         TR[Trae]
     end
-    subgraph Planned["📋 Planned — 15"]
+    subgraph Bridge["✅ Bridge-file install — 14"]
         direction TB
         CU[Cursor]
         GC[GitHub Copilot]
         GM[Gemini CLI]
-        AG[Antigravity]
         WS[Windsurf]
         CL[Cline]
         CN[Continue]
@@ -386,56 +422,78 @@ flowchart LR
         TB2[Tabnine]
         SC[Sourcegraph Cody]
     end
+    subgraph ZeroCode["✅ Zero-code reuse — 2"]
+        direction TB
+        OC[OpenCode]
+        WA[Warp]
+    end
 ```
 
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Didukung — lihat langkah di atas |
-| Cursor | 📋 Direncanakan — belum dapat diinstal |
-| GitHub Copilot (Chat/Workspace) | 📋 Direncanakan — belum dapat diinstal |
+| Cursor | ✅ Didukung — `./scripts/install.sh --harness cursor` (bridge file di bawah `.cursor/rules/`) |
+| GitHub Copilot (Chat/Workspace) | ✅ Didukung — `./scripts/install.sh --harness copilot` (bridge file di `.github/copilot-instructions.md`) |
 | Codex CLI (OpenAI) | ✅ Didukung — `./scripts/install.sh --harness codex-cli` (menginstal ke `.agents/skills/`) |
-| Gemini CLI | 📋 Direncanakan — belum dapat diinstal |
-| Antigravity (Google) | 📋 Direncanakan — belum dapat diinstal |
-| Windsurf (Codeium) | 📋 Direncanakan — belum dapat diinstal |
-| Cline | 📋 Direncanakan — belum dapat diinstal |
-| Continue | 📋 Direncanakan — belum dapat diinstal |
-| Aider | 📋 Direncanakan — belum dapat diinstal |
-| Amazon Q Developer | 📋 Direncanakan — belum dapat diinstal |
-| JetBrains AI Assistant | 📋 Direncanakan — belum dapat diinstal |
-| Zed | 📋 Direncanakan — belum dapat diinstal |
+| Gemini CLI | ✅ Didukung — `./scripts/install.sh --harness gemini-cli` (bridge file di `GEMINI.md`; Google menghentikan Gemini CLI demi Antigravity — lihat [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)) |
+| Antigravity (Google) | ✅ Didukung — `./scripts/install.sh --harness antigravity` (menginstal ke `.agents/skills/`, konvensi yang sama dengan Codex CLI) |
+| Windsurf (Codeium) | ✅ Didukung — `./scripts/install.sh --harness windsurf` (bridge file di bawah `.windsurf/rules/`) |
+| Cline | ✅ Didukung — `./scripts/install.sh --harness cline` (bridge file di bawah `.clinerules/`) |
+| Continue | ✅ Didukung — `./scripts/install.sh --harness continue` (bridge file di bawah `.continue/rules/`) |
+| Aider | ✅ Didukung — `./scripts/install.sh --harness aider` (bridge file di `CONVENTIONS.md`) |
+| Amazon Q Developer | ✅ Didukung — `./scripts/install.sh --harness amazon-q` (bridge file di bawah `.amazonq/rules/`) |
+| JetBrains AI Assistant | ✅ Didukung — `./scripts/install.sh --harness jetbrains-ai` (bridge file di bawah `.aiassistant/rules/`) |
+| Zed | ✅ Didukung — `./scripts/install.sh --harness zed` (bridge file di `.rules`) |
 | OpenCode | ✅ Didukung — dipenuhi oleh instalasi `claude-code` atau `codex-cli` (OpenCode secara native memindai baik `.claude/skills/` maupun `.agents/skills/`), tidak perlu flag terpisah |
 | Warp (Agent Mode) | ✅ Didukung — dipenuhi oleh instalasi `claude-code` atau `codex-cli` (sistem Skills Warp secara native memindai baik `.claude/skills/` maupun `.agents/skills/`), tidak perlu flag terpisah |
-| Replit Agent | 📋 Direncanakan — belum dapat diinstal |
-| Devin (Cognition) | 📋 Direncanakan — belum dapat diinstal |
-| Tabnine | 📋 Direncanakan — belum dapat diinstal |
-| Sourcegraph Cody | 📋 Direncanakan — belum dapat diinstal |
+| Replit Agent | ✅ Didukung — `./scripts/install.sh --harness replit` (bridge file di `replit.md`) |
+| Devin (Cognition) | ✅ Didukung — `./scripts/install.sh --harness devin` (bridge file di `.devin.md`, distruktur sebagai Devin Playbook) |
+| Tabnine | ✅ Didukung — `./scripts/install.sh --harness tabnine` (bridge file di bawah `.tabnine/guidelines/`) |
+| Sourcegraph Cody | ✅ Didukung — `./scripts/install.sh --harness cody` (custom commands `.vscode/cody.json`, dipanggil secara eksplisit sebagai `/specjedi-<name>`; tidak seperti semua harness lain di atas, Cody tidak memiliki file aturan always-on yang terkonfirmasi, jadi ini adalah invokasi manual, bukan konteks otomatis — lihat dokumen riset) |
 | Trae | ✅ Didukung — `./scripts/install.sh --harness trae` (menginstal ke `.trae/skills/`) |
 
 Dua puluh harness disebutkan satu per satu sesuai mandat "setidaknya
-dua puluh" dari Principle III — hanya status (✅ didukung / 📋
-direncanakan), tanpa klaim kapabilitas apa pun untuk harness yang
-belum benar-benar dibangun dan diuji oleh proyek ini, mengikuti
-disiplin resistensi-halusinasi Principle XX. "Direncanakan" adalah
-sebuah status, bukan tanggal roadmap yang dijanjikan.
+dua puluh" dari Principle III, semuanya ✅ Didukung — tanpa klaim
+kapabilitas apa pun untuk mekanisme yang belum benar-benar dibangun
+dan diuji oleh proyek ini, mengikuti disiplin resistensi-halusinasi
+Principle XX.
 
-Jika harness Anda belum terdaftar sebagai didukung, file `SKILL.md`
-adalah Markdown biasa dengan frontmatter YAML — banyak harness yang
-mendukung instruksi/prompt kustom sudah dapat membacanya secara
-langsung bahkan tanpa jalur instalasi khusus, tetapi ini belum
-diverifikasi atau didokumentasikan per-harness. Lihat
-[`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
-untuk catatan kapabilitas per-harness berbasis riset literatur.
+Lihat [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
+untuk catatan kapabilitas riset literatur asli per harness, dan
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+untuk keputusan mekanisme instalasi dan sitasi yang menjadi dasar
+tabel ini.
 
 Penasaran bagaimana Spec Jedi dibandingkan dengan spec-kit dan sepuluh
 alat SDD lain yang menjadi tolok ukurnya? Lihat
 [`references/competitive-comparison.md`](../../../references/competitive-comparison.md).
 
+Ingin versi tanpa filter — keunggulan nyata, keterbatasan nyata saat
+ini, dan poin peningkatan konkret yang didasarkan pada kompetitor?
+Lihat
+[`references/honest-assessment.md`](../../../references/honest-assessment.md).
+
 ## Mulai cepat
 
-Dua puluh tiga skill produk tersedia hari ini
+Dua puluh empat skill produk tersedia hari ini
 ([Apa yang Anda dapatkan hari ini](#apa-yang-anda-dapatkan-hari-ini)) —
 pipeline `specjedi-*` lengkap sudah selesai. Belum pernah menggunakan
 alat SDD sebelumnya? Mulai dari langkah 0.
+
+### Jalur mana yang harus saya gunakan?
+
+| Ukuran perubahan | Gunakan | Menghasilkan |
+|---|---|---|
+| Kecil, sudah dipahami dengan baik — typo, perbaikan satu file, penyesuaian dengan cakupan ketat | `specjedi-quick` ⚡ | Satu `quick.md`, langsung ke kode yang dikirim |
+| Apa pun yang lebih besar, ambigu, menyentuh lebih dari satu subsistem, atau skill `specjedi-*` baru | Pipeline lengkap (langkah 3-11 di bawah) | `spec.md` → `plan.md` → `tasks.md` → kode yang dikirim |
+
+`specjedi-quick` memeriksa kelayakan sendiri terhadap lima kriteria
+eksplisit sebelum menulis apa pun — jika permintaan Anda sebenarnya
+tidak muat dalam sekitar satu halaman catatan, ia menolak dan
+mengarahkan Anda ke `specjedi-specify` alih-alih memaksakannya. Kedua
+jalur menegakkan quality gate yang sama (test-first di mana kode
+terlibat, `specjedi-govcheck` sebelum PR dibuka) — "quick" hanya
+mempersingkat seremoni perencanaan, tidak pernah verifikasi.
 
 0. **Tidak yakin semua ini artinya apa?** Tanyakan saja — "apa itu spec
    dan mengapa saya membutuhkannya", "apa yang sebenarnya dilakukan

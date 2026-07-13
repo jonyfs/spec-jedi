@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@5e179bb lang=es -->
+<!-- i18n-sync: source=README.md@bf963a8 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#lo-que-obtienes-hoy)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#lo-que-obtienes-hoy)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#lo-que-obtienes-hoy)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#instalación)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -75,12 +75,12 @@ rigurosa a la vez según la disciplina de investigación competitiva de
 > *"La fuerza de un Jedi fluye de la Fuerza. La de un proyecto, igual,
 > fluye de sus skills."* — un Maestro sabio, probablemente.
 
-Veintitrés en número, es esta Orden — entrenada no para el combate, sino
+Veinticuatro en número, es esta Orden — entrenada no para el combate, sino
 para el Desarrollo Guiado por Especificaciones. Cuatro disciplinas mantiene:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 23 skills"))
+  root(("Spec Jedi — 24 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -100,7 +100,8 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 7
+    Meta and Tooling - 8
+      quick
       diagram
       status
       docs
@@ -121,6 +122,7 @@ mindmap
 | `specjedi-plan` 🛠️ | Convierte una especificación ya aclarada en un `plan.md` técnico — primero escanea el código base real en busca de convenciones existentes, para que la implementación nunca tenga que detenerse a buscar un patrón que ya existe |
 | `specjedi-tasks` ✅ | Descompone un plan en un `tasks.md` ordenado, consciente de dependencias, agrupado por historia de usuario — secuencia una prueba que falla antes de su tarea de implementación en todo lugar donde el plan requiera código |
 | `specjedi-implement` 🔨 | Ejecuta `tasks.md` en orden de dependencia, con pruebas primero donde el plan requiere código — solo confirma cambios a través de una rama de funcionalidad y un pull request, nunca directamente a `main` |
+| `specjedi-quick` ⚡ | El camino ligero para cambios pequeños y bien entendidos — un solo `quick.md` en lugar de `spec.md`+`research.md`+`plan.md`+`tasks.md`, directo a la implementación. Los controles de calidad (pruebas primero, `specjedi-govcheck`, solo PR) nunca se acortan, solo la ceremonia de planificación lo hace. Se niega y redirige a `specjedi-specify` para cualquier cosa más grande, ambigua, o una nueva skill — ver [¿Qué camino debería usar?](#qué-camino-debería-usar) |
 | `specjedi-analyze` 🔍 | Verificación cruzada estrictamente de solo lectura de `spec.md`/`plan.md`/`tasks.md` (y la constitución) en busca de vacíos, duplicación y contradicciones — reporta hallazgos, nunca edita un archivo |
 | `specjedi-checklist` ☑️ | Genera una lista de verificación personalizada para un área de enfoque nombrada (seguridad, accesibilidad, rendimiento...) fundamentada completamente en el `spec.md`/`plan.md` propio de esta funcionalidad — nunca una plantilla genérica |
 | `specjedi-converge` 🔁 | Detecta desviaciones entre el código base real y `tasks.md` tras cambios manuales, agregando cualquier vacío como una nueva tarea en lugar de ignorarlo silenciosamente — cierra el ciclo de vuelta a `specjedi-implement` |
@@ -207,6 +209,13 @@ todavía necesita su propia investigación antes de construirse.
 > 🚀 *"Entregado."*
 > 🌌 *"Que la Especificación te acompañe."*
 
+Esto no es hipotético — es el proceso literal y repetido detrás de los
+pull requests recientes de este mismo proyecto (por ejemplo,
+[#82](https://github.com/jonyfs/spec-jedi/pull/82),
+[#84](https://github.com/jonyfs/spec-jedi/pull/84),
+[#87](https://github.com/jonyfs/spec-jedi/pull/87)), cada uno
+ejecutando estos ocho paneles exactos, de verdad.
+
 ### La misma historia de bootstrap interno, como diagrama
 
 ```mermaid
@@ -291,7 +300,7 @@ flowchart TD
    este paso es idéntico en los tres sistemas operativos.
 
 3. Confirma que las skills se cargaron escribiendo `/` en el prompt de
-   Claude Code. Verás las 23 skills de producto `specjedi-*` y los comandos
+   Claude Code. Verás las 24 skills de producto `specjedi-*` y los comandos
    `speckit-*` (las herramientas internas de bootstrap propias de este
    repositorio — ver [Lo que obtienes hoy](#lo-que-obtienes-hoy)) listados
    juntos, ya que Claude Code descubre cada skill bajo `.claude/skills/`
@@ -319,45 +328,74 @@ resultado antes de terminar:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-`--harness` es opcional — si se omite, el instalador intenta detectar qué
-agente de codificación estás usando (un directorio del proyecto ya
-existente, un binario en `PATH`, o un directorio de configuración global
-ya existente) e instala automáticamente para ese — solo pregunta si la
-detección encuentra más de una coincidencia plausible. `claude-code`,
-`codex-cli` y `trae` están construidos y probados hoy; cualquier otro
-valor explícito se reporta como aún no soportado en lugar de intentarse
-silenciosamente — ver [Entornos soportados](#entornos-soportados) abajo.
-Ejecuta `./scripts/install.sh --help` (o `.\scripts\install.ps1 -Help`)
-para la lista completa de opciones, incluyendo `--auto`.
+**¿No quieres clonar el repositorio en absoluto?** `scripts/bootstrap-install.sh`/`.ps1`
+(specs/024-bootstrap-installer) obtienen una GitHub Release publicada y
+ejecutan su instalador incluido por ti — no se requiere un checkout local:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.sh \
+  | bash -s -- /path/to/your-project --harness cursor
+```
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1 | iex
+```
+
+⚠️ La primera release propia de este proyecto aún no se ha cortado
+(Principle XI — cortar una release siempre es un paso deliberado del
+mantenedor, nunca automático), así que el comando de arriba
+actualmente reportará "no release found" con un comando de respaldo de
+git clone. Está entregado y probado por CI contra ese estado real
+actual; comenzará a instalar de verdad en el momento en que exista una
+release.
+
+`--harness` es opcional — si se omite, el instalador intenta detectar
+qué agente de codificación estás usando entre `claude-code`/`codex-cli`/`trae`
+(un directorio del proyecto ya existente, un binario en `PATH`, o un
+directorio de configuración global ya existente) e instala
+automáticamente para ese — solo pregunta si la detección encuentra más
+de una coincidencia plausible. Los otros 17 entornos (para los cuales
+aún no existe una señal confiable de detección por sistema de
+archivos/PATH) requieren pasar `--harness` explícitamente. Ejecuta
+`./scripts/install.sh --help` (o `.\scripts\install.ps1 -Help`) para la
+lista completa de opciones, incluyendo `--auto`.
 
 ### Entornos soportados
 
 La constitución de Spec Jedi
 ([Principle III](../../../.specify/memory/constitution.md)) compromete a
-este proyecto a eventualmente soportar las veinte herramientas/entornos de
-codificación LLM de mayor uso en el mercado. Hoy, cinco son reales,
-probados y verificados por CI — tres mediante una rama de instalador
-dedicada (Claude Code, Codex CLI, Trae) y dos más (OpenCode, Warp)
-satisfechos por esas mismas rutas de instalación sin código adicional,
-ya que ambos escanean nativamente los directorios exactos donde el
-instalador ya escribe.
+este proyecto a soportar las veinte herramientas/entornos de codificación
+LLM de mayor uso en el mercado — a partir de esta release, las veinte son
+reales, probadas y verificadas por CI. Cuatro usan un escaneo nativo de
+directorio de skills (Claude Code, Codex CLI, Trae, Antigravity — los
+últimos tres compartiendo solo dos directorios de destino físicos,
+`.agents/skills/` y `.trae/skills/`, más OpenCode y Warp satisfechos por
+esas mismas rutas sin código adicional). Los catorce restantes no tienen
+un concepto nativo de directorio de skills — solo un archivo de reglas en
+la raíz del proyecto, un pequeño directorio de reglas, o (Sourcegraph
+Cody) un archivo JSON de comandos personalizados — así que el instalador
+genera un **puente**: los paquetes completos `specjedi-*` aterrizan
+igualmente en la ubicación canónica `.claude/skills/`, y un pequeño
+archivo adaptador (o un archivo por skill, para entornos de estilo
+directorio) apunta hacia allí usando la convención propia y documentada
+de ese entorno. Consulta
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+para la cita que respalda el mecanismo exacto de cada entorno.
 
 ```mermaid
 flowchart LR
-    subgraph Supported["✅ Supported — 5"]
+    subgraph Native["✅ Native skills-directory scan — 4"]
         direction TB
         CC[Claude Code]
         CX[Codex CLI]
-        OC[OpenCode]
-        WA[Warp]
+        AG[Antigravity]
         TR[Trae]
     end
-    subgraph Planned["📋 Planned — 15"]
+    subgraph Bridge["✅ Bridge-file install — 14"]
         direction TB
         CU[Cursor]
         GC[GitHub Copilot]
         GM[Gemini CLI]
-        AG[Antigravity]
         WS[Windsurf]
         CL[Cline]
         CN[Continue]
@@ -370,56 +408,81 @@ flowchart LR
         TB2[Tabnine]
         SC[Sourcegraph Cody]
     end
+    subgraph ZeroCode["✅ Zero-code reuse — 2"]
+        direction TB
+        OC[OpenCode]
+        WA[Warp]
+    end
 ```
 
 | Entorno | Estado |
 |---|---|
 | Claude Code | ✅ Soportado — ver pasos arriba |
-| Cursor | 📋 Planeado — aún no instalable |
-| GitHub Copilot (Chat/Workspace) | 📋 Planeado — aún no instalable |
+| Cursor | ✅ Soportado — `./scripts/install.sh --harness cursor` (archivos puente bajo `.cursor/rules/`) |
+| GitHub Copilot (Chat/Workspace) | ✅ Soportado — `./scripts/install.sh --harness copilot` (archivo puente en `.github/copilot-instructions.md`) |
 | Codex CLI (OpenAI) | ✅ Soportado — `./scripts/install.sh --harness codex-cli` (instala en `.agents/skills/`) |
-| Gemini CLI | 📋 Planeado — aún no instalable |
-| Antigravity (Google) | 📋 Planeado — aún no instalable |
-| Windsurf (Codeium) | 📋 Planeado — aún no instalable |
-| Cline | 📋 Planeado — aún no instalable |
-| Continue | 📋 Planeado — aún no instalable |
-| Aider | 📋 Planeado — aún no instalable |
-| Amazon Q Developer | 📋 Planeado — aún no instalable |
-| JetBrains AI Assistant | 📋 Planeado — aún no instalable |
-| Zed | 📋 Planeado — aún no instalable |
+| Gemini CLI | ✅ Soportado — `./scripts/install.sh --harness gemini-cli` (archivo puente en `GEMINI.md`; Google está descontinuando Gemini CLI en favor de Antigravity — ver [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)) |
+| Antigravity (Google) | ✅ Soportado — `./scripts/install.sh --harness antigravity` (instala en `.agents/skills/`, la misma convención que Codex CLI) |
+| Windsurf (Codeium) | ✅ Soportado — `./scripts/install.sh --harness windsurf` (archivos puente bajo `.windsurf/rules/`) |
+| Cline | ✅ Soportado — `./scripts/install.sh --harness cline` (archivos puente bajo `.clinerules/`) |
+| Continue | ✅ Soportado — `./scripts/install.sh --harness continue` (archivos puente bajo `.continue/rules/`) |
+| Aider | ✅ Soportado — `./scripts/install.sh --harness aider` (archivo puente en `CONVENTIONS.md`) |
+| Amazon Q Developer | ✅ Soportado — `./scripts/install.sh --harness amazon-q` (archivos puente bajo `.amazonq/rules/`) |
+| JetBrains AI Assistant | ✅ Soportado — `./scripts/install.sh --harness jetbrains-ai` (archivos puente bajo `.aiassistant/rules/`) |
+| Zed | ✅ Soportado — `./scripts/install.sh --harness zed` (archivo puente en `.rules`) |
 | OpenCode | ✅ Soportado — satisfecho por la instalación de `claude-code` o `codex-cli` (OpenCode escanea nativamente tanto `.claude/skills/` como `.agents/skills/`), sin necesidad de un flag separado |
 | Warp (Agent Mode) | ✅ Soportado — satisfecho por la instalación de `claude-code` o `codex-cli` (el sistema de Skills de Warp escanea nativamente tanto `.claude/skills/` como `.agents/skills/`), sin necesidad de un flag separado |
-| Replit Agent | 📋 Planeado — aún no instalable |
-| Devin (Cognition) | 📋 Planeado — aún no instalable |
-| Tabnine | 📋 Planeado — aún no instalable |
-| Sourcegraph Cody | 📋 Planeado — aún no instalable |
+| Replit Agent | ✅ Soportado — `./scripts/install.sh --harness replit` (archivo puente en `replit.md`) |
+| Devin (Cognition) | ✅ Soportado — `./scripts/install.sh --harness devin` (archivo puente en `.devin.md`, estructurado como un Devin Playbook) |
+| Tabnine | ✅ Soportado — `./scripts/install.sh --harness tabnine` (archivos puente bajo `.tabnine/guidelines/`) |
+| Sourcegraph Cody | ✅ Soportado — `./scripts/install.sh --harness cody` (comandos personalizados en `.vscode/cody.json`, invocados explícitamente como `/specjedi-<name>`; a diferencia de todos los demás entornos anteriores, Cody no tiene un archivo de reglas siempre activo confirmado, así que esto es invocación manual, no contexto automático — ver el documento de investigación) |
 | Trae | ✅ Soportado — `./scripts/install.sh --harness trae` (instala en `.trae/skills/`) |
 
 Veinte entornos nombrados individualmente según el mandato de "al menos
-veinte" del Principle III — solo estado (✅ soportado / 📋 planeado), sin
-afirmaciones de capacidad para ningún entorno que este proyecto no haya
-construido y probado realmente, según la disciplina de resistencia a la
-alucinación del Principle XX. "Planeado" es un estado, no una fecha de
-hoja de ruta prometida.
+veinte" del Principle III, todos ✅ Soportados — sin afirmaciones de
+capacidad para ningún mecanismo que este proyecto no haya construido y
+probado realmente, según la disciplina de resistencia a la alucinación
+del Principle XX.
 
-Si tu entorno aún no aparece como soportado, los archivos `SKILL.md` son
-Markdown plano con frontmatter YAML — muchos entornos que soportan
-instrucciones/prompts personalizados ya pueden leerlos directamente
-incluso sin una ruta de instalación dedicada, pero esto aún no ha sido
-verificado ni documentado entorno por entorno. Consulta
+Consulta
 [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
-para notas de capacidad por entorno basadas en investigación documental.
+para las notas de capacidad originales por entorno basadas en
+investigación documental, y
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+para las decisiones de mecanismo de instalación y citas sobre las que se
+construyó esta tabla.
 
 ¿Curiosidad por saber cómo se compara Spec Jedi con spec-kit y las otras
 diez herramientas SDD contra las que fue evaluado? Consulta
 [`references/competitive-comparison.md`](../../../references/competitive-comparison.md).
 
+¿Quieres la versión sin filtros — ventajas genuinas, limitaciones
+actuales genuinas, y puntos de mejora concretos fundamentados en la
+competencia? Consulta
+[`references/honest-assessment.md`](../../../references/honest-assessment.md).
+
 ## Guía rápida
 
-Veintitrés skills de producto están disponibles hoy
+Veinticuatro skills de producto están disponibles hoy
 ([Lo que obtienes hoy](#lo-que-obtienes-hoy)) — el pipeline completo
 `specjedi-*` está terminado. ¿Nunca usaste una herramienta de SDD? Empieza
 por el paso 0.
+
+### ¿Qué camino debería usar?
+
+| Tamaño del cambio | Usa | Produce |
+|---|---|---|
+| Pequeño, bien entendido — un typo, una corrección de un solo archivo, un ajuste de alcance muy acotado | `specjedi-quick` ⚡ | Un solo `quick.md`, directo a código entregado |
+| Cualquier cosa más grande, ambigua, que toque más de un subsistema, o una nueva skill `specjedi-*` | El pipeline completo (pasos 3-11 abajo) | `spec.md` → `plan.md` → `tasks.md` → código entregado |
+
+`specjedi-quick` verifica la elegibilidad por sí misma contra cinco
+criterios explícitos antes de escribir nada — si tu solicitud en
+realidad no cabe en aproximadamente una página de notas, se niega y te
+redirige a `specjedi-specify` en lugar de forzarla. Cualquiera de los
+dos caminos aplica los mismos controles de calidad (pruebas primero
+cuando hay código involucrado, `specjedi-govcheck` antes de abrir un
+PR) — "quick" solo acorta la ceremonia de planificación, nunca la
+verificación.
 
 0. **¿No estás seguro de qué significa todo esto?** Simplemente pregunta —
    "qué es una especificación y por qué la necesitaría", "qué hace

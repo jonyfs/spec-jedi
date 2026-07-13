@@ -419,6 +419,10 @@ Curious how Spec Jedi stacks up against spec-kit and the ten other SDD tools
 it was benchmarked against? See
 [`references/competitive-comparison.md`](references/competitive-comparison.md).
 
+Want the unfiltered version — genuine advantages, genuine current
+limitations, and concrete competitor-grounded improvement points? See
+[`references/honest-assessment.md`](references/honest-assessment.md).
+
 ## Quickstart
 
 Twenty-three product skills ship today ([What you get today](#what-you-get-today))

@@ -430,6 +430,12 @@ Want the unfiltered version — genuine advantages, genuine current
 limitations, and concrete competitor-grounded improvement points? See
 [`references/honest-assessment.md`](references/honest-assessment.md).
 
+New to Spec-Driven Development itself, not just this project? Start with
+[`references/what-is-sdd.md`](references/what-is-sdd.md) — a from-scratch
+explanation with zero Spec Jedi branding — then see
+[`references/specjedi-and-sdd.md`](references/specjedi-and-sdd.md) for
+exactly which skill handles which part of the practice.
+
 ## Quickstart
 
 Twenty-four product skills ship today ([What you get today](#what-you-get-today))

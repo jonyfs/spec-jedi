@@ -1,5 +1,40 @@
 <!--
 Sync Impact Report
+- Version change: 1.24.0 → 1.24.1
+- Modified principles: XVII. Skill Discovery & Gap-Filling
+  (`specjedi-find-skills`) — PATCH bump, a stale-TODO closure, not a new
+  obligation or removed guarantee.
+  - Closes a real, verifiable gap found during a `/speckit-constitution`
+    audit ("o que precisa ser revisto e refinado?"): `specs/001-specjedi-
+    pipeline/tasks.md`'s T127 explicitly instructed "resolve/close the
+    TODO" once the ninth and final original-pipeline skill
+    (`specjedi-converge`) shipped, and T127 is marked `[x]` complete —
+    but the literal `TODO(SPECJEDI_PIPELINE)` token was never actually
+    removed from this principle's text. The full `specjedi-*` pipeline
+    has existed for a long time (24 skills on disk as of this amendment,
+    not just the original 9), so the hedge this token supported ("it
+    does not require the whole pipeline to exist to be true today") is
+    now moot. Reworded to state the contract as closed-and-binding on
+    every `specjedi-*` skill, past and future, rather than leaving a
+    completed task's own tracking tag stranded in live principle text.
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none — wording-only closure of a stale
+  tracking tag, no new mandatory artifact section.
+- Follow-up TODOs: none new. The same audit also found two adjacent,
+  non-constitution maintenance gaps, fixed in the same session but not
+  requiring principle-text changes: `references/genuine-contributions-
+  log.md` had stopped gaining a row per shipped feature after feature
+  013 (15 rows backfilled for features 014-028, all of which have a
+  `research.md`) closing the same class of drift `checklists/project-
+  completeness.md` CHK013 already named; and `docs/i18n/id/README.md`
+  (Indonesian) had fallen out of sync with the English source (flagged
+  by `scripts/validate.sh`'s own Principle I drift check) and was
+  resynced alongside the other nine already-synced translations.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.23.1 → 1.24.0
 - Modified principles: IX. Mandatory Skill Validation & Testing — MINOR
   bump, materially expanded guidance (no renaming, no removal).
@@ -1339,9 +1374,9 @@ axis below, not just rename it:
   set's competence — the agent should notice and surface a suggestion as
   part of that skill's own output, not wait for the user to separately
   ask "is there a skill for X." This is a standing invocation contract
-  every future `specjedi-*` skill MUST honor once it exists (tracked:
-  TODO(SPECJEDI_PIPELINE)); it does not require the whole pipeline to
-  exist to be true today for whichever `specjedi-*` skills already ship.
+  every `specjedi-*` skill MUST honor — closed out in full as feature 001
+  shipped the complete nine-skill pipeline (P1-P9), and it now binds every
+  `specjedi-*` skill added since, not just that original set.
 - **Harness-aware, not registry-locked**: it MUST reason about which
   discovery mechanism actually fits the user's current harness
   (Principle III's compatibility matrix) rather than assuming one
@@ -1732,4 +1767,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.24.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13
+**Version**: 1.24.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13

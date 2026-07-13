@@ -72,16 +72,19 @@ Gemini CLI and Gemini Code Assist IDE extensions stopped serving requests
 for consumer/Pro/Ultra tiers on **2026-06-18** (Google Code Assist
 Standard/Enterprise licensees are unaffected). See the
 [Google Developers Blog announcement](https://developers.googleblog.com/an-important-update-transitioning-gemini-cli-to-antigravity-cli/).
-That date has already passed as of this research. The README's
-compatibility table still lists "Gemini CLI" and "Antigravity (Google)" as
-two separate 📋-planned harnesses — both entries stay accurate as *named
-harnesses that exist*, but a future install-path implementation effort
-should prioritize Antigravity over Gemini CLI, since Gemini CLI is no
-longer the actively-maintained target for most users. Not changing the
-README table's harness count/list here — that's a Principle III scope
-call for whenever install work actually starts on either row — but
-flagging it now so that future work isn't planned against a tool that's
-already been retired.
+That date has already passed as of this research. **Update
+(specs/023-full-harness-coverage, 2026-07-13)**: both rows now have a
+real, CI-proven install path — README's compatibility table lists
+"Gemini CLI" and "Antigravity (Google)" as two separate ✅-supported
+harnesses, not planned ones. Gemini CLI's install path was built anyway
+(a still-technically-functioning, still-named harness in the matrix),
+with the README explicitly flagging its sunset status rather than
+presenting it as a first-choice recommendation — this caveat's original
+warning (don't plan new work against a retired tool) was heeded, not
+ignored, by building Antigravity's install path via the genuine
+skills-directory mechanism this document's own top status update names,
+rather than treating Gemini CLI's `GEMINI.md` bridge as the primary
+path for either.
 
 ## How this was used
 

@@ -301,42 +301,68 @@ the result before finishing:
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
+**Don't want to clone the repo at all?** `scripts/bootstrap-install.sh`/`.ps1`
+(specs/024-bootstrap-installer) fetch a published GitHub Release and run its
+bundled installer for you — no local checkout required:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.sh \
+  | bash -s -- /path/to/your-project --harness cursor
+```
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1 | iex
+```
+
+⚠️ This project's own first release hasn't been cut yet (Principle XI —
+cutting a release is always a deliberate maintainer step, never
+automatic), so the one-liner above will currently report "no release
+found" with a git-clone fallback command. It's shipped and CI-tested
+against that real, current state; it'll start actually installing the
+moment a release exists.
+
 `--harness` is optional — if omitted, the installer attempts to detect
-which coding agent you're using (a project directory, a `PATH` binary, or
-a global config directory already present) and installs for it
-automatically, asking only if detection finds more than one plausible
-match. `claude-code`, `codex-cli`, and `trae` are built and tested today;
-any other explicit value is reported as not-yet-supported rather than
-silently attempted — see [Supported harnesses](#supported-harnesses)
-below. Run `./scripts/install.sh --help` (or `.\scripts\install.ps1
--Help`) for the full option list, including `--auto`.
+which coding agent you're using among `claude-code`/`codex-cli`/`trae` (a
+project directory, a `PATH` binary, or a global config directory already
+present) and installs for it automatically, asking only if detection finds
+more than one plausible match. The other 17 harnesses (no reliable
+filesystem/PATH detection signal exists for them yet) require passing
+`--harness` explicitly. Run `./scripts/install.sh --help` (or
+`.\scripts\install.ps1 -Help`) for the full option list, including
+`--auto`.
 
 ### Supported harnesses
 
 Spec Jedi's constitution ([Principle III](.specify/memory/constitution.md)) commits
-this project to eventually supporting the twenty highest-usage LLM coding
-tools/harnesses in the market. Today, five are real, tested, and CI-proven —
-three via a dedicated installer branch (Claude Code, Codex CLI, Trae) and two
-more (OpenCode, Warp) satisfied by those same install paths with zero extra
-code, since both natively scan the exact directories the installer already
-writes to.
+this project to supporting the twenty highest-usage LLM coding
+tools/harnesses in the market — as of this release, all twenty are real,
+tested, and CI-proven. Four use a native skills-directory scan (Claude
+Code, Codex CLI, Trae, Antigravity — the last three sharing just two
+physical target directories, `.agents/skills/` and `.trae/skills/`, plus
+OpenCode and Warp satisfied by those same paths with zero extra code).
+The remaining fourteen have no native skills-directory concept — only a
+project-root rules file, a small rules directory, or (Sourcegraph Cody) a
+custom-commands JSON file — so the installer generates a **bridge**: the
+full `specjedi-*` packages still land at the canonical `.claude/skills/`,
+and a small adapter file (or one file per skill, for directory-style
+harnesses) points into it using that harness's own documented convention.
+See [`specs/023-full-harness-coverage/research.md`](specs/023-full-harness-coverage/research.md)
+for the citation backing each harness's exact mechanism.
 
 ```mermaid
 flowchart LR
-    subgraph Supported["✅ Supported — 5"]
+    subgraph Native["✅ Native skills-directory scan — 4"]
         direction TB
         CC[Claude Code]
         CX[Codex CLI]
-        OC[OpenCode]
-        WA[Warp]
+        AG[Antigravity]
         TR[Trae]
     end
-    subgraph Planned["📋 Planned — 15"]
+    subgraph Bridge["✅ Bridge-file install — 14"]
         direction TB
         CU[Cursor]
         GC[GitHub Copilot]
         GM[Gemini CLI]
-        AG[Antigravity]
         WS[Windsurf]
         CL[Cline]
         CN[Continue]
@@ -349,43 +375,45 @@ flowchart LR
         TB2[Tabnine]
         SC[Sourcegraph Cody]
     end
+    subgraph ZeroCode["✅ Zero-code reuse — 2"]
+        direction TB
+        OC[OpenCode]
+        WA[Warp]
+    end
 ```
 
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Supported — see steps above |
-| Cursor | 📋 Planned — not yet installable |
-| GitHub Copilot (Chat/Workspace) | 📋 Planned — not yet installable |
+| Cursor | ✅ Supported — `./scripts/install.sh --harness cursor` (bridge files under `.cursor/rules/`) |
+| GitHub Copilot (Chat/Workspace) | ✅ Supported — `./scripts/install.sh --harness copilot` (bridge file at `.github/copilot-instructions.md`) |
 | Codex CLI (OpenAI) | ✅ Supported — `./scripts/install.sh --harness codex-cli` (installs to `.agents/skills/`) |
-| Gemini CLI | 📋 Planned — not yet installable |
-| Antigravity (Google) | 📋 Planned — not yet installable |
-| Windsurf (Codeium) | 📋 Planned — not yet installable |
-| Cline | 📋 Planned — not yet installable |
-| Continue | 📋 Planned — not yet installable |
-| Aider | 📋 Planned — not yet installable |
-| Amazon Q Developer | 📋 Planned — not yet installable |
-| JetBrains AI Assistant | 📋 Planned — not yet installable |
-| Zed | 📋 Planned — not yet installable |
+| Gemini CLI | ✅ Supported — `./scripts/install.sh --harness gemini-cli` (bridge file at `GEMINI.md`; Google is sunsetting Gemini CLI in favor of Antigravity — see [`references/harness-capability-notes.md`](references/harness-capability-notes.md)) |
+| Antigravity (Google) | ✅ Supported — `./scripts/install.sh --harness antigravity` (installs to `.agents/skills/`, same convention as Codex CLI) |
+| Windsurf (Codeium) | ✅ Supported — `./scripts/install.sh --harness windsurf` (bridge files under `.windsurf/rules/`) |
+| Cline | ✅ Supported — `./scripts/install.sh --harness cline` (bridge files under `.clinerules/`) |
+| Continue | ✅ Supported — `./scripts/install.sh --harness continue` (bridge files under `.continue/rules/`) |
+| Aider | ✅ Supported — `./scripts/install.sh --harness aider` (bridge file at `CONVENTIONS.md`) |
+| Amazon Q Developer | ✅ Supported — `./scripts/install.sh --harness amazon-q` (bridge files under `.amazonq/rules/`) |
+| JetBrains AI Assistant | ✅ Supported — `./scripts/install.sh --harness jetbrains-ai` (bridge files under `.aiassistant/rules/`) |
+| Zed | ✅ Supported — `./scripts/install.sh --harness zed` (bridge file at `.rules`) |
 | OpenCode | ✅ Supported — satisfied by either the `claude-code` or `codex-cli` install (OpenCode natively scans both `.claude/skills/` and `.agents/skills/`), no separate flag needed |
 | Warp (Agent Mode) | ✅ Supported — satisfied by either the `claude-code` or `codex-cli` install (Warp's Skills system natively scans both `.claude/skills/` and `.agents/skills/`), no separate flag needed |
-| Replit Agent | 📋 Planned — not yet installable |
-| Devin (Cognition) | 📋 Planned — not yet installable |
-| Tabnine | 📋 Planned — not yet installable |
-| Sourcegraph Cody | 📋 Planned — not yet installable |
+| Replit Agent | ✅ Supported — `./scripts/install.sh --harness replit` (bridge file at `replit.md`) |
+| Devin (Cognition) | ✅ Supported — `./scripts/install.sh --harness devin` (bridge file at `.devin.md`, structured as a Devin Playbook) |
+| Tabnine | ✅ Supported — `./scripts/install.sh --harness tabnine` (bridge files under `.tabnine/guidelines/`) |
+| Sourcegraph Cody | ✅ Supported — `./scripts/install.sh --harness cody` (`.vscode/cody.json` custom commands, invoked explicitly as `/specjedi-<name>`; unlike every other harness above, Cody has no confirmed always-on rules file, so this is manual-invocation, not automatic context — see the research doc) |
 | Trae | ✅ Supported — `./scripts/install.sh --harness trae` (installs to `.trae/skills/`) |
 
 Twenty harnesses named individually per Principle III's "at least twenty"
-mandate — status only (✅ supported / 📋 planned), no capability claims for
-any harness this project hasn't actually built and tested against, per
-Principle XX's hallucination-resistance discipline. "Planned" is a status,
-not a promised roadmap date.
+mandate, all ✅ Supported — no capability claims for any mechanism this
+project hasn't actually built and tested against, per Principle XX's
+hallucination-resistance discipline.
 
-If your harness isn't listed as supported yet, the `SKILL.md` files are plain
-Markdown with YAML frontmatter — many harnesses that support custom
-instructions/prompts can already read them directly even without a dedicated
-install path, but this hasn't been verified or documented per-harness yet.
 See [`references/harness-capability-notes.md`](references/harness-capability-notes.md)
-for desk-research capability notes per harness.
+for the original desk-research capability notes per harness, and
+[`specs/023-full-harness-coverage/research.md`](specs/023-full-harness-coverage/research.md)
+for the install-mechanism decisions and citations this table is built from.
 
 Curious how Spec Jedi stacks up against spec-kit and the ten other SDD tools
 it was benchmarked against? See

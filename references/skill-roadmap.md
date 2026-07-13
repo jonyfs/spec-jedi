@@ -179,29 +179,53 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   [specs/013-specjedi-govcheck/](../specs/013-specjedi-govcheck/) for the
   full research/spec/plan.
 
+## Shipped (installer/CI infrastructure, beyond `specjedi-*` skills)
+
+Two items below are installer/CI infrastructure, not `specjedi-*` skills —
+tracked here anyway since this is the project's existing living backlog
+doc, and inventing a second one for two items would violate this
+project's own YAGNI discipline.
+
+- **Full harness coverage** (feature 023, shipped 2026-07-13) — extends
+  `scripts/install.sh`/`.ps1` from 5 to all 20 harnesses in Principle
+  III's compatibility matrix. Four harnesses (Claude Code, Codex CLI,
+  Trae, and newly-added Antigravity) share a native skills-directory
+  scan; the other fourteen get a generated **bridge file** pointing at
+  the canonical `.claude/skills/` package, using each harness's own
+  documented rules-file convention. Genuine contribution: no researched
+  competitor's install tooling bridges a self-describing skills package
+  into fourteen *different* single-file/rules-directory conventions from
+  one shared source of truth. See
+  [specs/023-full-harness-coverage/](../specs/023-full-harness-coverage/)
+  for the full research/spec/plan, including the three-round research
+  trail that resolved Sourcegraph Cody's prior "Unclear" status.
+- **Standalone bootstrap installer script** (Sub-Project B, feature 024,
+  shipped 2026-07-13) — a Homebrew/SDKMAN-style one-liner
+  (`scripts/bootstrap-install.sh`/`.ps1`) that a user runs *without
+  cloning the repository first*: fetches the latest (or a `--version`-
+  pinned) published GitHub Release's downloadable
+  `spec-jedi-<version>.tar.gz` (feature 020) and runs its bundled
+  `install.sh`/`.ps1`, forwarding `--harness`/`--auto`. Identified during
+  feature 020's `/superpowers:brainstorming` session as Sub-Project B of
+  a 3-part decomposition (Sub-Project A shipped as feature 020: release
+  packaging; Sub-Project C shipped as feature 021: harness
+  auto-detection). **Honest caveat**: this project's own first real
+  release (`v0.1.0`) has not been cut yet (Principle XI's "always a
+  deliberate maintainer step"), so the script's live-download path
+  against a real GitHub Release is unverified in practice — its
+  mechanics (release-JSON parsing, tarball extraction, forwarding to
+  `install.sh`/`.ps1`) were proven end-to-end against a locally-built
+  release artifact instead, and its "no release found" path was verified
+  against this repo's real, current (empty) release list. See
+  [specs/024-bootstrap-installer/](../specs/024-bootstrap-installer/) for
+  the full research/spec/plan.
+
+New proposals get added below as they're identified, each still needing
+its own research pass per Principle II before it's built.
+
 ## Proposed, not yet built (prioritized by expected impact)
 
-One item below is installer/CI infrastructure, not a `specjedi-*` skill —
-tracked here anyway since this is the project's existing living backlog
-doc, and inventing a second one for a single item would violate this
-project's own YAGNI discipline. Identified during feature 020's
-`/superpowers:brainstorming` session as Sub-Project B of a 3-part
-decomposition (Sub-Project A shipped as feature 020: release packaging;
-Sub-Project C shipped as feature 021: harness auto-detection).
-
-- **Standalone bootstrap installer script** (Sub-Project B) — a
-  Homebrew/SDKMAN-style one-liner (e.g. `curl -fsSL .../install.sh |
-  bash`) that a user runs *without cloning the repository first*: it
-  fetches a chosen release artifact (feature 020's downloadable
-  `spec-jedi-<version>.tar.gz`), lets the user pick from already-released
-  versions, and installs into the current or a new directory (now with
-  feature 021's harness auto-detection available to it once it exists).
-  Depends entirely on feature 020 (needs real releases to exist to
-  download from) — cannot be usefully built before at least `v0.1.0` is
-  cut for real.
-
-New proposals get added here as they're identified, each still needing
-its own research pass per Principle II before it's built.
+Empty as of feature 024 — both items previously here have shipped.
 
 ## Not proposed (deliberately)
 

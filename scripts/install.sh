@@ -4,6 +4,18 @@
 # into a target project, plus the .specify/templates/*.md files those skills
 # depend on at runtime. Product-only by default, harness-selected, validated
 # after copy — not just asserted to work.
+#
+# Two install modes, chosen per --harness (Principle III's 20-harness
+# compatibility matrix, specs/023-full-harness-coverage/research.md):
+#   1. skills-dir: the harness natively scans a directory of SKILL.md
+#      packages (claude-code, codex-cli, trae, antigravity). Full packages
+#      copied as-is, exactly as before this feature.
+#   2. bridge: the harness only reads a project-root rules file, a small
+#      directory of rule files, or (Cody) a custom-commands JSON file --
+#      never a self-describing skills directory. The full specjedi-*
+#      packages are still copied to .claude/skills/ as the canonical
+#      source; a generated bridge file / set of files points into it so
+#      the harness's own native mechanism can find them.
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -17,12 +29,19 @@ Usage: install.sh [TARGET_DIR] [--harness HARNESS] [--auto]
 
   TARGET_DIR   Project to install Spec Jedi's specjedi-* skills into.
                Defaults to the current directory.
-  --harness    Which coding agent to configure for. "claude-code",
-               "codex-cli", and "trae" are built and tested today
-               (Constitution Principle III); any other value is reported
-               as not-yet-supported rather than silently attempted. If
-               omitted, the installer attempts harness auto-detection
-               (specs/021-harness-auto-detection).
+  --harness    Which coding agent to configure for. All 20 harnesses in
+               Constitution Principle III's compatibility matrix are
+               supported: claude-code, codex-cli, trae, antigravity
+               (native skills-directory scanning); cursor, windsurf,
+               copilot, gemini-cli, cline, continue, aider, amazon-q,
+               jetbrains-ai, zed, replit, devin, tabnine, cody (bridge
+               file(s) pointing at the canonical .claude/skills/ package
+               -- see specs/023-full-harness-coverage/research.md for the
+               per-harness mechanism and citation). If omitted, the
+               installer attempts harness auto-detection among
+               claude-code/codex-cli/trae (specs/021-harness-auto-detection);
+               the 17 other harnesses require an explicit --harness since
+               they have no reliable filesystem/PATH detection signal yet.
   --auto       When --harness is omitted and detection finds more than
                one plausible harness, automatically select the
                Recommended one instead of prompting interactively
@@ -62,6 +81,11 @@ target_dir="$(cd "$target_dir" && pwd)"
 # Harness auto-detection (specs/021-harness-auto-detection): only runs
 # when --harness was omitted. Any explicit --harness value bypasses all
 # of this entirely -- zero behavior change for existing scripted/CI usage.
+# Scoped to the three harnesses with a real filesystem/PATH signal; the 17
+# bridge-file harnesses added in specs/023-full-harness-coverage have no
+# such signal (a rules file's mere presence isn't strong evidence of which
+# *harness* is in use the way a binary on PATH or a config dir is) and
+# always require an explicit --harness.
 if [ -z "$harness" ]; then
   signals=()
 
@@ -214,10 +238,14 @@ if [ -z "$harness" ]; then
   fi
 fi
 
-# Harness Target mapping (data-model.md): --harness value -> skill
-# install location. Both entries share the same source skills, the same
-# runtime templates, and the same post-copy validation below -- only the
-# destination subdirectory name differs.
+# Harness Target mapping (specs/023-full-harness-coverage/data-model.md):
+# every harness shares the same source skills, the same runtime templates,
+# and the same post-copy validation below. skills_dst_rel is always where
+# the full specjedi-* packages land; bridge_mode/bridge_dst_rel (unset for
+# skills-dir harnesses) control whether an additional adapter file gets
+# generated afterward for a harness with no native skills-directory scan.
+bridge_mode=""
+bridge_dst_rel=""
 case "$harness" in
   claude-code)
     skills_dst_rel=".claude/skills"
@@ -238,14 +266,88 @@ case "$harness" in
     # rewrite needed (specs/019-trae-support/research.md).
     skills_dst_rel=".trae/skills"
     ;;
+  antigravity)
+    # Google Antigravity (the tool absorbing Gemini CLI's role) defaults
+    # to the same .agents/skills convention Codex CLI already uses --
+    # confirmed across Google's own Codelabs/Developer docs and community
+    # verification posts (specs/023-full-harness-coverage/research.md).
+    # Needs zero new code, same precedent as OpenCode/Warp piggybacking on
+    # an existing target directory.
+    skills_dst_rel=".agents/skills"
+    ;;
+  cursor)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".cursor/rules"
+    ;;
+  windsurf)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".windsurf/rules"
+    ;;
+  cline)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".clinerules"
+    ;;
+  continue)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".continue/rules"
+    ;;
+  amazon-q)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".amazonq/rules"
+    ;;
+  jetbrains-ai)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".aiassistant/rules"
+    ;;
+  tabnine)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="dir"
+    bridge_dst_rel=".tabnine/guidelines"
+    ;;
+  gemini-cli)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="single"
+    bridge_dst_rel="GEMINI.md"
+    ;;
+  zed)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="single"
+    bridge_dst_rel=".rules"
+    ;;
+  replit)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="single"
+    bridge_dst_rel="replit.md"
+    ;;
+  aider)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="single"
+    bridge_dst_rel="CONVENTIONS.md"
+    ;;
+  copilot)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="single"
+    bridge_dst_rel=".github/copilot-instructions.md"
+    ;;
+  devin)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="devin"
+    bridge_dst_rel=".devin.md"
+    ;;
+  cody)
+    skills_dst_rel=".claude/skills"
+    bridge_mode="cody"
+    bridge_dst_rel=".vscode/cody.json"
+    ;;
   *)
-    echo "🔭 '$harness' isn't built and tested yet — only 'claude-code',"
-    echo "'codex-cli', and 'trae' are fully supported today (Constitution"
-    echo "Principle III's compatibility matrix). The SKILL.md files are plain"
-    echo "Markdown with YAML frontmatter, so many harnesses that read custom"
-    echo "instructions can already use them directly even without a dedicated"
-    echo "install path — but this installer won't claim to have set that up"
-    echo "for you."
+    echo "🔭 '$harness' isn't a recognized harness. See --help for the full"
+    echo "list of 20 supported values (Constitution Principle III)."
     exit 1
     ;;
 esac
@@ -279,6 +381,137 @@ for template in constitution-template.md spec-template.md plan-template.md tasks
   cp "$repo_root/.specify/templates/$template" "$templates_dst/$template"
   echo "  ✅ $template"
 done
+
+# Bridge-file generation (specs/023-full-harness-coverage): only runs for
+# harnesses with no native skills-directory scan. Reads name/description
+# straight back out of the just-installed .claude/skills/specjedi-*/SKILL.md
+# files, so the bridge always reflects what actually landed on disk.
+json_escape() {
+  printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
+}
+
+first_sentence() {
+  # Truncates a description to its first sentence (up to the first ". " --
+  # period-then-space, not just any period, so abbreviations like
+  # "spec.md"/"SKILL.md" inside a description don't cause a false cut),
+  # falling back to a 160-char hard cap -- Principle XVI/XX token economy:
+  # the full detail already lives in the SKILL.md this line points to.
+  # ${desc%%. *} is a portable (bash 3.2+, no GNU-only regex) way to keep
+  # everything before the first ". ": %% removes the *longest* matching
+  # suffix, and the suffix starting at the earliest ". " is the longest
+  # one that matches, so this lands on the first sentence boundary.
+  local desc="$1" cut
+  cut="${desc%%. *}"
+  if [ "$cut" != "$desc" ]; then
+    desc="$cut."
+  fi
+  if [ "${#desc}" -gt 160 ]; then
+    desc="${desc:0:157}..."
+  fi
+  printf '%s' "$desc"
+}
+
+skill_meta() {
+  # Prints "name<TAB>description" for one SKILL.md.
+  local skill_file="$1" name desc
+  name="$(grep -m1 -E '^name:[[:space:]]*' "$skill_file" | sed -E 's/^name:[[:space:]]*//')"
+  desc="$(grep -m1 -E '^description:[[:space:]]*' "$skill_file" | sed -E 's/^description:[[:space:]]*//')"
+  printf '%s\t%s\n' "$name" "$(first_sentence "$desc")"
+}
+
+if [ -n "$bridge_mode" ]; then
+  echo
+  echo "🌉 Generating $harness bridge file(s)..."
+  bridge_dst="$target_dir/$bridge_dst_rel"
+
+  case "$bridge_mode" in
+    dir)
+      mkdir -p "$bridge_dst"
+      bridge_count=0
+      while IFS=$'\t' read -r name desc; do
+        [ -z "$name" ] && continue
+        {
+          echo "<!-- Managed by Spec Jedi's installer (scripts/install.sh/.ps1)."
+          echo "     Re-running the installer regenerates this file. -->"
+          echo
+          echo "# $name"
+          echo
+          echo "$desc"
+          echo
+          echo "Full instructions: \`.claude/skills/$name/SKILL.md\` — read and follow it in full when this applies."
+        } > "$bridge_dst/$name.md"
+        bridge_count=$((bridge_count + 1))
+      done < <(for f in "$skills_dst"/specjedi-*/SKILL.md; do skill_meta "$f"; done)
+      echo "  ✅ $bridge_count bridge file(s) under $bridge_dst_rel/"
+      ;;
+    single|devin)
+      mkdir -p "$(dirname "$bridge_dst")"
+      {
+        echo "<!-- Managed by Spec Jedi's installer (scripts/install.sh/.ps1)."
+        echo "     Re-running the installer regenerates this file. -->"
+        echo
+        if [ "$bridge_mode" = "devin" ]; then
+          echo "# Spec Jedi Playbook"
+          echo
+          echo "## Specifications"
+          echo
+          echo "This project has the Spec Jedi spec-driven-development skill set"
+          echo "installed at \`.claude/skills/\`. Each skill below is a self-contained"
+          echo "Markdown instruction file with YAML frontmatter."
+          echo
+          echo "## Procedure"
+          echo
+          echo "1. When a request matches one of the skills in the table below, open"
+          echo "   its \`SKILL.md\` in full and follow its instructions before responding."
+          echo "2. New to Spec Jedi? Start with \`specjedi-onboard\`."
+          echo
+          echo "## Advice"
+          echo
+        else
+          echo "# Spec Jedi skills available in this project"
+          echo
+          echo "This project has the Spec Jedi spec-driven-development skill set"
+          echo "installed at \`.claude/skills/\`. This harness reads a single"
+          echo "project-level instructions file rather than scanning a skills"
+          echo "directory, so this index bridges the gap: when a request matches"
+          echo "one of the skills below, open and follow the full instructions in"
+          echo "its \`SKILL.md\` before responding. New to Spec Jedi? Start with"
+          echo "\`specjedi-onboard\`."
+          echo
+        fi
+        echo "| Skill | What it does |"
+        echo "|---|---|"
+        for f in "$skills_dst"/specjedi-*/SKILL.md; do
+          IFS=$'\t' read -r name desc < <(skill_meta "$f")
+          echo "| \`$name\` | $desc |"
+        done
+      } > "$bridge_dst"
+      echo "  ✅ $bridge_dst_rel"
+      ;;
+    cody)
+      mkdir -p "$(dirname "$bridge_dst")"
+      {
+        echo "{"
+        first=1
+        for f in "$skills_dst"/specjedi-*/SKILL.md; do
+          IFS=$'\t' read -r name desc < <(skill_meta "$f")
+          if [ "$first" -eq 1 ]; then first=0; else echo ","; fi
+          printf '  "%s": {\n' "$(json_escape "$name")"
+          printf '    "description": "%s",\n' "$(json_escape "$desc")"
+          printf '    "prompt": "%s",\n' "$(json_escape "Follow the instructions in .claude/skills/$name/SKILL.md in full.")"
+          printf '    "contextFiles": [".claude/skills/%s/SKILL.md"]\n' "$name"
+          printf '  }'
+        done
+        echo
+        echo "}"
+      } > "$bridge_dst"
+      echo "  ✅ $bridge_dst_rel (Cody custom commands — invoke with /specjedi-<name>;"
+      echo "     Cody has no confirmed always-on rules file, so these load on"
+      echo "     explicit invocation rather than automatically, unlike the other"
+      echo "     bridge harnesses — see specs/023-full-harness-coverage/research.md)"
+      ;;
+  esac
+fi
 
 echo
 echo "== Validating installed skills =="

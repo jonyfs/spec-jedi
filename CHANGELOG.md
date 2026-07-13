@@ -11,6 +11,34 @@ this file directly.
 
 ### Added
 
+- **Standalone bootstrap installer** (feature 024, Sub-Project B) —
+  `scripts/bootstrap-install.sh`/`.ps1` fetch a published GitHub Release's
+  `spec-jedi-<version>.tar.gz` and run its bundled `install.sh`/`.ps1`,
+  no local `git clone` required — a Homebrew/SDKMAN-style one-liner.
+  Forwards `--harness`/`--auto`; supports `--version` to pin a specific
+  release. This project's own first release (`v0.1.0`) hasn't been cut
+  yet, so the live-download path is verified against a locally-built
+  release artifact rather than production — stated explicitly, not
+  hidden — while the "no release found" path is verified against this
+  repo's real, current (empty) release list.
+- **Full harness coverage** (feature 023) — closes Constitution Principle
+  III's last open gap. `scripts/install.sh`/`.ps1` now support all 20
+  harnesses in the compatibility matrix (up from 5): Antigravity joins
+  the native skills-directory group (`.agents/skills/`, shared with
+  Codex CLI, zero new installer code); the other fourteen (Cursor,
+  Windsurf, GitHub Copilot, Gemini CLI, Cline, Continue, Aider, Amazon Q
+  Developer, JetBrains AI Assistant, Zed, Replit Agent, Devin, Tabnine,
+  Sourcegraph Cody) get a new **bridge-file mechanism**: the full
+  `specjedi-*` package still lands at the canonical `.claude/skills/`,
+  and a generated adapter file (or one per skill, for directory-
+  convention harnesses) points into it using each harness's own
+  documented rules format. Sourcegraph Cody's prior "Unclear" capability
+  status is resolved — no confirmed always-on rules file exists, so it's
+  installed via its real, documented Custom Commands mechanism
+  (`.vscode/cody.json`), explicitly flagged as manual-invocation rather
+  than automatic context. Verified via new `install-test-antigravity` and
+  matrix `install-test-bridge-harnesses` CI jobs on Linux, macOS, and
+  Windows (bash and native PowerShell).
 - **Session-start live-render verification closure** (feature 022) —
   closes Constitution Principle XXI's last remaining gap: feature 015's
   T020 (a real, live session-start firing was never observed). A genuine

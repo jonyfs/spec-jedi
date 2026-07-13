@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@5e179bb lang=ur -->
+<!-- i18n-sync: source=README.md@bf963a8 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:
@@ -15,7 +15,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#آج-آپ-کو-کیا-ملتا-ہے)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#آج-آپ-کو-کیا-ملتا-ہے)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#آج-آپ-کو-کیا-ملتا-ہے)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#تنصیب)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -78,12 +78,12 @@ competitive research نظم و ضبط (Principle II) کے مطابق ایک وق
 > *"ایک Jedi کی طاقت Force سے آتی ہے۔ ایک project کی طاقت بھی، اسی طرح،
 > اس کی skills سے آتی ہے۔"* — ایک دانا Master، غالباً۔
 
-تئیس کی تعداد میں، یہ Order ہے — لڑائی کے لیے نہیں بلکہ Spec-Driven
+چوبیس کی تعداد میں، یہ Order ہے — لڑائی کے لیے نہیں بلکہ Spec-Driven
 Development کے لیے تربیت یافتہ۔ یہ چار شعبے برقرار رکھتی ہے:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 23 skills"))
+  root(("Spec Jedi — 24 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -103,7 +103,8 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 7
+    Meta and Tooling - 8
+      quick
       diagram
       status
       docs
@@ -124,6 +125,7 @@ mindmap
 | `specjedi-plan` 🛠️ | واضح کردہ spec کو ایک تکنیکی `plan.md` میں تبدیل کرتی ہے — پہلے موجودہ conventions کے لیے اصل codebase اسکین کرتی ہے، تاکہ implementation کو کبھی رک کر پہلے سے موجود pattern تلاش نہ کرنا پڑے |
 | `specjedi-tasks` ✅ | کسی plan کو ترتیب وار، dependency-aware `tasks.md` میں تقسیم کرتی ہے، user story کے مطابق گروپ کیا گیا — جہاں بھی plan کوڈ کا تقاضا کرتا ہے، وہاں implementation task سے پہلے ایک ناکام test task ترتیب دیتی ہے |
 | `specjedi-implement` 🔨 | dependency ترتیب میں `tasks.md` کو انجام دیتی ہے، جہاں plan کوڈ کا تقاضا کرتا ہے وہاں test-first — صرف feature branch اور pull request کے ذریعے commit کرتی ہے، کبھی براہ راست `main` پر نہیں |
+| `specjedi-quick` ⚡ | چھوٹی، اچھی طرح سمجھی گئی تبدیلیوں کے لیے ہلکا پھلکا راستہ — `spec.md`+`research.md`+`plan.md`+`tasks.md` کے بجائے صرف ایک `quick.md`، براہ راست implementation تک۔ Quality gates (test-first، `specjedi-govcheck`، صرف PR) کبھی مختصر نہیں ہوتیں، صرف planning کی رسمی کارروائی مختصر ہوتی ہے۔ کسی بھی بڑی، مبہم، یا نئی skill کے لیے انکار کرتی ہے اور `specjedi-specify` کی طرف بھیجتی ہے — دیکھیں [کون سا راستہ استعمال کریں؟](#کون-سا-راستہ-استعمال-کریں) |
 | `specjedi-analyze` 🔍 | `spec.md`/`plan.md`/`tasks.md` (اور constitution) کا سختی سے صرف پڑھنے کے قابل cross-check — خلا، تکرار، اور تضادات کے لیے — نتائج رپورٹ کرتی ہے، کبھی کسی فائل میں ترمیم نہیں کرتی |
 | `specjedi-checklist` ☑️ | کسی مخصوص focus area (سیکیورٹی، accessibility، کارکردگی...) کے لیے ایک custom checklist تیار کرتی ہے، مکمل طور پر اس feature کے اپنے `spec.md`/`plan.md` پر مبنی — کبھی عام boilerplate نہیں |
 | `specjedi-converge` 🔁 | manual تبدیلیوں کے بعد اصل codebase اور `tasks.md` کے درمیان انحراف کا پتہ لگاتی ہے، کسی بھی خلا کو خاموشی سے نظر انداز کرنے کے بجائے نئے task کے طور پر شامل کرتی ہے — `specjedi-implement` کی طرف واپس loop بند کرتی ہے |

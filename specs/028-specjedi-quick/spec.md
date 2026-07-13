@@ -122,10 +122,11 @@ accurate status derived from their own on-disk artifacts.
   the work already done.
 - What happens if a user explicitly asks for the fast path on something
   that clearly fails eligibility (e.g., "quick, just build a new skill
-  for X")? → the explicit request doesn't override the hard exclusions
-  in FR-001 (new skill, constitution amendment, multi-subsystem change) —
-  those apply unconditionally, unlike a genuine judgment-call criterion
-  the user might reasonably override.
+  for X")? → the explicit request doesn't override any of FR-001's five
+  criteria (one-page-of-notes size, single-subsystem scope, no
+  unresolved ambiguity, not a new skill, not a constitution amendment) —
+  all five apply unconditionally; none is a user-overridable judgment
+  call.
 - What happens to `quick.md` once implemented — does it get deleted or
   moved? → no; `specs/NNN-name/` stays permanent history for every
   feature regardless of which path produced it, matching this project's

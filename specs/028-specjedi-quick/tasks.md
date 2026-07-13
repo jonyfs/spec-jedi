@@ -33,7 +33,9 @@ CHANGELOG updates.
       exact four-section template from plan.md's Design.
 - [X] T004 [US1] Write the straight-to-implementation step (FR-003),
       mirroring `specjedi-implement`'s branch-check/test-first/govcheck/
-      PR sequence verbatim where applicable (FR-004).
+      PR sequence verbatim where applicable (FR-004), including setting
+      `quick.md`'s `Status:` line to `Implemented` once the PR opens
+      (FR-007).
 - [X] T005 [US1] Add Format, Example (input → output), `--auto` mode,
       Always/Never, and Verifiable success criteria sections per the
       Skill Authoring Standard (Principle XIX full bar).

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@5e179bb lang=bn -->
+<!-- i18n-sync: source=README.md@bf963a8 lang=bn -->
 > 🌐 এই ডকুমেন্টটি AI-সহায়তায় অনূদিত। **ইংরেজি হলো প্রামাণিক উৎস**
 > ([Principle I](../../../.specify/memory/constitution.md))；কোনো অসঙ্গতি
 > থাকলে ইংরেজি সংস্করণ প্রাধান্য পাবে। অন্যান্য ভাষা দেখুন:
@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#আজ-আপনি-কী-পাচ্ছেন)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#আজ-আপনি-কী-পাচ্ছেন)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#আজ-আপনি-কী-পাচ্ছেন)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#ইনস্টলেশন)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)

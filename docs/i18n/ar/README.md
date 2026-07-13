@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@5e179bb lang=ar -->
+<!-- i18n-sync: source=README.md@bf963a8 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر
 > المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال
 > وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى:
@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#ما-الذي-تحصل-عليه-اليوم)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#ما-الذي-تحصل-عليه-اليوم)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#ما-الذي-تحصل-عليه-اليوم)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#التثبيت)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -70,12 +70,12 @@ flowchart TD
 > *"قوة الجدَاي تنبع من القوة. وقوة المشروع، كذلك، تنبع من مهاراته."* —
 > سيد حكيم، على الأرجح.
 
-ثلاثة وعشرون عدداً، هذه الرتبة — لم تُدرَّب للقتال، بل لتطوير SDD.
+أربعة وعشرون عدداً، هذه الرتبة — لم تُدرَّب للقتال، بل لتطوير SDD.
 أربعة تخصصات تحفظها:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 23 skills"))
+  root(("Spec Jedi — 24 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -95,7 +95,8 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 7
+    Meta and Tooling - 8
+      quick
       diagram
       status
       docs
@@ -116,6 +117,7 @@ mindmap
 | `specjedi-plan` 🛠️ | تحوّل مواصفة تم توضيحها إلى `plan.md` تقني — تفحص أولاً قاعدة الكود الفعلية بحثاً عن الأنماط الموجودة، حتى لا يضطر التنفيذ للتوقف والبحث عن نمط موجود بالفعل |
 | `specjedi-tasks` ✅ | تقسّم الخطة إلى `tasks.md` مرتّب ومدرك للتبعيات، مجمّع حسب قصة المستخدم — تضع مهمة اختبار فاشلة قبل مهمة التنفيذ المقابلة أينما تطلبت الخطة كتابة كود |
 | `specjedi-implement` 🔨 | تنفّذ `tasks.md` بترتيب التبعيات، مع الاختبار أولاً حيثما تطلب الخطة كتابة كود — لا تُثبّت التغييرات (commit) إلا عبر فرع ميزة وطلب سحب، وأبداً مباشرة على `main` |
+| `specjedi-quick` ⚡ | المسار الخفيف للتغييرات الصغيرة والمفهومة جيداً — ملف `quick.md` واحد بدلاً من `spec.md`+`research.md`+`plan.md`+`tasks.md`، مباشرة إلى التنفيذ. بوابات الجودة (الاختبار أولاً، `specjedi-govcheck`، طلب سحب فقط) لا تُختصر أبداً، فقط مراسم التخطيط تُختصر. ترفض وتُعيد التوجيه إلى `specjedi-specify` لأي شيء أكبر أو غامض أو مهارة جديدة — راجع [أي مسار يجب أن أستخدم؟](#أي-مسار-يجب-أن-أستخدم) |
 | `specjedi-analyze` 🔍 | فحص متقاطع للقراءة فقط بشكل صارم لـ `spec.md`/`plan.md`/`tasks.md` (والدستور) بحثاً عن الثغرات والتكرار والتناقضات — تُبلّغ عن النتائج فقط، ولا تعدّل أي ملف أبداً |
 | `specjedi-checklist` ☑️ | تُنشئ قائمة تحقق مخصصة لمجال تركيز محدد (الأمان، إمكانية الوصول، الأداء...) مبنية بالكامل على `spec.md`/`plan.md` الخاصَّين بهذه الميزة — أبداً قالب عام |
 | `specjedi-converge` 🔁 | تكتشف الانحراف بين قاعدة الكود الفعلية و `tasks.md` بعد التغييرات اليدوية، وتضيف أي ثغرة كمهمة جديدة بدلاً من تجاهلها بصمت — تُغلق الحلقة عائدةً إلى `specjedi-implement` |
@@ -196,6 +198,11 @@ mindmap
 **اللوحة 8 — سفينة تقفز إلى الفضاء الفائق.**
 > 🚀 *"تم التسليم."*
 > 🌌 *"لتكن المواصفة معك."*
+
+هذه ليست افتراضية — إنها العملية الحرفية والمتكررة وراء طلبات السحب
+الأخيرة لهذا المشروع نفسه (مثل [#82](https://github.com/jonyfs/spec-jedi/pull/82)،
+[#84](https://github.com/jonyfs/spec-jedi/pull/84)، [#87](https://github.com/jonyfs/spec-jedi/pull/87))،
+كل واحد منها يُشغِّل هذه اللوحات الثماني بالضبط بشكل حقيقي.
 
 ### نفس قصة التمهيد الداخلي، كمخطط
 
@@ -280,7 +287,7 @@ flowchart TD
    التشغيل الثلاثة.
 
 3. تأكد من تحميل المهارات بكتابة `/` في موجّه Claude Code. سترى جميع
-   المهارات الثلاث والعشرين من `specjedi-*` وأوامر `speckit-*` (أدوات
+   المهارات الأربع والعشرين من `specjedi-*` وأوامر `speckit-*` (أدوات
    التمهيد الداخلية الخاصة بهذا المستودع — راجع
    [ما الذي تحصل عليه اليوم](#ما-الذي-تحصل-عليه-اليوم)) مُدرَجة معاً،
    لأن Claude Code يكتشف كل مهارة تحت `.claude/skills/` دون التمييز
@@ -306,42 +313,67 @@ flowchart TD
 .\scripts\install.ps1 -TargetDir C:\path\to\your-project
 ```
 
-أصبح `--harness` اختيارياً الآن — إذا تم حذفه، يحاول المثبِّت اكتشاف
-وكيل البرمجة الذي تستخدمه (دليل مشروع موجود مسبقاً، أو ملف تنفيذي على
-`PATH`، أو دليل إعدادات عام موجود مسبقاً) ويُثبِّت تلقائياً له — لا
-يسأل إلا إذا وجد الاكتشاف أكثر من تطابق محتمل. `claude-code` و
-`codex-cli` و `trae` مبنية ومُختبَرة اليوم؛ أي قيمة صريحة أخرى يُبلَّغ
-عنها بأنها غير مدعومة بعد بدلاً من محاولتها بصمت — راجع
-[البيئات المدعومة](#البيئات-المدعومة) أدناه. شغّل
+**لا تريد استنساخ المستودع على الإطلاق؟** يقوم `scripts/bootstrap-install.sh`/`.ps1`
+(specs/024-bootstrap-installer) بجلب إصدار (Release) منشور على GitHub وتشغيل
+مثبِّته المرفق نيابة عنك — دون الحاجة لنسخة محلية:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.sh \
+  | bash -s -- /path/to/your-project --harness cursor
+```
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1 | iex
+```
+
+⚠️ لم يُصدَر أول إصدار خاص بهذا المشروع نفسه بعد (Principle XI — إصدار
+نسخة هو دائماً خطوة متعمَّدة يقودها القائم على الصيانة، وليست تلقائية
+أبداً)، لذا فإن الأمر السريع أعلاه سيُبلِّغ حالياً بأنه "لم يُعثر على
+إصدار" مع أمر بديل للاستنساخ عبر git. إنه مُشحَّن ومُختبَر عبر CI مقابل
+هذه الحالة الحقيقية الراهنة؛ وسيبدأ بالتثبيت الفعلي بمجرد وجود إصدار.
+
+أصبح `--harness` اختيارياً — إذا تم حذفه، يحاول المثبِّت اكتشاف وكيل
+البرمجة الذي تستخدمه من بين `claude-code`/`codex-cli`/`trae` (دليل
+مشروع موجود مسبقاً، أو ملف تنفيذي على `PATH`، أو دليل إعدادات عام
+موجود مسبقاً) ويُثبِّت تلقائياً له — لا يسأل إلا إذا وجد الاكتشاف أكثر
+من تطابق محتمل. البيئات السبع عشرة الأخرى (لا توجد إشارة اكتشاف موثوقة
+عبر نظام الملفات/`PATH` لها بعد) تتطلب تمرير `--harness` صراحةً. شغّل
 `./scripts/install.sh --help` (أو `.\scripts\install.ps1 -Help`) لقائمة
 الخيارات الكاملة، بما في ذلك `--auto`.
 
 ### البيئات المدعومة
 
 يُلزم دستور Spec Jedi ([Principle III](../../../.specify/memory/constitution.md))
-هذا المشروع بدعم عشرين أداة/بيئة برمجة LLM الأكثر استخداماً في السوق في
-النهاية. اليوم، خمس بيئات حقيقية ومُختبَرة ومُثبَتة عبر CI — ثلاث منها
-عبر فرع مخصص في المثبِّت (Claude Code وCodex CLI وTrae)، واثنتان أخريان
-(OpenCode وWarp) تتحققان عبر مساري التثبيت نفسيهما دون أي كود إضافي،
-لأن كلتيهما تفحصان بشكل أصلي المجلدات الدقيقة التي يكتب فيها المثبِّت
-بالفعل.
+هذا المشروع بدعم عشرين أداة/بيئة برمجة LLM الأكثر استخداماً في السوق —
+اعتباراً من هذا الإصدار، كل العشرين حقيقية ومُختبَرة ومُثبَتة عبر CI.
+أربع منها تستخدم فحصاً أصلياً لمجلد المهارات (Claude Code وCodex CLI
+وTrae وAntigravity — الثلاث الأخيرة تشترك في مجلدَي هدف فعليَّين فقط،
+`.agents/skills/` و `.trae/skills/`، بالإضافة إلى OpenCode وWarp
+اللذين يتحققان عبر المسارين نفسيهما دون أي كود إضافي). أما البيئات
+الأربع عشرة المتبقية فليس لديها مفهوم أصلي لمجلد مهارات — فقط ملف
+قواعد في جذر المشروع، أو مجلد قواعد صغير، أو (بالنسبة لـ Sourcegraph
+Cody) ملف JSON لأوامر مخصصة — لذا يُنشئ المثبِّت **جسراً (bridge)**:
+تهبط حزم `specjedi-*` الكاملة دائماً في المسار المرجعي
+`.claude/skills/`، ويشير ملف محوِّل (adapter) صغير (أو ملف واحد لكل
+مهارة، للبيئات ذات نمط المجلدات) إليه باستخدام الاصطلاح الموثَّق الخاص
+بتلك البيئة. راجع
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+للمرجع الداعم لآلية كل بيئة بالضبط.
 
 ```mermaid
 flowchart LR
-    subgraph Supported["✅ Supported — 5"]
+    subgraph Native["✅ Native skills-directory scan — 4"]
         direction TB
         CC[Claude Code]
         CX[Codex CLI]
-        OC[OpenCode]
-        WA[Warp]
+        AG[Antigravity]
         TR[Trae]
     end
-    subgraph Planned["📋 Planned — 15"]
+    subgraph Bridge["✅ Bridge-file install — 14"]
         direction TB
         CU[Cursor]
         GC[GitHub Copilot]
         GM[Gemini CLI]
-        AG[Antigravity]
         WS[Windsurf]
         CL[Cline]
         CN[Continue]
@@ -354,53 +386,72 @@ flowchart LR
         TB2[Tabnine]
         SC[Sourcegraph Cody]
     end
+    subgraph ZeroCode["✅ Zero-code reuse — 2"]
+        direction TB
+        OC[OpenCode]
+        WA[Warp]
+    end
 ```
 
 | البيئة | الحالة |
 |---|---|
 | Claude Code | ✅ مدعومة — راجع الخطوات أعلاه |
-| Cursor | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| GitHub Copilot (Chat/Workspace) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
+| Cursor | ✅ مدعومة — `./scripts/install.sh --harness cursor` (ملفات جسر تحت `.cursor/rules/`) |
+| GitHub Copilot (Chat/Workspace) | ✅ مدعومة — `./scripts/install.sh --harness copilot` (ملف جسر في `.github/copilot-instructions.md`) |
 | Codex CLI (OpenAI) | ✅ مدعومة — `./scripts/install.sh --harness codex-cli` (تُثبَّت في `.agents/skills/`) |
-| Gemini CLI | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Antigravity (Google) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Windsurf (Codeium) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Cline | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Continue | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Aider | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Amazon Q Developer | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| JetBrains AI Assistant | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Zed | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
+| Gemini CLI | ✅ مدعومة — `./scripts/install.sh --harness gemini-cli` (ملف جسر في `GEMINI.md`؛ تعمل Google على إيقاف Gemini CLI تدريجياً لصالح Antigravity — راجع [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)) |
+| Antigravity (Google) | ✅ مدعومة — `./scripts/install.sh --harness antigravity` (تُثبَّت في `.agents/skills/`، بنفس اصطلاح Codex CLI) |
+| Windsurf (Codeium) | ✅ مدعومة — `./scripts/install.sh --harness windsurf` (ملفات جسر تحت `.windsurf/rules/`) |
+| Cline | ✅ مدعومة — `./scripts/install.sh --harness cline` (ملفات جسر تحت `.clinerules/`) |
+| Continue | ✅ مدعومة — `./scripts/install.sh --harness continue` (ملفات جسر تحت `.continue/rules/`) |
+| Aider | ✅ مدعومة — `./scripts/install.sh --harness aider` (ملف جسر في `CONVENTIONS.md`) |
+| Amazon Q Developer | ✅ مدعومة — `./scripts/install.sh --harness amazon-q` (ملفات جسر تحت `.amazonq/rules/`) |
+| JetBrains AI Assistant | ✅ مدعومة — `./scripts/install.sh --harness jetbrains-ai` (ملفات جسر تحت `.aiassistant/rules/`) |
+| Zed | ✅ مدعومة — `./scripts/install.sh --harness zed` (ملف جسر في `.rules`) |
 | OpenCode | ✅ مدعومة — تُلبّى عبر تثبيت `claude-code` أو `codex-cli` (يفحص OpenCode بشكل أصلي كلاً من `.claude/skills/` و `.agents/skills/`)، دون الحاجة لعلامة منفصلة |
 | Warp (Agent Mode) | ✅ مدعومة — تُلبّى عبر تثبيت `claude-code` أو `codex-cli` (يفحص نظام Skills الخاص بـ Warp بشكل أصلي كلاً من `.claude/skills/` و `.agents/skills/`)، دون الحاجة لعلامة منفصلة |
-| Replit Agent | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Devin (Cognition) | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Tabnine | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Sourcegraph Cody | 📋 مخطَّط لها — غير قابلة للتثبيت بعد |
-| Trae | ✅ مدعومة — `./scripts/install.sh --harness trae` (يثبِّت في `.trae/skills/`) |
+| Replit Agent | ✅ مدعومة — `./scripts/install.sh --harness replit` (ملف جسر في `replit.md`) |
+| Devin (Cognition) | ✅ مدعومة — `./scripts/install.sh --harness devin` (ملف جسر في `.devin.md`، مُهيكَل كـ Devin Playbook) |
+| Tabnine | ✅ مدعومة — `./scripts/install.sh --harness tabnine` (ملفات جسر تحت `.tabnine/guidelines/`) |
+| Sourcegraph Cody | ✅ مدعومة — `./scripts/install.sh --harness cody` (أوامر مخصصة في `.vscode/cody.json`، تُستدعى صراحةً كـ `/specjedi-<name>`؛ خلافاً لكل بيئة أخرى أعلاه، لا يملك Cody ملف قواعد مؤكَّد دائم التفعيل، لذا هذا استدعاء يدوي، وليس سياقاً تلقائياً — راجع وثيقة البحث) |
+| Trae | ✅ مدعومة — `./scripts/install.sh --harness trae` (تُثبَّت في `.trae/skills/`) |
 
 عشرون بيئة مذكورة كل واحدة على حدة وفق ولاية Principle III "عشرون على
-الأقل" — الحالة فقط (✅ مدعومة / 📋 مخطَّط لها)، دون أي ادّعاءات قدرات
-لأي بيئة لم يبنِ هذا المشروع ويختبرها فعلياً، وفق انضباط مقاومة
-الهلوسة الخاص بـ Principle XX. "مخطَّط لها" حالة، وليست موعداً موعوداً
-على خارطة الطريق.
+الأقل"، جميعها ✅ مدعومة — دون أي ادّعاءات قدرات لأي آلية لم يبنِ هذا
+المشروع ويختبرها فعلياً، وفق انضباط مقاومة الهلوسة الخاص بـ Principle XX.
 
-إذا لم تكن بيئتك مُدرَجة كمدعومة بعد، فملفات `SKILL.md` هي Markdown صِرف
-مع بيانات وصفية YAML — العديد من البيئات التي تدعم التعليمات/المطالبات
-المخصصة يمكنها بالفعل قراءتها مباشرة حتى دون مسار تثبيت مخصص، لكن هذا
-لم يُتحقَّق منه أو يُوثَّق بعد لكل بيئة على حدة. انظر
-[`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
-لملاحظات القدرات لكل بيئة المستندة إلى بحث مكتبي.
+راجع [`references/harness-capability-notes.md`](../../../references/harness-capability-notes.md)
+لملاحظات القدرات الأصلية المستندة إلى بحث مكتبي لكل بيئة، و
+[`specs/023-full-harness-coverage/research.md`](../../../specs/023-full-harness-coverage/research.md)
+لقرارات آلية التثبيت والمراجع التي بُني عليها هذا الجدول.
 
 هل تتساءل كيف يقارن Spec Jedi بـ spec-kit والعشر أدوات SDD الأخرى التي
-قورن بها؟ انظر
+قورن بها؟ راجع
 [`references/competitive-comparison.md`](../../../references/competitive-comparison.md).
+
+تريد النسخة غير المنقَّحة — مزايا حقيقية، وقيود حالية حقيقية، ونقاط
+تحسين ملموسة مبنية على المنافسين؟ راجع
+[`references/honest-assessment.md`](../../../references/honest-assessment.md).
 
 ## البدء السريع
 
-ثلاث وعشرون مهارة منتج متاحة اليوم
+أربع وعشرون مهارة منتج متاحة اليوم
 ([ما الذي تحصل عليه اليوم](#ما-الذي-تحصل-عليه-اليوم)) — مسار
 `specjedi-*` الكامل مكتمل. لم تستخدم أداة SDD من قبل؟ ابدأ بالخطوة 0.
+
+### أي مسار يجب أن أستخدم؟
+
+| حجم التغيير | استخدم | ينتج |
+|---|---|---|
+| صغير ومفهوم جيداً — خطأ إملائي، إصلاح لملف واحد، تعديل محدود النطاق | `specjedi-quick` ⚡ | ملف `quick.md` واحد، مباشرة إلى كود مُسلَّم |
+| أي شيء أكبر أو غامض أو يمسّ أكثر من نظام فرعي واحد، أو مهارة `specjedi-*` جديدة | المسار الكامل (الخطوات 3-11 أدناه) | `spec.md` ← `plan.md` ← `tasks.md` ← كود مُسلَّم |
+
+تتحقق `specjedi-quick` بنفسها من الأهلية مقابل خمسة معايير صريحة قبل
+كتابة أي شيء — إذا كان طلبك لا يناسب فعلياً حوالي صفحة واحدة من
+الملاحظات، فإنها ترفض وتُعيد توجيهك إلى `specjedi-specify` بدلاً من
+فرضه. كلا المسارين يفرضان نفس بوابات الجودة (الاختبار أولاً حيثما
+يتضمن الأمر كوداً، `specjedi-govcheck` قبل فتح طلب سحب) — "quick"
+تختصر مراسم التخطيط فقط، وليس التحقق أبداً.
 
 0. **لست متأكداً مما يعنيه كل هذا؟** فقط اسأل — "ما هي المواصفة ولماذا
    قد أحتاجها"، "ما الذي يفعله هذا المشروع فعلياً". `specjedi-explain`

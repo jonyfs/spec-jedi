@@ -238,79 +238,9 @@ version, and CI runs the battery on all three operating systems on every PR.
 
 ## Installation
 
-### Claude Code (fully supported today)
-
-The clone step differs slightly by OS; everything after that is identical.
-
-**Linux / macOS** (Terminal):
-
-```bash
-git clone https://github.com/jonyfs/spec-jedi.git
-cd spec-jedi
-```
-
-**Windows — native PowerShell** (no WSL required):
-
-```powershell
-git clone https://github.com/jonyfs/spec-jedi.git
-cd spec-jedi
-```
-
-**Windows — WSL or Git Bash** (if you prefer a Unix-like shell on Windows):
-
-```bash
-git clone https://github.com/jonyfs/spec-jedi.git
-cd spec-jedi
-```
-
-Both Windows paths work equally well — pick whichever shell you already use daily.
-The only place it matters going forward is which helper script you run
-(`scripts/*.sh` in a POSIX shell, `scripts/*.ps1` in native PowerShell); the
-skills themselves work identically either way.
-
-```mermaid
-flowchart TD
-    A[Clone the repo] --> B[Open the folder in Claude Code]
-    B --> C["Confirm skills loaded: type / in the prompt"]
-    C --> D[Run specjedi-onboard for a guided first run]
-```
-
-1. Clone the repository using the block above for your OS.
-
-2. Open the folder in [Claude Code](https://claude.com/claude-code). Claude Code
-   auto-discovers every skill under `.claude/skills/*/SKILL.md` — there is no
-   separate install step or build process, and this step is identical on all three
-   operating systems.
-
-3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   all 24 `specjedi-*` product skills and the `speckit-*` commands (this repo's
-   own internal bootstrap tooling — see [What you get today](#what-you-get-today))
-   listed together, since Claude Code discovers every skill under
-   `.claude/skills/` without distinguishing the two.
-
-4. That's it — you're ready to run `specjedi-onboard` for a guided first run,
-   ask `specjedi-explain` anything if you're not sure where to start, or read
-   the constitution to understand where the rest of the pipeline is headed.
-
-**Using Spec Jedi in a project other than this one?** Run the installer
-(Constitution [Principle XVIII](.specify/memory/constitution.md)) — it copies
-only the `specjedi-*` product skills, never the `speckit-*` bootstrap tooling,
-plus the four `.specify/templates/*.md` files those skills need, and validates
-the result before finishing:
-
-```bash
-# from a Spec Jedi checkout, targeting another project on disk
-./scripts/install.sh /path/to/your-project
-```
-
-```powershell
-# Windows native PowerShell
-.\scripts\install.ps1 -TargetDir C:\path\to\your-project
-```
-
-**Don't want to clone the repo at all?** `scripts/bootstrap-install.sh`/`.ps1`
+Run one command — no `git clone` required. `scripts/bootstrap-install.sh`/`.ps1`
 (specs/024-bootstrap-installer) fetch a published GitHub Release and run its
-bundled installer for you — no local checkout required:
+bundled installer against your target directory:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.sh \
@@ -318,15 +248,8 @@ curl -fsSL https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/boots
 ```
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1 | iex
+&([scriptblock]::Create((iwr -useb https://raw.githubusercontent.com/jonyfs/spec-jedi/main/scripts/bootstrap-install.ps1).Content)) -TargetDir C:\path\to\your-project -Harness cursor
 ```
-
-⚠️ This project's own first release hasn't been cut yet (Principle XI —
-cutting a release is always a deliberate maintainer step, never
-automatic), so the one-liner above will currently report "no release
-found" with a git-clone fallback command. It's shipped and CI-tested
-against that real, current state; it'll start actually installing the
-moment a release exists.
 
 `--harness` is optional — if omitted, the installer attempts to detect
 which coding agent you're using among `claude-code`/`codex-cli`/`trae` (a
@@ -334,8 +257,9 @@ project directory, a `PATH` binary, or a global config directory already
 present) and installs for it automatically, asking only if detection finds
 more than one plausible match. The other 17 harnesses (no reliable
 filesystem/PATH detection signal exists for them yet) require passing
-`--harness` explicitly. Run `./scripts/install.sh --help` (or
-`.\scripts\install.ps1 -Help`) for the full option list, including
+`--harness` explicitly — see [Supported harnesses](#supported-harnesses)
+below for the full list. Run `./scripts/bootstrap-install.sh --help` (or
+`.\scripts\bootstrap-install.ps1 -Help`) for the full option list, including
 `--auto`.
 
 ### Supported harnesses
@@ -391,7 +315,7 @@ flowchart LR
 
 | Harness | Status |
 |---|---|
-| Claude Code | ✅ Supported — see steps above |
+| Claude Code | ✅ Supported — the [Installation](#installation) command above, omit `--harness` (auto-detected) or pass `--harness claude-code` explicitly |
 | Cursor | ✅ Supported — `./scripts/install.sh --harness cursor` (bridge files under `.cursor/rules/`) |
 | GitHub Copilot (Chat/Workspace) | ✅ Supported — `./scripts/install.sh --harness copilot` (bridge file at `.github/copilot-instructions.md`) |
 | Codex CLI (OpenAI) | ✅ Supported — `./scripts/install.sh --harness codex-cli` (installs to `.agents/skills/`) |

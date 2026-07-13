@@ -197,6 +197,11 @@ still needs its own research pass before it gets built.
 > 🚀 *"Shipped."*
 > 🌌 *"May the Spec be with you."*
 
+This isn't a hypothetical — it's the literal, repeated process behind
+this project's own recent pull requests (e.g. [#82](https://github.com/jonyfs/spec-jedi/pull/82),
+[#84](https://github.com/jonyfs/spec-jedi/pull/84), [#87](https://github.com/jonyfs/spec-jedi/pull/87)),
+each one running these exact eight panels for real.
+
 ### The same internal-bootstrap story, as a diagram
 
 ```mermaid

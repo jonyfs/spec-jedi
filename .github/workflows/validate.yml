@@ -190,6 +190,233 @@ jobs:
             exit 1
           }
 
+  # specs/023-full-harness-coverage: Antigravity shares Codex CLI's exact
+  # .agents/skills convention (confirmed against Google's own Codelabs/
+  # Developer docs) so it needed zero new installer branch logic -- same
+  # precedent as OpenCode/Warp reusing an existing target directory. This
+  # job proves that reuse actually holds for the antigravity value too,
+  # not just codex-cli.
+  install-test-antigravity:
+    name: install-test-antigravity (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install into a scratch directory and verify (antigravity)
+        shell: bash
+        run: |
+          ./scripts/install.sh /tmp/spec-jedi-install-test-antigravity --harness antigravity
+          count=$(find /tmp/spec-jedi-install-test-antigravity/.agents/skills -maxdepth 1 -name 'specjedi-*' -type d | wc -l)
+          echo "Installed skill count: $count"
+          if [ "$count" -lt 1 ]; then
+            echo "FAIL: no specjedi-* skills installed under .agents/skills"
+            exit 1
+          fi
+          if find /tmp/spec-jedi-install-test-antigravity -iname 'speckit-*' | grep -q .; then
+            echo "FAIL: speckit-* bootstrap tooling leaked into the install"
+            exit 1
+          fi
+
+  # Native PowerShell counterpart of install-test-antigravity.
+  install-test-antigravity-windows-native:
+    name: install-test-antigravity (windows-latest, native PowerShell)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install into a scratch directory and verify (antigravity, PowerShell)
+        shell: pwsh
+        run: |
+          ./scripts/install.ps1 -TargetDir C:\spec-jedi-install-test-antigravity -Harness antigravity
+          $count = (Get-ChildItem -Path C:\spec-jedi-install-test-antigravity\.agents\skills -Directory -Filter "specjedi-*").Count
+          Write-Host "Installed skill count: $count"
+          if ($count -lt 1) {
+            Write-Host "FAIL: no specjedi-* skills installed under .agents/skills"
+            exit 1
+          }
+          $leaked = Get-ChildItem -Path C:\spec-jedi-install-test-antigravity -Recurse -Filter "speckit-*" -ErrorAction SilentlyContinue
+          if ($leaked) {
+            Write-Host "FAIL: speckit-* bootstrap tooling leaked into the install"
+            exit 1
+          }
+
+  # specs/023-full-harness-coverage: the 14 harnesses with no native
+  # skills-directory scan (only a project-root rules file, a small rules
+  # directory, or -- Cody -- a custom-commands JSON file). One matrix job
+  # asserts each harness's own exact bridge path independently (visible
+  # as a separate matrix row in the Actions UI, same "dedicated per
+  # harness" spirit as install-test-codex-cli/-trae) without 14 near-
+  # duplicate hand-written blocks. mode selects which shape of assertion
+  # applies: "dir" (a directory of one .md per skill), "single" (one
+  # combined index file), or "json" (Cody's custom-commands file).
+  install-test-bridge-harnesses:
+    name: install-test-bridge (${{ matrix.harness }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - { harness: cursor, mode: dir, path: .cursor/rules }
+          - { harness: windsurf, mode: dir, path: .windsurf/rules }
+          - { harness: cline, mode: dir, path: .clinerules }
+          - { harness: continue, mode: dir, path: .continue/rules }
+          - { harness: amazon-q, mode: dir, path: .amazonq/rules }
+          - { harness: jetbrains-ai, mode: dir, path: .aiassistant/rules }
+          - { harness: tabnine, mode: dir, path: .tabnine/guidelines }
+          - { harness: gemini-cli, mode: single, path: GEMINI.md }
+          - { harness: zed, mode: single, path: .rules }
+          - { harness: replit, mode: single, path: replit.md }
+          - { harness: aider, mode: single, path: CONVENTIONS.md }
+          - { harness: copilot, mode: single, path: .github/copilot-instructions.md }
+          - { harness: devin, mode: single, path: .devin.md }
+          - { harness: cody, mode: json, path: .vscode/cody.json }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install and verify bridge output (${{ matrix.harness }})
+        shell: bash
+        run: |
+          dest="/tmp/spec-jedi-install-test-${{ matrix.harness }}"
+          rm -rf "$dest"
+          ./scripts/install.sh "$dest" --harness "${{ matrix.harness }}"
+
+          skill_count=$(find "$dest/.claude/skills" -maxdepth 1 -name 'specjedi-*' -type d | wc -l)
+          echo "Canonical .claude/skills count: $skill_count"
+          if [ "$skill_count" -lt 1 ]; then
+            echo "FAIL: no specjedi-* skills installed under .claude/skills"
+            exit 1
+          fi
+
+          bridge_path="$dest/${{ matrix.path }}"
+          case "${{ matrix.mode }}" in
+            dir)
+              bridge_count=$(find "$bridge_path" -maxdepth 1 -name '*.md' -type f | wc -l)
+              echo "Bridge files under ${{ matrix.path }}: $bridge_count"
+              if [ "$bridge_count" -lt 1 ]; then
+                echo "FAIL: no bridge .md files under ${{ matrix.path }}"
+                exit 1
+              fi
+              if ! grep -rq 'specjedi-' "$bridge_path"; then
+                echo "FAIL: bridge files under ${{ matrix.path }} don't reference any specjedi-* skill"
+                exit 1
+              fi
+              ;;
+            single)
+              if [ ! -f "$bridge_path" ]; then
+                echo "FAIL: bridge file ${{ matrix.path }} not found"
+                exit 1
+              fi
+              if ! grep -q 'specjedi-onboard' "$bridge_path"; then
+                echo "FAIL: ${{ matrix.path }} does not reference specjedi-onboard"
+                exit 1
+              fi
+              ;;
+            json)
+              if [ ! -f "$bridge_path" ]; then
+                echo "FAIL: ${{ matrix.path }} not found"
+                exit 1
+              fi
+              first_char=$(head -c 1 "$bridge_path")
+              last_char=$(tail -c 2 "$bridge_path" | head -c 1)
+              if [ "$first_char" != "{" ] || [ "$last_char" != "}" ]; then
+                echo "FAIL: ${{ matrix.path }} doesn't look like a JSON object"
+                exit 1
+              fi
+              if ! grep -q 'specjedi-onboard' "$bridge_path"; then
+                echo "FAIL: ${{ matrix.path }} does not reference specjedi-onboard"
+                exit 1
+              fi
+              ;;
+          esac
+
+          if find "$dest" -iname 'speckit-*' | grep -q .; then
+            echo "FAIL: speckit-* bootstrap tooling leaked into the install"
+            exit 1
+          fi
+          echo "OK: ${{ matrix.harness }} (${{ matrix.mode }})"
+
+  # Native PowerShell counterpart of install-test-bridge-harnesses, same
+  # matrix and same assertions via install.ps1 instead of install.sh.
+  install-test-bridge-harnesses-windows-native:
+    name: install-test-bridge (${{ matrix.harness }}, windows-latest, native PowerShell)
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { harness: cursor, mode: dir, path: .cursor\rules }
+          - { harness: windsurf, mode: dir, path: .windsurf\rules }
+          - { harness: cline, mode: dir, path: .clinerules }
+          - { harness: continue, mode: dir, path: .continue\rules }
+          - { harness: amazon-q, mode: dir, path: .amazonq\rules }
+          - { harness: jetbrains-ai, mode: dir, path: .aiassistant\rules }
+          - { harness: tabnine, mode: dir, path: .tabnine\guidelines }
+          - { harness: gemini-cli, mode: single, path: GEMINI.md }
+          - { harness: zed, mode: single, path: .rules }
+          - { harness: replit, mode: single, path: replit.md }
+          - { harness: aider, mode: single, path: CONVENTIONS.md }
+          - { harness: copilot, mode: single, path: .github\copilot-instructions.md }
+          - { harness: devin, mode: single, path: .devin.md }
+          - { harness: cody, mode: json, path: .vscode\cody.json }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install and verify bridge output (${{ matrix.harness }}, PowerShell)
+        shell: pwsh
+        run: |
+          $dest = "C:\spec-jedi-install-test-${{ matrix.harness }}"
+          Remove-Item -Recurse -Force $dest -ErrorAction SilentlyContinue
+          ./scripts/install.ps1 -TargetDir $dest -Harness "${{ matrix.harness }}"
+
+          $skillCount = (Get-ChildItem -Path (Join-Path $dest ".claude\skills") -Directory -Filter "specjedi-*").Count
+          Write-Host "Canonical .claude\skills count: $skillCount"
+          if ($skillCount -lt 1) {
+            Write-Host "FAIL: no specjedi-* skills installed under .claude\skills"
+            exit 1
+          }
+
+          $bridgePath = Join-Path $dest "${{ matrix.path }}"
+          switch ("${{ matrix.mode }}") {
+            "dir" {
+              $bridgeFiles = Get-ChildItem -Path $bridgePath -Filter "*.md" -ErrorAction SilentlyContinue
+              Write-Host "Bridge files under ${{ matrix.path }}: $($bridgeFiles.Count)"
+              if ($bridgeFiles.Count -lt 1) {
+                Write-Host "FAIL: no bridge .md files under ${{ matrix.path }}"
+                exit 1
+              }
+            }
+            "single" {
+              if (-not (Test-Path $bridgePath)) {
+                Write-Host "FAIL: bridge file ${{ matrix.path }} not found"
+                exit 1
+              }
+              if (-not (Select-String -Path $bridgePath -Pattern 'specjedi-onboard' -Quiet)) {
+                Write-Host "FAIL: ${{ matrix.path }} does not reference specjedi-onboard"
+                exit 1
+              }
+            }
+            "json" {
+              if (-not (Test-Path $bridgePath)) {
+                Write-Host "FAIL: ${{ matrix.path }} not found"
+                exit 1
+              }
+              try {
+                Get-Content -Path $bridgePath -Raw | ConvertFrom-Json | Out-Null
+              } catch {
+                Write-Host "FAIL: ${{ matrix.path }} is not valid JSON"
+                exit 1
+              }
+            }
+          }
+
+          $leaked = Get-ChildItem -Path $dest -Recurse -Filter "speckit-*" -ErrorAction SilentlyContinue
+          if ($leaked) {
+            Write-Host "FAIL: speckit-* bootstrap tooling leaked into the install"
+            exit 1
+          }
+          Write-Host "OK: ${{ matrix.harness }} (${{ matrix.mode }})"
+
   # specs/021-harness-auto-detection: proves --harness is now optional and
   # correctly auto-selects a harness from detection signals, without
   # touching any existing explicit --harness job above.
@@ -486,6 +713,46 @@ jobs:
           # CI run (PR #58).
           exit 0
 
+  # specs/024-bootstrap-installer: this project's own first release
+  # (v0.1.0) hasn't been cut yet (Principle XI — always a deliberate
+  # maintainer step), so the one thing genuinely testable in CI right now
+  # is the "no release found" graceful path against the real, current
+  # GitHub API for this repo (no mocking) plus --help. The live-download
+  # path itself was verified manually against a locally-built release
+  # artifact (specs/024-bootstrap-installer/plan.md) and gets its own CI
+  # coverage once v0.1.0 exists. Unauthenticated GitHub API calls are
+  # rate-limited per-IP; acceptable here since this is PR-triggered only,
+  # not a hot loop.
+  bootstrap-installer-smoke:
+    name: bootstrap-installer-smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: --help works and no-release path exits cleanly (bash)
+        shell: bash
+        run: |
+          ./scripts/bootstrap-install.sh --help
+          if ./scripts/bootstrap-install.sh /tmp/bootstrap-smoke-sh; then
+            echo "FAIL: expected non-zero exit against a repo with no releases"
+            exit 1
+          fi
+          echo "OK: bootstrap-install.sh exited non-zero with no crash"
+      - name: -Help works and no-release path exits cleanly (PowerShell)
+        shell: pwsh
+        run: |
+          ./scripts/bootstrap-install.ps1 -Help
+          ./scripts/bootstrap-install.ps1 -TargetDir C:\bootstrap-smoke-ps
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "FAIL: expected non-zero exit against a repo with no releases"
+            exit 1
+          }
+          Write-Host "OK: bootstrap-install.ps1 exited non-zero with no crash"
+          exit 0
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -494,7 +761,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

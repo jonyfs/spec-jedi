@@ -1,5 +1,62 @@
 <!--
 Sync Impact Report
+- Version change: 1.23.0 → 1.23.1
+- Modified principles: none — PATCH bump, consistent with the
+  v1.16.3/v1.16.4/v1.18.1 precedent for "a feature closes an existing
+  principle's gap without changing that principle's normative text."
+  - Principle III (Universal LLM & Harness Compatibility) moves from 🟡
+    Partial to ✅ Mechanized in `references/principle-traceability.md`:
+    feature 023 (full-harness-coverage) extends `scripts/install.sh`/
+    `.ps1` from 5 to all 20 harnesses in the compatibility matrix.
+    Antigravity joins the native skills-directory group (`.agents/skills/`,
+    shared with Codex CLI — confirmed via Google's own Codelabs docs,
+    zero new installer branch, same "zero-code reuse" precedent as
+    OpenCode/Warp). The other fourteen — Cursor, Windsurf, GitHub
+    Copilot, Gemini CLI, Cline, Continue, Aider, Amazon Q Developer,
+    JetBrains AI Assistant, Zed, Replit Agent, Devin, Tabnine,
+    Sourcegraph Cody — get a new bridge-file mechanism: the full
+    `specjedi-*` package still lands at the canonical `.claude/skills/`,
+    and a generated adapter (one combined index for single-rules-file
+    harnesses, one file per skill for directory-convention harnesses)
+    points into it using each harness's own documented format.
+    Sourcegraph Cody's prior "Unclear" capability status is resolved
+    after three further research rounds found no confirmed always-on
+    rules file; it's installed via its one real, documented mechanism
+    instead (`.vscode/cody.json` Custom Commands), explicitly flagged as
+    manual-invocation rather than automatic context — unlike every other
+    harness in the matrix. Verified via new `install-test-antigravity`
+    and matrix `install-test-bridge-harnesses` CI jobs on Linux, macOS,
+    and Windows (bash and native PowerShell), plus exhaustive local
+    execution against all 18 explicit `--harness` values under both real
+    `bash` and real `pwsh` before any CI job was written. A real
+    cross-platform bug was caught and fixed during that manual testing:
+    BSD `sed` (macOS) doesn't support GNU `\s` in extended regex, which
+    silently produced a leading-space bug in extracted skill metadata —
+    fixed with the POSIX `[[:space:]]` class instead.
+  - Also ships `scripts/bootstrap-install.sh`/`.ps1` (feature 024,
+    `references/skill-roadmap.md`'s "Sub-Project B", identified during
+    feature 020's brainstorming but blocked until now): a Homebrew/
+    SDKMAN-style one-liner that fetches a published GitHub Release and
+    runs its bundled installer without requiring a prior `git clone`.
+    Stated honestly rather than overclaimed: this project's own first
+    release (`v0.1.0`) has not been cut yet (Principle XI — cutting a
+    release is always a deliberate maintainer step), so the live-download
+    path is verified against a locally-built release artifact rather
+    than a real published release; the "no release found" path *is*
+    verified against this repo's real, current (empty) release list.
+    `references/skill-roadmap.md` states this limitation inline rather
+    than presenting the feature as more thoroughly verified than it is,
+    per Principle XX's grounding discipline.
+- Added sections: none
+- Removed sections: none
+- Templates requiring updates: none
+- Follow-up TODOs: none new. `specs/023-full-harness-coverage/` and
+  `specs/024-bootstrap-installer/` carry the full research/spec/plan
+  trail for both features.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.22.0 → 1.23.0
 - Modified principles: XXI. Session-Start Orientation & the Master Yoda
   Greeting — MINOR bump, materially expanded guidance (no renaming, no
@@ -1593,4 +1650,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.23.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-12
+**Version**: 1.23.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13

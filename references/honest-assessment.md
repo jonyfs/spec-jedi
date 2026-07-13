@@ -1,6 +1,9 @@
 # Honest Assessment: Advantages, Disadvantages, and Improvement Points
 
-*Last reviewed: 2026-07-13.*
+*Last reviewed: 2026-07-13 (updated: the "Quick Flow" gap this document
+named as its top improvement point shipped the same day as
+`specjedi-quick`, feature 028 — Disadvantage #1 and the corresponding
+Improvement Point below are revised to reflect that, not left stale).*
 
 A candid answer to "why would — or wouldn't — I use Spec Jedi's
 `specjedi-*` skills today." This is not a marketing page: every
@@ -46,14 +49,14 @@ authoritative status of any principle these tie back to.
 At least 5 genuine, currently-true limitations — each independently
 checkable against this repository's real state, not a hedge.
 
-1. **A design idea recorded as "adopted" was never actually shipped.**
-   `references/competitive-comparison.md`'s own BMAD-METHOD row states
-   Spec Jedi adopted *"the 'Quick Flow' lightweight-path idea — a way to
-   skip phases 1-3 for small, well-understood work."* No such skill or
-   flag exists in the 23 shipped `specjedi-*` skills as of this writing.
-   Every feature — including this very document — currently goes through
-   the full research → specify → clarify → plan → tasks → implement
-   pipeline, with no fast path for small, well-understood changes.
+1. **Heavier process ceremony than the lightest competitors, for changes
+   that don't need the fast path.** `specjedi-quick` (feature 028,
+   shipped 2026-07-13) now closes the "no lightweight path at all" gap
+   this item used to describe — but its own eligibility checklist (one
+   page of notes, single subsystem, no ambiguity) still routes anything
+   bigger through the full research → specify → clarify → plan → tasks
+   → implement pipeline, which remains real overhead for a solo
+   developer's medium-sized change that doesn't clear the fast-path bar.
 2. **No release has ever been cut.** `git tag -l` returns nothing as of
    this writing. The release mechanism (`.github/workflows/release.yml`)
    exists and works, but `v0.1.0` itself remains an outstanding,
@@ -74,11 +77,6 @@ checkable against this repository's real state, not a hedge.
    feature.** `references/competitive-comparison.md`'s own Spec Kitty row
    says as much directly — no `specjedi-*` skill actually detects or
    manages git worktrees; a user has to know to do it themselves.
-6. **Heavier process ceremony than the lightest competitors.** Even a
-   small documentation-only change (like this one) currently produces a
-   `spec.md` + `research.md` + `plan.md` + `tasks.md` set — real overhead
-   for a solo developer or a tiny fix, with no lighter-weight option
-   today (see #1 above).
 
 ## Improvement Points
 
@@ -86,12 +84,6 @@ The competitor-grounded subset of the disadvantages above — each names a
 specific tool that already solves the gap, so these are concrete,
 prioritizable roadmap signals, not vague aspirations.
 
-- **Build the lightweight/quick path.** Two independently-researched
-  competitors validate this is worth having: BMAD-METHOD's "Quick Flow"
-  (already recorded as worth adopting, never built) and OpenSpec's
-  three-command, brownfield-focused model. This is the single
-  highest-signal gap in this assessment — named as valuable by two
-  separate prior research passes and still unaddressed.
 - **A cross-project pattern/spec registry**, closer to Tessl's Framework
   + Registry model. `specjedi-find-skills` today only reasons about the
   current session's known ecosystem — there's no persistent, shared

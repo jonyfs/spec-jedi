@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
-[![Skills](https://img.shields.io/badge/specjedi_skills-23_shipped-success)](#what-you-get-today)
+[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#what-you-get-today)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
@@ -69,12 +69,12 @@ research discipline (Principle II), never rushed.
 > *"A Jedi's strength flows from the Force. So too does a project's, from
 > its skills."* — a wise Master, probably.
 
-Twenty-three strong, this Order is — trained not for combat, but for
+Twenty-four strong, this Order is — trained not for combat, but for
 Spec-Driven Development. Four disciplines it keeps:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 23 skills"))
+  root(("Spec Jedi — 24 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -94,7 +94,8 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 7
+    Meta and Tooling - 8
+      quick
       diagram
       status
       docs
@@ -115,6 +116,7 @@ mindmap
 | `specjedi-plan` 🛠️ | Turns a clarified spec into a technical `plan.md` — scans the actual codebase for existing conventions first, so implementation never has to stop and search for one |
 | `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
 | `specjedi-implement` 🔨 | Executes `tasks.md` in dependency order, test-first where the plan calls for code — commits only through a feature branch and pull request, never directly to `main` |
+| `specjedi-quick` ⚡ | The lightweight path for small, well-understood changes — one `quick.md` instead of `spec.md`+`research.md`+`plan.md`+`tasks.md`, straight to implementation. Quality gates (test-first, `specjedi-govcheck`, PR-only) never shorten, only planning ceremony does. Declines and redirects to `specjedi-specify` for anything bigger, ambiguous, or a new skill — see [Which path should I use?](#which-path-should-i-use) |
 | `specjedi-analyze` 🔍 | Strictly read-only cross-check of `spec.md`/`plan.md`/`tasks.md` (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file |
 | `specjedi-checklist` ☑️ | Generates a custom checklist for a named focus area (security, accessibility, performance...) grounded entirely in this feature's own `spec.md`/`plan.md` — never generic boilerplate |
 | `specjedi-converge` 🔁 | Detects drift between the actual codebase and `tasks.md` after manual changes, appending any gap as a new task instead of silently ignoring it — closes the loop back to `specjedi-implement` |
@@ -276,7 +278,7 @@ flowchart TD
    operating systems.
 
 3. Confirm the skills loaded by typing `/` in the Claude Code prompt. You'll see
-   all 23 `specjedi-*` product skills and the `speckit-*` commands (this repo's
+   all 24 `specjedi-*` product skills and the `speckit-*` commands (this repo's
    own internal bootstrap tooling — see [What you get today](#what-you-get-today))
    listed together, since Claude Code discovers every skill under
    `.claude/skills/` without distinguishing the two.
@@ -425,9 +427,24 @@ limitations, and concrete competitor-grounded improvement points? See
 
 ## Quickstart
 
-Twenty-three product skills ship today ([What you get today](#what-you-get-today))
+Twenty-four product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
+
+### Which path should I use?
+
+| Change size | Use | Produces |
+|---|---|---|
+| Small, well-understood — a typo, a one-file fix, a tightly-scoped tweak | `specjedi-quick` ⚡ | One `quick.md`, straight to shipped code |
+| Anything bigger, ambiguous, touching more than one subsystem, or a new `specjedi-*` skill | The full pipeline (steps 3-11 below) | `spec.md` → `plan.md` → `tasks.md` → shipped code |
+
+`specjedi-quick` checks eligibility itself against five explicit
+criteria before writing anything — if your request doesn't actually fit
+on about one page of notes, it declines and redirects you to
+`specjedi-specify` rather than forcing it through. Either path enforces
+the same quality gates (test-first where code is involved,
+`specjedi-govcheck` before a PR opens) — "quick" only shortens planning
+ceremony, never verification.
 
 0. **Not sure what any of this means?** Just ask — "what is a spec and why
    would I need one," "what does this project actually do." `specjedi-explain`

@@ -223,6 +223,33 @@ project's own YAGNI discipline.
 New proposals get added below as they're identified, each still needing
 its own research pass per Principle II before it's built.
 
+## Shipped (third wave, from `references/honest-assessment.md`'s improvement points)
+
+- **`specjedi-quick`** ⚡ (feature 028, shipped 2026-07-13) — the
+  lightweight, one-artifact path for small, well-understood changes,
+  closing `references/honest-assessment.md`'s top improvement point.
+  Validated by two independently-researched competitors: BMAD-METHOD's
+  Quick Flow ("if the change fits on one page of notes, Quick Flow is
+  the right tool" — the exact heuristic this skill's five-criterion
+  eligibility checklist is built from) and OpenSpec's propose → apply →
+  archive three-command model (echoed in `quick.md`'s own `Status:`
+  line). Produces one `quick.md` instead of `spec.md`+`research.md`+
+  `plan.md`+`tasks.md`, then implements directly — quality gates
+  (test-first, `specjedi-govcheck`, PR-only) never shorten, only
+  planning ceremony does. Declines and redirects to `specjedi-specify`
+  for anything failing eligibility, including — unconditionally — a
+  request for a new `specjedi-*` skill, since Principle II's research
+  rigor doesn't bend for scope. Genuine contribution: neither researched
+  competitor's lightweight mode runs inside a project that also
+  maintains a live, versioned constitution gating every artifact; this
+  is the first researched fast path required to satisfy one. Paired
+  with a small, targeted `specjedi-status` compatibility extension
+  (recognizes `quick.md`'s `Status:` line and Acceptance Checks, the
+  same derivation-rule shape `tasks.md` already uses) so quick-path
+  features report correctly rather than appearing as "no artifacts
+  found." See [specs/028-specjedi-quick/](../specs/028-specjedi-quick/)
+  for the full research/spec/plan.
+
 ## Proposed, not yet built (prioritized by expected impact)
 
 Empty as of feature 024 — both items previously here have shipped.

@@ -1,7 +1,7 @@
 ---
 name: specjedi-status
-description: A project-wide dashboard deriving every feature's status entirely from on-disk artifacts (spec.md/plan.md/tasks.md presence and checkbox completion) — zero separately-maintained tracking system. Triggers on a request for project status, a dashboard, or "what am I still working on."
-compatibility: Uses git for a recency signal when available (degrades gracefully otherwise). Reads specs/NNN-feature-name/{spec,plan,tasks}.md; writes nothing.
+description: A project-wide dashboard deriving every feature's status entirely from on-disk artifacts (spec.md/plan.md/tasks.md presence and checkbox completion, or quick.md's Status line and Acceptance Checks for specjedi-quick features) — zero separately-maintained tracking system. Triggers on a request for project status, a dashboard, or "what am I still working on."
+compatibility: Uses git for a recency signal when available (degrades gracefully otherwise). Reads specs/NNN-feature-name/{spec,plan,tasks,quick}.md; writes nothing.
 ---
 
 # 🧭 Spec Jedi Status
@@ -29,6 +29,13 @@ cached state.
      unrecognized checkbox-like lines rather than silently miscounting)
      and report a completion percentage: 0% → "not started," 1-99% → "in
      progress," 100% → "complete."
+   - `quick.md` exists (a `specjedi-quick` feature — `spec.md`/`plan.md`/
+     `tasks.md` never present for these) → read its `**Status**:` line
+     and its Acceptance Checks `- [x]`/`- [ ]` count, applying the exact
+     same 0%/1-99%/100% mapping `tasks.md` uses above. `Status: Proposed`
+     with zero checks ticked reports "not started"; `Status: Implemented`
+     with all checks ticked reports "100% (complete)" — one more branch
+     of this same derivation rule, not a second tracking mechanism.
 4. **Report the most recent `git log` commit date touching that
    directory** as a plain, objective fact — never translate it into a
    "stalled" verdict. If `git` isn't available, omit this column and say
@@ -102,6 +109,9 @@ interface consistency with every other `specjedi-*` skill.
   found yet," never a silently empty table.
 - **Never** create, read, or require a separately-maintained status file
   — the derivation rules are the entire mechanism.
+- **Never** report a `quick.md`-only directory as "no artifacts found" —
+  it's a complete, valid artifact set for a `specjedi-quick` feature, not
+  a partial or broken one.
 - **Never** assert "stalled" as a fact — report the objective commit date
   and let the reader draw that conclusion.
 - **Never** include a non-conforming directory in the scan.

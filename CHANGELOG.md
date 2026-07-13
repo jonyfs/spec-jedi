@@ -11,6 +11,43 @@ this file directly.
 
 ### Added
 
+- **Honest advantages/disadvantages assessment** (feature 027) — new
+  `references/honest-assessment.md`: candid, three-section self-
+  assessment (Advantages / Disadvantages / Improvement Points), each
+  advantage citing a specific shipped mechanism, each disadvantage
+  independently checkable, each improvement point naming a specific
+  researched competitor. Headline finding: `references/competitive-
+  comparison.md`'s own BMAD-METHOD row recorded Spec Jedi as having
+  "adopted" the Quick Flow lightweight-path idea back at feature 001,
+  but no such skill had ever shipped — named as the top improvement
+  point, later closed by feature 028 (`specjedi-quick`).
+- **Constitution v1.24.0 — skill validation testing framework** —
+  adapts a maintainer-supplied external skill-validation framework
+  (written for live, API-backed conversational agents) into Principle
+  IX's scenario-dry-run requirement, scoped to what actually applies to
+  this project's architecture. New `references/skill-validation-
+  testing-framework.md`: adopted categories (vague/incomplete input,
+  out-of-bounds input, prompt-injection resistance, external-call
+  resilience) each with a concrete Spec Jedi example; explicitly
+  rejected categories (RBAC, PII masking, third-party load-testing
+  tools) named and reasoned about, not silently dropped.
+- **Theme-safe, right-sized Mermaid diagrams** (feature 025) —
+  `specjedi-diagram`'s render-verification step now also checks: zero
+  explicit `style`/`classDef`/`%%{init` color overrides (so diagrams
+  inherit the rendering surface's own light/dark theme instead of
+  breaking GitHub's auto-switching), and a 20-node complexity
+  threshold, splitting oversized diagrams into multiple smaller,
+  labeled diagrams along a natural seam. New "Theme Safety" and
+  "Complexity Threshold" sections in `references/mermaid-diagram-
+  catalog.md`.
+- **Mandatory, failure-aware render verification** (feature 026) —
+  `specjedi-diagram`'s render-verification is now unconditional (no
+  skip branch, ever), and a render-verification *call* failure (error,
+  timeout, output too large — the class of problem behind messages
+  like "Unable to render rich display") is now treated identically to
+  a Mermaid syntax failure. Revision is bounded at 2 attempts, falling
+  back to an explicit "unverified" caveat rather than looping or
+  presenting silently.
 - **`specjedi-quick`** (feature 028) — a lightweight, one-artifact path
   for small, well-understood changes, closing `references/honest-
   assessment.md`'s top improvement point. Validated by BMAD-METHOD's

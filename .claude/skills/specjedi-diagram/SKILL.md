@@ -43,16 +43,47 @@ it, render-verify the result, and present it alongside the source prose.
 3. **Generate Mermaid source grounded in the actual content.** Every node
    and edge MUST trace to something the spec/plan actually states — the
    same "does this trace to the source" discipline `specjedi-checklist`
-   applies to checklist items, applied here to diagram elements.
-4. **Render-verify before presenting.** Run the generated source through
-   the harness's Mermaid validation mechanism. If it fails, revise and
-   re-check — never present a diagram known to be broken. If no
-   verification mechanism is available in the current harness, state that
-   plainly and offer the unverified source with an explicit caveat,
-   rather than silently skipping the check.
-5. **Present the diagram alongside the source prose** — a one-line note
-   on the type chosen and why, the verification result, and the Mermaid
-   source. Never a replacement for the prose itself (Principle XVI).
+   applies to checklist items, applied here to diagram elements. Never
+   emit an explicit `style`/`classDef`/`%%{init` color override while
+   generating — rely on the rendering surface's own theme from the start
+   (`references/mermaid-diagram-catalog.md`'s Theme Safety section); if a
+   distinction needs conveying, use shape, edge style, or label text
+   instead of color.
+4. **Verify before presenting — theme safety, complexity, and rendering,
+   all in one gate.** Before showing any diagram:
+   - **Theme safety**: scan the generated source for `style `,
+     `classDef `, or `%%{init` directives. If found, remove them and
+     re-express the distinction structurally instead — never present a
+     diagram with a hardcoded color.
+   - **Complexity**: tally nodes (or the equivalent unit — tasks for
+     Gantt, classes for a class diagram) and check whether the diagram
+     can be described in one sentence
+     (`references/mermaid-diagram-catalog.md`'s Complexity Threshold
+     section). Above 20 nodes, or failing the one-sentence test, split
+     along a natural seam in the source (one per user story, one per
+     phase, an overview + a detail diagram) into multiple smaller
+     diagrams instead — each labeled with which part of the whole it
+     covers — unless the content has no natural seam to split along, or
+     the user explicitly asked for one large diagram anyway (in which
+     case only the complexity check is overridden; theme safety never is).
+   - **Render-verification**: run the generated source through the
+     harness's Mermaid validation mechanism. If it fails, revise and
+     re-check — never present a diagram known to be broken. If no
+     verification mechanism is available in the current harness, state
+     that plainly and offer the unverified source with an explicit
+     caveat, rather than silently skipping the check.
+
+   Theme safety and complexity are static source inspection, not a
+   rendering capability — both run identically whether or not a live
+   render-verification tool is available in the current harness.
+5. **Present the diagram(s) alongside the source prose** — a one-line
+   note on the type chosen and why, the verification result, and the
+   Mermaid source. If splitting occurred (step 4), present each diagram
+   with its part-of-the-whole label, plus one line naming that a split
+   happened and why. If a revision changed what the diagram shows
+   relative to the source content (e.g., simplifying to pass the
+   complexity check), state that tradeoff in one line too. Never a
+   replacement for the prose itself (Principle XVI).
 6. **Offer to write it into a target file only on explicit confirmation**
    (never silently) — inline presentation in the response is the default.
 7. **Offer the next step(s) as a short bulleted list** (Principle XIV):
@@ -122,12 +153,21 @@ flowchart TD
 adding a node for a "delete data" flow the spec excerpt never mentioned
 just to make the diagram feel more complete.
 
+*(This example already complies with the Theme Safety and Complexity
+Threshold checks above: zero `style`/`classDef` directives, 8 nodes —
+well under the 20-node threshold — so it needed no revision when those
+checks were added.)*
+
 ## `--auto` mode
 
 Proceed through type inference, generation, and verification without
 pausing — `--auto` never replaces a genuinely ambiguous diagram-type
-decision (step 2) with a guess, and never skips the render-verification
-step.
+decision (step 2) with a guess, and never skips the theme-safety,
+complexity, or render-verification checks in step 4. A complexity split
+still happens automatically in `--auto` mode when the source has a clear
+natural seam; if it doesn't, `--auto` presents the single (possibly
+still-oversized) diagram with the complexity note stated rather than
+guessing at an artificial seam.
 
 ## Always / Never
 
@@ -137,6 +177,13 @@ step.
   actually states.
 - **Always** weigh whether a diagram is actually more efficient than
   prose/a table for this content before generating one (Principle XVI).
+- **Always** rely on the rendering surface's own theme — never hardcode
+  a color; encode any needed distinction via shape, edge style, or label
+  text instead (`references/mermaid-diagram-catalog.md`'s Theme Safety
+  section).
+- **Always** split a diagram over the complexity threshold into multiple
+  smaller, labeled diagrams along a natural seam, unless there's no
+  natural seam or the user explicitly asked for one large diagram.
 - **Never** present a diagram known to fail render-verification.
 - **Never** present a diagram as a replacement for the source prose —
   always a supplement, alongside it.
@@ -144,6 +191,12 @@ step.
   explicit confirmation.
 - **Never** default to flowchart out of habit when the content actually
   matches a different type in `references/mermaid-diagram-catalog.md`.
+- **Never** emit an explicit `style`/`classDef`/`%%{init` color override
+  in generated Mermaid source — this is the one rule with no
+  user-request override (unlike the complexity threshold).
+- **Never** force a split on content with no natural seam just to satisfy
+  the node-count threshold — the threshold is a trigger to reconsider,
+  not an unconditional hard cap.
 
 ## Verifiable success criteria
 
@@ -154,3 +207,9 @@ step.
   the named source spec/plan.
 - An ambiguous diagram-type request produces a clarifying question in the
   skill's documented step sequence, not a silently-chosen type.
+- Every presented diagram's Mermaid source contains zero `style`/
+  `classDef`/`%%{init` color directives.
+- Every presented diagram is at or under the 20-node complexity
+  threshold, or is one of multiple smaller diagrams a split produced, or
+  carries an explicit note explaining why a split wasn't applied
+  (no natural seam, or explicit user request for one large diagram).

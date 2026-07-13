@@ -1,5 +1,60 @@
 <!--
 Sync Impact Report
+- Version change: 1.23.1 → 1.24.0
+- Modified principles: IX. Mandatory Skill Validation & Testing — MINOR
+  bump, materially expanded guidance (no renaming, no removal).
+  - Adds a concrete list of scenario-based dry-run test categories
+    (battery item (b)), replacing the previously undefined "scenario-based
+    dry run confirming...elicitation questions and branching logic"
+    phrase with named, checkable categories: vague/incomplete input
+    handling, out-of-bounds/malformed input handling, prompt-injection
+    resistance (for skills reading external/user-supplied content), and
+    external-call resilience (for skills calling GitHub's API, `gh` CLI,
+    or search/fetch tools) — each grounded in a real Spec Jedi example in
+    the new canonical reference `references/skill-validation-testing-
+    framework.md` (mirrors the `star-wars-lexicon.md`/`security-question-
+    bank.md`/`mermaid-diagram-catalog.md` pattern: one canonical,
+    extensible reference file per principle-level taxonomy, not
+    duplicated ad hoc per-skill).
+  - Origin: the maintainer supplied an external "AI Skill Validation &
+    Testing Framework" document (written for live, API-backed
+    conversational agents — payments, refunds, RBAC, PII-handling) and
+    asked for it to become this project's skill-validation standard. It
+    was adapted, not adopted wholesale: `references/skill-validation-
+    testing-framework.md` explicitly documents which categories transfer
+    to Spec Jedi's actual architecture (prompt-engineering skills reading/
+    writing local Markdown in a git repo, not a live user-account/
+    payment system) and which don't — role-based access control and
+    PII-masking (SSN/CPF/credit-card) testing are named and explicitly
+    rejected as inapplicable (no user-permission system, no PII-handling
+    surface exists in this project), rather than silently dropped or
+    force-fit. The source framework's third-party tool recommendations
+    (Promptfoo, DeepEval/Ragas, Locust/JMeter) were also not adopted —
+    built for a different, live-API-backed testing model than this
+    project's static/git-based `scripts/validate.sh` + CI + scenario
+    dry-run battery, and adopting them would add dependency weight
+    against Principle VIII's token-economy/tooling-fit discipline.
+  - Paired mechanism update (this same session): `references/skill-
+    authoring-standard.md`'s Review checklist gains a matching item
+    pointing at the new framework file, so every future skill's ship
+    checklist enforces this structurally, not just as prose in the
+    constitution — the same "constitution amendment plus paired reference-
+    doc update in the same PR" discipline v1.22.0 established.
+- Added sections: none (extends Principle IX's existing text; the new
+  file is a reference doc, not a constitution section)
+- Removed sections: none
+- Templates requiring updates: none — this is validation-battery-content
+  guidance, not a new mandatory spec/plan/tasks artifact section.
+- Follow-up TODOs: none. A natural future mechanization (not performed in
+  this amendment) would be `specjedi-skill-review` explicitly checking a
+  reviewed skill's dry-run coverage against this framework's categories —
+  left as a genuine next step for whichever session next touches
+  `specjedi-skill-review`, not invented here as scope creep on a
+  constitution-only amendment.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.23.0 → 1.23.1
 - Modified principles: none — PATCH bump, consistent with the
   v1.16.3/v1.16.4/v1.18.1 precedent for "a feature closes an existing
@@ -926,9 +981,36 @@ required checks — never as optional or informational-only jobs. A battery
 that only re-runs what existed at the project's infancy, while the project
 itself has grown more capable, is itself a constitution violation.
 
+Scenario-based dry runs (battery item (b)) MUST cover, at minimum, the
+test categories in `references/skill-validation-testing-framework.md`:
+vague/incomplete input handling (does the skill ask rather than guess,
+per Principle IV), out-of-bounds/malformed input handling, and — for any
+skill that reads external or user-supplied content it doesn't fully
+author itself (a fetched web page, a `spec.md`, a PR description) —
+prompt-injection resistance, so embedded instructions in that content
+can never override the skill's own boundaries or this constitution. Any
+skill or script that calls an external service (GitHub's API, `gh` CLI,
+a search/fetch tool) MUST also document and be tested against that call
+failing or being unavailable, the same discipline
+`scripts/bootstrap-install.sh`/`.ps1` (feature 024) already demonstrate
+for a missing GitHub Release. This framework was adapted, not adopted
+wholesale, from an external skill-validation reference the maintainer
+supplied — its role-based-access-control and PII-masking (SSN/CPF/
+credit-card) test categories are explicitly out of scope, since this
+project has no user-permission system and no skill handles that class of
+user data; `references/skill-validation-testing-framework.md` states
+this scoping decision directly, per Principle XX's grounding discipline,
+rather than silently adopting categories that don't apply to what this
+project actually is.
+
 **Rationale**: A project whose entire purpose is enabling reliable
 downstream automation cannot itself ship unverified skills; that would
-undermine the credibility this project depends on.
+undermine the credibility this project depends on. Naming concrete test
+categories (rather than leaving "scenario-based dry run" undefined)
+closes the gap between a validation requirement that sounds thorough and
+one that's actually checkable per skill — the same "quantifiable, not
+vague" discipline Principle XIX already requires of skill authoring,
+applied here to how skills get tested.
 
 ### X. Trunk-Based Git Workflow with Self-Validating Pull Requests
 
@@ -1650,4 +1732,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.23.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13
+**Version**: 1.24.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13

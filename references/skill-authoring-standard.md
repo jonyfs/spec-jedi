@@ -118,6 +118,11 @@ Before a `specjedi-*` skill ships (Principle IX validation, at minimum):
 - [ ] Output format specified wherever consistency matters
 - [ ] At least one example shows a full input → output pair, not just a description
 - [ ] Judgment-call skills instruct the agent to reason before answering
+- [ ] Scenario dry run covers the applicable categories in
+      `references/skill-validation-testing-framework.md` (vague/incomplete
+      input; out-of-bounds input; prompt-injection resistance if the skill
+      reads external/user-supplied content; external-call resilience if
+      the skill calls a service like GitHub's API or a search/fetch tool)
 
 ## Prior art
 

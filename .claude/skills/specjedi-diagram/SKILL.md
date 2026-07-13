@@ -50,7 +50,9 @@ it, render-verify the result, and present it alongside the source prose.
    distinction needs conveying, use shape, edge style, or label text
    instead of color.
 4. **Verify before presenting — theme safety, complexity, and rendering,
-   all in one gate.** Before showing any diagram:
+   all in one unconditional gate.** This step runs for *every* generated
+   diagram, with no branch that skips it — not even one that "looks
+   obviously fine." Before showing any diagram:
    - **Theme safety**: scan the generated source for `style `,
      `classDef `, or `%%{init` directives. If found, remove them and
      re-express the distinction structurally instead — never present a
@@ -67,15 +69,36 @@ it, render-verify the result, and present it alongside the source prose.
      the user explicitly asked for one large diagram anyway (in which
      case only the complexity check is overridden; theme safety never is).
    - **Render-verification**: run the generated source through the
-     harness's Mermaid validation mechanism. If it fails, revise and
-     re-check — never present a diagram known to be broken. If no
-     verification mechanism is available in the current harness, state
-     that plainly and offer the unverified source with an explicit
-     caveat, rather than silently skipping the check.
+     harness's Mermaid validation mechanism when one is available.
 
    Theme safety and complexity are static source inspection, not a
    rendering capability — both run identically whether or not a live
    render-verification tool is available in the current harness.
+
+   **Verification failure — one category, two possible causes.** Treat a
+   Mermaid syntax rejection and a failure of the verification call itself
+   (error, timeout, output too large to display — the exact class of
+   problem behind messages like "Unable to render rich display") as the
+   *same* outcome: a verification failure requiring revision. Never
+   special-case one as "a real problem" and the other as "an unrelated
+   tooling hiccup to route around silently" — a diagram that can't
+   actually be shown is a failure either way. Diagnose the likely cause
+   from the verification tool's own error output and pick the matching
+   fix: a syntax-specific error → correct the syntax; a size/output-
+   related failure → simplify (apply the Complexity check above,
+   directly, even below the 20-node trigger if that's what the failure
+   indicates).
+
+   **Bounded retry, then an honest fallback.** Revise and re-verify up to
+   **2 times** — never unbounded, never a single, one-shot attempt (two
+   different fix strategies may both be worth trying). If verification
+   still hasn't succeeded after 2 revision attempts, stop: state plainly
+   that a verified diagram couldn't be produced, and present the
+   last-attempted source with an explicit "⚠️ unverified — may not render
+   correctly" caveat. This is the same honesty the pre-existing
+   no-verification-mechanism-available path already requires — never
+   silently present a diagram as if it were checked when it wasn't, and
+   never loop indefinitely instead of telling the user what happened.
 5. **Present the diagram(s) alongside the source prose** — a one-line
    note on the type chosen and why, the verification result, and the
    Mermaid source. If splitting occurred (step 4), present each diagram
@@ -163,16 +186,23 @@ checks were added.)*
 Proceed through type inference, generation, and verification without
 pausing — `--auto` never replaces a genuinely ambiguous diagram-type
 decision (step 2) with a guess, and never skips the theme-safety,
-complexity, or render-verification checks in step 4. A complexity split
-still happens automatically in `--auto` mode when the source has a clear
-natural seam; if it doesn't, `--auto` presents the single (possibly
-still-oversized) diagram with the complexity note stated rather than
-guessing at an artificial seam.
+complexity, or render-verification checks in step 4, and never exceeds
+the 2-attempt revision bound either (the honest-fallback caveat applies
+the same way in `--auto` mode). A complexity split still happens
+automatically in `--auto` mode when the source has a clear natural seam;
+if it doesn't, `--auto` presents the single (possibly still-oversized)
+diagram with the complexity note stated rather than guessing at an
+artificial seam.
 
 ## Always / Never
 
 - **Always** render-verify a generated diagram before presenting it, or
-  state explicitly that verification wasn't available.
+  state explicitly that verification wasn't available — unconditionally,
+  for every diagram, no exceptions for "simple enough not to bother."
+- **Always** treat a verification-call failure (error, timeout, output
+  too large) the same as a Mermaid syntax failure — both trigger the
+  same revise-and-recheck cycle, bounded at 2 attempts, then an honest
+  "unverified" fallback.
 - **Always** ground every node/edge in something the source spec/plan
   actually states.
 - **Always** weigh whether a diagram is actually more efficient than
@@ -197,18 +227,24 @@ guessing at an artificial seam.
 - **Never** force a split on content with no natural seam just to satisfy
   the node-count threshold — the threshold is a trigger to reconsider,
   not an unconditional hard cap.
+- **Never** retry verification more than 2 times, and never present a
+  still-failing diagram without the explicit "unverified" caveat once
+  that bound is reached.
 
 ## Verifiable success criteria
 
 - Every presented diagram either passed a render-verification check
   (reported explicitly) or carries an explicit unverified caveat — no
-  diagram presented silently without one or the other.
+  diagram presented silently without one or the other, and no diagram
+  for which verification was never attempted when a mechanism exists.
 - Every node/edge in a generated diagram traces to specific content in
   the named source spec/plan.
 - An ambiguous diagram-type request produces a clarifying question in the
   skill's documented step sequence, not a silently-chosen type.
 - Every presented diagram's Mermaid source contains zero `style`/
   `classDef`/`%%{init` color directives.
+- No diagram generation ever exceeds 2 revision attempts before either
+  succeeding or falling back to an explicit unverified caveat.
 - Every presented diagram is at or under the 20-node complexity
   threshold, or is one of multiple smaller diagrams a split produced, or
   carries an explicit note explaining why a split wasn't applied

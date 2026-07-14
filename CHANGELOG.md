@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.1.0] - 2026-07-14
+
 ### Added
 
 - **README as a wise Jedi's letter** (feature 036) — reframes

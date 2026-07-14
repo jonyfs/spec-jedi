@@ -419,6 +419,84 @@ skill_meta() {
   printf '%s\t%s\n' "$name" "$(first_sentence "$desc")"
 }
 
+# specs/039-memory-file-skill-mentions: for harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory (CLAUDE.md, AGENTS.md, .trae/rules/project_rules.md), create
+# or idempotently update a marker-delimited section naming the installed
+# skills -- never for antigravity (no confirmed convention) or the 14
+# bridge harnesses (their existing bridge file already serves this
+# purpose).
+memory_section() {
+  # $1 = skills_dst_rel (e.g. ".claude/skills"), for the "installed at"
+  # sentence. Reads skill metadata from $skills_dst (already populated
+  # by the copy loop above skill_meta is already used in).
+  local skills_dst_rel="$1"
+  echo "<!-- SPEC-JEDI:SKILLS:START -->"
+  echo "## Spec Jedi skills available in this project"
+  echo
+  echo "This project has the Spec Jedi spec-driven-development skill set"
+  echo "installed at \`$skills_dst_rel/\`. When a request matches one of"
+  echo "the skills below, open and follow the full instructions in its"
+  echo "\`SKILL.md\` before responding. New to Spec Jedi? Start with"
+  echo "\`specjedi-onboard\`."
+  echo
+  echo "| Skill | What it does |"
+  echo "|---|---|"
+  for f in "$skills_dst"/specjedi-*/SKILL.md; do
+    IFS=$'\t' read -r name desc < <(skill_meta "$f")
+    echo "| \`$name\` | $desc |"
+  done
+  echo "<!-- SPEC-JEDI:SKILLS:END -->"
+}
+
+update_memory_file() {
+  # $1 = absolute path to the memory file, $2 = skills_dst_rel.
+  local memory_path="$1" skills_dst_rel="$2"
+  local start_marker="<!-- SPEC-JEDI:SKILLS:START -->"
+  local end_marker="<!-- SPEC-JEDI:SKILLS:END -->"
+  local new_section
+  new_section="$(memory_section "$skills_dst_rel")"
+
+  mkdir -p "$(dirname "$memory_path")"
+
+  if [ ! -f "$memory_path" ]; then
+    printf '%s\n' "$new_section" > "$memory_path"
+    echo "  ✅ $(basename "$memory_path") created"
+    return
+  fi
+
+  local content
+  content="$(cat "$memory_path")"
+
+  local has_start=0 has_end=0
+  case "$content" in *"$start_marker"*) has_start=1 ;; esac
+  case "$content" in *"$end_marker"*) has_end=1 ;; esac
+
+  if [ "$has_start" -ne "$has_end" ]; then
+    echo "FAIL: $memory_path has a Spec Jedi marker without its matching pair -- refusing to guess where the managed section ends. Remove the stray marker manually and re-run."
+    exit 1
+  fi
+
+  if [ "$has_start" -eq 1 ]; then
+    # Whole-content substring slicing, not a line-by-line rewrite: %%
+    # removes the longest suffix starting at the FIRST occurrence of
+    # start_marker (everything before it, untouched); ## removes the
+    # longest prefix ending at the LAST occurrence of end_marker
+    # (leaving everything after it, untouched). This is CRLF-safe by
+    # construction -- there's no per-line $0-style comparison to be
+    # defeated by a trailing \r. Bytes outside the markers -- CRLF or
+    # not -- are never touched, only sliced around.
+    local before after
+    before="${content%%"$start_marker"*}"
+    after="${content##*"$end_marker"}"
+    printf '%s%s%s\n' "$before" "$new_section" "$after" > "$memory_path"
+    echo "  ✅ $(basename "$memory_path") updated (existing Spec Jedi section refreshed)"
+  else
+    printf '\n%s\n' "$new_section" >> "$memory_path"
+    echo "  ✅ $(basename "$memory_path") updated (Spec Jedi section appended)"
+  fi
+}
+
 if [ -n "$bridge_mode" ]; then
   echo
   echo "🌉 Generating $harness bridge file(s)..."

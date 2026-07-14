@@ -1,4 +1,4 @@
-# <img src="saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 > 🌐 **Read this in another language:** [中文](docs/i18n/zh/README.md) ·
 > [हिन्दी](docs/i18n/hi/README.md) · [Español](docs/i18n/es/README.md) ·
@@ -40,9 +40,7 @@ versioned and how pull requests get merged — no exceptions carved out for
 the maintainers. No shortcuts to the Dark Side of vibe-coding here. 🚫🖤
 
 *(Unofficial fan-flavored branding — Spec Jedi is not affiliated with, endorsed by,
-or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌 "Lightsaber" icon by
-Carlos von Dessauer, from [Noun Project](https://thenounproject.com), used under
-CC BY 3.0.)*
+or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌)*
 
 ```mermaid
 flowchart TD

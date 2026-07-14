@@ -5,7 +5,7 @@
 > [中文](../zh/README.md) · [हिन्दी](../hi/README.md) · [Español](../es/README.md) ·
 > [Français](../fr/README.md) · [العربية](../ar/README.md) · [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -36,9 +36,7 @@ versionan las releases y cómo se validan y fusionan los pull requests. Sin
 atajos hacia el Lado Oscuro del vibe-coding aquí. 🚫🖤
 
 *(Branding no oficial, inspirado por fans — Spec Jedi no está afiliado, avalado
-ni patrocinado por Lucasfilm/Disney. Que la Especificación te acompañe. 🌌 Icono
-de "sable de luz" por Carlos von Dessauer, de [Noun Project](https://thenounproject.com),
-usado bajo CC BY 3.0.)*
+ni patrocinado por Lucasfilm/Disney. Que la Especificación te acompañe. 🌌)*
 
 ```mermaid
 flowchart TD

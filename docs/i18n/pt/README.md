@@ -9,7 +9,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -43,8 +43,7 @@ mesclados. Nenhum atalho para o Lado Sombrio do vibe-coding aqui. 🚫🖤
 
 *(Branding não oficial, inspirado por fãs — Spec Jedi não é afiliado,
 endossado ou patrocinado por Lucasfilm/Disney. Que a Spec esteja com
-você. 🌌 Ícone de "sabre de luz" por Carlos von Dessauer, do
-[Noun Project](https://thenounproject.com), usado sob licença CC BY 3.0.)*
+você. 🌌)*
 
 ```mermaid
 flowchart TD

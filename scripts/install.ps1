@@ -55,6 +55,9 @@ $TargetDir = (Resolve-Path $TargetDir).Path
 # when -Harness was omitted. Scoped to the three harnesses with a real
 # filesystem/PATH signal; the 17 bridge-file harnesses added in
 # specs/023-full-harness-coverage always require an explicit -Harness.
+# Global-config checks below use $HOME (PowerShell's cross-platform
+# automatic variable, resolving on Linux/macOS too) rather than
+# $env:USERPROFILE, which is Windows-only and null elsewhere.
 if (-not $Harness) {
     $signals = @()
 
@@ -64,7 +67,7 @@ if (-not $Harness) {
     if (Get-Command claude -ErrorAction SilentlyContinue) {
         $signals += "claude-code:2:PATH binary (claude)"
     }
-    if (Test-Path (Join-Path $env:USERPROFILE ".claude")) {
+    if (Test-Path (Join-Path $HOME ".claude")) {
         $signals += "claude-code:3:global config (~\.claude)"
     }
 
@@ -74,7 +77,7 @@ if (-not $Harness) {
     if (Get-Command codex -ErrorAction SilentlyContinue) {
         $signals += "codex-cli:2:PATH binary (codex)"
     }
-    if (Test-Path (Join-Path $env:USERPROFILE ".codex")) {
+    if (Test-Path (Join-Path $HOME ".codex")) {
         $signals += "codex-cli:3:global config (~\.codex)"
     }
 
@@ -83,7 +86,7 @@ if (-not $Harness) {
     }
     # trae has no established cross-platform PATH binary to check
     # (it's a GUI-first IDE) -- see specs/021-harness-auto-detection/research.md
-    if (Test-Path (Join-Path $env:USERPROFILE ".trae")) {
+    if (Test-Path (Join-Path $HOME ".trae")) {
         $signals += "trae:3:global config (~\.trae)"
     }
 

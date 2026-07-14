@@ -39,7 +39,7 @@ scaffolding.
 dispatch code calls into. Unreachable (no `case`/`switch` entry points
 to them yet) until Phase 3 adds the first one — expected at this stage.
 
-- [ ] T001 [P] In `scripts/install.sh`, add `memory_section()` and
+- [x] T001 [P] In `scripts/install.sh`, add `memory_section()` and
   `update_memory_file()` (insert after the existing `skill_meta()`
   function, before the `bridge_mode` block) exactly per plan.md's
   Implementation notes: `memory_section()` takes `skills_dst_rel`,
@@ -52,7 +52,7 @@ to them yet) until Phase 3 adds the first one — expected at this stage.
   create / append-if-existing-no-markers / replace-if-existing-markers,
   and the `has_start -ne has_end` check that exits 1 with a clear
   message naming the file (FR-005).
-- [ ] T002 [P] In `scripts/install.ps1`, add `Get-MemorySection` and
+- [x] T002 [P] In `scripts/install.ps1`, add `Get-MemorySection` and
   `Update-MemoryFile` (insert after the existing `Get-SkillMeta`
   function, before the `bridgeMode` block) exactly per plan.md's
   Implementation notes: same whole-content substring-slice design using

@@ -121,7 +121,12 @@ fi
 # keeps this a true zero-dependency one-liner, consistent with the
 # Homebrew/SDKMAN-style bootstrap this script is modeled on.
 tag_name="$(printf '%s' "$response" | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
-asset_url="$(printf '%s' "$response" | grep -o '"browser_download_url": *"[^"]*spec-jedi-[^"]*\.tar\.gz"' | head -1 | sed -E 's/.*"(https:[^"]+)"$/\1/')"
+# grep -m1 stops after the first matching line itself, unlike piping
+# through `head -1` -- under `set -o pipefail`, head closing the pipe
+# early can SIGPIPE the upstream grep/printf ("write error: Broken
+# pipe"), aborting the script even though the extraction would have
+# succeeded.
+asset_url="$(printf '%s' "$response" | grep -m1 -o '"browser_download_url": *"[^"]*spec-jedi-[^"]*\.tar\.gz"' | sed -E 's/.*"(https:[^"]+)"$/\1/')"
 
 if [ -z "$asset_url" ]; then
   echo "FAIL: release '$tag_name' has no spec-jedi-*.tar.gz asset — is this a valid Spec Jedi release?"

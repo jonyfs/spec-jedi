@@ -116,4 +116,24 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           git commit -m "docs: release ${{ inputs.version }}"
-          git push origin HEAD:main
+
+          # main can move during this job's earlier steps (validate,
+          # packaging) -- rebase onto whatever landed and retry the push
+          # a bounded number of times instead of failing on the first
+          # non-fast-forward rejection.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase origin/main; then
+              echo "FAIL: CHANGELOG.md commit conflicts with origin/main -- manual intervention required"
+              git rebase --abort
+              exit 1
+            fi
+            if git push origin HEAD:main; then
+              echo "OK: pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5), retrying after backoff..."
+            sleep $((attempt * 3))
+          done
+          echo "FAIL: could not push CHANGELOG.md commit to main after 5 attempts"
+          exit 1

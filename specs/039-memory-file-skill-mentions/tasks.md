@@ -210,7 +210,7 @@ is now completely CI-proven.
   job is already listed there (same pattern as feature 038's
   `package-content-completeness` addition). Depends on T005 (the job
   must exist first).
-- [ ] T018 Self-invoke `specjedi-govcheck` against this branch's full
+- [x] T018 Self-invoke `specjedi-govcheck` against this branch's full
   diff before opening the PR, per `specjedi-implement`'s standard
   pre-PR step — surface any finding, never block the PR on it. Depends
   on all preceding tasks.

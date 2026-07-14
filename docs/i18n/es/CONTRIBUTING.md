@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=es -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # Contribuir a Spec Jedi
@@ -40,6 +40,38 @@ Este proyecto está basado en trunk (Principle X):
   dueño del repositorio.** Si eres un colaborador externo, tu PR necesita una revisión
   explícita APPROVED del dueño además de un `ci-gate` en verde antes de fusionarse — ver
   el job `owner-gate` en `.github/workflows/validate.yml` para el mecanismo exacto.
+
+![una figura solitaria en una bifurcación de un camino de piedra, un sendero iluminado por cálidos faroles que ascienden, el otro desvaneciéndose en sombra fría](../../comic/letter-path.jpg)
+
+Eso no es burocracia por sí misma — es el lado correcto de la Fuerza,
+mecanizado: la misma disciplina se mantiene sin importar si alguien está
+mirando, porque la constitución está mirando en su lugar.
+
+## Versionado y releases
+
+Spec Jedi sigue el [Versionado Semántico](https://semver.org/), acotado
+al contrato público del paquete de skills: romper el comportamiento de
+una skill es MAJOR, una nueva skill o capacidad aditiva es MINOR,
+correcciones y documentación son PATCH. La política completa vive en el
+[Principle XI](.specify/memory/constitution.md).
+
+Nadie corta una release en silencio por aquí — el proyecto simplemente
+sugiere cuándo se justifica una y deja la decisión real a una persona:
+
+```bash
+# Linux / macOS / Windows (WSL o Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (PowerShell nativo)
+./scripts/suggest-release.ps1
+```
+
+Eso inspecciona los commits desde la última etiqueta y recomienda una
+siguiente versión. Nunca etiqueta, nunca publica — cortar efectivamente
+una release sigue siendo un paso deliberado, dirigido por el
+mantenedor, cada vez.
 
 ## Añadir o cambiar una skill `specjedi-*`
 

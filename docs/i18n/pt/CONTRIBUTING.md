@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=pt -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:
@@ -56,6 +56,38 @@ Este projeto é baseado em trunk (Principle X):
   além de um `ci-gate` verde antes de mesclar — veja o job
   `owner-gate` em `.github/workflows/validate.yml` para o mecanismo
   exato.
+
+![uma figura solitária em uma bifurcação de um caminho de pedra, uma trilha iluminada por lanternas quentes subindo, a outra desaparecendo em sombra fria](../../comic/letter-path.jpg)
+
+Isso não é burocracia por si só — é o lado certo da Força, mecanizado: o
+tipo de disciplina que se mantém mesmo quando ninguém está olhando,
+porque a constitution está olhando em seu lugar.
+
+## Versionamento e releases
+
+Spec Jedi segue o [Versionamento Semântico](https://semver.org/),
+limitado ao contrato público do pacote de skills: quebrar o
+comportamento de uma skill é MAJOR, uma nova skill ou capacidade
+aditiva é MINOR, correções e documentação são PATCH. A política
+completa vive no [Principle XI](.specify/memory/constitution.md).
+
+Ninguém corta uma release em silêncio por aqui — o projeto apenas
+sugere quando uma se justifica e deixa a decisão real para uma pessoa:
+
+```bash
+# Linux / macOS / Windows (WSL ou Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (PowerShell nativo)
+./scripts/suggest-release.ps1
+```
+
+Isso inspeciona os commits desde a última tag e recomenda uma próxima
+versão. Nunca cria tag nem publica nada sozinho — cortar de fato uma
+release continua sendo um passo deliberado, conduzido pelo mantenedor,
+sempre.
 
 ## Adicionando ou mudando uma skill `specjedi-*`
 

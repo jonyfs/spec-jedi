@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=id -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -59,6 +59,39 @@ Proyek ini berbasis trunk (Principle X):
   selain `ci-gate` yang hijau sebelum digabungkan — lihat job
   `owner-gate` di `.github/workflows/validate.yml` untuk mekanisme
   yang tepat.
+
+![sosok kesepian di percabangan jalan berbatu, satu jalur diterangi lentera hangat menuju ke atas, jalur lainnya memudar ke bayangan dingin](../../comic/letter-path.jpg)
+
+Itu bukan birokrasi demi birokrasi — itu adalah sisi baik Force, yang
+dimekanisasi: disiplin yang bertahan bahkan ketika tidak ada yang
+melihat, karena constitution yang mengawasi sebagai gantinya.
+
+## Versioning dan rilis
+
+Spec Jedi mengikuti [Semantic Versioning](https://semver.org/),
+dibatasi pada kontrak paket skill publik: perubahan perilaku skill
+yang breaking adalah MAJOR, skill baru atau kapabilitas aditif adalah
+MINOR, perbaikan dan dokumentasi adalah PATCH. Kebijakan lengkap ada di
+[Principle XI](.specify/memory/constitution.md).
+
+Tidak seorang pun di sini memotong rilis secara diam-diam — proyek ini
+hanya menyarankan kapan rilis dibenarkan dan menyerahkan keputusan
+nyatanya kepada manusia:
+
+```bash
+# Linux / macOS / Windows (WSL atau Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (PowerShell native)
+./scripts/suggest-release.ps1
+```
+
+Ini memeriksa commit sejak tag terakhir dan merekomendasikan versi
+berikutnya. Ia tidak pernah mem-tag atau mempublikasikan apa pun
+sendiri — benar-benar memotong rilis selalu tetap menjadi langkah yang
+disengaja, dipimpin oleh maintainer, setiap saat.
 
 ## Menambah atau mengubah skill `specjedi-*`
 

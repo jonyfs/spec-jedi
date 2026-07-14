@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=ur -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:
@@ -53,6 +53,37 @@ Spec Jedi اپنے ہی [constitution](../../../.specify/memory/constitution.md)
   آپ کے PR کو green `ci-gate` کے علاوہ owner سے ایک واضح APPROVED
   review چاہیے — درست mechanism کے لیے
   `.github/workflows/validate.yml` میں `owner-gate` job دیکھیں۔
+
+![ایک پتھریلے راستے کے دوراہے پر ایک تنہا شخصیت، ایک راستہ گرم لالٹینوں سے روشن ہو کر اوپر جا رہا ہے، دوسرا ٹھنڈے سائے میں دھندلا رہا ہے](../../comic/letter-path.jpg)
+
+یہ اپنے آپ میں بیوروکریسی نہیں ہے — یہ Force کا صحیح رخ ہے، میکانائزڈ:
+وہ نظم و ضبط جو قائم رہتا ہے چاہے کوئی دیکھ رہا ہو یا نہ ہو، کیونکہ
+constitution اس کی جگہ دیکھ رہا ہے۔
+
+## Versioning اور releases
+
+Spec Jedi [Semantic Versioning](https://semver.org/) کی پیروی کرتا ہے،
+جو public skill-package contract تک محدود ہے: کسی skill کے برتاؤ کو
+توڑنا MAJOR ہے، ایک نئی skill یا additive صلاحیت MINOR ہے، fixes اور
+documentation PATCH ہیں۔ مکمل policy
+[Principle XI](.specify/memory/constitution.md) میں ہے۔
+
+یہاں کوئی خاموشی سے release نہیں کاٹتا — project صرف تجویز کرتا ہے کہ
+کب ایک release justified ہے، اور اصل فیصلہ ایک انسان پر چھوڑ دیتا ہے:
+
+```bash
+# Linux / macOS / Windows (WSL یا Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (native PowerShell)
+./scripts/suggest-release.ps1
+```
+
+یہ آخری tag کے بعد سے commits کا معائنہ کرتا ہے اور اگلی version کی
+سفارش کرتا ہے۔ یہ خود کبھی کچھ tag یا publish نہیں کرتا — واقعی release
+کاٹنا ہمیشہ ایک جان بوجھ کر، maintainer-driven قدم رہتا ہے، ہر بار۔
 
 ## کسی `specjedi-*` skill کو شامل کرنا یا تبدیل کرنا
 

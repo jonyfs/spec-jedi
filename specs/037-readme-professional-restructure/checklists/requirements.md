@@ -31,12 +31,15 @@
 
 ## Notes
 
-- Amended same-session (re-invocation of `/speckit-specify` with one
-  added instruction): FR-001/FR-006 now retain the "A letter, from one
-  Master..." opening line verbatim as a single evocative hook, narrowly
-  scoped — the rest of FR-006's third-person dial-back is unchanged. No
-  new `[NEEDS CLARIFICATION]` markers introduced by this amendment.
-- All 3 `[NEEDS CLARIFICATION]` markers (FR-004, FR-005, FR-006) were
-  resolved during this `/speckit-specify` run via the standard
-  3-question presentation — see `## Clarifications` in `spec.md` for
-  the recorded answers. Spec is ready for `/speckit-plan`.
+- Amendment 2 (re-invocation clarifying FR-005's "consolidate" as
+  "relocate, never delete"): added FR-009/FR-010 and SC-005, resolved
+  via a fresh 3-question round (comic-section fate, relocation-target
+  split, letter-image split) — all recorded in `spec.md`'s
+  Clarifications section. No open markers remain.
+- Amendment 1 (re-invocation adding one instruction): FR-001/FR-006 now
+  retain the "A letter, from one Master..." opening line verbatim as a
+  single evocative hook, narrowly scoped — the rest of FR-006's
+  third-person dial-back is unchanged.
+- Original 3 `[NEEDS CLARIFICATION]` markers (FR-004, FR-005, FR-006)
+  were resolved during the initial `/speckit-specify` run via the
+  standard 3-question presentation. Spec is ready for `/speckit-plan`.

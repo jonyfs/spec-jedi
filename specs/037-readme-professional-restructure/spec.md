@@ -44,7 +44,7 @@ star-wars-lexicon.md. Keep Contributing and License at the end.)
   2-4 sentences per document (one real advantage, one real limitation),
   matching today's existing link-out pattern.
 
-### Amendment (same session, following re-invocation with one added instruction)
+### Amendment 1 (same session, following re-invocation with one added instruction)
 
 - Q: Given FR-006's "dial back to third-person" resolution, should the
   literal opening line "**A letter, from one Master to whoever picks up
@@ -55,6 +55,33 @@ star-wars-lexicon.md. Keep Contributing and License at the end.)
   existing italic quote line already plays), not as the first line of a
   sustained first-person narrator. Everything else in FR-006's original
   resolution (dialing the body prose back to third-person) still holds.
+
+### Amendment 2 (same session, following re-invocation clarifying FR-005's "consolidate" as "relocate, never delete")
+
+- Q: Does the "How Spec Jedi builds itself, in comic form" section
+  (feature 035's 8 illustrated panels) get relocated to extra docs too,
+  or does it stay in the README, since it's already explicitly labeled
+  as a separate internal-bootstrap aside? → A: Stays in the README —
+  it's already self-contained and clearly marked as a separate aside,
+  and removing a recently-commissioned, real illustrated feature from
+  the homepage would be a bigger, likely-unintended side effect of a
+  general instruction that wasn't really targeting it.
+- Q: Where should the content FR-005 consolidates out of the README
+  (skill catalog table, mindmap/pipeline diagrams, Quickstart's 23
+  numbered steps, Recommended companions, Versioning & releases) go? →
+  A: Split across purpose-fitting docs — the skill catalog/diagrams/
+  Quickstart steps go into a new dedicated reference doc; Recommended
+  companions and Versioning & releases each get a home in whichever
+  existing or new reference doc best fits that topic (exact target
+  file(s) decided during `/speckit-plan`, using `/brainstorming` per
+  FR-005 — a "which specific file" decision belongs in planning, not
+  the spec).
+- Q: What happens to the two letter images (`letter-open.jpg`,
+  `letter-path.jpg`) now that the surrounding letter body text is being
+  dialed back/relocated? → A: `letter-open.jpg` stays in the README as
+  the retained opening hook line's visual anchor; `letter-path.jpg`
+  (tied to the now-relocated discipline passage) relocates with that
+  content to wherever it lands.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -160,20 +187,27 @@ one Star Wars-themed reference that specifically puns on an SDD concept
 ### Edge Cases
 
 - What happens to the "How Spec Jedi builds itself, in comic form"
-  section? → Not named in this request; kept as-is, since it is already
-  explicitly labeled as a separate internal-bootstrap aside (Principle
-  XV) rather than part of the home-page product narrative this feature
-  restructures.
-- What happens to the skill catalog table and the numbered Quickstart
-  steps? → Not named for removal; kept, repositioned within the new flow
-  as the concrete "here's what you actually get / how you actually use
-  it" continuation of the specjedi-and-sdd mapping (User Story 1),
-  rather than deleted.
+  section? → Stays in the README as-is (Amendment 2, confirmed) — it is
+  already explicitly labeled as a separate internal-bootstrap aside
+  (Principle XV) rather than part of the home-page product narrative
+  this feature restructures.
+- What happens to the skill catalog table, the two Mermaid diagrams
+  (skills mindmap, pipeline flowchart), and the 23 numbered Quickstart
+  steps? → Relocated (never deleted) to a new dedicated reference doc
+  per Amendment 2 — the README's own new flow (FR-001/FR-002) covers
+  the SDD-primer/specjedi-mapping content at a conceptual level; the
+  full step-by-step walkthrough and complete skill catalog move to
+  where a reader wanting that depth can still find all of it.
 - What if condensing a reference document's summary would require
   dropping a caveat to keep it short? → Never — per FR-004, a
   shortened summary MUST preserve every genuine caveat/limitation the
   source states, even if that means the summary runs slightly longer
   than an idealized "one paragraph" target.
+- What happens to "Recommended companions" and "Versioning & releases"?
+  → Relocated (never deleted) per Amendment 2, each to whichever
+  existing or new reference doc best fits its own topic — the specific
+  target file(s) are a planning-phase decision (`/speckit-plan`, via
+  `/brainstorming` per FR-005), not fixed in this spec.
 
 ## Requirements *(mandatory)*
 
@@ -210,7 +244,8 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   Recommended companions, Versioning) by folding their substance into
   the new flow — fewer, more purposeful sections, not new anchors
   layered around six pre-existing ones (Clarifications, Session
-  2026-07-14).
+  2026-07-14). "Consolidates" MUST mean relocated, never deleted — see
+  FR-009 (Amendment 2).
 - **FR-006**: The README MUST read as professional and well-organized,
   dialing back feature 036's first-person "letter" conceit (direct
   address, "I/you" narrator, personal asides) toward the standard
@@ -226,8 +261,25 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   final two sections of the README, in that order.
 - **FR-008**: Every fact, badge, link, table row, code block, and
   install/release command currently accurate in `README.md` MUST remain
-  present and accurate after this restructure — reorganizing and
-  condensing changes structure and voice, never facts.
+  present and accurate — either still in the README, or relocated to
+  its new home per FR-009 — after this restructure. Reorganizing,
+  condensing, and relocating changes structure and location, never
+  facts, and never deletes content outright.
+- **FR-009**: Content consolidated out of the README by FR-005 (the
+  skill catalog table, both Mermaid diagrams — skills mindmap and
+  pipeline flowchart —, the 23 numbered Quickstart steps, "Recommended
+  companions," and "Versioning & releases") MUST be relocated, in full,
+  into existing or new reference documentation — split across
+  whichever doc(s) best fit each piece's own topic, not dumped into one
+  undifferentiated file — never simply deleted (Amendment 2, Session
+  2026-07-14). The "How Spec Jedi builds itself, in comic form" section
+  is explicitly out of scope for relocation — it stays in the README
+  (Amendment 2).
+- **FR-010**: `letter-open.jpg` (feature 036) MUST remain in the README
+  as the retained opening hook line's (FR-001) visual anchor.
+  `letter-path.jpg` MUST relocate together with the discipline-passage
+  content it illustrated, to wherever that content lands per FR-009
+  (Amendment 2, Session 2026-07-14).
 
 ### Key Entities
 
@@ -247,27 +299,34 @@ documentation content; no data model is introduced.)*
   source document, verifiable by cross-referencing the summary against
   the source.
 - **SC-003**: Zero functional or reference content (badges, install
-  commands, harness table, skill catalog) is lost relative to today's
-  README, verifiable by the same fact-preservation check used in the
-  two prior README features this session (badge/table/code-block
-  counts).
+  commands, harness table) is lost relative to today's README,
+  verifiable by the same fact-preservation check used in the two prior
+  README features this session (badge/table/code-block counts).
 - **SC-004**: A reader can identify at least one Star Wars reference
   tied to a specific SDD concept still present in the final document.
+- **SC-005**: Every piece of content FR-009 relocates (skill catalog,
+  both diagrams, all 23 Quickstart steps, Recommended companions,
+  Versioning & releases) is verifiably present, in full, somewhere in
+  the project's documentation after this feature ships — checkable by
+  confirming each item's real content (not just a stub or a "see X"
+  pointer) exists in its new home.
 
 ## Assumptions
 
-- Scope is `README.md` only. The already-shipped comic section
-  (feature 035) is kept as-is per its own Edge Case above. Feature 036's
-  first-person letter conceit is intentionally dialed back per the
-  resolved Clarifications (FR-006), with one explicit exception (the
-  Amendment): the opening line "A letter, from one Master to whoever
+- Scope is primarily `README.md`, plus whichever reference doc(s)
+  FR-009 relocates content into — this feature touches more than one
+  file by design, not a README-only change. The already-shipped comic
+  section (feature 035) is kept in the README as-is (Amendment 2).
+  Feature 036's first-person letter conceit is intentionally dialed
+  back per the resolved Clarifications (FR-006), with one explicit
+  exception: the opening line "A letter, from one Master to whoever
   picks up this scroll next:" is kept verbatim as a single evocative
-  hook. The two new images (`letter-open.jpg`, `letter-path.jpg`) and
-  the underlying facts/ideas the letter prose carried (the
-  constitution's role, the discipline-as-"right side of the Force"
-  framing) are preserved and re-expressed in the new third-person voice,
-  not deleted outright; only the sustained personal-narrator conceit
-  itself goes, apart from that one retained opening line.
+  hook, paired with `letter-open.jpg` (FR-010). The underlying facts/
+  ideas the rest of the letter prose carried (the constitution's role,
+  the discipline-as-"right side of the Force" framing) are preserved
+  and re-expressed in the new third-person voice as part of the
+  restructured flow, not deleted — only the sustained personal-narrator
+  conceit itself goes, apart from that one retained opening line.
 - "Resumido" (condensed/summarized) means genuinely new, shorter prose
   written for the README's own flow — not simply copy-pasting each
   source document's full text inline.

@@ -390,6 +390,49 @@ json_escape() {
   printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
 }
 
+utf8_len() {
+  # Counts Unicode characters, not bytes, regardless of the runtime's
+  # ambient locale. ${#str} and ${str:offset:length} both count/slice by
+  # BYTE under a byte-oriented locale (e.g. C/POSIX) but by CHARACTER
+  # under a UTF-8 locale -- confirmed to actually differ across GitHub-
+  # hosted runners (Windows Git Bash counted this repo's em-dash-heavy
+  # skill descriptions by byte, Ubuntu/macOS by character), producing a
+  # different 160-char truncation point on Windows and breaking
+  # install.sh/.ps1 cross-script byte-parity (Constitution Principle
+  # XIII). Forcing LC_ALL=C here doesn't request byte-counting -- it
+  # forces a KNOWN, CONSISTENT byte-oriented view so this function can
+  # reliably identify and strip UTF-8 continuation bytes (0x80-0xBF)
+  # itself, which is what actually makes the result locale-independent.
+  local LC_ALL=C
+  local str="$1" stripped
+  stripped="${str//[$'\200'-$'\277']/}"
+  printf '%s' "${#stripped}"
+}
+
+utf8_truncate() {
+  # Truncates $1 to at most $2 Unicode characters (never splitting a
+  # multi-byte character in half, unlike a naive byte-based ${str:0:N}),
+  # locale-independent for the same reason utf8_len is.
+  local LC_ALL=C
+  local str="$1" max="$2" char_count=0 byte_pos=0 len=${#1} byte
+  while [ "$byte_pos" -lt "$len" ]; do
+    byte="${str:$byte_pos:1}"
+    case "$byte" in
+      [$'\200'-$'\277'])
+        byte_pos=$((byte_pos + 1))
+        ;;
+      *)
+        if [ "$char_count" -ge "$max" ]; then
+          break
+        fi
+        char_count=$((char_count + 1))
+        byte_pos=$((byte_pos + 1))
+        ;;
+    esac
+  done
+  printf '%s' "${str:0:$byte_pos}"
+}
+
 first_sentence() {
   # Truncates a description to its first sentence (up to the first ". " --
   # period-then-space, not just any period, so abbreviations like
@@ -405,8 +448,8 @@ first_sentence() {
   if [ "$cut" != "$desc" ]; then
     desc="$cut."
   fi
-  if [ "${#desc}" -gt 160 ]; then
-    desc="${desc:0:157}..."
+  if [ "$(utf8_len "$desc")" -gt 160 ]; then
+    desc="$(utf8_truncate "$desc" 157)..."
   fi
   printf '%s' "$desc"
 }

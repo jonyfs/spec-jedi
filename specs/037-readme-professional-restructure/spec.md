@@ -44,6 +44,18 @@ star-wars-lexicon.md. Keep Contributing and License at the end.)
   2-4 sentences per document (one real advantage, one real limitation),
   matching today's existing link-out pattern.
 
+### Amendment (same session, following re-invocation with one added instruction)
+
+- Q: Given FR-006's "dial back to third-person" resolution, should the
+  literal opening line "**A letter, from one Master to whoever picks up
+  this scroll next:**" (feature 036) be dropped along with the rest of
+  the sustained personal narrator, or kept? → A: Kept, explicitly, per
+  direct user instruction — but scoped narrowly: it stands alone as a
+  single evocative opening hook (the same epigraph-style role the
+  existing italic quote line already plays), not as the first line of a
+  sustained first-person narrator. Everything else in FR-006's original
+  resolution (dialing the body prose back to third-person) still holds.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - A reader learns what SDD is before being asked to adopt a tool for it (Priority: P1)
@@ -169,7 +181,12 @@ one Star Wars-themed reference that specifically puns on an SDD concept
 
 - **FR-001**: The README MUST present a condensed summary of
   `references/what-is-sdd.md` (the general SDD practice, no
-  Spec-Jedi-specific branding) before any Spec-Jedi-specific claim.
+  Spec-Jedi-specific branding) before any Spec-Jedi-specific claim. The
+  document MUST open with the line "**A letter, from one Master to
+  whoever picks up this scroll next:**" (feature 036) retained verbatim
+  as a single evocative hook, positioned the same way the existing
+  italic epigraph quote already functions — not as the opening of a
+  sustained first-person narrator (Amendment, Session 2026-07-14).
 - **FR-002**: Immediately following that summary, the README MUST
   present a condensed summary of `references/specjedi-and-sdd.md`
   (mapping SDD activities to real, shipped `specjedi-*` skills) before
@@ -202,7 +219,9 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   or illuminate an SDD concept as decorative seasoning (quotes, emoji,
   brief thematic asides), drawn from
   `references/star-wars-lexicon.md`'s curated pool, never invented
-  ad hoc (Clarifications, Session 2026-07-14).
+  ad hoc (Clarifications, Session 2026-07-14). The single exception is
+  FR-001's retained opening hook line — everything else in the body
+  prose dials back to third-person (Amendment, Session 2026-07-14).
 - **FR-007**: The "Contributing" and "License" sections MUST remain the
   final two sections of the README, in that order.
 - **FR-008**: Every fact, badge, link, table row, code block, and
@@ -240,12 +259,15 @@ documentation content; no data model is introduced.)*
 - Scope is `README.md` only. The already-shipped comic section
   (feature 035) is kept as-is per its own Edge Case above. Feature 036's
   first-person letter conceit is intentionally dialed back per the
-  resolved Clarifications (FR-006) — its two new images
-  (`letter-open.jpg`, `letter-path.jpg`) and the underlying facts/ideas
-  they and the letter prose carried (the constitution's role, the
-  discipline-as-"right side of the Force" framing) are preserved and
-  re-expressed in the new third-person voice, not deleted outright; only
-  the sustained personal-narrator conceit itself goes.
+  resolved Clarifications (FR-006), with one explicit exception (the
+  Amendment): the opening line "A letter, from one Master to whoever
+  picks up this scroll next:" is kept verbatim as a single evocative
+  hook. The two new images (`letter-open.jpg`, `letter-path.jpg`) and
+  the underlying facts/ideas the letter prose carried (the
+  constitution's role, the discipline-as-"right side of the Force"
+  framing) are preserved and re-expressed in the new third-person voice,
+  not deleted outright; only the sustained personal-narrator conceit
+  itself goes, apart from that one retained opening line.
 - "Resumido" (condensed/summarized) means genuinely new, shorter prose
   written for the README's own flow — not simply copy-pasting each
   source document's full text inline.

@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=ar -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # المساهمة في Spec Jedi
@@ -38,6 +38,37 @@
   إذا كنت مساهماً خارجياً، فإن طلب سحبك يحتاج إلى مراجعة APPROVED صريحة من المالك
   بالإضافة إلى `ci-gate` أخضر قبل الدمج — راجع مهمة (job) `owner-gate` في
   `.github/workflows/validate.yml` للآلية الدقيقة.
+
+![شخصية وحيدة عند مفترق طريق حجري، مسار مضاء بفوانيس دافئة يصعد إلى الأعلى، ومسار آخر
+يتلاشى في ظل بارد](../../comic/letter-path.jpg)
+
+هذا ليس بيروقراطية لذاتها — إنه الجانب الصحيح من القوة، بصيغة آلية:
+الانضباط الذي يصمد سواء كان أحد يراقب أم لا، لأن الدستور هو من يراقب
+بدلاً من ذلك.
+
+## الإصدارات والنشر
+
+يتّبع Spec Jedi [الإصدار الدلالي (Semantic Versioning)](https://semver.org/)،
+محدوداً بعقد حزمة المهارات العام: تغيير سلوك مهارة بشكل جذري هو MAJOR،
+مهارة جديدة أو إمكانية إضافية هي MINOR، الإصلاحات والتوثيق هي PATCH.
+السياسة الكاملة في [Principle XI](.specify/memory/constitution.md).
+
+لا أحد هنا يصدر نسخة بصمت — يقترح المشروع فقط متى يكون الإصدار مبرَّراً
+ويترك القرار الفعلي لإنسان:
+
+```bash
+# Linux / macOS / Windows (WSL أو Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (PowerShell أصلي)
+./scripts/suggest-release.ps1
+```
+
+يفحص هذا الالتزامات منذ آخر وسم ويوصي بالإصدار التالي. لا يضع وسماً أو
+ينشر أي شيء بنفسه أبداً — إصدار نسخة فعلياً يظل دائماً خطوة متعمَّدة
+يقودها القائم على الصيانة، في كل مرة.
 
 ## إضافة أو تغيير مهارة `specjedi-*`
 

@@ -60,10 +60,16 @@ checkable against this repository's real state, not a hedge.
    bigger through the full research → specify → clarify → plan → tasks
    → implement pipeline, which remains real overhead for a solo
    developer's medium-sized change that doesn't clear the fast-path bar.
-2. **No release has ever been cut.** `git tag -l` returns nothing as of
-   this writing. The release mechanism (`.github/workflows/release.yml`)
-   exists and works, but `v0.1.0` itself remains an outstanding,
-   deliberate maintainer action (Principle XI), not something automated.
+2. **The release package's contents are a manually maintained allowlist,
+   not auto-derived.** Two real releases exist now (`v0.1.0`, `v0.1.1`)
+   — but `scripts/package-release.sh`/`.ps1` (specs/038-expand-release-
+   package) stage an explicit, hand-listed set of files into the
+   downloadable tarball. A newly added user-facing `references/*.md`
+   file doesn't automatically ship; someone has to remember to add it to
+   the allowlist. This is a deliberate choice (an implicit "copy
+   everything" rule risks leaking internal spec-authoring content, which
+   is worse) but it's a real, standing maintenance burden, not a solved
+   problem.
 3. **Most harness install paths are desk-research-grounded, not
    hands-on-verified inside the real third-party product.** Of the 20
    supported harnesses, a real install path exists and is CI-tested for

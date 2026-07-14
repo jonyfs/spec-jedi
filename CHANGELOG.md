@@ -9,6 +9,39 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **Expanded release package** (feature 038) — `scripts/package-release.sh`/
+  `.ps1` (the artifact `scripts/bootstrap-install.sh`/`.ps1` download)
+  now also stage `README.md`; three user-facing reference docs
+  (`references/quickstart-guide.md`, `references/what-is-sdd.md`,
+  `references/specjedi-and-sdd.md`); and a new
+  `references/session-start-hook-guide.md` plus
+  `scripts/session-start.sh`/`.ps1`, giving a user who never clones the
+  repo both real usage documentation and a working session-start hook
+  example with an honest, per-harness confirmed/unconfirmed status
+  table — never a fabricated blanket claim. Deliberately still excludes
+  `specs/*` and 11 internal skill-authoring/governance reference docs
+  (plus `CONTRIBUTING.md`), verified by a new
+  `package-content-completeness` CI job that builds a real tarball and
+  inspects its actual contents on all three OSes, including a
+  byte-identical staged-tree parity check between the two script
+  variants. `scripts/install.sh`/`.ps1` are unchanged — this is a
+  packaging change, not an installer behavior change.
+
+### Fixed
+
+- Along the way, three real cross-platform CI bugs in the new job's
+  `windows-latest` leg, each diagnosed from its actual error message
+  rather than guessed at: Git Bash auto-translating a bash-generated
+  POSIX-style temp path when handed to `pwsh` as a command-line
+  argument; a non-deterministic same-job tar rebuild failure; and the
+  actual root cause underneath both — `tar` applying the traditional
+  Unix `host:path` remote-archive convention to a Windows drive-letter
+  path (`D:\...` parsed as "connect to a host named D"), fixed by
+  converting to the POSIX-style form Git Bash's own MSYS runtime already
+  recognizes, only when the path actually needs it.
+
 ## [v0.1.1] - 2026-07-14
 
 ### Fixed

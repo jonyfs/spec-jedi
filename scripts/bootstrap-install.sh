@@ -91,7 +91,7 @@ fi
 response=""
 http_status=""
 for attempt in 1 2 3; do
-  http_status="$(curl -sSL "${auth_header[@]}" -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
+  http_status="$(curl -sSL ${auth_header[@]+"${auth_header[@]}"} -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
   if [ "$http_status" = "200" ]; then
     response="$(cat /tmp/spec-jedi-bootstrap-response.$$ 2>/dev/null || true)"
     rm -f /tmp/spec-jedi-bootstrap-response.$$
@@ -144,4 +144,8 @@ fi
 echo "🚀 Running install.sh from $tag_name..."
 echo
 chmod +x "$extracted_dir/scripts/install.sh"
-"$extracted_dir/scripts/install.sh" "$target_dir" "${install_args[@]}"
+# macOS ships bash 3.2 (Apple hasn't upgraded past GPLv2), which treats
+# an empty array as unset under `set -u` when expanded with "${arr[@]}"
+# -- bash 4.4+ (Linux, Git Bash on Windows) doesn't have this quirk. The
+# ${arr[@]+"${arr[@]}"} idiom expands to nothing when empty on both.
+"$extracted_dir/scripts/install.sh" "$target_dir" ${install_args[@]+"${install_args[@]}"}

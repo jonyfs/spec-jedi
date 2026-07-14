@@ -19,7 +19,11 @@ change too big or too ambiguous through the fast path.
 ## Step-by-step
 
 1. **Check eligibility before writing anything.** All five must pass, or
-   decline and redirect (step 6):
+   decline and redirect (step 6). **Reason through each criterion
+   explicitly against the actual request** — this is the skill's one
+   real judgment call, not a formality: does the request genuinely fit
+   each bar below, or does it only pattern-match a keyword ("quick,"
+   "small") without actually clearing it?
    - **Fits on one page of notes** — the change, described plainly,
      doesn't need more than that (BMAD-METHOD's own stated bar for its
      Quick Flow).

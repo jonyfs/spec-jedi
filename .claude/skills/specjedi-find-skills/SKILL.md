@@ -99,6 +99,13 @@ competing skill candidates:
 > - Install: `npx skills add <owner/repo@skill>` (or the harness-native equivalent)
 > - Skip and continue without it
 
+**Audience calibration**: Step 5's verification signals (install count,
+source, GitHub stars) mean little to someone unfamiliar with
+package-ecosystem conventions. For a beginner-signaled request, name
+what each signal actually indicates in plain terms ("1K+ installs means
+a lot of other people already trust this one"), not just the bare
+numbers; for an experienced asker, the numbers alone are enough.
+
 ## Examples (input → output)
 
 **Reactive trigger**

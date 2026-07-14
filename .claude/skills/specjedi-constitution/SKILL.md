@@ -67,6 +67,13 @@ shape: `## Core Principles` (each a `### N. Name` with description and
 `## Governance` (amendment procedure, versioning policy, compliance review),
 then the `**Version**: X.Y.Z | **Ratified**: ... | **Last Amended**: ...` line.
 
+**Audience calibration boundary**: `constitution.md`'s own content stays
+precise and testable (Principle V/XII exemption); calibration (Principle
+XIX) applies only to the skill's own narration — the follow-up questions
+Step 2 asks when a principle is vague or contradictory, and the
+explanation around a version-bump decision — never to the constitution's
+own written principle text.
+
 ## Example (input → output)
 
 **User**: *"Our project must have 80% test coverage and never hardcode

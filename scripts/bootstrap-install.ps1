@@ -92,9 +92,14 @@ try {
 
     Write-Host "🚀 Running install.ps1 from $tagName..."
     Write-Host ""
-    $installArgs = @("-TargetDir", $TargetDir)
-    if ($Harness) { $installArgs += @("-Harness", $Harness) }
-    if ($Auto) { $installArgs += "-Auto" }
+    # Splat a hashtable, not an array -- array splatting binds positionally
+    # (the literal "-TargetDir" string lands in install.ps1's first
+    # parameter and the real path lands in its second), which silently
+    # misroutes TargetDir's value into Harness. Hashtable splatting binds
+    # by name unambiguously.
+    $installArgs = @{ TargetDir = $TargetDir }
+    if ($Harness) { $installArgs["Harness"] = $Harness }
+    if ($Auto) { $installArgs["Auto"] = $true }
     & (Join-Path $extractedDir.FullName "scripts/install.ps1") @installArgs
 }
 finally {

@@ -1,7 +1,11 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/033-skill-validation-audit/plan.md
+<<<<<<< HEAD
+at specs/034-skill-prompt-quality/plan.md
+=======
+at specs/034-skill-prompt-quality/plan.md
+>>>>>>> 54f6693 (docs: plan+tasks for feature 034 -- close prompt-engineering gaps in 5 skills)
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

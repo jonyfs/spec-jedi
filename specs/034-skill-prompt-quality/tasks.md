@@ -94,7 +94,7 @@ present directly in that step.
 - [X] T006 Run `quickstart.md`'s 6 scenarios in order, including the
       per-file word-count check (SC-003/FR-007) and the "exactly 5 files
       touched" check (SC-002/FR-006) (depends on T001-T005).
-- [ ] T007 Run `specjedi-govcheck` against this branch before opening
+- [X] T007 Run `specjedi-govcheck` against this branch before opening
       the PR (depends on T006).
 
 ---

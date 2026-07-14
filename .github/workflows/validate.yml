@@ -837,6 +837,7 @@ jobs:
             exit 1
           fi
           echo "OK: package-release.sh's output has exactly the expected contents"
+          echo "PKG_SH_OUT=$out_dir" >> "$GITHUB_ENV"
       - name: Build a real package and assert its contents (PowerShell)
         shell: pwsh
         run: |
@@ -890,32 +891,26 @@ jobs:
             exit 1
           }
           Write-Host "OK: package-release.ps1's output has exactly the expected contents"
+          Add-Content -Path $env:GITHUB_ENV -Value "PKG_PS_OUT=$outDir"
       - name: Assert package-release.sh and .ps1 stage identical trees
         shell: bash
         run: |
-          # Both scripts build their own temp staging dirs internally;
-          # this step only needs its own two output dirs. pwsh is
-          # available as `pwsh` on all three GitHub-hosted runners,
-          # already proven by every other `shell: pwsh` step in this
-          # job's matrix -- but a bash-generated $(mktemp -d) path
-          # (POSIX-style, e.g. /tmp/tmp.XXXX) breaks when handed to pwsh
-          # on windows-latest: Git Bash auto-translates POSIX-looking
-          # paths for non-MSYS executables, mangling it into a
-          # nonexistent path ("D:\tmp\tmp.XXXX: Cannot connect to D:").
-          # $RUNNER_TEMP is a GitHub Actions-provided env var already in
-          # each OS's native path format (a real Windows path with a
-          # drive letter on windows-latest), so passing it through bash
-          # into pwsh's command line never triggers that translation.
-          ps_out="$RUNNER_TEMP/pkg-check-ps"
-          mkdir -p "$ps_out"
-          sh_out="$(mktemp -d)"
-          ./scripts/package-release.sh v0.0.0-ci-check "$sh_out"
-          pwsh -Command "./scripts/package-release.ps1 v0.0.0-ci-check '$ps_out'"
-
+          # Reuse the two packages the previous two steps already built
+          # (via $PKG_SH_OUT/$PKG_PS_OUT, each written by its own native
+          # shell to $GITHUB_ENV) rather than rebuilding a third time --
+          # a second same-job invocation of package-release.sh's own
+          # internal `tar -czf` was observed to non-deterministically
+          # fail on windows-latest with "Cannot connect to D:" (an MSYS
+          # tar/path quirk under Git Bash), even though the same command
+          # succeeds as the job's first invocation. Reading files a
+          # PowerShell step already wrote (an already Windows-style path
+          # in $PKG_PS_OUT) is a plain file-I/O read, not an argv handoff
+          # into another executable -- the operation that actually
+          # triggers MSYS's path-mangling -- so it doesn't hit that bug.
           sh_extracted="$(mktemp -d)"
           ps_extracted="$(mktemp -d)"
-          tar -xzf "$sh_out/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$sh_extracted"
-          tar -xzf "$ps_out/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$ps_extracted"
+          tar -xzf "$PKG_SH_OUT/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$sh_extracted"
+          tar -xzf "$PKG_PS_OUT/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$ps_extracted"
           if ! diff -rq "$sh_extracted" "$ps_extracted"; then
             echo "FAIL: package-release.sh and package-release.ps1 staged different trees for the same version (Constitution Principle XIII)"
             exit 1

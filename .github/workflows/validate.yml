@@ -728,6 +728,13 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+    # macos-latest's shared runner IP pool routinely exhausts GitHub's
+    # 60/hour anonymous API quota from unrelated global traffic; both
+    # bootstrap installers opportunistically use GITHUB_TOKEN (5000/hour)
+    # when it's set, which end users running these scripts outside CI
+    # simply won't have.
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: --help works and a real release installs successfully (bash)

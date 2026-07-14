@@ -69,11 +69,43 @@ if [ -n "$version" ]; then
 fi
 
 echo "📡 Looking up Spec Jedi release (${version:-latest})..."
-response="$(curl -fsSL "$api_url" 2>/dev/null || true)"
+# curl -f suppresses the response body on any HTTP error (404, 403
+# rate-limit, 5xx alike), so a transient failure and a genuine "no
+# release" look identical here -- retry a few times before concluding
+# it's the latter, rather than surfacing a misleading permanent-looking
+# message for what might just be a rate limit or network blip. Capture
+# the actual HTTP status separately so the failure message is honest
+# about which of those it actually was.
+# Anonymous GitHub API calls share a 60/hour-per-IP limit; GitHub-hosted
+# CI runners (macOS in particular) pool a small set of egress IPs across
+# a large volume of unrelated global traffic and can exhaust that quota
+# without this script alone making many calls. If GITHUB_TOKEN happens
+# to be set (e.g. this script invoked from within a GitHub Actions job),
+# use it to raise the effective limit to 5000/hour -- end users running
+# this outside CI simply won't have the variable set and stay anonymous.
+auth_header=()
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  auth_header=(-H "Authorization: Bearer $GITHUB_TOKEN")
+fi
+
+response=""
+http_status=""
+for attempt in 1 2 3; do
+  http_status="$(curl -sSL ${auth_header[@]+"${auth_header[@]}"} -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
+  if [ "$http_status" = "200" ]; then
+    response="$(cat /tmp/spec-jedi-bootstrap-response.$$ 2>/dev/null || true)"
+    rm -f /tmp/spec-jedi-bootstrap-response.$$
+    break
+  fi
+  rm -f /tmp/spec-jedi-bootstrap-response.$$
+  if [ "$attempt" -lt 3 ]; then
+    sleep "$attempt"
+  fi
+done
 
 if [ -z "$response" ] || printf '%s' "$response" | grep -q '"message": *"Not Found"'; then
   echo
-  echo "🔭 No published Spec Jedi release found${version:+ for $version}."
+  echo "🔭 No published Spec Jedi release found${version:+ for $version}${http_status:+ (last HTTP status: $http_status)}."
   echo "This project cuts releases deliberately (Constitution Principle XI) --"
   echo "none may exist yet, the requested version may not exist, or the"
   echo "network request itself may have failed."
@@ -112,4 +144,8 @@ fi
 echo "🚀 Running install.sh from $tag_name..."
 echo
 chmod +x "$extracted_dir/scripts/install.sh"
-"$extracted_dir/scripts/install.sh" "$target_dir" "${install_args[@]}"
+# macOS ships bash 3.2 (Apple hasn't upgraded past GPLv2), which treats
+# an empty array as unset under `set -u` when expanded with "${arr[@]}"
+# -- bash 4.4+ (Linux, Git Bash on Windows) doesn't have this quirk. The
+# ${arr[@]+"${arr[@]}"} idiom expands to nothing when empty on both.
+"$extracted_dir/scripts/install.sh" "$target_dir" ${install_args[@]+"${install_args[@]}"}

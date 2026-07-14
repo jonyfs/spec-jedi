@@ -894,15 +894,21 @@ jobs:
         shell: bash
         run: |
           # Both scripts build their own temp staging dirs internally;
-          # this step only needs its own two output dirs, computed and
-          # consumed entirely within itself -- no cross-step/cross-shell
-          # env var handoff (GITHUB_ENV path formatting differs between
-          # a bash step's $(mktemp -d) and a pwsh step's Windows-style
-          # path on the windows-latest matrix leg). pwsh is available as
-          # `pwsh` on all three GitHub-hosted runners, already proven by
-          # every other `shell: pwsh` step in this same job's matrix.
+          # this step only needs its own two output dirs. pwsh is
+          # available as `pwsh` on all three GitHub-hosted runners,
+          # already proven by every other `shell: pwsh` step in this
+          # job's matrix -- but a bash-generated $(mktemp -d) path
+          # (POSIX-style, e.g. /tmp/tmp.XXXX) breaks when handed to pwsh
+          # on windows-latest: Git Bash auto-translates POSIX-looking
+          # paths for non-MSYS executables, mangling it into a
+          # nonexistent path ("D:\tmp\tmp.XXXX: Cannot connect to D:").
+          # $RUNNER_TEMP is a GitHub Actions-provided env var already in
+          # each OS's native path format (a real Windows path with a
+          # drive letter on windows-latest), so passing it through bash
+          # into pwsh's command line never triggers that translation.
+          ps_out="$RUNNER_TEMP/pkg-check-ps"
+          mkdir -p "$ps_out"
           sh_out="$(mktemp -d)"
-          ps_out="$(mktemp -d)"
           ./scripts/package-release.sh v0.0.0-ci-check "$sh_out"
           pwsh -Command "./scripts/package-release.ps1 v0.0.0-ci-check '$ps_out'"
 

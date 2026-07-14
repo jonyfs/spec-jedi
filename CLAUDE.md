@@ -1,11 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-<<<<<<< HEAD
-at specs/034-skill-prompt-quality/plan.md
-=======
-at specs/034-skill-prompt-quality/plan.md
->>>>>>> 54f6693 (docs: plan+tasks for feature 034 -- close prompt-engineering gaps in 5 skills)
+at specs/036-readme-jedi-letter/plan.md
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

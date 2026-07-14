@@ -171,7 +171,7 @@ status check more than once to see all 3 features.
       T008, T011, T014).
 - [X] T022 Badge-row review per the Distribution & Ecosystem Standards
       section (Principle X's pre-PR requirement) (depends on T015).
-- [ ] T023 Run `specjedi-govcheck` against this branch before opening
+- [X] T023 Run `specjedi-govcheck` against this branch before opening
       the PR (depends on T021, T022).
 
 ---

@@ -333,15 +333,23 @@ function Update-MemoryFile {
     }
 
     if ($hasStart) {
-        # Drop exactly one trailing newline (LF or CRLF) before slicing,
-        # mirroring bash's $(cat file) command-substitution semantics --
-        # both scripts always re-add exactly one trailing newline at the
-        # very end, which is what keeps their output byte-identical
-        # (FR-008) regardless of the target file's original line-ending
-        # style. Whole-content substring slicing (.IndexOf()/.Substring()),
-        # never a line-array rebuild -- CRLF-safe by construction, since
-        # there's no per-line comparison to be defeated by a trailing \r.
-        $content = $rawContent -replace '(\r?\n)$', ''
+        # Drop exactly one trailing LF before slicing, mirroring bash's
+        # $(cat file) command-substitution semantics EXACTLY: bash's
+        # command substitution strips only a trailing \n, not a
+        # preceding \r -- a CRLF-terminated file keeps its trailing \r
+        # after stripping, which the final "...$after`n" reconstruction
+        # below then completes back into a proper CRLF. Stripping
+        # `\r?\n` instead (both characters as one unit) was tried first
+        # and rejected: it strips the \r too, so a CRLF-terminated file
+        # loses its trailing \r and ends in a bare LF after re-append --
+        # a real, verified FR-002 byte-preservation gap AND an FR-008
+        # cross-script mismatch against install.sh, which doesn't have
+        # this problem (confirmed by inspecting both scripts' raw output
+        # bytes against the same CRLF fixture). Whole-content substring
+        # slicing (.IndexOf()/.Substring()), never a line-array rebuild
+        # -- CRLF-safe by construction, since there's no per-line
+        # comparison to be defeated by a trailing \r.
+        $content = $rawContent -replace '\n$', ''
         $startIdx = $content.IndexOf($startMarker)
         $endIdx = $content.LastIndexOf($endMarker) + $endMarker.Length
         $before = $content.Substring(0, $startIdx)

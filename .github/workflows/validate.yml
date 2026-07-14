@@ -1016,6 +1016,10 @@ jobs:
           tail -c "$suffix_size" "$dir4/CLAUDE.md" > /tmp/post-suffix-s4.md
           if ! diff -q /tmp/pre-suffix-s4.md /tmp/post-suffix-s4.md >/dev/null; then
             echo "FAIL scenario4: CRLF suffix content not preserved"; fail=1
+            echo "DIAG: suffix_size=$suffix_size total_size=$total_size prefix_size=$prefix_size"
+            echo "DIAG: pre-suffix bytes:"; od -c /tmp/pre-suffix-s4.md | head -5
+            echo "DIAG: post-suffix bytes:"; od -c /tmp/post-suffix-s4.md | head -5
+            echo "DIAG: full post-install file bytes:"; od -c "$dir4/CLAUDE.md" | tail -5
           fi
           echo "OK: scenario4 (CRLF preservation + refresh)"
 

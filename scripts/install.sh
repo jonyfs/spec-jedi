@@ -465,8 +465,22 @@ update_memory_file() {
     return
   fi
 
+  # Capture the file's raw bytes losslessly (a sentinel "x" appended
+  # inside the same command substitution absorbs $(...)'s own trailing-
+  # newline stripping, so the file's actual trailing bytes -- whatever
+  # they are -- survive untouched), then strip exactly one trailing \n
+  # ourselves. Plain "$(cat "$memory_path")" was tried first and found
+  # to behave inconsistently across bash builds: on Windows Git Bash it
+  # strips a trailing \r along with the \n (unlike macOS/Linux bash,
+  # which strips only \n), silently losing a CRLF-terminated file's
+  # trailing \r and producing a bare-LF ending after the later printf
+  # re-append -- confirmed via CI byte diagnostics showing the suffix
+  # one byte short on windows-latest only. Mirrors install.ps1's
+  # `-replace '\n$', ''`, which strips the same single character.
   local content
-  content="$(cat "$memory_path")"
+  content="$(cat "$memory_path"; echo x)"
+  content="${content%x}"
+  content="${content%$'\n'}"
 
   local has_start=0 has_end=0
   case "$content" in *"$start_marker"*) has_start=1 ;; esac

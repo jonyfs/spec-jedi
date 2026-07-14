@@ -158,9 +158,12 @@ update_memory_file() {
     return
   fi
 
+  local content
+  content="$(cat "$memory_path")"
+
   local has_start=0 has_end=0
-  grep -qF "$start_marker" "$memory_path" && has_start=1
-  grep -qF "$end_marker" "$memory_path" && has_end=1
+  case "$content" in *"$start_marker"*) has_start=1 ;; esac
+  case "$content" in *"$end_marker"*) has_end=1 ;; esac
 
   if [ "$has_start" -ne "$has_end" ]; then
     echo "FAIL: $memory_path has a Spec Jedi marker without its matching pair -- refusing to guess where the managed section ends. Remove the stray marker manually and re-run."
@@ -168,12 +171,22 @@ update_memory_file() {
   fi
 
   if [ "$has_start" -eq 1 ]; then
-    awk -v start="$start_marker" -v end="$end_marker" -v section="$new_section" '
-      $0 == start { print section; skip=1; next }
-      $0 == end { skip=0; next }
-      skip { next }
-      { print }
-    ' "$memory_path" > "$memory_path.tmp" && mv "$memory_path.tmp" "$memory_path"
+    # Whole-content substring slicing, not a line-by-line rewrite: %%
+    # removes the longest suffix starting at the FIRST occurrence of
+    # start_marker (everything before it, untouched); ## removes the
+    # longest prefix ending at the LAST occurrence of end_marker
+    # (leaving everything after it, untouched). This is what makes it
+    # CRLF-safe by construction -- there's no per-line $0-style
+    # comparison to be defeated by a trailing \r (a line-by-line awk
+    # rewrite was tried first and rejected: it silently failed to
+    # recognize CRLF-terminated marker lines, no-opping the update with
+    # no error -- caught by specjedi-analyze against an earlier version
+    # of this plan). Bytes outside the markers -- CRLF or not -- are
+    # never touched, only sliced around.
+    local before after
+    before="${content%%"$start_marker"*}"
+    after="${content##*"$end_marker"}"
+    printf '%s%s%s\n' "$before" "$new_section" "$after" > "$memory_path"
     echo "  ✅ $(basename "$memory_path") updated (existing Spec Jedi section refreshed)"
   else
     printf '\n%s\n' "$new_section" >> "$memory_path"
@@ -204,17 +217,72 @@ that already works).
 **`install.ps1`**: identical logic via `Get-SkillMeta` (already exists),
 a new `Get-MemorySection` function returning a joined multi-line string
 (`[string]::Join("`n", $lines)`, matching `Get-SkillMeta`'s own
-`[PSCustomObject]` return-value idiom), and `Update-MemoryFile` using
-`Select-String`/`-match` for marker detection and a line-array
-rebuild (read all lines via `Get-Content`, find start/end marker
-indices, splice the new section's lines in between) instead of `awk` —
-PowerShell has no direct `awk` equivalent, so this is a genuine
-per-language idiom difference, not a cross-platform inconsistency (the
-*output* must still match exactly, per FR-008/SC-004, only the
-*mechanism* differs). Same `switch` dispatch for
-`$memoryFileRel` (`claude-code`→`CLAUDE.md`, `codex-cli`→`AGENTS.md`,
-`trae`→`.trae/rules/project_rules.md`), same "not for antigravity or
-bridge harnesses" scoping.
+`[PSCustomObject]` return-value idiom), and `Update-MemoryFile` mirroring
+`install.sh`'s whole-content substring-slice approach exactly (not a
+line-array splice — `.Contains()`/`.IndexOf()`/`.Substring()` on the raw
+file text, the same CRLF-safe design `install.sh` uses and for the same
+reason: no per-line comparison exists to be defeated by a trailing `\r`):
+
+```powershell
+function Update-MemoryFile {
+    param([string]$MemoryPath, [string]$SkillsDstRel)
+    $startMarker = "<!-- SPEC-JEDI:SKILLS:START -->"
+    $endMarker = "<!-- SPEC-JEDI:SKILLS:END -->"
+    $newSection = Get-MemorySection -SkillsDstRel $SkillsDstRel
+
+    $parentDir = Split-Path -Parent $MemoryPath
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    if (-not (Test-Path $MemoryPath)) {
+        [System.IO.File]::WriteAllText($MemoryPath, "$newSection`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) created"
+        return
+    }
+
+    $rawContent = [System.IO.File]::ReadAllText($MemoryPath)
+    $hasStart = $rawContent.Contains($startMarker)
+    $hasEnd = $rawContent.Contains($endMarker)
+
+    if ($hasStart -ne $hasEnd) {
+        Write-Host "FAIL: $MemoryPath has a Spec Jedi marker without its matching pair -- refusing to guess where the managed section ends. Remove the stray marker manually and re-run."
+        exit 1
+    }
+
+    if ($hasStart) {
+        # Drop exactly one trailing newline (LF or CRLF) before slicing,
+        # mirroring bash's $(cat file) command-substitution semantics --
+        # both scripts always re-add exactly one trailing newline at the
+        # very end, which is what keeps their output byte-identical
+        # (FR-008) regardless of the target file's original line-ending
+        # style.
+        $content = $rawContent -replace '(\r?\n)$', ''
+        $startIdx = $content.IndexOf($startMarker)
+        $endIdx = $content.LastIndexOf($endMarker) + $endMarker.Length
+        $before = $content.Substring(0, $startIdx)
+        $after = $content.Substring($endIdx)
+        [System.IO.File]::WriteAllText($MemoryPath, "$before$newSection$after`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) updated (existing Spec Jedi section refreshed)"
+    } else {
+        # Raw append onto the file's existing bytes exactly as they are
+        # -- no rewrite of pre-existing content -- matching install.sh's
+        # own `printf '\n%s\n' "$new_section" >> file` append semantics.
+        [System.IO.File]::AppendAllText($MemoryPath, "`n$newSection`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) updated (Spec Jedi section appended)"
+    }
+}
+```
+
+`[System.IO.File]` methods perform no newline translation (unlike
+`Set-Content`/`Out-File`, which apply the platform's default newline —
+CRLF on Windows — to every line they write, which would have silently
+converted an existing LF-only file's non-marker content to CRLF: a real
+violation of "preserve every byte outside the section," and a fresh
+FR-008 mismatch against `install.sh`'s output for the same input). Same
+`switch` dispatch for `$memoryFileRel` (`claude-code`→`CLAUDE.md`,
+`codex-cli`→`AGENTS.md`, `trae`→`.trae/rules/project_rules.md`), same
+"not for antigravity or bridge harnesses" scoping.
 
 **CI job** (`memory-file-injection`, 3-OS matrix, both `shell: bash` and
 `shell: pwsh` steps mirroring `install-test`'s existing pattern):
@@ -223,29 +291,50 @@ bridge harnesses" scoping.
    `CLAUDE.md` exists and contains both markers and every currently
    installed skill's name (User Story 1, AS1).
 2. A *second* scratch dir: write a `CLAUDE.md` with known dummy content
-   first (`echo "# My Project\n\nRun tests with pytest." > CLAUDE.md`),
-   then install; assert the dummy content is still present verbatim
-   (`grep -qF` the exact dummy string) AND the markers/skill table are
-   also present (User Story 1, AS2).
+   first (`printf '# My Project\n\nRun tests with pytest.' > CLAUDE.md`),
+   capture that exact pre-install content, then install; assert (a) the
+   post-install file, with the region between the markers (inclusive)
+   removed, is byte-identical to the captured pre-install content — a
+   real diff of the non-marker region, not just a substring presence
+   check, per SC-002's own "diff the pre-existing content" wording — and
+   (b) the markers/skill table are present (User Story 1, AS2).
 3. Re-run the installer against scratch dir #1 with `sha256sum`/
    `Get-FileHash` before and after; assert identical (User Story 1, AS3).
-4. `--harness codex-cli` into a fresh scratch dir; assert `AGENTS.md`
+4. A *third* scratch dir: write a `CLAUDE.md` using CRLF line endings
+   throughout (including around a pre-existing Spec Jedi section planted
+   by the test itself, not by the installer) via `printf '...\r\n...'`;
+   install; assert (a) the update actually refreshes the section (not a
+   silent no-op — the specific failure mode `specjedi-analyze` found in
+   this feature's first plan revision) and (b) every CRLF byte outside
+   the markers is still present, verified the same real-diff way as
+   step 2.
+5. A *fourth* scratch dir: write a `CLAUDE.md` containing only a start
+   marker with no matching end marker; run the installer; assert it
+   exits non-zero, prints a message naming the file, and leaves the file
+   completely unmodified (FR-005, Edge Case #1 — the plan's own
+   `has_start -ne has_end` branch, otherwise unexercised by any other
+   step above).
+6. `--harness codex-cli` into a fresh scratch dir; assert `AGENTS.md`
    exists with the markers, mentioning `.agents/skills/` (not
    `.claude/skills/`) in its "installed at" sentence — proves
    `skills_dst_rel` is actually parameterized, not hardcoded (User
    Story 2, AS1).
-5. `--harness trae` into a fresh scratch dir; assert
+7. `--harness trae` into a fresh scratch dir; assert
    `.trae/rules/project_rules.md` exists with the markers (User Story 2,
    AS3).
-6. `--harness antigravity` into a fresh scratch dir; assert no file
+8. `--harness antigravity` into a fresh scratch dir; assert no file
    named `CLAUDE.md`/`AGENTS.md`/anything under `.trae/rules/` was
    created — only `.agents/skills/` (User Story 3, AS1).
-7. `--harness cursor` into a fresh scratch dir; assert `.cursor/rules/`
+9. `--harness cursor` into a fresh scratch dir; assert `.cursor/rules/`
    file count equals the installed skill count (the existing bridge-file
    behavior, unchanged — User Story 3, AS2).
-8. Repeat steps 1-3 for the PowerShell leg (`install.ps1`), then diff
-   `install.sh`'s and `.ps1`'s `CLAUDE.md` output for the same scratch
-   input (FR-008/SC-004).
+10. Repeat steps 1-5 for the PowerShell leg (`install.ps1`), then diff
+    `install.sh`'s and `.ps1`'s `CLAUDE.md` output for the same scratch
+    input (FR-008/SC-004) — already spot-verified by hand during this
+    plan's own revision (bash and PowerShell produced byte-identical
+    output against both a plain and a CRLF fixture), but that manual
+    check doesn't substitute for real CI coverage per this plan's own
+    Constraints section.
 
 Add `memory-file-injection` to `ci-gate`'s `needs:` list in
 `.github/workflows/validate.yml`, matching how every other required job

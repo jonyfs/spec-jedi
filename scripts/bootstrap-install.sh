@@ -76,10 +76,22 @@ echo "📡 Looking up Spec Jedi release (${version:-latest})..."
 # message for what might just be a rate limit or network blip. Capture
 # the actual HTTP status separately so the failure message is honest
 # about which of those it actually was.
+# Anonymous GitHub API calls share a 60/hour-per-IP limit; GitHub-hosted
+# CI runners (macOS in particular) pool a small set of egress IPs across
+# a large volume of unrelated global traffic and can exhaust that quota
+# without this script alone making many calls. If GITHUB_TOKEN happens
+# to be set (e.g. this script invoked from within a GitHub Actions job),
+# use it to raise the effective limit to 5000/hour -- end users running
+# this outside CI simply won't have the variable set and stay anonymous.
+auth_header=()
+if [ -n "${GITHUB_TOKEN:-}" ]; then
+  auth_header=(-H "Authorization: Bearer $GITHUB_TOKEN")
+fi
+
 response=""
 http_status=""
 for attempt in 1 2 3; do
-  http_status="$(curl -sSL -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
+  http_status="$(curl -sSL "${auth_header[@]}" -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
   if [ "$http_status" = "200" ]; then
     response="$(cat /tmp/spec-jedi-bootstrap-response.$$ 2>/dev/null || true)"
     rm -f /tmp/spec-jedi-bootstrap-response.$$

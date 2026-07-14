@@ -51,10 +51,22 @@ Write-Host "📡 Looking up Spec Jedi release ($(if ($Version) { $Version } else
 # release" both surface as a caught exception here -- retry a few times
 # before concluding it's the latter, rather than surfacing a misleading
 # permanent-looking message for what might just be a passing hiccup.
+#
+# Anonymous GitHub API calls share a 60/hour-per-IP limit; GitHub-hosted
+# CI runners pool a small set of egress IPs across a large volume of
+# unrelated global traffic and can exhaust that quota on their own. If
+# GITHUB_TOKEN happens to be set (e.g. this script invoked from within a
+# GitHub Actions job), use it to raise the effective limit to 5000/hour
+# -- end users running this outside CI simply won't have it set.
+$headers = @{ "User-Agent" = "spec-jedi-bootstrap-installer" }
+if ($env:GITHUB_TOKEN) {
+    $headers["Authorization"] = "Bearer $($env:GITHUB_TOKEN)"
+}
+
 $release = $null
 for ($attempt = 1; $attempt -le 3; $attempt++) {
     try {
-        $release = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "spec-jedi-bootstrap-installer" } -ErrorAction Stop
+        $release = Invoke-RestMethod -Uri $apiUrl -Headers $headers -ErrorAction Stop
         break
     } catch {
         $release = $null

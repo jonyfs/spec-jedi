@@ -591,6 +591,21 @@ if [ -n "$bridge_mode" ]; then
   esac
 fi
 
+# specs/039-memory-file-skill-mentions: harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory get that file created or updated too -- never antigravity
+# (no confirmed convention) or the 14 bridge harnesses above (their
+# bridge file already serves this purpose).
+memory_file_rel=""
+case "$harness" in
+  claude-code) memory_file_rel="CLAUDE.md" ;;
+esac
+if [ -n "$memory_file_rel" ]; then
+  echo
+  echo "🧠 Updating $memory_file_rel with the installed skill set..."
+  update_memory_file "$target_dir/$memory_file_rel" "$skills_dst_rel"
+fi
+
 echo
 echo "== Validating installed skills =="
 fail=0

@@ -47,6 +47,36 @@ This project is trunk-based (Principle X):
   merges — see the `owner-gate` job in `.github/workflows/validate.yml` for
   the exact mechanism.
 
+![a lone figure at a fork in a stone path, one trail lit by warm lanterns leading upward, the other fading into cold shadow](docs/comic/letter-path.jpg)
+
+That's not bureaucracy for its own sake — it's the right side of the
+Force, mechanized: the same discipline holds whether or not anyone's
+watching, because the constitution is watching instead.
+
+## Versioning & releases
+
+Spec Jedi follows [Semantic Versioning](https://semver.org/), scoped to
+the public skill-package contract: breaking a skill's behavior is MAJOR,
+a new skill or additive capability is MINOR, fixes and docs are PATCH.
+Full policy lives at [Principle XI](.specify/memory/constitution.md).
+
+Nobody cuts a release silently around here — the project just suggests
+when one's warranted and leaves the actual call to a human:
+
+```bash
+# Linux / macOS / Windows (WSL or Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (native PowerShell)
+./scripts/suggest-release.ps1
+```
+
+That inspects the commits since the last tag and recommends a next
+version. It never tags, never publishes — cutting an actual release
+stays a deliberate, maintainer-driven step, every time.
+
 ## Adding or changing a `specjedi-*` skill
 
 New skills and material changes to existing skills follow this project's own

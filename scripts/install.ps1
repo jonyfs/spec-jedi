@@ -460,6 +460,8 @@ if ($bridgeMode) {
 $memoryFileRel = ""
 switch ($Harness) {
     "claude-code" { $memoryFileRel = "CLAUDE.md" }
+    "codex-cli" { $memoryFileRel = "AGENTS.md" }
+    "trae" { $memoryFileRel = ".trae/rules/project_rules.md" }
 }
 if ($memoryFileRel) {
     Write-Host ""

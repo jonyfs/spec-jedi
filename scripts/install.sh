@@ -599,6 +599,8 @@ fi
 memory_file_rel=""
 case "$harness" in
   claude-code) memory_file_rel="CLAUDE.md" ;;
+  codex-cli) memory_file_rel="AGENTS.md" ;;
+  trae) memory_file_rel=".trae/rules/project_rules.md" ;;
 esac
 if [ -n "$memory_file_rel" ]; then
   echo

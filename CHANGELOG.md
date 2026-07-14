@@ -11,6 +11,21 @@ this file directly.
 
 ### Added
 
+- **README as a wise Jedi's letter** (feature 036) — reframes
+  `README.md`'s narrative sections (the opening pitch, "Who this is
+  for," "What you get today"'s intro, and the Quickstart's connective
+  prose) as an actual letter — an addressed opening, a body connecting
+  disciplined SDD practice (constitution-first, test-first, no
+  self-approval) to "the right side of the Force," and a closing
+  send-off — while every fact, badge, link, table, code block, and the
+  5 existing Mermaid diagrams stay exactly as they were. Adds 2 new
+  original illustrations (`docs/comic/letter-open.jpg`,
+  `docs/comic/letter-path.jpg`), generated via the same Pollinations.ai
+  mechanism feature 035 verified, both passing Constitution Principle
+  XII's Star-Wars-signature exclusion review clean on the first
+  attempt. Also removes `saber.svg` and its Noun Project attribution
+  from the README title and disclaimer, across the English source and
+  all 10 i18n translations.
 - **Skill validation & testing framework compliance audit** (feature
   033) — closes a real, measured gap: a direct `grep` audit found zero
   of the 24 shipped `specjedi-*` skills cited

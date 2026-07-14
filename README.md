@@ -21,23 +21,47 @@
 
 > *"Spec first. Code second. That is the way."* — a wise Master, probably.
 
-Here's the pitch in one breath: instead of writing code and explaining it
-after the fact, you write four things first — a **constitution** 📜 (the
-rules nobody gets to quietly break), a **specification** 🎯 (what you're
-building, and for whom), a **plan** 🛠️ (how, technically, in enough detail
-nobody has to guess), and a **task list** ✅ (the actual ordered steps).
-Then your coding agent builds against those artifacts instead of
-improvising its way through your codebase like a Padawan who skipped
-training.
+![a weathered scroll and a glowing quill on a stone desk in a quiet observatory, starlight through a high window](docs/comic/letter-open.jpg)
 
-Spec Jedi is the set of skills that makes that workflow real inside
-whatever coding agent you already use — twenty of them, supported for
-real (more on that below).
+**A letter, from one Master to whoever picks up this scroll next:**
 
-This repo holds itself to the exact same standard it ships. Its own
-[constitution](.specify/memory/constitution.md) decides how releases get
-versioned and how pull requests get merged — no exceptions carved out for
-the maintainers. No shortcuts to the Dark Side of vibe-coding here. 🚫🖤
+If you're reading this, you've probably already lost a few nights to a
+project that outgrew its own plan — or one that never had a plan at
+all, code first, explanation later, and later never quite arrives.
+That's the whole reason this letter exists.
+
+Here's what I want you to carry with you: before a single line of code,
+write four things — a **constitution** 📜 (the rules nobody, not even
+your future self at 2am, gets to quietly break), a **specification** 🎯
+(what you're building, and for whom, put into actual words), a **plan**
+🛠️ (how, technically, spelled out clearly enough that nobody has to
+guess later), and a **task list** ✅ (the ordered steps, in the order
+they actually need doing). Then — and only then — let your coding agent
+build against those four things, instead of improvising through your
+codebase like a Padawan who skipped the boring parts of training and is
+now discovering why they weren't boring.
+
+Spec Jedi is what turns that promise into something you can actually
+install — twenty coding agents supported, for real, not just in theory
+(more on that below).
+
+I'll say this plainly, because a letter that only flatters isn't much
+of a letter: this repository holds itself to the exact same discipline
+it's asking of you. Its own
+[constitution](.specify/memory/constitution.md) decides how its own
+releases get versioned and how its own pull requests get merged — no
+quiet exception carved out for whoever happens to be maintaining it
+that week. Every change goes through a real pull request, gets checked
+by a battery that doesn't care who wrote it, and nobody — not even the
+person who wrote the code — gets to approve their own work. That's not
+bureaucracy for its own sake. That's the right side of the Force,
+mechanized: the kind of discipline that holds even when nobody's
+watching, because the constitution is watching instead. No shortcuts to
+the Dark Side of vibe-coding here. 🚫🖤 (Yes, I said Dark Side. It's the
+whole metaphor. Let's not pretend otherwise — a Sith doesn't write
+tests either.)
+
+![a lone figure at a fork in a stone path, one trail lit by warm lanterns leading upward, the other fading into cold shadow](docs/comic/letter-path.jpg)
 
 *(Unofficial fan-flavored branding — Spec Jedi is not affiliated with, endorsed by,
 or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌)*
@@ -56,24 +80,28 @@ it runs.
 
 ## Who this is for
 
-You, probably, if you're using an AI coding agent and you're tired of
-re-explaining the same project context every session — or if you've ever
-watched an agent quietly reinvent a decision your team already made and
-abandoned three weeks ago. Solo developer, small team standardizing how
-everyone's agent behaves, doesn't matter: if you want specs, plans, and
-tasks to be real, versioned files instead of scrollback that vanishes
-when the chat closes, this is for you.
+You, most likely — if you're reading a letter about spec-driven
+development instead of scrolling past it, you already know the feeling
+I'm describing. Tired of re-explaining the same project context every
+session. Tired of watching an agent quietly reinvent a decision your
+team made and abandoned three weeks ago, because nothing wrote it down
+anywhere the agent could actually find it. Doesn't matter if it's just
+you or a whole team trying to get everyone's agent to behave the same
+way: if you want specs, plans, and tasks to be real, versioned files
+instead of scrollback that vanishes the moment the chat window closes,
+keep reading. This letter's for you.
 
 ## What you get today
 
-Let's be clear about what this actually is: Spec Jedi is a genuine
-**competitor** to [spec-kit](https://github.com/github/spec-kit), not a
-reskin of it ([Principle XV](.specify/memory/constitution.md)). The full
-`specjedi-*` SDD pipeline — constitution through convergence — shipped in
-full a while back: all 9 stages, each one built off real competitive
-research before a line of it got written
-([research.md](specs/001-specjedi-pipeline/research.md), Principle II),
-never rushed out the door.
+Let me be straight with you, the way this letter has tried to be from
+the start: Spec Jedi is a genuine **competitor** to
+[spec-kit](https://github.com/github/spec-kit), not a reskin wearing its
+robes ([Principle XV](.specify/memory/constitution.md)). The full
+`specjedi-*` SDD pipeline — constitution through convergence — shipped
+in full a while back: all 9 stages, each one built off real competitive
+research before a single line of it got written
+([research.md](specs/001-specjedi-pipeline/research.md), Principle II).
+Nothing here got rushed out the door just to have something to show.
 
 > *"A Jedi's strength flows from the Force. So too does a project's, from
 > its skills."* — a wise Master, probably.
@@ -412,9 +440,11 @@ exactly which skill handles which part of the practice.
 
 ## Quickstart
 
-Twenty-five product skills, all live ([What you get today](#what-you-get-today))
-— the full `specjedi-*` pipeline is done, not partial. If you've never
-touched an SDD tool before, start at step 0 and don't skip it.
+Now, the practical part of this letter — inspiration without a next
+step is just a nice quote. Twenty-five product skills, all live
+([What you get today](#what-you-get-today)), the full `specjedi-*`
+pipeline done, not partial. Never touched an SDD tool before? Start at
+step 0. Don't skip it — I promise it's short.
 
 ### Which path should I use?
 
@@ -544,14 +574,16 @@ the planning ceremony. It never shortens verification.
     anything, and it never blocks a PR from opening on its own.
 
 Per [Principle XIV](.specify/memory/constitution.md), whatever you just
-ran should already be telling you what comes next — you genuinely
-shouldn't need to keep scrolling back up to this list. Full chain:
-`specjedi-onboard` (first run only) → `specjedi-constitution` →
-`specjedi-specify` → `specjedi-clarify` → `specjedi-plan` →
-`specjedi-tasks` → `specjedi-implement` → `specjedi-analyze` →
-`specjedi-checklist` → `specjedi-converge`, looping back to
-`specjedi-implement` any time `specjedi-converge` turns up drift worth
-working through.
+ran should already be telling you what comes next — that's not an
+accident, and you genuinely shouldn't need to keep scrolling back up to
+this list to find your way. Full chain: `specjedi-onboard` (first run
+only) → `specjedi-constitution` → `specjedi-specify` →
+`specjedi-clarify` → `specjedi-plan` → `specjedi-tasks` →
+`specjedi-implement` → `specjedi-analyze` → `specjedi-checklist` →
+`specjedi-converge`, looping back to `specjedi-implement` any time
+`specjedi-converge` turns up drift worth working through. Follow it
+once, and you'll see why I bothered writing all this down in the first
+place.
 
 ### The pipeline, end to end
 

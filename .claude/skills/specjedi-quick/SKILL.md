@@ -34,7 +34,14 @@ change too big or too ambiguous through the fast path.
      seems. No exception, ever.
    - **Not a constitution amendment** — has its own `/speckit-constitution`
      path already.
-2. **Write `specs/NNN-name/quick.md`** — one file, four sections:
+2. **Before creating the new feature directory, self-invoke
+   `specjedi-worktree`'s proactive-offer detection step** (Principle
+   XVII): if the current checkout has actual uncommitted changes on a
+   non-trunk branch, offer — never force — a worktree for this change
+   before anything else happens. A clean checkout or one already on the
+   trunk branch triggers nothing; declining the offer proceeds with
+   today's existing single-checkout flow completely unchanged.
+3. **Write `specs/NNN-name/quick.md`** — one file, four sections:
    ```markdown
    # Quick: <one-line title>
 
@@ -49,20 +56,20 @@ change too big or too ambiguous through the fast path.
    ## Acceptance checks
    - [ ] <checkable item>
    ```
-3. **Branch check — before touching any other file.** Run `git branch
+4. **Branch check — before touching any other file.** Run `git branch
    --show-current`; if on trunk (`main` by default), create and check out
    a short-lived feature branch first (`specjedi-implement`'s Step 1,
    reused verbatim).
-4. **Implement directly from `quick.md`'s Concrete Changes list** — no
+5. **Implement directly from `quick.md`'s Concrete Changes list** — no
    separate `specjedi-plan`/`specjedi-tasks` invocation. Where the change
    involves code, test-first for real (Principle VI): write the test,
    run it, observe it fail, implement, run it again, observe it pass —
    exactly `specjedi-implement`'s Step 4, applied here.
-5. **Self-invoke `specjedi-govcheck`** against the branch's diff before
+6. **Self-invoke `specjedi-govcheck`** against the branch's diff before
    opening a PR — surface any CRITICAL finding prominently, but never let
    it block the PR from opening; the CI battery is the actual gate
    (Principle X), same as `specjedi-implement`'s Step 6.5.
-6. **Set `Status: Implemented`** in `quick.md`, open the PR, and request
+7. **Set `Status: Implemented`** in `quick.md`, open the PR, and request
    merge via the repo's own supported mechanism (e.g. `gh pr merge
    --auto`) where available — whether it actually merges is the target
    repo's CI/branch-protection decision, never this skill's to claim or

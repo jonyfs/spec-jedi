@@ -1,7 +1,7 @@
 ---
 name: specjedi-status
-description: A project-wide dashboard deriving every feature's status entirely from on-disk artifacts (spec.md/plan.md/tasks.md presence and checkbox completion, or quick.md's Status line and Acceptance Checks for specjedi-quick features) — zero separately-maintained tracking system. Triggers on a request for project status, a dashboard, or "what am I still working on."
-compatibility: Uses git for a recency signal when available (degrades gracefully otherwise). Reads specs/NNN-feature-name/{spec,plan,tasks,quick}.md; writes nothing.
+description: A project-wide dashboard deriving every feature's status entirely from on-disk artifacts (spec.md/plan.md/tasks.md presence and checkbox completion, or quick.md's Status line and Acceptance Checks for specjedi-quick features) — zero separately-maintained tracking system. Worktree-aware — a single report spans every git worktree of the repository, not just the current checkout's. Triggers on a request for project status, a dashboard, or "what am I still working on."
+compatibility: Uses git for a recency signal and worktree enumeration (git worktree list --porcelain) when available (degrades gracefully otherwise). Reads specs/NNN-feature-name/{spec,plan,tasks,quick}.md across the current checkout and every enumerated worktree; writes nothing.
 ---
 
 # 🧭 Spec Jedi Status
@@ -42,7 +42,17 @@ cached state.
    so rather than failing the whole report.
 5. **Present one Markdown table**, one row per feature, plus a one-line
    summary count.
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV):
+6. **Enumerate every worktree of this repository** (FR-006): run `git
+   worktree list --porcelain`. If it reports only the current checkout,
+   skip straight to step 8 — the common case produces zero added output,
+   byte-for-byte unchanged from before this capability existed (SC-004).
+7. **For each additional worktree found, apply steps 1-4 to that
+   worktree's own `specs/*/` directory tree** — the exact same on-disk
+   derivation logic already used for the current checkout, just reading a
+   different filesystem root, per no-parallel-derivation-logic (Constitution
+   Principle XXI's precedent). Attribute each row clearly to its own
+   worktree path so a reader knows which checkout a feature lives in.
+8. **Offer the next step(s) as a short bulleted list** (Principle XIV):
    whichever in-progress feature seems most relevant, or `specjedi-tasks`/
    `specjedi-implement` for a feature that's planned but not yet broken
    down or built.
@@ -67,6 +77,26 @@ skill's behavior, since there are no confirmation pauses to narrow.
 | 001-example | spec, plan, tasks | 100% (complete) | 2026-07-11 |
 
 5 features: 4 complete, 1 in progress.
+```
+
+When 2+ worktrees exist, each additional worktree's rows are grouped
+under their own heading naming the worktree path, appended after the
+current checkout's table — never interleaved row-by-row:
+
+```markdown
+| Feature | Artifacts | Completion | Last commit |
+|---|---|---|---|
+| 001-example | spec, plan, tasks | 100% (complete) | 2026-07-11 |
+
+5 features: 4 complete, 1 in progress.
+
+### Worktree: .worktrees/rate-limiting
+
+| Feature | Artifacts | Completion | Last commit |
+|---|---|---|---|
+| 032-worktree-awareness | spec, plan, tasks | 60% (in progress) | 2026-07-13 |
+
+1 feature: 0 complete, 1 in progress.
 ```
 
 **Audience calibration boundary**: the status table itself stays precise,
@@ -95,6 +125,15 @@ own dry run)**:
 commit history yet — that would assert a judgment the data doesn't
 support; "not yet committed" is the honest fact, not a verdict.
 
+**Edge-case input**: the same repository, but `git worktree list
+--porcelain` reports only the current checkout (the common case).
+
+**Agent writes**: the single-checkout table above, unchanged — no
+"Worktrees: 1" line, no extra heading, nothing added (SC-004).
+
+**Not this**: adding a "no other worktrees found" line to the report —
+that's still noise the common case shouldn't carry.
+
 ## `--auto` mode
 
 No-op — this skill has no confirmation pauses to narrow. Accepted for
@@ -115,6 +154,12 @@ interface consistency with every other `specjedi-*` skill.
 - **Never** assert "stalled" as a fact — report the objective commit date
   and let the reader draw that conclusion.
 - **Never** include a non-conforming directory in the scan.
+- **Never** add any worktree-related output (heading, count, or note) when
+  `git worktree list --porcelain` reports only the current checkout — the
+  common case stays byte-for-byte unchanged (SC-004).
+- **Never** derive a worktree's feature status any differently than the
+  current checkout's own — same on-disk-artifact rules, just a different
+  filesystem root.
 
 ## Verifiable success criteria
 
@@ -125,3 +170,10 @@ interface consistency with every other `specjedi-*` skill.
   with a suggested next step.
 - No report line contains the word "stalled" as an assertion — only
   objective dates and percentages.
+- A run from any one of 2+ worktrees reports every worktree's in-progress
+  features in one output, each attributed to its own worktree path
+  (SC-002) — checkable by comparing the report against each worktree's
+  own `specs/` directory independently.
+- A run against a repository with no other worktrees produces output
+  identical to a pre-worktree-awareness run — checkable by diffing the
+  report against the single-checkout table format alone.

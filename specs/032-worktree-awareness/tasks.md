@@ -27,13 +27,13 @@ New file: `.claude/skills/specjedi-worktree/SKILL.md`. Modified files:
 
 ## Phase 1: Setup
 
-- [ ] T001 [P] Re-read `.claude/skills/specjedi-tokencheck/SKILL.md`
+- [X] T001 [P] Re-read `.claude/skills/specjedi-tokencheck/SKILL.md`
       and `.claude/skills/specjedi-implement/SKILL.md` in full — both
       already establish this project's convention for confirm-gated
       actions and direct git command execution respectively; ground
       `specjedi-worktree`'s own structure in these rather than
       inventing a new shape (depends on nothing).
-- [ ] T002 [P] Re-read `.claude/skills/specjedi-status/SKILL.md`'s
+- [X] T002 [P] Re-read `.claude/skills/specjedi-status/SKILL.md`'s
       current on-disk-artifact derivation logic end to end to confirm
       the exact insertion point for worktree enumeration (US3 prep;
       depends on nothing).
@@ -51,28 +51,28 @@ otherwise.
 via `git worktree list` that a real worktree exists at a distinct path,
 checked out on a new branch.
 
-- [ ] T003 [US1] Write `.claude/skills/specjedi-worktree/SKILL.md`'s
+- [X] T003 [US1] Write `.claude/skills/specjedi-worktree/SKILL.md`'s
       YAML frontmatter, Persona, and Task sections (depends on T001)
-- [ ] T004 [US1] Write the native-tool-detection step: check whether
+- [X] T004 [US1] Write the native-tool-detection step: check whether
       the current harness exposes an `EnterWorktree`-shaped tool
       (confirmed this session for Claude Code); if present, delegate to
       it and let it own directory placement + session relocation
       (FR-001, FR-007, research.md's native-tool-first decision)
       (depends on T003)
-- [ ] T005 [US1] Write the git-fallback path (only when no native tool
+- [X] T005 [US1] Write the git-fallback path (only when no native tool
       exists): verify `.worktrees/` is `.gitignore`d — add + commit the
       entry first if not — then `git worktree add .worktrees/<branch>
       -b <branch>` (FR-001, research.md's `.worktrees/` convention,
       adopted from Superpowers' `using-git-worktrees` skill) (depends
       on T004)
-- [ ] T006 [US1] Write the path-collision guard: detect an existing
+- [X] T006 [US1] Write the path-collision guard: detect an existing
       target path and refuse with a clear, actionable message instead
       of overwriting or silently picking a different path (FR-004)
       (depends on T005)
-- [ ] T007 [US1] Write the unsupported-git-worktree-version guard: a
+- [X] T007 [US1] Write the unsupported-git-worktree-version guard: a
       clear, honest decline message instead of a raw git error (FR-003)
       (depends on T005)
-- [ ] T008 [US1] Add Format, Example (input → output — a full worked
+- [X] T008 [US1] Add Format, Example (input → output — a full worked
       scenario showing both the native-tool path and the git-fallback
       path), `--auto` mode, Always/Never, and Verifiable success
       criteria sections per the Skill Authoring Standard (Principle XIX
@@ -95,19 +95,19 @@ branch, start a new feature via the normal flow; confirm the offer
 appears before any branch switch, and confirm declining leaves today's
 existing flow completely unchanged.
 
-- [ ] T009 [US2] In `.claude/skills/specjedi-worktree/SKILL.md`: write
+- [X] T009 [US2] In `.claude/skills/specjedi-worktree/SKILL.md`: write
       the reusable proactive-offer detection step (`git status`
       dirty-check combined with current branch ≠ trunk) as a step other
       skills self-invoke, plus the FR-005 guarded-removal step (explicit
       request only; refuse to discard uncommitted/unmerged work without
       a second, explicit confirmation — leaning on the native tool's own
       built-in guard where available, per research.md) (depends on T008)
-- [ ] T010 [P] [US2] Wire `.claude/skills/specjedi-specify/SKILL.md` to
+- [X] T010 [P] [US2] Wire `.claude/skills/specjedi-specify/SKILL.md` to
       self-invoke T009's detection step before creating the new feature
       directory, offering (never forcing) a worktree when it fires
       (FR-002; Principle XVII proactive-invocation precedent) (depends
       on T009)
-- [ ] T011 [P] [US2] Wire `.claude/skills/specjedi-quick/SKILL.md` to do
+- [X] T011 [P] [US2] Wire `.claude/skills/specjedi-quick/SKILL.md` to do
       the same (FR-002) (depends on T009)
 
 **Checkpoint**: Starting a new feature with dirty, uncommitted work on
@@ -126,15 +126,15 @@ single, unified view.
 run the status check from any one of them; confirm every worktree's
 feature status appears in the single report.
 
-- [ ] T012 [US3] In `.claude/skills/specjedi-status/SKILL.md`: add the
+- [X] T012 [US3] In `.claude/skills/specjedi-status/SKILL.md`: add the
       `git worktree list --porcelain` enumeration step (FR-006,
       research.md's decision) (depends on T002)
-- [ ] T013 [US3] In `.claude/skills/specjedi-status/SKILL.md`: for each
+- [X] T013 [US3] In `.claude/skills/specjedi-status/SKILL.md`: for each
       enumerated worktree beyond the current checkout, apply the exact
       same on-disk `specs/*/` derivation logic already used for the
       current checkout, reading that worktree's own directory (FR-006)
       (depends on T012)
-- [ ] T014 [US3] In `.claude/skills/specjedi-status/SKILL.md`: add an
+- [X] T014 [US3] In `.claude/skills/specjedi-status/SKILL.md`: add an
       explicit early-return/guard so the common case (no other
       worktrees) produces byte-for-byte unchanged output — zero added
       noise (SC-004) (depends on T013)
@@ -146,30 +146,30 @@ status check more than once to see all 3 features.
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T015 [P] Update `README.md`: add the `specjedi-worktree` row to
+- [X] T015 [P] Update `README.md`: add the `specjedi-worktree` row to
       the skill table, update the mindmap (Meta and Tooling 8→9, total
       24→25), update the `Skills` badge count.
-- [ ] T016 [P] Update `references/skill-roadmap.md`: add the Shipped
+- [X] T016 [P] Update `references/skill-roadmap.md`: add the Shipped
       section entry for `specjedi-worktree`.
-- [ ] T017 [P] Update `references/genuine-contributions-log.md`: add
+- [X] T017 [P] Update `references/genuine-contributions-log.md`: add
       the row for this feature (cross-worktree unified status
       reporting — the genuine Principle II contribution per
       research.md).
-- [ ] T018 [P] Update `references/honest-assessment.md`: close the
+- [X] T018 [P] Update `references/honest-assessment.md`: close the
       worktree-awareness Disadvantage/Improvement Point now that a real
       mechanism ships.
-- [ ] T019 [P] Update `references/competitive-comparison.md`: revise
+- [X] T019 [P] Update `references/competitive-comparison.md`: revise
       the Spec Kitty row's "Rejected" cell (worktree-awareness is no
       longer rejected-as-mandatory-machinery — it's shipped) per that
       document's own Maintenance rule; note Superpowers'
       `using-git-worktrees` skill was directly inspected this cycle.
-- [ ] T020 [P] Add the `CHANGELOG.md` entry.
-- [ ] T021 Run `quickstart.md`'s 7 scenarios in order — Scenarios 1-4
+- [X] T020 [P] Add the `CHANGELOG.md` entry.
+- [X] T021 Run `quickstart.md`'s 7 scenarios in order — Scenarios 1-4
       execute real `git worktree` commands against this checkout;
       Scenario 6 cleans up the test worktree/branch before anything
       else proceeds; Scenario 7 runs `scripts/validate.sh` (depends on
       T008, T011, T014).
-- [ ] T022 Badge-row review per the Distribution & Ecosystem Standards
+- [X] T022 Badge-row review per the Distribution & Ecosystem Standards
       section (Principle X's pre-PR requirement) (depends on T015).
 - [ ] T023 Run `specjedi-govcheck` against this branch before opening
       the PR (depends on T021, T022).

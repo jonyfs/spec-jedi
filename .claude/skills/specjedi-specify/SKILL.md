@@ -29,20 +29,27 @@ next step once the spec is done.
 1. **Understand the idea.** If it's already detailed, extract the shape
    directly. If it's rough, ask what problem it solves and for whom — don't
    demand a fully-formed description before starting.
-2. **Break it into user stories**, each assigned a priority (P1 = most
+2. **Before creating the new feature directory, self-invoke
+   `specjedi-worktree`'s proactive-offer detection step** (Principle XVII):
+   if the current checkout has actual uncommitted changes on a non-trunk
+   branch, offer — never force — a worktree for this new feature before
+   anything else happens. A clean checkout or one already on the trunk
+   branch triggers nothing; declining the offer proceeds with today's
+   existing single-checkout flow completely unchanged.
+3. **Break it into user stories**, each assigned a priority (P1 = most
    critical). Reason through the priority order explicitly: which story
    alone would still deliver real, demonstrable value if nothing else
    shipped? That's P1. This is a judgment call, not a default ordering by
    the order ideas were mentioned.
-3. **Write acceptance scenarios** (Given/When/Then) and an independent test
+4. **Write acceptance scenarios** (Given/When/Then) and an independent test
    for each story — one that doesn't require any other story to exist.
-4. **Extract functional requirements.** For anything genuinely unclear —
+5. **Extract functional requirements.** For anything genuinely unclear —
    not inferable from context or reasonable default — mark it
    `NEEDS CLARIFICATION: <specific question>` inline rather than guessing.
    Don't invent detail that wasn't given and isn't a safe default.
-5. **Define measurable success criteria** — technology-agnostic, numeric or
+6. **Define measurable success criteria** — technology-agnostic, numeric or
    otherwise checkable, never "the system should work well."
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV): if
+7. **Offer the next step(s) as a short bulleted list** (Principle XIV): if
    any `NEEDS CLARIFICATION` markers remain, `specjedi-clarify` as the
    primary option; otherwise `specjedi-plan` to move to technical planning.
 

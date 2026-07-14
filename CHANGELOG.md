@@ -11,6 +11,20 @@ this file directly.
 
 ### Added
 
+- **`specjedi-worktree`** (feature 032) — mechanizes git-worktree-based
+  parallel development, closing the gap `references/competitive-
+  comparison.md`'s Spec Kitty row and `references/honest-assessment.md`'s
+  Improvement Points previously only documented as advice. Creates a
+  worktree for a named feature on demand, preferring a native harness
+  relocation tool (Claude Code's `EnterWorktree`/`ExitWorktree`) and
+  falling back to a project-local, `.gitignore`-verified `.worktrees/`
+  directory otherwise — the design adopted directly from Superpowers'
+  `using-git-worktrees` skill (inspected in full this cycle). Also
+  provides the reusable proactive-offer detection step `specjedi-
+  specify`/`specjedi-quick` now self-invoke before starting a new
+  feature atop real uncommitted work on a non-trunk branch, and pairs
+  with a `specjedi-status` extension unifying status reporting across
+  every worktree of the repository in one report.
 - **Honest advantages/disadvantages assessment** (feature 027) — new
   `references/honest-assessment.md`: candid, three-section self-
   assessment (Advantages / Disadvantages / Improvement Points), each

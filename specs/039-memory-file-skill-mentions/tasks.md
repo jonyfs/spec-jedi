@@ -82,21 +82,21 @@ and marker-corruption edge cases.
 fresh-file creation, pre-existing-content preservation, and idempotent
 re-run, all checkable without any other harness's dispatch code existing.
 
-- [ ] T003 [US1] In `scripts/install.sh`, add a `memory_file_rel=""` +
+- [x] T003 [US1] In `scripts/install.sh`, add a `memory_file_rel=""` +
   `case "$harness" in claude-code) memory_file_rel="CLAUDE.md" ;; esac`
   block and the `if [ -n "$memory_file_rel" ]; then ... update_memory_file ...; fi`
   call, placed *after* the existing `bridge_mode` block (per plan.md:
   "keeping them as separate `if` blocks rather than merging into the
   `case` avoids restructuring code that already works"). Depends on
   T001.
-- [ ] T004 [US1] In `scripts/install.ps1`, add the equivalent
+- [x] T004 [US1] In `scripts/install.ps1`, add the equivalent
   `$memoryFileRel = ""` + `switch ($Harness) { "claude-code" { $memoryFileRel = "CLAUDE.md" } }`
   block and the `if ($memoryFileRel) { ... Update-MemoryFile ... }` call,
   placed after the existing `bridgeMode` block. Depends on T002. Not
   `[P]` with T003 in the sense that both must exist before Phase 3's CI
   tasks can pass, but they touch different files with no shared state —
   safe to implement in either order.
-- [ ] T005 [US1] Add a new `memory-file-injection` job to
+- [x] T005 [US1] Add a new `memory-file-injection` job to
   `.github/workflows/validate.yml`, 3-OS matrix
   (`runs-on: ${{ matrix.os }}` / `os: [ubuntu-latest, macos-latest, windows-latest]`,
   matching `install-test`'s existing pattern), with a `shell: bash` step
@@ -104,29 +104,29 @@ re-run, all checkable without any other harness's dispatch code existing.
   `./scripts/install.sh --harness claude-code <dir>`, assert `CLAUDE.md`
   exists and contains both markers plus every currently installed
   skill's name. Depends on T003.
-- [ ] T006 [US1] Extend the same bash step (or add a second one in the
+- [x] T006 [US1] Extend the same bash step (or add a second one in the
   same job) implementing plan.md's CI step 2: a *second* scratch dir,
   write a `CLAUDE.md` with known dummy content first, capture that exact
   pre-install content, install, then assert the post-install file with
   the marker region (inclusive) removed is byte-identical to the
   captured pre-install content (a real diff, not a substring `grep`) —
   per SC-002's own wording. Depends on T005.
-- [ ] T007 [US1] Extend the job implementing plan.md's CI step 3:
+- [x] T007 [US1] Extend the job implementing plan.md's CI step 3:
   re-run the installer against T005's first scratch dir, hash the file
   before and after (`sha256sum`), assert identical. Depends on T005.
-- [ ] T008 [US1] Extend the job implementing plan.md's CI step 4: a
+- [x] T008 [US1] Extend the job implementing plan.md's CI step 4: a
   *third* scratch dir, write a `CLAUDE.md` using CRLF line endings
   throughout (including around a Spec-Jedi-section the test plants
   itself, not the installer), install, assert (a) the section actually
   refreshes rather than silently no-op'ing, and (b) every CRLF byte
   outside the markers is preserved (same real-diff method as T006).
   Depends on T003.
-- [ ] T009 [US1] Extend the job implementing plan.md's CI step 5: a
+- [x] T009 [US1] Extend the job implementing plan.md's CI step 5: a
   *fourth* scratch dir, write a `CLAUDE.md` with only a start marker and
   no matching end marker, run the installer, assert non-zero exit, an
   error message naming the file, and the file left completely
   unmodified (FR-005). Depends on T003.
-- [ ] T010 [US1] Add the `shell: pwsh` counterpart step to the same job,
+- [x] T010 [US1] Add the `shell: pwsh` counterpart step to the same job,
   repeating T005-T009's five scenarios against `install.ps1` (plan.md CI
   step 10's "repeat steps 1-5 for the PowerShell leg"), then add a final
   assertion diffing `install.sh`'s and `install.ps1`'s `CLAUDE.md` output
@@ -150,22 +150,22 @@ functions unchanged.
 checkable without Phase 3's `CLAUDE.md` logic ever running, since it
 exercises a different harness value end-to-end.
 
-- [ ] T011 [US2] In `scripts/install.sh`, extend the `case "$harness" in`
+- [x] T011 [US2] In `scripts/install.sh`, extend the `case "$harness" in`
   block T003 introduced with `codex-cli) memory_file_rel="AGENTS.md" ;;`
   and `trae) memory_file_rel=".trae/rules/project_rules.md" ;;`. Depends
   on T003 (extends the same `case` block — not safe to run before T003
   exists, and not `[P]` with it since both edit the same block).
-- [ ] T012 [US2] In `scripts/install.ps1`, extend the `switch ($Harness)`
+- [x] T012 [US2] In `scripts/install.ps1`, extend the `switch ($Harness)`
   block T004 introduced with the equivalent `"codex-cli"` and `"trae"`
   entries. Depends on T004 (same-block reasoning as T011). T011 and T012
   ARE `[P]` with each other — different files.
-- [ ] T013 [US2] Extend `memory-file-injection`'s bash step implementing
+- [x] T013 [US2] Extend `memory-file-injection`'s bash step implementing
   plan.md's CI step 6: `--harness codex-cli` into a fresh scratch dir,
   assert `AGENTS.md` exists with the markers, and that its "installed
   at" sentence names `.agents/skills/` (not `.claude/skills/`) — proves
   `skills_dst_rel` is genuinely parameterized in `memory_section()`, not
   hardcoded. Depends on T011.
-- [ ] T014 [US2] Extend the same step implementing plan.md's CI step 7:
+- [x] T014 [US2] Extend the same step implementing plan.md's CI step 7:
   `--harness trae` into a fresh scratch dir, assert
   `.trae/rules/project_rules.md` (and its parent directory) was created
   with the markers. Depends on T011.
@@ -185,13 +185,13 @@ output.
 **Independent Test**: Per spec.md's own Independent Test — checkable
 without any Phase 3/4 dispatch code running for the harness under test.
 
-- [ ] T015 [US3] Extend `memory-file-injection`'s bash step implementing
+- [x] T015 [US3] Extend `memory-file-injection`'s bash step implementing
   plan.md's CI step 8: `--harness antigravity` into a fresh scratch dir,
   assert no `CLAUDE.md`/`AGENTS.md`/`.trae/rules/*` file was created —
   only `.agents/skills/`. No dependency on any dispatch task (FR-006 is
   satisfied by the *absence* of an `antigravity` entry in T003/T011's
   `case` block, not by new code).
-- [ ] T016 [US3] Extend the same step implementing plan.md's CI step 9:
+- [x] T016 [US3] Extend the same step implementing plan.md's CI step 9:
   `--harness cursor` into a fresh scratch dir, assert `.cursor/rules/`'s
   file count equals the installed skill count — the existing bridge-file
   behavior, unchanged by this feature (FR-007). No dependency on any
@@ -205,7 +205,7 @@ is now completely CI-proven.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T017 Add `memory-file-injection` to `ci-gate`'s `needs:` list in
+- [x] T017 Add `memory-file-injection` to `ci-gate`'s `needs:` list in
   `.github/workflows/validate.yml`, matching how every other required
   job is already listed there (same pattern as feature 038's
   `package-content-completeness` addition). Depends on T005 (the job

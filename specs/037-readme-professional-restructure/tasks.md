@@ -106,7 +106,7 @@ Single repository, documentation-only. All paths are repo-root-relative.
 - [x] T015 Run the fact-preservation diff against `specs/037-readme-professional-restructure/baseline-facts.md` (T001): badge count (expect 10, unchanged), harness-table row count (expect 20, unchanged — not relocated), and every install/release code block's content byte-identical to before, only location may differ (FR-008, SC-003) — depends on T001, T013
 - [x] T016 Run all 6 scenarios in `specs/037-readme-professional-restructure/quickstart.md` against the finished `README.md`/`CONTRIBUTING.md`/`references/quickstart-guide.md`/`references/recommended-companions.md` and record the outcome of each — depends on T013, T014, T015
 - [x] T017 Delete the scratch `specs/037-readme-professional-restructure/baseline-facts.md` file created in T001 once T015 confirms the diff — it was working scratch, not a shipped artifact — depends on T015
-- [ ] T018 Run `specjedi-govcheck` against the feature branch's diff before opening the PR (self-invoked convention this session has followed for every prior feature) — depends on T016
+- [x] T018 Run `specjedi-govcheck` against the feature branch's diff before opening the PR (self-invoked convention this session has followed for every prior feature) — depends on T016
 
 ---
 

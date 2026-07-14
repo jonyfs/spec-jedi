@@ -7,7 +7,7 @@
 > [Français](../fr/README.md) · [العربية](../ar/README.md) ·
 > [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -42,8 +42,7 @@ vibe-coding ici. 🚫🖤
 
 *(Image de marque non officielle, inspirée par des fans — Spec Jedi n'est
 affilié, approuvé ni sponsorisé par Lucasfilm/Disney. Que la Spec soit
-avec vous. 🌌 Icône « sabre laser » par Carlos von Dessauer, provenant de
-[Noun Project](https://thenounproject.com), utilisée sous licence CC BY 3.0.)*
+avec vous. 🌌)*
 
 ```mermaid
 flowchart TD

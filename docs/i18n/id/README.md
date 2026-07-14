@@ -9,7 +9,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -44,9 +44,7 @@ Gelap vibe-coding di sini. 🚫🖤
 
 *(Branding tidak resmi, terinspirasi penggemar — Spec Jedi tidak
 berafiliasi dengan, didukung oleh, atau disponsori oleh
-Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌 Ikon "lightsaber" oleh
-Carlos von Dessauer, dari [Noun Project](https://thenounproject.com),
-digunakan di bawah lisensi CC BY 3.0.)*
+Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌)*
 
 ```mermaid
 flowchart TD

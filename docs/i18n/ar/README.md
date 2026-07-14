@@ -7,7 +7,7 @@
 > [Français](../fr/README.md) · [العربية](../ar/README.md) ·
 > [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -36,9 +36,7 @@
 اختصارات نحو الجانب المظلم من "vibe-coding" هنا. 🚫🖤
 
 *(هوية غير رسمية مستوحاة من المعجبين — Spec Jedi ليست تابعة لشركة
-Lucasfilm/Disney ولا مدعومة أو مموَّلة منها. لتكن المواصفة معك. 🌌 أيقونة
-"سيف الضوء" من تصميم Carlos von Dessauer، من [Noun Project](https://thenounproject.com)،
-مستخدَمة بموجب رخصة CC BY 3.0.)*
+Lucasfilm/Disney ولا مدعومة أو مموَّلة منها. لتكن المواصفة معك. 🌌)*
 
 ```mermaid
 flowchart TD

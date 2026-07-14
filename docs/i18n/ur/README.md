@@ -9,7 +9,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -40,9 +40,7 @@ releases کا ورژن کیسے طے ہوتا ہے اور pull requests کیسے
 کیے جاتے ہیں۔ یہاں vibe-coding کی تاریک جانب کوئی شارٹ کٹ نہیں ہے۔ 🚫🖤
 
 *(یہ غیر سرکاری، فین سے متاثر برانڈنگ ہے — Spec Jedi کا Lucasfilm/Disney
-سے کوئی تعلق، توثیق یا سرپرستی نہیں ہے۔ Spec آپ کے ساتھ رہے۔ 🌌 "لائٹ
-سیبر" آئیکن Carlos von Dessauer کا بنایا ہوا ہے، [Noun Project](https://thenounproject.com)
-سے، CC BY 3.0 کے تحت استعمال کیا گیا۔)*
+سے کوئی تعلق، توثیق یا سرپرستی نہیں ہے۔ Spec آپ کے ساتھ رہے۔ 🌌)*
 
 ```mermaid
 flowchart TD

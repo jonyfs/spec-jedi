@@ -10,7 +10,7 @@
 > [Русский](../ru/README.md) · [اردو](../ur/README.md) ·
 > [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -44,9 +44,7 @@ Spec Jedi — это набор навыков (skills) для разработ�
 
 *(Неофициальный, вдохновлённый фанатами брендинг — Spec Jedi не связан
 с Lucasfilm/Disney, не одобрен и не спонсируется ими. Да пребудет Spec
-с вами. 🌌 Значок «световой меч» — автор Carlos von Dessauer, с сайта
-[Noun Project](https://thenounproject.com), используется по лицензии
-CC BY 3.0.)*
+с вами. 🌌)*
 
 ```mermaid
 flowchart TD

@@ -7,7 +7,7 @@
 > [Français](../fr/README.md) · [العربية](../ar/README.md) ·
 > [বাংলা](../bn/README.md) · [Português](../pt/README.md) · [Русский](../ru/README.md) · [اردو](../ur/README.md) · [Bahasa Indonesia](../id/README.md)
 
-# <img src="../../../saber.svg" alt="lightsaber" width="26"/> Spec Jedi
+# Spec Jedi
 
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
@@ -39,9 +39,7 @@ merge होते हैं, शामिल है। यहाँ vibe-coding
 शॉर्टकट नहीं है। 🚫🖤
 
 *(यह गैर-आधिकारिक, फैन-प्रेरित branding है — Spec Jedi का Lucasfilm/Disney
-से कोई संबंध, समर्थन या प्रायोजन नहीं है। Spec आपके साथ रहे। 🌌 "Lightsaber"
-आइकन Carlos von Dessauer द्वारा, [Noun Project](https://thenounproject.com)
-से, CC BY 3.0 के तहत उपयोग किया गया।)*
+से कोई संबंध, समर्थन या प्रायोजन नहीं है। Spec आपके साथ रहे। 🌌)*
 
 ```mermaid
 flowchart TD

@@ -25,7 +25,11 @@ if ($Help -or -not $Version -or -not $OutputDir) {
     Write-Host ""
     Write-Host "Produces a tarball containing .claude/skills/specjedi-*/, the four"
     Write-Host ".specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,"
-    Write-Host "and LICENSE -- nothing else."
+    Write-Host "scripts/session-start.sh, scripts/session-start.ps1, README.md, four"
+    Write-Host "user-facing references/*.md files (quickstart-guide.md, what-is-sdd.md,"
+    Write-Host "specjedi-and-sdd.md, session-start-hook-guide.md), and LICENSE -- never"
+    Write-Host "specs/, CONTRIBUTING.md, or this project's own internal skill-authoring/"
+    Write-Host "governance reference docs (specs/038-expand-release-package)."
     if ($Help) { exit 0 } else { exit 1 }
 }
 
@@ -55,12 +59,26 @@ try {
         Write-Host "  ✅ .specify/templates/$template"
     }
 
+    $referencesDst = Join-Path $stageRoot "references"
+    New-Item -ItemType Directory -Force -Path $referencesDst | Out-Null
+    foreach ($ref in @("quickstart-guide.md", "what-is-sdd.md", "specjedi-and-sdd.md", "session-start-hook-guide.md")) {
+        Copy-Item -Path (Join-Path $repoRoot "references/$ref") -Destination (Join-Path $referencesDst $ref)
+        Write-Host "  ✅ references/$ref"
+    }
+
+    Copy-Item -Path (Join-Path $repoRoot "README.md") -Destination (Join-Path $stageRoot "README.md")
+    Write-Host "  ✅ README.md"
+
     $scriptsDst = Join-Path $stageRoot "scripts"
     New-Item -ItemType Directory -Force -Path $scriptsDst | Out-Null
     Copy-Item -Path (Join-Path $repoRoot "scripts/install.sh") -Destination (Join-Path $scriptsDst "install.sh")
     Copy-Item -Path (Join-Path $repoRoot "scripts/install.ps1") -Destination (Join-Path $scriptsDst "install.ps1")
+    Copy-Item -Path (Join-Path $repoRoot "scripts/session-start.sh") -Destination (Join-Path $scriptsDst "session-start.sh")
+    Copy-Item -Path (Join-Path $repoRoot "scripts/session-start.ps1") -Destination (Join-Path $scriptsDst "session-start.ps1")
     Write-Host "  ✅ scripts/install.sh"
     Write-Host "  ✅ scripts/install.ps1"
+    Write-Host "  ✅ scripts/session-start.sh"
+    Write-Host "  ✅ scripts/session-start.ps1"
 
     Copy-Item -Path (Join-Path $repoRoot "LICENSE") -Destination (Join-Path $stageRoot "LICENSE")
     Write-Host "  ✅ LICENSE"

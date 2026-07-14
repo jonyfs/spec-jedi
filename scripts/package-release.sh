@@ -15,7 +15,11 @@ Usage: package-release.sh VERSION OUTPUT_DIR
 
 Produces a tarball containing .claude/skills/specjedi-*/, the four
 .specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,
-and LICENSE -- nothing else.
+scripts/session-start.sh, scripts/session-start.ps1, README.md, four
+user-facing references/*.md files (quickstart-guide.md, what-is-sdd.md,
+specjedi-and-sdd.md, session-start-hook-guide.md), and LICENSE -- never
+specs/, CONTRIBUTING.md, or this project's own internal skill-authoring/
+governance reference docs (specs/038-expand-release-package).
 EOF
 }
 
@@ -52,11 +56,25 @@ for template in constitution-template.md spec-template.md plan-template.md tasks
   echo "  ✅ .specify/templates/$template"
 done
 
+references_dst="$stage_root/references"
+mkdir -p "$references_dst"
+for ref in quickstart-guide.md what-is-sdd.md specjedi-and-sdd.md session-start-hook-guide.md; do
+  cp "$repo_root/references/$ref" "$references_dst/$ref"
+  echo "  ✅ references/$ref"
+done
+
+cp "$repo_root/README.md" "$stage_root/README.md"
+echo "  ✅ README.md"
+
 mkdir -p "$stage_root/scripts"
 cp "$repo_root/scripts/install.sh" "$stage_root/scripts/install.sh"
 cp "$repo_root/scripts/install.ps1" "$stage_root/scripts/install.ps1"
+cp "$repo_root/scripts/session-start.sh" "$stage_root/scripts/session-start.sh"
+cp "$repo_root/scripts/session-start.ps1" "$stage_root/scripts/session-start.ps1"
 echo "  ✅ scripts/install.sh"
 echo "  ✅ scripts/install.ps1"
+echo "  ✅ scripts/session-start.sh"
+echo "  ✅ scripts/session-start.ps1"
 
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"

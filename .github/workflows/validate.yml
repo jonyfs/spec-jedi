@@ -770,6 +770,163 @@ jobs:
           Write-Host "OK: bootstrap-install.ps1 installed a real published release successfully"
           exit 0
 
+  # specs/038-expand-release-package: the release tarball must contain
+  # exactly the user-facing content (skills, usage docs, hook utility
+  # scripts) and never this project's own internal spec-authoring/skill-
+  # authoring history -- verified by building a real package and
+  # inspecting its actual contents (Principle IX), never asserted in docs
+  # alone. Also asserts package-release.sh and .ps1 stage byte-identical
+  # trees (Principle XIII).
+  package-content-completeness:
+    name: package-content-completeness (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build a real package and assert its contents (bash)
+        shell: bash
+        run: |
+          out_dir="$(mktemp -d)"
+          ./scripts/package-release.sh v0.0.0-ci-check "$out_dir"
+          listing="$(tar -tzf "$out_dir/spec-jedi-v0.0.0-ci-check.tar.gz")"
+
+          fail=0
+          # Must be present.
+          for path in \
+            "README.md" \
+            "references/quickstart-guide.md" \
+            "references/what-is-sdd.md" \
+            "references/specjedi-and-sdd.md" \
+            "references/session-start-hook-guide.md" \
+            "scripts/session-start.sh" \
+            "scripts/session-start.ps1"; do
+            if ! printf '%s\n' "$listing" | grep -qF "spec-jedi-v0.0.0-ci-check/$path"; then
+              echo "FAIL: expected $path to be present in the release package, but it wasn't"
+              fail=1
+            fi
+          done
+          # Must be absent -- this project's own spec-authoring history
+          # and internal skill-authoring/governance reference docs never
+          # ship to users.
+          if printf '%s\n' "$listing" | grep -qE "spec-jedi-v0.0.0-ci-check/specs/"; then
+            echo "FAIL: specs/ leaked into the release package"
+            fail=1
+          fi
+          for path in \
+            "CONTRIBUTING.md" \
+            "references/skill-authoring-standard.md" \
+            "references/skill-validation-testing-framework.md" \
+            "references/star-wars-lexicon.md" \
+            "references/skill-roadmap.md" \
+            "references/mermaid-diagram-catalog.md" \
+            "references/principle-traceability.md" \
+            "references/genuine-contributions-log.md" \
+            "references/competitive-comparison.md" \
+            "references/honest-assessment.md" \
+            "references/security-question-bank.md" \
+            "references/harness-capability-notes.md"; do
+            if printf '%s\n' "$listing" | grep -qF "spec-jedi-v0.0.0-ci-check/$path"; then
+              echo "FAIL: $path leaked into the release package -- it's internal spec-authoring content, not user-facing"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            exit 1
+          fi
+          echo "OK: package-release.sh's output has exactly the expected contents"
+          echo "PKG_SH_OUT=$out_dir" >> "$GITHUB_ENV"
+      - name: Build a real package and assert its contents (PowerShell)
+        shell: pwsh
+        run: |
+          $outDir = Join-Path $env:RUNNER_TEMP "pkg-check-ps"
+          New-Item -ItemType Directory -Force -Path $outDir | Out-Null
+          ./scripts/package-release.ps1 v0.0.0-ci-check $outDir
+          $archive = Join-Path $outDir "spec-jedi-v0.0.0-ci-check.tar.gz"
+          $listing = (tar -tzf $archive) -join "`n"
+
+          $fail = $false
+          $mustExist = @(
+            "README.md",
+            "references/quickstart-guide.md",
+            "references/what-is-sdd.md",
+            "references/specjedi-and-sdd.md",
+            "references/session-start-hook-guide.md",
+            "scripts/session-start.sh",
+            "scripts/session-start.ps1"
+          )
+          foreach ($path in $mustExist) {
+            if ($listing -notmatch [regex]::Escape("spec-jedi-v0.0.0-ci-check/$path")) {
+              Write-Host "FAIL: expected $path to be present in the release package, but it wasn't"
+              $fail = $true
+            }
+          }
+          if ($listing -match "spec-jedi-v0.0.0-ci-check/specs/") {
+            Write-Host "FAIL: specs/ leaked into the release package"
+            $fail = $true
+          }
+          $mustNotExist = @(
+            "CONTRIBUTING.md",
+            "references/skill-authoring-standard.md",
+            "references/skill-validation-testing-framework.md",
+            "references/star-wars-lexicon.md",
+            "references/skill-roadmap.md",
+            "references/mermaid-diagram-catalog.md",
+            "references/principle-traceability.md",
+            "references/genuine-contributions-log.md",
+            "references/competitive-comparison.md",
+            "references/honest-assessment.md",
+            "references/security-question-bank.md",
+            "references/harness-capability-notes.md"
+          )
+          foreach ($path in $mustNotExist) {
+            if ($listing -match [regex]::Escape("spec-jedi-v0.0.0-ci-check/$path")) {
+              Write-Host "FAIL: $path leaked into the release package -- it's internal spec-authoring content, not user-facing"
+              $fail = $true
+            }
+          }
+          if ($fail) {
+            exit 1
+          }
+          Write-Host "OK: package-release.ps1's output has exactly the expected contents"
+          Add-Content -Path $env:GITHUB_ENV -Value "PKG_PS_OUT=$outDir"
+      - name: Assert package-release.sh and .ps1 stage identical trees
+        shell: bash
+        run: |
+          # Reuse the two packages the previous two steps already built
+          # (via $PKG_SH_OUT/$PKG_PS_OUT, each written by its own native
+          # shell to $GITHUB_ENV) rather than rebuilding a third time.
+          #
+          # On windows-latest, $PKG_PS_OUT is a Windows-style path (e.g.
+          # D:\a\_temp\...); on ubuntu-latest/macos-latest it's already
+          # POSIX (pwsh's $env:RUNNER_TEMP resolves natively per OS).
+          # tar applies the traditional Unix "host:path" remote-archive
+          # convention to any argument matching word-then-colon -- so a
+          # Windows drive-letter path parses as "connect to a host
+          # literally named D" ("tar (child): Cannot connect to D:
+          # resolve failed"). --force-local (the usual fix) isn't
+          # supported by every tar variant across the three OSes, so
+          # only-when-needed, convert to the POSIX-style form Git Bash's
+          # own MSYS runtime already recognizes internally
+          # (D:\a\_temp -> /d/a/_temp), which has no colon left to be
+          # ambiguous about; leave an already-POSIX path untouched.
+          if printf '%s' "$PKG_PS_OUT" | grep -qE '^[A-Za-z]:'; then
+            ps_out_posix="/$(printf '%s' "$PKG_PS_OUT" | sed -E 's#\\#/#g; s#^([A-Za-z]):#\1#' | tr '[:upper:]' '[:lower:]')"
+          else
+            ps_out_posix="$PKG_PS_OUT"
+          fi
+          sh_extracted="$(mktemp -d)"
+          ps_extracted="$(mktemp -d)"
+          tar -xzf "$PKG_SH_OUT/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$sh_extracted"
+          tar -xzf "$ps_out_posix/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$ps_extracted"
+          if ! diff -rq "$sh_extracted" "$ps_extracted"; then
+            echo "FAIL: package-release.sh and package-release.ps1 staged different trees for the same version (Constitution Principle XIII)"
+            exit 1
+          fi
+          echo "OK: package-release.sh and .ps1 stage identical trees"
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -778,7 +935,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

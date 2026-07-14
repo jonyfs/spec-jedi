@@ -32,7 +32,7 @@ Single project, repository root — `scripts/`, `references/`,
 **Purpose**: Author the one net-new content file every later phase's
 completeness check needs to find. No packaging-script changes yet.
 
-- [ ] T001 [P] Author `references/session-start-hook-guide.md`: explain
+- [x] T001 [P] Author `references/session-start-hook-guide.md`: explain
   what `scripts/session-start.sh`/`.ps1` does (per plan.md's
   Implementation notes — reads `SessionStart` hook stdin, calls
   `specjedi-status`'s on-disk logic, emits `additionalContext`, matching
@@ -67,7 +67,7 @@ Story 3, Acceptance Scenario 2) — true today, stays true after this
 feature, verified by the new CI job regardless of whether US1/US2's
 additions have landed yet.
 
-- [ ] T002 [US3] Add a new `package-content-completeness` job to
+- [x] T002 [US3] Add a new `package-content-completeness` job to
   `.github/workflows/validate.yml`, matching the existing
   `bootstrap-installer-smoke` job's `runs-on: ${{ matrix.os }}` /
   `strategy.matrix.os: [ubuntu-latest, macos-latest, windows-latest]`
@@ -89,14 +89,14 @@ additions have landed yet.
   `references/harness-capability-notes.md`, plus `CONTRIBUTING.md`),
   exiting non-zero with a clear `FAIL:` message naming which excluded
   path leaked if any is found.
-- [ ] T003 [US3] In the same job, add the PowerShell counterpart step
+- [x] T003 [US3] In the same job, add the PowerShell counterpart step
   (`shell: pwsh`): run `./scripts/package-release.ps1 v0.0.0-ci-check C:\pkg-check`
   (or `$env:RUNNER_TEMP`-based path per the cross-platform-path lesson
   already applied to `bootstrap-installer-smoke` in
   `.github/workflows/validate.yml`), extract via `tar -xzf`, and assert
   the same absence set using `Test-Path`/`Get-ChildItem -Recurse` checks,
   mirroring T002's assertions exactly (Constitution Principle XIII).
-- [ ] T004 [US3] Add `package-content-completeness` to `ci-gate`'s
+- [x] T004 [US3] Add `package-content-completeness` to `ci-gate`'s
   `needs:` list in `.github/workflows/validate.yml`, matching how every
   other required job is already listed there.
 
@@ -117,7 +117,7 @@ at paths that keep their existing internal relative links resolvable.
 `references/specjedi-and-sdd.md` — all present, all readable, no broken
 relative links, without needing anything from Phase 4.
 
-- [ ] T005 [P] [US1] In `scripts/package-release.sh`, after the existing
+- [x] T005 [P] [US1] In `scripts/package-release.sh`, after the existing
   templates-copy loop, add a `references_dst="$stage_root/references"` +
   `mkdir -p "$references_dst"` block, then copy `README.md` to
   `$stage_root/README.md` and copy
@@ -128,7 +128,7 @@ relative links, without needing anything from Phase 4.
   intentionally excluded from this task's loop list (added in Phase 4,
   T007, to keep US1 and US2 independently landable/revertable). Update
   the script's `usage()` heredoc to name the newly-added contents.
-- [ ] T006 [P] [US1] In `scripts/package-release.ps1`, add the identical
+- [x] T006 [P] [US1] In `scripts/package-release.ps1`, add the identical
   additions using this script's existing `Copy-Item`/
   `New-Item -ItemType Directory -Force` idiom and `foreach (... in @(...))`
   array style (matches the existing templates `foreach` loop), same
@@ -155,19 +155,19 @@ and its per-harness table is readable — checkable without US1's files
 being present (though in practice they will be, since both phases modify
 the same two scripts).
 
-- [ ] T007 [US2] In `scripts/package-release.sh`, extend the
+- [x] T007 [US2] In `scripts/package-release.sh`, extend the
   `references_dst` loop from T005 to also include
   `session-start-hook-guide.md`, and add
   `cp "$repo_root/scripts/session-start.sh" "$stage_root/scripts/session-start.sh"`
   (with matching `echo "  ✅ ..."` output) immediately after the existing
   `install.sh`/`.ps1` copy block. Depends on T001 (the doc must exist)
   and T005 (extends the same loop T005 introduced — not `[P]` with T005).
-- [ ] T008 [US2] In `scripts/package-release.ps1`, make the identical
+- [x] T008 [US2] In `scripts/package-release.ps1`, make the identical
   extension: add `session-start-hook-guide.md` to the `references/`
   `foreach` list from T006, and `Copy-Item` `session-start.ps1` alongside
   the existing `install.ps1` copy. Depends on T001 and T006 (extends the
   same loop) — not `[P]` with T006.
-- [ ] T009 [US2] Add the presence assertions to T002's bash CI step:
+- [x] T009 [US2] Add the presence assertions to T002's bash CI step:
   `grep -q` the `tar -tzf` listing for
   `spec-jedi-v0.0.0-ci-check/README.md`,
   `spec-jedi-v0.0.0-ci-check/references/quickstart-guide.md`,
@@ -179,7 +179,7 @@ the same two scripts).
   be found, failing loudly with `FAIL:` naming whichever is missing.
   Depends on T002 (extends its step), T005, T007 (files must exist to be
   found).
-- [ ] T010 [US2] Add the matching presence assertions to T003's
+- [x] T010 [US2] Add the matching presence assertions to T003's
   PowerShell CI step (`Test-Path` for the same seven paths). Depends on
   T003, T006, T008.
 
@@ -195,14 +195,14 @@ the point where the CI job first exercises everything this feature adds.
 three stories — cross-platform staged-output parity (FR-010/SC-004) and
 `specjedi-govcheck`.
 
-- [ ] T011 Add a final step to the `package-content-completeness` job (or
+- [x] T011 Add a final step to the `package-content-completeness` job (or
   a small follow-up step) that runs both `package-release.sh` and
   `.ps1` against the identical version string in the same job run and
   diffs their two staged directory trees (before compression) — asserting
   zero differences per FR-010/SC-004. This is a genuinely new assertion;
   name it as its own explicit step rather than assuming T002/T003 already
   cover it (plan.md's Implementation notes call this out specifically).
-- [ ] T012 Self-invoke `specjedi-govcheck` against this branch's full
+- [x] T012 Self-invoke `specjedi-govcheck` against this branch's full
   diff before opening the PR, per `specjedi-implement`'s standard
   pre-PR step — surface any finding, never block the PR on it.
 

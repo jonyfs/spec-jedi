@@ -285,39 +285,6 @@ See [`specs/023-full-harness-coverage/research.md`](specs/023-full-harness-cover
 if you want the citation behind each harness's exact mechanism — nothing
 here is guessed.
 
-```mermaid
-flowchart LR
-    subgraph Native["✅ Native skills-directory scan — 4"]
-        direction TB
-        CC[Claude Code]
-        CX[Codex CLI]
-        AG[Antigravity]
-        TR[Trae]
-    end
-    subgraph Bridge["✅ Bridge-file install — 14"]
-        direction TB
-        CU[Cursor]
-        GC[GitHub Copilot]
-        GM[Gemini CLI]
-        WS[Windsurf]
-        CL[Cline]
-        CN[Continue]
-        AI[Aider]
-        AQ[Amazon Q]
-        JB[JetBrains AI]
-        ZD[Zed]
-        RA[Replit Agent]
-        DV[Devin]
-        TB2[Tabnine]
-        SC[Sourcegraph Cody]
-    end
-    subgraph ZeroCode["✅ Zero-code reuse — 2"]
-        direction TB
-        OC[OpenCode]
-        WA[Warp]
-    end
-```
-
 | Harness | Status |
 |---|---|
 | Claude Code | ✅ Supported — the [Installation](#installation) command above, omit `--harness` (auto-detected) or pass `--harness claude-code` explicitly |

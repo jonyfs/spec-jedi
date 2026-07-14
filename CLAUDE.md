@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/031-simplify-install-bootstrap/plan.md
+at specs/035-comic-panel-illustrations/plan.md
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

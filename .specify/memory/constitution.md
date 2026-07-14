@@ -1,5 +1,57 @@
 <!--
 Sync Impact Report
+- Version change: 1.24.1 → 1.25.0
+- Modified principles: XII. Star Wars-Flavored End-User Voice — Jedi
+  Master Fluency — MINOR bump, materially expanded guidance (no
+  renaming, no removal).
+  - Adds a new guardrail for a content type this principle never
+    previously addressed: generated artwork. Feature 035
+    (comic-panel-illustrations) is the first time this project ships
+    AI-generated images — the comic section's 8 panels each gained an
+    original illustration via a free, no-account image API
+    (Pollinations.ai, verified reachable and watermark-free via real
+    test requests this session).
+  - The new rule: generated artwork MUST maintain an original visual
+    identity and MUST NOT attempt to evoke Star Wars' specific,
+    recognizable visual signatures — named explicitly (glowing-blade
+    weapons, X-wing/TIE-fighter/Star-Destroyer-shaped craft, twin-sun
+    desert-planet framing, Jedi-robe-specific silhouettes, the logo/
+    wordmark), the same literal, checkable-list discipline Principle
+    XIX already requires of skill authoring, applied here to image
+    generation. Enforced two ways: original word choice at
+    prompt-construction time (no franchise-specific nouns), and a
+    mandatory post-generation visual review before any image is
+    committed — a failing image gets a bounded number of regeneration
+    attempts, then an honest text-only fallback rather than being
+    shipped despite failing review.
+  - Origin: the user initially asked for imagery specifically evocative
+    of Star Wars (even without named characters); this was declined —
+    visual style-mimicry of an actively-copyrighted franchise carries
+    real IP risk independent of whether proper nouns are used, and is
+    outside what this project's own sessions will generate. The user
+    then chose genuinely original sci-fi art instead, which this
+    amendment now governs going forward for any future generated
+    artwork, not just this one feature's 8 images.
+  - This does not weaken the existing non-affiliation/no-copyrighted-
+    art commitment (unchanged, still in force) — it extends the same
+    commitment to a content type (generated imagery) the principle's
+    prior text was silent on, closing a real gap this session's own
+    request surfaced rather than leaving future generated-art requests
+    to re-derive the same boundary from first principles each time.
+- Added sections: none (extends Principle XII's existing bullet list,
+  not a new top-level section)
+- Removed sections: none
+- Templates requiring updates: none — this is content-generation
+  guardrail guidance, not a new mandatory spec/plan/tasks artifact
+  section.
+- Follow-up TODOs: none. `specs/035-comic-panel-illustrations/` carries
+  the full research/spec/plan/tasks trail, including the exact prompt
+  used for each of the 8 committed images and the FR-003 review outcome
+  for each.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.24.0 → 1.24.1
 - Modified principles: XVII. Skill Discovery & Gap-Filling
   (`specjedi-find-skills`) — PATCH bump, a stale-TODO closure, not a new
@@ -1181,7 +1233,22 @@ This voice is deliberately scoped:
 - This is unofficial fan-inspired flavor, not a claim of affiliation:
   skills and docs MUST NOT imply endorsement by, or sponsorship from,
   Lucasfilm/Disney, and MUST NOT reproduce official logos or
-  copyrighted artwork — text references only.
+  copyrighted artwork.
+- **Generated artwork, where this project ships any, MUST maintain an
+  original visual identity and MUST NOT attempt to evoke Star Wars'
+  specific, recognizable visual signatures** — named explicitly:
+  glowing-blade weapon silhouettes, X-wing/TIE-fighter/Star-Destroyer-
+  shaped craft, twin-sun desert-planet framing, Jedi-robe-specific
+  silhouettes, or the Star Wars logo/wordmark. Every generation prompt
+  MUST be constructed using only original descriptive language (never
+  franchise-specific nouns), and every resulting image MUST be reviewed
+  against this list before being committed — a failing image MUST be
+  regenerated with a revised prompt (bounded, not indefinite) or, if
+  still failing, shipped as an honest text-only fallback rather than
+  committed despite failing review. This does not relax the
+  text-reference discipline above; it extends the same non-affiliation,
+  no-copyrighted-material commitment to a content type (generated
+  imagery) this principle didn't originally address.
 - The overall register MUST read as warm, funny, and human — natural
   sentences a witty person would actually say, not stock AI-assistant
   phrasing ("I'd be happy to help you with that!", "As an AI..."). This is
@@ -1767,4 +1834,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.24.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13
+**Version**: 1.25.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13

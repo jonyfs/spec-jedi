@@ -152,36 +152,49 @@ still needs its own research pass before it gets built.
 > [Principle XV](.specify/memory/constitution.md) for the full policy on why
 > these are kept clearly separate.
 >
-> Also, a note on format: these are text-and-emoji comic panels, not generated
-> artwork. Actual Star Wars imagery (characters, ships, the logo) is Lucasfilm/
-> Disney IP — this project's own [Principle XII](.specify/memory/constitution.md)
-> commits to text references only, never reproduced copyrighted art. So: the story
-> beats are real, the panels are Markdown. 🖋️
+> Also, a note on format: the panels below pair text-and-emoji dialogue with
+> original illustrations — never actual Star Wars imagery (characters, ships,
+> the logo), which is Lucasfilm/Disney IP. This project's own
+> [Principle XII](.specify/memory/constitution.md) commits to an original visual
+> identity and text-only Star Wars references, never reproduced copyrighted art
+> or artwork evoking the franchise's own recognizable signatures. So: the story
+> beats are real, the art is original, and the words still carry the meaning on
+> their own. 🖋️
 
 ---
 
 **PANEL 1 — A lone terminal, blinking cursor.**
 > 🧑‍💻 *"I have an idea for a feature. ...Now what?"*
 
+![Panel 1: a lone glowing console terminal in a dark workshop](docs/comic/panel-1.jpg)
+
 **PANEL 2 — A hooded figure steps out of the shadows, holding a scroll.**
 > 🧙 *"First, the Code."* 📜
 > `/speckit-constitution` — the project's non-negotiable rules, written down once,
 > checked forever after.
+
+![Panel 2: a robed archivist-mentor figure unrolling a glowing data-scroll](docs/comic/panel-2.jpg)
 
 **PANEL 3 — The idea, pinned to a wall, question marks circling it.**
 > 🌀 *"What are you really building — and for whom?"*
 > `/speckit-specify` turns the idea into `spec.md`. `/speckit-clarify` hunts down
 > the ambiguity before it becomes a bug.
 
+![Panel 3: a corkboard covered in holographic sticky-notes and glowing question marks](docs/comic/panel-3.jpg)
+
 **PANEL 4 — A blueprint unrolls across a workbench.**
 > 🛠️ *"Now the how."*
 > `/speckit-plan` → `plan.md`. `/speckit-tasks` → an ordered, dependency-aware
 > `tasks.md`. No step skipped, no step out of order.
 
+![Panel 4: a technical schematic unrolling across a cluttered workbench](docs/comic/panel-4.jpg)
+
 **PANEL 5 — Tools whirring, tests failing red, then turning green one by one.**
 > 🤖 *"Tests first. Always tests first."*
 > `/speckit-implement` executes `tasks.md`, test-first where it applies
 > ([Principle VI](.specify/memory/constitution.md)).
+
+![Panel 5: a workshop wall of status lights flickering from red to green](docs/comic/panel-5.jpg)
 
 **PANEL 6 — A council chamber. A pull request stands before the bench.**
 > 🏛️ *"State your changes."*
@@ -189,13 +202,19 @@ still needs its own research pass before it gets built.
 > check. No self-approval allowed; the machine can't pardon itself, and neither
 > can you ([Principle X](.specify/memory/constitution.md)).
 
+![Panel 6: a circular chamber, robed elders seated around a raised dais](docs/comic/panel-6.jpg)
+
 **PANEL 7 — Green light. The gate opens on its own.**
 > ✅ *"The battery has spoken."*
 > All checks pass → auto-merge, no human had to click a button.
 
+![Panel 7: a massive mechanical blast door irising open under a green beacon light](docs/comic/panel-7.jpg)
+
 **PANEL 8 — A ship leaps to hyperspace.**
 > 🚀 *"Shipped."*
 > 🌌 *"May the Spec be with you."*
+
+![Panel 8: a sleek original-design starship streaking away against a starfield](docs/comic/panel-8.jpg)
 
 This isn't a hypothetical — it's the literal, repeated process behind
 this project's own recent pull requests (e.g. [#82](https://github.com/jonyfs/spec-jedi/pull/82),

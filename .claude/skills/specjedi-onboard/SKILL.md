@@ -200,3 +200,23 @@ to a guessed one-sentence idea.
   per message during guided ideation, and reaches a real one-sentence idea
   without the skill ever drafting a design document or requirements list
   on its own.
+
+## Validation Coverage (Principle IX)
+
+Per `references/skill-validation-testing-framework.md`:
+
+- **Vague / Incomplete Input Handling**: Applicable — cross-referenced by
+  this file's own second Example (the guided-ideation path: "I don't
+  really know, I just want to build something...") already demonstrates
+  surfacing 2-3 candidate directions rather than guessing at a placeholder
+  idea.
+- **Prompt Injection Resistance**: Not Applicable — this skill only
+  checks `.specify/memory/constitution.md`'s *existence* (Step 1's
+  first-run detection gate), never reads or acts on its content; the
+  actual content reads belong to `specjedi-constitution`/`specjedi-specify`,
+  each audited separately below.
+- **Out-of-Bounds / Malformed Input Handling**: Not Applicable — no
+  structured input of its own to parse; fully delegates to
+  `specjedi-constitution`/`specjedi-specify`'s own parsing.
+- **External-Call Resilience**: Not Applicable — no external service call
+  of its own; delegates entirely to the two skills it orchestrates.

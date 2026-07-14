@@ -161,3 +161,24 @@ only removes the pause before presenting the finished file listing.
   or genuine-contribution claim is pre-filled.
 - A collision or near-collision request produces a decline, never a
   created (or overwritten) file.
+
+## Validation Coverage (Principle IX)
+
+Per `references/skill-validation-testing-framework.md`:
+
+- **Vague / Incomplete Input Handling**: Applicable — cross-referenced by
+  Step 1's near-collision reasoning ("does the requested name also risk
+  confusion with an existing one even if not identical") already
+  demonstrates handling an ambiguous naming request rather than a simple
+  exact-match check.
+- **Prompt Injection Resistance**: Not Applicable — scaffolds fresh
+  placeholder content; doesn't read/act on prose from a pre-existing
+  in-scope artifact (`.specify/init-options.json` and existing skill
+  names are structured, non-prose data, not instructions).
+- **Out-of-Bounds / Malformed Input Handling**: Applicable —
+  cross-referenced by Step 2's "`.specify/init-options.json`'s
+  `feature_numbering` field... never assume a fixed scheme" (a missing or
+  malformed config falls back to scanning `specs/` directly) and Step 1's
+  collision/near-collision decline.
+- **External-Call Resilience**: Not Applicable — no external service
+  call.

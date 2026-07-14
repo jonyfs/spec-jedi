@@ -1170,6 +1170,13 @@ jobs:
           # idempotent by scenario 3) is kept for the cross-script parity
           # step below.
           Add-Content -Path $env:GITHUB_ENV -Value "MEMORY_PS_DIR=$($dir1.FullName)"
+          # Scenario 5 intentionally invokes install.ps1 expecting a
+          # non-zero exit, which leaves $LASTEXITCODE=1 with nothing
+          # after it to reset that value -- GitHub Actions' pwsh step
+          # runner treats a stale non-zero $LASTEXITCODE at script end as
+          # step failure even though every $fail check above passed.
+          # Explicit exit 0 overrides it.
+          exit 0
       - name: Assert install.sh and install.ps1 produce identical CLAUDE.md output
         shell: bash
         run: |

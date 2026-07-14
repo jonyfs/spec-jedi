@@ -191,3 +191,24 @@ it does not silently force the fast path.
   section — no untracked edits.
 - `quick.md`'s `Status:` line reads `Implemented` only once the PR is
   actually open, never before.
+
+## Validation Coverage (Principle IX)
+
+Per `references/skill-validation-testing-framework.md`:
+
+- **Vague / Incomplete Input Handling**: Applicable — cross-referenced by
+  Step 1's five-criterion eligibility gate and the "If a change grows
+  past eligibility mid-flight" paragraph, both of which already handle an
+  ambiguous or under-scoped request by declining the fast path rather
+  than guessing at scope.
+- **Prompt Injection Resistance**: Not Applicable — writes `quick.md`
+  fresh from the live request each run; no pre-existing artifact of its
+  own kind is read and acted on.
+- **Out-of-Bounds / Malformed Input Handling**: Not Applicable — the
+  eligibility gate (Vague Input Handling, above) already covers a
+  too-big or ambiguous free-text request; `quick.md` is produced fresh
+  each time, not defensively parsed from a pre-existing malformed one.
+- **External-Call Resilience**: Applicable — cross-referenced by
+  Always/Never's "Never claim a PR has merged — only that it was opened
+  and requested for auto-merge," the same `gh pr merge --auto`
+  failure-honesty discipline `specjedi-implement` documents.

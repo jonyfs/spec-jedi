@@ -66,24 +66,24 @@ local files and git state, never making a network call themselves.
 
 | Skill | Cat 1 Vague | Cat 2 Injection | Cat 3 Malformed | Cat 4 External |
 |---|---|---|---|---|
-| `specjedi-onboard` | Applicable | Applicable (reads `constitution.md`) | N/A | N/A |
-| `specjedi-constitution` | Applicable | Applicable (reads existing `constitution.md`) | Applicable (template/placeholder parsing) | N/A |
-| `specjedi-specify` | Applicable | Applicable (reads `constitution.md` for context) | Applicable (spec-template structure) | N/A |
+| `specjedi-onboard` | Applicable | N/A (only checks `constitution.md`'s existence, never reads/acts on its content — the actual content reads are `specjedi-constitution`/`specjedi-specify`, audited separately) | N/A | N/A |
+| `specjedi-constitution` | Applicable | Applicable (reads existing `constitution.md`) | Applicable (amends/validates an existing constitution's structure, not just produces a fresh one) | N/A |
+| `specjedi-specify` | Applicable | Applicable (reads `constitution.md` for context) | N/A (produces `spec.md` fresh from free text each time; doesn't defensively parse a pre-existing, possibly-malformed artifact of its own kind — distinct from Cat 1's free-text ambiguity) | N/A |
 | `specjedi-clarify` | N/A | Applicable (reads `spec.md`) | Applicable (spec section structure) | N/A |
 | `specjedi-plan` | N/A | Applicable (reads `spec.md`/`constitution.md`) | Applicable (spec structure) | Applicable (Principle II research: WebSearch/WebFetch) |
 | `specjedi-tasks` | N/A | Applicable (reads `plan.md`) | Applicable (plan's Constitution Check state) | N/A |
 | `specjedi-implement` | N/A | Applicable (reads `tasks.md`/`plan.md`) | Applicable (tasks.md checklist format) | Applicable (`gh pr create`/`merge`) |
-| `specjedi-quick` | Applicable | N/A (writes fresh from live request, no pre-existing artifact read) | Applicable (5-criterion eligibility + quick.md template) | Applicable (`gh pr merge --auto`) |
+| `specjedi-quick` | Applicable | N/A (writes fresh from live request, no pre-existing artifact read) | N/A (the 5-criterion eligibility gate handles free-text scope/ambiguity, Cat 1's territory — `quick.md` is produced fresh each time, not defensively parsed from a pre-existing malformed one) | Applicable (`gh pr merge --auto`) |
 | `specjedi-analyze` | N/A | Applicable (reads spec/plan/tasks/constitution) | Applicable (missing-file case) | N/A |
 | `specjedi-checklist` | Applicable | Applicable (reads spec/plan) | Applicable (empty/nonsensical focus area) | N/A |
 | `specjedi-converge` | N/A | Applicable (reads `tasks.md`) | Applicable (fully-checked-off tasks.md) | N/A |
-| `specjedi-find-skills` | Applicable | N/A (reasons over ecosystem, not an in-scope artifact) | N/A | Applicable (external skill registry checks) |
+| `specjedi-find-skills` | Applicable | Applicable (fetched skill descriptions/search results from skills.sh/GitHub — genuinely external, third-party content, the framework's own "fetched web page" example) | Applicable (a malformed/no-results query — already has an explicit "When nothing is found" path) | Applicable (`npx skills find`/skills.sh network calls) |
 | `specjedi-explain` | Applicable | N/A (answers from internal SDD knowledge) | N/A | N/A |
 | `specjedi-migrate` | N/A | Applicable (target project's existing files) | Applicable (project with no `/speckit-*` refs) | N/A |
 | `specjedi-diagram` | N/A | Applicable (reads spec/plan) | Applicable (no diagram-worthy structure) | Applicable (live render-verification call) |
 | `specjedi-status` | N/A | Applicable (reads spec/plan/tasks/quick.md) | Applicable (unrecognized checkbox line — already named in Step 3) | N/A |
 | `specjedi-retro` | N/A | Applicable (reads `plan.md`) | Applicable (plan with no clear decisions to compare) | N/A |
-| `specjedi-security` | N/A | Applicable (reads spec/plan it's invoked against) | N/A (no structured field of its own) | N/A |
+| `specjedi-security` | N/A | Applicable (reads spec/plan it's invoked against) | Applicable (an explicit missing/empty `references/security-question-bank.md` fallback is already documented) | N/A |
 | `specjedi-docs` | N/A | Applicable (reads spec/plan) | Applicable (spec/plan missing expected sections) | N/A |
 | `specjedi-new-skill` | Applicable | N/A (scaffolds fresh placeholders) | Applicable (name collision/naming-convention violation) | N/A |
 | `specjedi-release` | N/A | Applicable (contributor-authored commit messages) | Applicable (no tags yet / malformed version) | N/A (local git only; the separate `release.yml` workflow, not this skill, publishes) |

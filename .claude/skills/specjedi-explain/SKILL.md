@@ -122,3 +122,19 @@ to remove.
 - Every answer names a specific next skill or action, formatted as a
   bulleted list — never ends on the explanation alone with nothing to do
   next, and never buries the next step in a sentence of prose.
+
+## Validation Coverage (Principle IX)
+
+Per `references/skill-validation-testing-framework.md`:
+
+- **Vague / Incomplete Input Handling**: Applicable — Step 1's entire
+  calibration-signal-reading logic *is* this category's mechanism: "If
+  genuinely ambiguous, default to a short answer with an explicit offer
+  to go deeper — never the reverse."
+- **Prompt Injection Resistance**: Not Applicable — answers from internal
+  SDD knowledge (frontmatter: "reads no files, writes none"); no external
+  or pre-existing artifact content is read and acted on.
+- **Out-of-Bounds / Malformed Input Handling**: Not Applicable — no
+  structured input of its own to parse.
+- **External-Call Resilience**: Not Applicable — no external service
+  call.

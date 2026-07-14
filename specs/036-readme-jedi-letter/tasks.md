@@ -145,7 +145,7 @@ Mermaid diagrams and 8 comic panels are byte-for-byte unchanged.
 - [X] T016 Badge-row review per the Distribution & Ecosystem Standards
       section (Principle X's pre-PR requirement) — this feature doesn't
       warrant a new badge (depends on T015).
-- [ ] T017 Run `specjedi-govcheck` against this branch before opening
+- [X] T017 Run `specjedi-govcheck` against this branch before opening
       the PR (depends on T015, T016).
 
 ---

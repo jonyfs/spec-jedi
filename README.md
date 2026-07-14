@@ -11,8 +11,8 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/jonyfs/spec-jedi/validate.yml?branch=main&label=ci-gate&logo=githubactions&logoColor=white)](https://github.com/jonyfs/spec-jedi/actions/workflows/validate.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
-[![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
-[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#what-you-get-today)
+[![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#how-spec-jedi-implements-sdd)
+[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#how-spec-jedi-implements-sdd)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
@@ -25,46 +25,35 @@
 
 **A letter, from one Master to whoever picks up this scroll next:**
 
-If you're reading this, you've probably already lost a few nights to a
-project that outgrew its own plan — or one that never had a plan at
-all, code first, explanation later, and later never quite arrives.
-That's the whole reason this letter exists.
-
-Here's what I want you to carry with you: before a single line of code,
-write four things — a **constitution** 📜 (the rules nobody, not even
-your future self at 2am, gets to quietly break), a **specification** 🎯
-(what you're building, and for whom, put into actual words), a **plan**
-🛠️ (how, technically, spelled out clearly enough that nobody has to
-guess later), and a **task list** ✅ (the ordered steps, in the order
-they actually need doing). Then — and only then — let your coding agent
-build against those four things, instead of improvising through your
-codebase like a Padawan who skipped the boring parts of training and is
-now discovering why they weren't boring.
-
-Spec Jedi is what turns that promise into something you can actually
-install — twenty coding agents supported, for real, not just in theory
-(more on that below).
-
-I'll say this plainly, because a letter that only flatters isn't much
-of a letter: this repository holds itself to the exact same discipline
-it's asking of you. Its own
-[constitution](.specify/memory/constitution.md) decides how its own
-releases get versioned and how its own pull requests get merged — no
-quiet exception carved out for whoever happens to be maintaining it
-that week. Every change goes through a real pull request, gets checked
-by a battery that doesn't care who wrote it, and nobody — not even the
-person who wrote the code — gets to approve their own work. That's not
-bureaucracy for its own sake. That's the right side of the Force,
-mechanized: the kind of discipline that holds even when nobody's
-watching, because the constitution is watching instead. No shortcuts to
-the Dark Side of vibe-coding here. 🚫🖤 (Yes, I said Dark Side. It's the
-whole metaphor. Let's not pretend otherwise — a Sith doesn't write
-tests either.)
-
-![a lone figure at a fork in a stone path, one trail lit by warm lanterns leading upward, the other fading into cold shadow](docs/comic/letter-path.jpg)
+Most projects that outgrow their own plan share the same root cause:
+code first, explanation later — and later never quite arrives. What
+follows is the practice that inverts that order, and the specific
+project built to put it into practice.
 
 *(Unofficial fan-flavored branding — Spec Jedi is not affiliated with, endorsed by,
 or sponsored by Lucasfilm/Disney. May the Spec be with you. 🌌)*
+
+## What Is Spec-Driven Development?
+
+The default way most people build software with an AI coding agent looks
+like this: describe what you want in chat, the agent writes code, read
+the code to figure out whether it did what was meant, correct it,
+repeat. The agent's understanding of "what you meant" lives only in the
+conversation — never written down as a durable, reviewable artifact.
+Two failure modes follow: ambiguity gets resolved by guessing instead of
+surfaced for a decision, and nothing outlives the conversation — close
+the chat, lose the reasoning.
+
+Spec-Driven Development (SDD) inverts that order. Before any code
+exists, write down what's being built and why, as a structured,
+reviewable document — a **constitution** 📜 (the non-negotiable rules),
+a **specification** 🎯 (what, and for whom), a **plan** 🛠️ (how,
+technically), and a **task list** ✅ (the ordered steps). Code gets
+generated *against* those artifacts, not the other way around — the
+same discipline the Jedi Code asks of anyone tempted to skip the
+boring parts of training. Full explanation, zero Spec-Jedi-specific
+branding:
+[`references/what-is-sdd.md`](references/what-is-sdd.md).
 
 ```mermaid
 flowchart TD
@@ -78,106 +67,47 @@ Everything downstream checks itself against the constitution, never the
 other way around. Change a rule, and every skill feels it the next time
 it runs.
 
-## Who this is for
+## How Spec Jedi Implements SDD
 
-You, most likely — if you're reading a letter about spec-driven
-development instead of scrolling past it, you already know the feeling
-I'm describing. Tired of re-explaining the same project context every
-session. Tired of watching an agent quietly reinvent a decision your
-team made and abandoned three weeks ago, because nothing wrote it down
-anywhere the agent could actually find it. Doesn't matter if it's just
-you or a whole team trying to get everyone's agent to behave the same
-way: if you want specs, plans, and tasks to be real, versioned files
-instead of scrollback that vanishes the moment the chat window closes,
-keep reading. This letter's for you.
-
-## What you get today
-
-Let me be straight with you, the way this letter has tried to be from
-the start: Spec Jedi is a genuine **competitor** to
+Spec Jedi is a genuine **competitor** to
 [spec-kit](https://github.com/github/spec-kit), not a reskin wearing its
-robes ([Principle XV](.specify/memory/constitution.md)). The full
-`specjedi-*` SDD pipeline — constitution through convergence — shipped
-in full a while back: all 9 stages, each one built off real competitive
-research before a single line of it got written
+robes ([Principle XV](.specify/memory/constitution.md)) — twenty coding
+agents supported, for real, not just in theory (see
+[Installation](#installation) below). The full `specjedi-*` SDD pipeline
+— constitution through convergence — shipped in full a while back: all 9
+stages, each one built off real competitive research before a single
+line of it got written
 ([research.md](specs/001-specjedi-pipeline/research.md), Principle II).
-Nothing here got rushed out the door just to have something to show.
 
-> *"A Jedi's strength flows from the Force. So too does a project's, from
-> its skills."* — a wise Master, probably.
-
-Twenty-five skills deep at this point — trained not for combat, but for
-Spec-Driven Development, across four disciplines:
-
-```mermaid
-mindmap
-  root(("Spec Jedi — 25 skills"))
-    Core Pipeline - 9
-      constitution
-      specify
-      clarify
-      plan
-      tasks
-      implement
-      analyze
-      checklist
-      converge
-    Onboarding and Guidance - 3
-      onboard
-      explain
-      find-skills
-    Quality and Review - 4
-      security
-      skill-review
-      govcheck
-      retro
-    Meta and Tooling - 9
-      quick
-      diagram
-      status
-      docs
-      migrate
-      new-skill
-      release
-      tokencheck
-      worktree
-```
-
-**Ships today, install and use now:**
-
-| Skill | What it does |
-|---|---|
-| `specjedi-onboard` 🌱 | First-run walkthrough for a brand-new project — produces a real first `constitution.md` and `spec.md` together, teaching each SDD concept exactly when it's needed. Steps aside instantly if onboarding already happened |
-| `specjedi-constitution` 📜 | Establishes or amends a project's non-negotiable rules — the foundation every other `specjedi-*` skill checks against. See [spec](specs/001-specjedi-pipeline/spec.md) |
-| `specjedi-specify` 🎯 | Turns a feature idea — one sentence is enough — into a prioritized, independently-testable `spec.md`, marking real ambiguity instead of guessing |
-| `specjedi-clarify` 🌀 | Scans a spec for real ambiguity and asks up to 5 prioritized questions — each with a Recommended answer so a beginner gets guidance and an expert can reply in one word — before you plan against a guess |
-| `specjedi-plan` 🛠️ | Turns a clarified spec into a technical `plan.md` — scans the actual codebase for existing conventions first, so implementation never has to stop and search for one |
-| `specjedi-tasks` ✅ | Breaks a plan into an ordered, dependency-aware `tasks.md` grouped by user story — sequences a failing test before its implementation task wherever the plan calls for code |
-| `specjedi-implement` 🔨 | Executes `tasks.md` in dependency order, test-first where the plan calls for code — commits only through a feature branch and pull request, never directly to `main` |
-| `specjedi-quick` ⚡ | The lightweight path for small, well-understood changes — one `quick.md` instead of `spec.md`+`research.md`+`plan.md`+`tasks.md`, straight to implementation. Quality gates (test-first, `specjedi-govcheck`, PR-only) never shorten, only planning ceremony does. Declines and redirects to `specjedi-specify` for anything bigger, ambiguous, or a new skill — see [Which path should I use?](#which-path-should-i-use) |
-| `specjedi-analyze` 🔍 | Strictly read-only cross-check of `spec.md`/`plan.md`/`tasks.md` (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file |
-| `specjedi-checklist` ☑️ | Generates a custom checklist for a named focus area (security, accessibility, performance...) grounded entirely in this feature's own `spec.md`/`plan.md` — never generic boilerplate |
-| `specjedi-converge` 🔁 | Detects drift between the actual codebase and `tasks.md` after manual changes, appending any gap as a new task instead of silently ignoring it — closes the loop back to `specjedi-implement` |
-| `specjedi-find-skills` 🔍 | Suggests a specific, verified skill when your request touches a domain nothing installed covers well — never installs without asking first ([Principle XVII](.specify/memory/constitution.md)) |
-| `specjedi-explain` 🎓 | Explains any SDD concept or command, calibrated to how experienced you sound — total beginner through daily practitioner, never the same canned answer either way ([Principle XIX](.specify/memory/constitution.md)) |
-| `specjedi-migrate` 🔄 | Rewrites literal `/speckit-*` tooling references in your own constitution/spec/plan/tasks to their `specjedi-*` equivalents — never touches principle or requirement content, explicit request only |
-| `specjedi-diagram` 📊 | Generates a render-verified Mermaid diagram — the right type inferred from content across the full Mermaid catalog (flowchart, sequence, ER, class, state, Gantt, timeline, user journey, kanban, mindmap, quadrant, pie, and more) — from an existing `spec.md`/`plan.md` — always a supplement to the source prose, never a replacement |
-| `specjedi-status` 🧭 | Project-wide dashboard showing every feature's status, derived entirely from on-disk `spec.md`/`plan.md`/`tasks.md` artifacts — zero separately-maintained tracking system, never asserts "stalled" as a fact |
-| `specjedi-retro` 🪞 | Strictly read-only retrospective comparing a completed feature's actual implementation against its `plan.md` — grounds any deviation's cause in real git history, never invents one, logs a durable dated entry |
-| `specjedi-security` 🛡️ | Lightweight, proactive "did we think about X" prompt for auth/input validation/secrets/data-privacy gaps — self-invoked by `specjedi-plan`, never claims to be a full security review |
-| `specjedi-docs` 📚 | Drafts a README skill-table row, Quickstart step, and `CHANGELOG.md` entry from a shipped feature's spec/plan — grounded in actual content, always shown for confirmation before writing |
-| `specjedi-new-skill` 🌟 | Scaffolds a new `specjedi-*` skill's file structure — placeholders only, never invented content — following this project's own Skill Authoring Standard and baking in the Principle II research checklist |
-| `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
-| `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
-| `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
-| `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 20 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
-| `specjedi-worktree` 🌳 | Mechanizes git-worktree-based parallel development — creates a real worktree for a named feature on demand, preferring a native harness relocation tool (e.g. Claude Code's `EnterWorktree`/`ExitWorktree`) and falling back to a project-local, `.gitignore`-verified `.worktrees/` directory otherwise. Self-invoked by `specjedi-specify`/`specjedi-quick` to proactively offer a worktree before real uncommitted work on another branch would collide; paired with a `specjedi-status` extension that unifies status reporting across every worktree in one report |
+Every SDD activity above maps to a real, currently-shipped `specjedi-*`
+skill, not an aspiration: `specjedi-constitution` establishes the rules,
+`specjedi-specify` turns an idea into a `spec.md`, `specjedi-clarify`
+resolves flagged ambiguity, `specjedi-plan` and `specjedi-tasks` produce
+the technical plan and task breakdown, and `specjedi-implement` (or
+`specjedi-quick` for small, well-understood changes) executes it
+test-first, through a feature branch and pull request only. Twenty-five
+skills ship today in total, across four disciplines — the full catalog,
+both diagrams, and the 23-step walkthrough live in
+[`references/quickstart-guide.md`](references/quickstart-guide.md); the
+complete activity-to-skill mapping, including three genuine
+contributions beyond generic SDD practice, lives in
+[`references/specjedi-and-sdd.md`](references/specjedi-and-sdd.md).
 
 Curious what's next?
 [`references/skill-roadmap.md`](references/skill-roadmap.md) tracks
 what's proposed beyond the core pipeline — a backlog of *additional*
 ideas, not gaps in the pipeline itself. Every one of them still needs its
 own real research pass before it gets built; nothing here ships on vibes.
+
+## Who this is for
+
+Tired of re-explaining the same project context every session. Tired of
+watching an agent quietly reinvent a decision a team made and abandoned
+three weeks ago, because nothing wrote it down anywhere the agent could
+find it. Doesn't matter if it's one person or a whole team trying to get
+everyone's agent to behave the same way: anyone who wants specs, plans,
+and tasks to be real, versioned files instead of scrollback that
+vanishes the moment the chat window closes is the intended reader here.
 
 ## How Spec Jedi builds *itself*, in comic form
 
@@ -187,7 +117,7 @@ own real research pass before it gets built; nothing here ships on vibes.
 > same "bootstrap a compiler with an older compiler" pattern), the way any
 > competitor might use an incumbent's tools while building its replacement.
 > **If you're evaluating Spec Jedi as a product, skip to
-> [What you get today](#what-you-get-today) below** — the actual product surface
+> [Installation](#installation) below** — the actual product surface
 > is the `specjedi-*` skills, not these. See
 > [Principle XV](.specify/memory/constitution.md) for the full policy on why
 > these are kept clearly separate.
@@ -422,254 +352,30 @@ has the original desk-research notes per harness, and
 has the actual install-mechanism decisions and citations this whole
 table is built from.
 
-Curious how Spec Jedi actually stacks up against spec-kit and the ten
-other SDD tools it was benchmarked against?
+## Honest assessment
+
+Real advantages, real current limitations — not a marketing page.
+Twenty of twenty target harnesses have a real, CI-tested install path,
+diagrams get render-verified before they're shown, and the constitution
+is a living, versioned document at v1.24.0 with a documented amendment
+history. The candid other half: no release has been cut yet
+(`git tag -l` returns nothing as of this writing), and most bridge-file
+harness install paths rest on desk research rather than a hands-on
+session inside the actual third-party product. Full, unfiltered picture:
+[`references/honest-assessment.md`](references/honest-assessment.md).
+
+Twenty harnesses named individually, all CI-proven — but 18 of the 19
+non-Claude-Code harnesses were confirmed by desk research (one cited
+source per harness), not by installing into the real product and
+watching it load a skill; only Sourcegraph Cody's status changed after
+deeper follow-up research turned up no confirmed always-on rules file at
+all. Per-harness citations and the full research trail:
+[`references/harness-capability-notes.md`](references/harness-capability-notes.md).
+
+Curious how Spec Jedi stacks up against spec-kit and ten other SDD tools
+it was benchmarked against?
 [`references/competitive-comparison.md`](references/competitive-comparison.md)
 has the receipts.
-
-Want the version with no marketing gloss — real advantages, real current
-limitations, concrete competitor-grounded improvement points?
-[`references/honest-assessment.md`](references/honest-assessment.md) is
-that document.
-
-New to Spec-Driven Development itself, not just this project? Start with
-[`references/what-is-sdd.md`](references/what-is-sdd.md) — a from-scratch
-explanation with zero Spec Jedi branding in it — then
-[`references/specjedi-and-sdd.md`](references/specjedi-and-sdd.md) maps
-exactly which skill handles which part of the practice.
-
-## Quickstart
-
-Now, the practical part of this letter — inspiration without a next
-step is just a nice quote. Twenty-five product skills, all live
-([What you get today](#what-you-get-today)), the full `specjedi-*`
-pipeline done, not partial. Never touched an SDD tool before? Start at
-step 0. Don't skip it — I promise it's short.
-
-### Which path should I use?
-
-| Change size | Use | Produces |
-|---|---|---|
-| Small, well-understood — a typo, a one-file fix, a tightly-scoped tweak | `specjedi-quick` ⚡ | One `quick.md`, straight to shipped code |
-| Anything bigger, ambiguous, touching more than one subsystem, or a new `specjedi-*` skill | The full pipeline (steps 3-11 below) | `spec.md` → `plan.md` → `tasks.md` → shipped code |
-
-`specjedi-quick` doesn't just take your word for it, either — it checks
-your request against five explicit eligibility criteria before it
-writes anything. Doesn't fit on about a page of notes? It declines and
-hands you off to `specjedi-specify` instead of forcing a bad fit
-through. Both paths run the exact same quality gates — test-first where
-there's code, `specjedi-govcheck` before any PR opens. "Quick" shortens
-the planning ceremony. It never shortens verification.
-
-0. **Genuinely not sure what any of this means yet?** Good — just ask.
-   "What is a spec and why would I need one," "what does this project
-   actually do," whatever's actually confusing you. `specjedi-explain`
-   🎓 answers at whatever depth fits — total beginner or seasoned
-   practitioner — and always tells you what to run next
-   ([Principle XIX](.specify/memory/constitution.md)).
-1. Install it (see [Installation](#installation) above).
-2. Brand-new project and no idea where to even start? `specjedi-onboard`
-   🌱 walks you from a one-sentence idea to a real first
-   `constitution.md` and `spec.md`, explaining each concept only when
-   it's actually relevant — no wall of documentation dumped on you up
-   front. (It's really just orchestrating steps 3-4 below on your
-   behalf; skip straight there if you'd rather drive each stage
-   yourself.)
-3. Lay down your project's rules. Describe your non-negotiables in
-   plain language, and `specjedi-constitution` 📜 turns them into a
-   versioned `.specify/memory/constitution.md` — the document every
-   other `specjedi-*` skill checks its own work against.
-4. Spec out a feature. A rough one-sentence idea is genuinely enough —
-   `specjedi-specify` 🎯 turns it into a prioritized,
-   independently-testable `spec.md`, and flags real ambiguity instead
-   of quietly guessing past it.
-5. Not convinced the spec is solid yet? `specjedi-clarify` 🌀 scans it
-   for real gaps and asks up to 5 prioritized questions, each with a
-   Recommended answer already attached — accept it in one word, or read
-   the reasoning if you actually want to think it through — before
-   anything downstream gets planned against a guess.
-6. Ready for the "how"? `specjedi-plan` 🛠️ scans your actual codebase
-   for existing conventions first, then turns the clarified spec into a
-   technical `plan.md` — so implementation never has to stop mid-build
-   and go hunting for a pattern that already exists three files over.
-   Touches auth, external input, secrets, or data handling?
-   `specjedi-security` 🛡️ triggers on its own with a handful of
-   targeted "did we think about X" questions — a nudge, not a full
-   audit.
-7. Ready to break it into actual work? `specjedi-tasks` ✅ turns the
-   plan into an ordered, dependency-aware `tasks.md`, grouped by user
-   story — a failing test lands before its implementation task, every
-   time the plan calls for code.
-8. Ready to build? `specjedi-implement` 🔨 works `tasks.md` in
-   dependency order, test-first wherever the plan calls for code. Every
-   commit lands on a feature branch and a pull request — `main` never
-   sees a direct push.
-9. Want a safety net at any point? `specjedi-analyze` 🔍 cross-checks
-   `spec.md`, `plan.md`, and `tasks.md` (plus your constitution) for
-   gaps, duplication, contradictions — strictly read-only, run it
-   whenever, it never touches a file.
-10. Need a review focused on one specific thing? `specjedi-checklist`
-    ☑️ generates a checklist for whatever focus area you name —
-    security, accessibility, performance, anything — grounded entirely
-    in this feature's own spec/plan. No generic boilerplate items.
-11. Changed code by hand since your last `tasks.md` update?
-    `specjedi-converge` 🔁 scans the actual codebase, finds any
-    capability with no matching task, and appends it as new work rather
-    than letting the two silently drift apart. The pipeline's last
-    stage — it closes the loop straight back to `specjedi-implement`.
-12. Stuck on something outside this whole set? Just say so — "how do I
-    do X," "is there a skill for X" — and `specjedi-find-skills` 🔍
-    kicks in on its own, searches the wider agent-skills ecosystem, and
-    points you at one specific, verified skill. It never installs
-    anything without asking you first
-    ([Principle VIII](.specify/memory/constitution.md)).
-13. Coming over from an existing spec-kit project? `specjedi-migrate`
-    🔄 rewrites your project's own `/speckit-*` tooling references to
-    their `specjedi-*` equivalents — it never touches a principle or a
-    requirement, and it only runs when you explicitly ask for it.
-14. Rather have a picture than another wall of prose? `specjedi-diagram`
-    📊 turns a spec or plan into a render-verified Mermaid diagram,
-    picking whichever type the actual content calls for from Mermaid's
-    full catalog (see
-    [`references/mermaid-diagram-catalog.md`](references/mermaid-diagram-catalog.md))
-    — always sitting alongside the source prose, never replacing it.
-15. Juggling more than a feature or two? `specjedi-status` 🧭 gives you
-    a project-wide dashboard — specified, planned, in progress,
-    complete — derived entirely from what's actually sitting on disk.
-    No separate tracking system to fall out of sync with reality.
-16. Just wrapped up a feature? `specjedi-retro` 🪞 compares what
-    actually shipped against what `plan.md` promised, traces any
-    deviation back to real git history — never invents a cause — and
-    logs a durable entry, so the signal outlives this one conversation.
-17. Shipped something and it needs documenting? `specjedi-docs` 📚
-    drafts the README row, the Quickstart step, and the
-    `CHANGELOG.md` entry for you, grounded in your actual spec/plan —
-    and always shows you the draft before writing a word of it.
-18. Extending Spec Jedi itself with a brand-new skill?
-    `specjedi-new-skill` 🌟 scaffolds the whole file structure —
-    `specs/`, the `SKILL.md` skeleton, every section a labeled
-    placeholder — and never invents research findings or behavior on
-    your behalf. You still have to do the actual thinking.
-19. Wondering if a release is due? `specjedi-release` 🚀 narrates
-    whatever `scripts/suggest-release.sh` already figured out — last
-    tag, next version, the commits that got you there — and if you ask
-    it to actually cut one, it declines and hands you the exact manual
-    command instead. It never tags or publishes anything itself.
-20. Wrote or hand-edited a `specjedi-*` skill? `specjedi-skill-review`
-    🎓 checks its `SKILL.md` against the Skill Authoring Standard —
-    actual section content, not just whether the headings exist,
-    cross-referenced against the matching `plan.md` for any legitimate
-    exemption — and reports findings or a clean pass. It never touches
-    the file itself.
-21. `specjedi-onboard` already runs this once automatically on first
-    use, but `specjedi-tokencheck` 🎒 works fine standalone too —
-    checks whether `rtk` and `graphify` are installed, explains what's
-    missing and roughly how many tokens it'd save you, and offers to
-    walk through installing it. Never without your explicit yes.
-22. `specjedi-implement` already runs this before every PR it opens,
-    but `specjedi-govcheck` ⚖️ works standalone too — a per-branch or
-    per-PR checklist against all 20 constitution principles, each one
-    reported as not applicable, compliant, or non-compliant, with any
-    real conflict marked CRITICAL. Strictly read-only — it never edits
-    anything, and it never blocks a PR from opening on its own.
-
-Per [Principle XIV](.specify/memory/constitution.md), whatever you just
-ran should already be telling you what comes next — that's not an
-accident, and you genuinely shouldn't need to keep scrolling back up to
-this list to find your way. Full chain: `specjedi-onboard` (first run
-only) → `specjedi-constitution` → `specjedi-specify` →
-`specjedi-clarify` → `specjedi-plan` → `specjedi-tasks` →
-`specjedi-implement` → `specjedi-analyze` → `specjedi-checklist` →
-`specjedi-converge`, looping back to `specjedi-implement` any time
-`specjedi-converge` turns up drift worth working through. Follow it
-once, and you'll see why I bothered writing all this down in the first
-place.
-
-### The pipeline, end to end
-
-Onboarding through convergence, laid out as one picture — every stage
-below is live, nothing dotted-in as a someday:
-
-```mermaid
-flowchart TD
-    Y["✅ specjedi-migrate 🔄<br/>coming from spec-kit: rewrite tooling refs"] -.-> A
-    Z["✅ specjedi-onboard 🌱<br/>first run only: idea → constitution + spec"] -.-> A
-    A["✅ specjedi-constitution 📜<br/>establish or amend the project's rules"] --> B["✅ specjedi-specify 🎯<br/>feature idea → spec.md"]
-    B --> C{"✅ specjedi-clarify 🌀<br/>ambiguity to resolve?"}
-    C -->|yes| C2["✅ resolve, encode answers into spec.md"] --> D
-    C -->|no| D["✅ specjedi-plan 🛠️<br/>spec.md → plan.md"]
-    D --> E["✅ specjedi-tasks ✅<br/>plan.md → tasks.md"]
-    E --> F["✅ specjedi-implement 🔨<br/>execute tasks.md"]
-    F --> G{"✅ specjedi-analyze 🔍<br/>spec/plan/tasks consistent?"}
-    G -->|gaps found| H["✅ specjedi-converge 🔁<br/>append drift as new tasks"] --> F
-    G -->|clean| I(["🚀 shipped"])
-    F -.->|need a checklist mid-flight| J["✅ specjedi-checklist ☑️<br/>ships today"]
-    F -.->|stuck outside this pipeline| K["✅ specjedi-find-skills 🔍<br/>ships today"]
-    D -.->|want a picture of the spec/plan| L["✅ specjedi-diagram 📊<br/>ships today"]
-```
-
-✅ = ships today. The full 9-stage `specjedi-*` pipeline is done, plus
-`specjedi-onboard` sitting in front of it as the guided first-run entry
-point.
-
-## Recommended companions
-
-The constitution ([Principle VIII](.specify/memory/constitution.md)) has
-every Spec Jedi session proactively suggest — but never silently
-install — two token-saving tools:
-
-- [`rtk`](https://github.com/rtk-ai/rtk) — a token-optimized CLI proxy
-  for the dev operations you run constantly.
-- [`graphify`](https://graphify.net/) — turns your codebase into a
-  queryable knowledge graph instead of something an agent has to re-read
-  from scratch every time.
-
-If your agent ever offers to install or configure either one, that's
-this policy doing its job — you're always asked first, no exceptions.
-
-**graphify is already wired into this repo**, with maintainer sign-off:
-a `## graphify` section in `CLAUDE.md` tells Claude Code to check the
-knowledge graph before browsing source and to refresh it after code
-changes, and `.claude/settings.json` registers hooks nudging tool calls
-toward `graphify query`/`explain`/`path` instead of raw grep/read, once
-the graph exists. The graph itself (`graphify-out/`) isn't committed —
-it's a derived cache, rebuilt fresh per clone.
-
-Want the same auto-updating behavior locally after you clone this repo?
-
-```bash
-pip install graphifyy   # or: uv tool install graphifyy
-graphify .               # first build (only needed once; also runs on first use anyway)
-graphify hook install    # auto-rebuild graph.json after every commit (code changes)
-```
-
-One catch: doc/content edits don't trigger the commit hook the way code
-changes do — run `graphify update .` yourself (or just ask your agent
-to) after editing anything that isn't code.
-
-## Versioning & releases
-
-Spec Jedi follows [Semantic Versioning](https://semver.org/), scoped to
-the public skill-package contract: breaking a skill's behavior is MAJOR,
-a new skill or additive capability is MINOR, fixes and docs are PATCH.
-Full policy lives at [Principle XI](.specify/memory/constitution.md).
-
-Nobody cuts a release silently around here — the project just suggests
-when one's warranted and leaves the actual call to a human:
-
-```bash
-# Linux / macOS / Windows (WSL or Git Bash)
-./scripts/suggest-release.sh
-```
-
-```powershell
-# Windows (native PowerShell)
-./scripts/suggest-release.ps1
-```
-
-That inspects the commits since the last tag and recommends a next
-version. It never tags, never publishes — cutting an actual release
-stays a deliberate, maintainer-driven step, every time.
 
 ## Contributing
 

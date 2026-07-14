@@ -83,6 +83,75 @@ star-wars-lexicon.md. Keep Contributing and License at the end.)
   (tied to the now-relocated discipline passage) relocates with that
   content to wherever it lands.
 
+### Amendment 3 (post-implementation, resolving `specjedi-checklist`'s voice-and-thematic-consistency findings against the shipped feature)
+
+- Q (CHK-001/CHK-002): What checkable signal distinguishes the FR-001
+  hook line as a single evocative epigraph from it being the opening of
+  a sustained first-person narrator? → A: Positional and formatting
+  identity with the existing italic epigraph quote — the hook line sits
+  as its own bolded paragraph immediately after the opening image, and
+  the sentence(s) immediately following it use third-person phrasing
+  with no first-person pronoun ("I"/"me"/"my"/"we") anywhere else in the
+  document. A reviewer can check this mechanically: grep the rendered
+  README for first-person pronouns outside the hook line's own sentence;
+  zero hits confirms the boundary held.
+- Q (CHK-003/CHK-005): Which specific voice elements count as the
+  "sustained first-person narrator conceit" FR-006 dials back, and does
+  that include second-person ("you"/"your") address, not just
+  first-person? → A: Yes — the conceit being dialed back is direct
+  address in general (both first-person "I/we" narration and
+  second-person "you" used as the narrator's rhetorical device, e.g.
+  "Let me be straight with you," "I promise it's short") plus personal
+  asides. It does NOT include plain third-person description of who a
+  section's audience is (e.g., "anyone who wants X is the intended
+  reader here") — that's compliant third-person phrasing, not direct
+  address, and "Who this is for" is written entirely in this compliant
+  form with zero first- or second-person pronouns.
+- Q (CHK-004): What does "professional-but-informal" third-person voice
+  mean beyond citing PR #100 as precedent? → A: Direct factual
+  statements, contractions and informal connective tissue (em-dashes,
+  parentheticals) permitted, no corporate boilerplate — but no narrator
+  persona and no direct reader address used as a rhetorical device. The
+  shipped "How Spec Jedi Implements SDD" and "Honest assessment"
+  sections are the reference examples of this register.
+- Q (CHK-006): Must each retained Star Wars reference cite which
+  specific `star-wars-lexicon.md` entry it draws from, inline in the
+  README's own prose? → A: No — traceability is required at the
+  artifact-review level (a `specjedi-skill-review`/`specjedi-analyze`-
+  style pass can cross-reference a given reference against the lexicon
+  file), not as inline citations in the shipped prose, which would
+  clutter it and contradict FR-006's own "decorative seasoning" framing.
+- Q (CHK-007): Is SC-004's "at least one" Star Wars reference a floor or
+  the intended final count? → A: A floor for acceptance testing, not a
+  target to minimize toward. The actual shipped README retains more than
+  one (the Jedi Code/discipline framing in "What Is Spec-Driven
+  Development?", the lightsaber-free mentor callback in the comic
+  section, "right side of the Force, mechanized" now living in
+  `CONTRIBUTING.md` beside `letter-path.jpg`) — reducing further would
+  need to still clear US3's "professional, not overwrought" bar on its
+  own merits, not merely clear the SC-004 floor.
+- Q (CHK-008): Does the "right side of the Force" framing tied to the
+  relocated discipline passage need to also appear somewhere in
+  `README.md` itself, or is its relocation to `CONTRIBUTING.md` (beside
+  `letter-path.jpg`, per FR-010) sufficient? → A: Relocation to
+  `CONTRIBUTING.md` alone is sufficient — it is not required to also
+  appear in the README. SC-004's floor for the README itself is
+  satisfied independently via the Jedi Code/discipline framing already
+  present in "What Is Spec-Driven Development?" Duplicating the same
+  metaphor in both files would work against FR-005's "fewer, more
+  purposeful sections" consolidation goal. This supersedes the
+  Assumptions section's earlier "re-expressed... as part of the
+  restructured flow" phrasing, which read ambiguously as requiring the
+  metaphor to reappear verbatim in the README — see the amended
+  Assumptions entry below.
+- Q (CHK-009): Does `CONTRIBUTING.md` need its own explicit Star-Wars-
+  seasoning voice bar now that thematic content has crossed into it? →
+  A: No — `CONTRIBUTING.md`'s own pre-existing default voice (plain,
+  factual, third-person) is unchanged by this feature. The single
+  relocated image and its one-line caption are the sole, explicitly
+  scoped exception carrying thematic seasoning into that file; this is
+  not a general loosening of `CONTRIBUTING.md`'s own voice convention.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - A reader learns what SDD is before being asked to adopt a tool for it (Priority: P1)
@@ -221,6 +290,10 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   as a single evocative hook, positioned the same way the existing
   italic epigraph quote already functions — not as the opening of a
   sustained first-person narrator (Amendment, Session 2026-07-14).
+  Checkable boundary (Amendment 3): the hook line stands as its own
+  bolded paragraph immediately after the opening image, and no
+  first-person pronoun ("I"/"me"/"my"/"we") appears anywhere else in the
+  document.
 - **FR-002**: Immediately following that summary, the README MUST
   present a condensed summary of `references/specjedi-and-sdd.md`
   (mapping SDD activities to real, shipped `specjedi-*` skills) before
@@ -256,7 +329,14 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   `references/star-wars-lexicon.md`'s curated pool, never invented
   ad hoc (Clarifications, Session 2026-07-14). The single exception is
   FR-001's retained opening hook line — everything else in the body
-  prose dials back to third-person (Amendment, Session 2026-07-14).
+  prose dials back to third-person (Amendment, Session 2026-07-14). The
+  conceit being dialed back covers both first-person ("I/we") narration
+  and second-person ("you") used as a rhetorical narrator device —
+  plain third-person description of a section's audience (e.g. "anyone
+  who wants X is the intended reader here") is compliant, not an
+  exception (Amendment 3). Lexicon traceability for any retained
+  reference is required at the artifact-review level, not as inline
+  citations in the shipped prose (Amendment 3, CHK-006).
 - **FR-007**: The "Contributing" and "License" sections MUST remain the
   final two sections of the README, in that order.
 - **FR-008**: Every fact, badge, link, table row, code block, and
@@ -279,7 +359,13 @@ one Star Wars-themed reference that specifically puns on an SDD concept
   as the retained opening hook line's (FR-001) visual anchor.
   `letter-path.jpg` MUST relocate together with the discipline-passage
   content it illustrated, to wherever that content lands per FR-009
-  (Amendment 2, Session 2026-07-14).
+  (Amendment 2, Session 2026-07-14). The relocated discipline framing
+  (e.g. "right side of the Force, mechanized") is NOT required to also
+  reappear in `README.md` itself — relocating it alongside
+  `letter-path.jpg` is sufficient (Amendment 3, CHK-008). The
+  destination file's own pre-existing default voice is otherwise
+  unchanged by this relocation; the relocated image and its caption are
+  the sole scoped exception (Amendment 3, CHK-009).
 
 ### Key Entities
 
@@ -304,6 +390,9 @@ documentation content; no data model is introduced.)*
   README features this session (badge/table/code-block counts).
 - **SC-004**: A reader can identify at least one Star Wars reference
   tied to a specific SDD concept still present in the final document.
+  This is a floor for acceptance testing, not a target to minimize
+  toward — the shipped document may (and does) retain more than one
+  (Amendment 3, CHK-007).
 - **SC-005**: Every piece of content FR-009 relocates (skill catalog,
   both diagrams, all 23 Quickstart steps, Recommended companions,
   Versioning & releases) is verifiably present, in full, somewhere in
@@ -322,11 +411,15 @@ documentation content; no data model is introduced.)*
   exception: the opening line "A letter, from one Master to whoever
   picks up this scroll next:" is kept verbatim as a single evocative
   hook, paired with `letter-open.jpg` (FR-010). The underlying facts/
-  ideas the rest of the letter prose carried (the constitution's role,
-  the discipline-as-"right side of the Force" framing) are preserved
-  and re-expressed in the new third-person voice as part of the
-  restructured flow, not deleted — only the sustained personal-narrator
-  conceit itself goes, apart from that one retained opening line.
+  ideas the rest of the letter prose carried are preserved, not deleted
+  — only the sustained personal-narrator conceit itself goes, apart from
+  that one retained opening line. Specifically: the constitution's role
+  is re-expressed in third-person voice within the new SDD-primer
+  sections of the README itself; the discipline-as-"right side of the
+  Force" framing relocates to `CONTRIBUTING.md` alongside
+  `letter-path.jpg` (FR-010) rather than being duplicated back into the
+  README — this is a deliberate resolution, not an open question
+  (Amendment 3, CHK-008).
 - "Resumido" (condensed/summarized) means genuinely new, shorter prose
   written for the README's own flow — not simply copy-pasting each
   source document's full text inline.

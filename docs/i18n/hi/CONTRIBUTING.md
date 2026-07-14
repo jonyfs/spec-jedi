@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@01f83f5 lang=hi -->
+<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=hi -->
 > 🌐 यह दस्तावेज़ AI-सहायता प्राप्त अनुवाद है। **अंग्रेज़ी मूल स्रोत है** ([Principle I](../../../.specify/memory/constitution.md))；किसी भी विरोधाभास की स्थिति में अंग्रेज़ी संस्करण मान्य होगा। अन्य भाषाएँ देखें: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # Spec Jedi में योगदान देना
@@ -39,6 +39,38 @@ Spec Jedi अपने ही [constitution](../../../.specify/memory/constituti
   है।** अगर आप बाहरी योगदानकर्ता हैं, तो merge होने से पहले आपके PR को green `ci-gate`
   के अलावा owner से एक स्पष्ट APPROVED review चाहिए — exact mechanism के लिए
   `.github/workflows/validate.yml` में `owner-gate` job देखें।
+
+![एक पत्थर के रास्ते के दोराहे पर एक अकेली आकृति, एक रास्ता गर्म lanterns से रोशन होकर ऊपर की ओर जाता हुआ, दूसरा ठंडी छाया में धुँधला होता हुआ](../../comic/letter-path.jpg)
+
+यह अपने आप में bureaucracy नहीं है — यह Force का सही पक्ष है, mechanized:
+वह अनुशासन जो तब भी बना रहता है जब कोई देख नहीं रहा होता, क्योंकि constitution
+उसकी जगह देख रही होती है।
+
+## Versioning और releases
+
+Spec Jedi [Semantic Versioning](https://semver.org/) का पालन करता है, जो
+public skill-package contract तक सीमित है: किसी skill के व्यवहार को तोड़ने
+वाला बदलाव MAJOR है, नई skill या additive capability MINOR है, fixes और
+documentation PATCH हैं। पूरी policy
+[Principle XI](.specify/memory/constitution.md) में है।
+
+यहाँ कोई भी चुपचाप release cut नहीं करता — project सिर्फ़ यह सुझाव देता है
+कि कब release justified है, और असली फ़ैसला किसी इंसान पर छोड़ देता है:
+
+```bash
+# Linux / macOS / Windows (WSL या Git Bash)
+./scripts/suggest-release.sh
+```
+
+```powershell
+# Windows (native PowerShell)
+./scripts/suggest-release.ps1
+```
+
+यह आख़िरी tag के बाद से commits को inspect करता है और अगली version की
+सिफ़ारिश करता है। यह खुद कभी कुछ tag या publish नहीं करता — वास्तव में
+release काटना हमेशा एक जान-बूझकर उठाया गया, maintainer-driven कदम रहता है,
+हर बार।
 
 ## किसी `specjedi-*` skill को जोड़ना या बदलना
 

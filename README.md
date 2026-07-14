@@ -163,63 +163,71 @@ still needs its own research pass before it gets built.
 
 ---
 
-**PANEL 1 — A lone terminal, blinking cursor.**
+Every story starts the same way: a dark room, a terminal, a cursor
+that won't stop blinking until you give it something to do.
+
+![a lone glowing console terminal in a dark workshop](docs/comic/panel-1.jpg)
 > 🧑‍💻 *"I have an idea for a feature. ...Now what?"*
 
-![Panel 1: a lone glowing console terminal in a dark workshop](docs/comic/panel-1.jpg)
+That's when the mentor shows up — no lightsaber, just a scroll, because
+the first fight here is never the last one. `/speckit-constitution`
+writes the rules down once, so nobody has to relearn them the hard way
+three features from now.
 
-**PANEL 2 — A hooded figure steps out of the shadows, holding a scroll.**
+![a robed archivist-mentor figure unrolling a glowing data-scroll](docs/comic/panel-2.jpg)
 > 🧙 *"First, the Code."* 📜
-> `/speckit-constitution` — the project's non-negotiable rules, written down once,
-> checked forever after.
 
-![Panel 2: a robed archivist-mentor figure unrolling a glowing data-scroll](docs/comic/panel-2.jpg)
+The idea goes up on the wall next, circled by every question it hasn't
+answered yet — what you're actually building, and who it's actually
+for. `/speckit-specify` turns that into a real `spec.md`; `/speckit-clarify`
+goes hunting for the ambiguity before it turns into a bug nobody wants
+to own later.
 
-**PANEL 3 — The idea, pinned to a wall, question marks circling it.**
+![a corkboard covered in holographic sticky-notes and glowing question marks](docs/comic/panel-3.jpg)
 > 🌀 *"What are you really building — and for whom?"*
-> `/speckit-specify` turns the idea into `spec.md`. `/speckit-clarify` hunts down
-> the ambiguity before it becomes a bug.
 
-![Panel 3: a corkboard covered in holographic sticky-notes and glowing question marks](docs/comic/panel-3.jpg)
+Then the blueprint comes out. `/speckit-plan` becomes `plan.md`,
+`/speckit-tasks` breaks it into an ordered, dependency-aware `tasks.md`
+— nothing skipped, nothing out of sequence, the kind of plan a Padawan
+could follow without asking twice.
 
-**PANEL 4 — A blueprint unrolls across a workbench.**
+![a technical schematic unrolling across a cluttered workbench](docs/comic/panel-4.jpg)
 > 🛠️ *"Now the how."*
-> `/speckit-plan` → `plan.md`. `/speckit-tasks` → an ordered, dependency-aware
-> `tasks.md`. No step skipped, no step out of order.
 
-![Panel 4: a technical schematic unrolling across a cluttered workbench](docs/comic/panel-4.jpg)
+Tools start whirring. Tests fail red, one after another — and then,
+slowly, they don't. `/speckit-implement` works `tasks.md` test-first
+wherever it applies ([Principle VI](.specify/memory/constitution.md)),
+because a build that skips this step is just a guess with extra steps.
 
-**PANEL 5 — Tools whirring, tests failing red, then turning green one by one.**
+![a workshop wall of status lights flickering from red to green](docs/comic/panel-5.jpg)
 > 🤖 *"Tests first. Always tests first."*
-> `/speckit-implement` executes `tasks.md`, test-first where it applies
-> ([Principle VI](.specify/memory/constitution.md)).
 
-![Panel 5: a workshop wall of status lights flickering from red to green](docs/comic/panel-5.jpg)
+Now the council convenes — not to bless the work, just to check it. A
+pull request stands before the bench, and `ci-gate` 🤖 runs the whole
+validation battery: every OS, every check, no shortcuts. Nobody gets to
+approve their own work here, machine or otherwise
+([Principle X](.specify/memory/constitution.md)).
 
-**PANEL 6 — A council chamber. A pull request stands before the bench.**
+![a circular chamber, robed elders seated around a raised dais](docs/comic/panel-6.jpg)
 > 🏛️ *"State your changes."*
-> A PR opens. `ci-gate` 🤖 runs the full validation battery — every OS, every
-> check. No self-approval allowed; the machine can't pardon itself, and neither
-> can you ([Principle X](.specify/memory/constitution.md)).
 
-![Panel 6: a circular chamber, robed elders seated around a raised dais](docs/comic/panel-6.jpg)
+The light turns green, and the gate opens on its own — no hand on the
+lever, nobody clicking a button. The battery already said what needed
+saying.
 
-**PANEL 7 — Green light. The gate opens on its own.**
+![a massive mechanical blast door irising open under a green beacon light](docs/comic/panel-7.jpg)
 > ✅ *"The battery has spoken."*
-> All checks pass → auto-merge, no human had to click a button.
 
-![Panel 7: a massive mechanical blast door irising open under a green beacon light](docs/comic/panel-7.jpg)
+And then it's gone — off to hyperspace, shipped.
 
-**PANEL 8 — A ship leaps to hyperspace.**
+![a sleek original-design starship streaking away against a starfield](docs/comic/panel-8.jpg)
 > 🚀 *"Shipped."*
 > 🌌 *"May the Spec be with you."*
 
-![Panel 8: a sleek original-design starship streaking away against a starfield](docs/comic/panel-8.jpg)
-
-This isn't a hypothetical — it's the literal, repeated process behind
-this project's own recent pull requests (e.g. [#82](https://github.com/jonyfs/spec-jedi/pull/82),
-[#84](https://github.com/jonyfs/spec-jedi/pull/84), [#87](https://github.com/jonyfs/spec-jedi/pull/87)),
-each one running these exact eight panels for real.
+None of this is a bedtime story. It's the literal, repeated process
+behind this project's own recent pull requests — [#82](https://github.com/jonyfs/spec-jedi/pull/82),
+[#84](https://github.com/jonyfs/spec-jedi/pull/84), [#87](https://github.com/jonyfs/spec-jedi/pull/87),
+to name a few — start to finish, for real, every time.
 
 ### The same internal-bootstrap story, as a diagram
 

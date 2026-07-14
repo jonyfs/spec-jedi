@@ -73,13 +73,19 @@ echo "📡 Looking up Spec Jedi release (${version:-latest})..."
 # rate-limit, 5xx alike), so a transient failure and a genuine "no
 # release" look identical here -- retry a few times before concluding
 # it's the latter, rather than surfacing a misleading permanent-looking
-# message for what might just be a rate limit or network blip.
+# message for what might just be a rate limit or network blip. Capture
+# the actual HTTP status separately so the failure message is honest
+# about which of those it actually was.
 response=""
+http_status=""
 for attempt in 1 2 3; do
-  response="$(curl -fsSL "$api_url" 2>/dev/null || true)"
-  if [ -n "$response" ]; then
+  http_status="$(curl -sSL -o /tmp/spec-jedi-bootstrap-response.$$ -w '%{http_code}' "$api_url" 2>/dev/null || true)"
+  if [ "$http_status" = "200" ]; then
+    response="$(cat /tmp/spec-jedi-bootstrap-response.$$ 2>/dev/null || true)"
+    rm -f /tmp/spec-jedi-bootstrap-response.$$
     break
   fi
+  rm -f /tmp/spec-jedi-bootstrap-response.$$
   if [ "$attempt" -lt 3 ]; then
     sleep "$attempt"
   fi
@@ -87,7 +93,7 @@ done
 
 if [ -z "$response" ] || printf '%s' "$response" | grep -q '"message": *"Not Found"'; then
   echo
-  echo "🔭 No published Spec Jedi release found${version:+ for $version}."
+  echo "🔭 No published Spec Jedi release found${version:+ for $version}${http_status:+ (last HTTP status: $http_status)}."
   echo "This project cuts releases deliberately (Constitution Principle XI) --"
   echo "none may exist yet, the requested version may not exist, or the"
   echo "network request itself may have failed."

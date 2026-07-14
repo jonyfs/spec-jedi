@@ -264,7 +264,20 @@ function Get-SkillMeta {
         $desc = $sentenceMatch.Groups[1].Value
     }
     if ($desc.Length -gt 160) {
-        $desc = $desc.Substring(0, 157) + "..."
+        $truncated = $desc.Substring(0, 157)
+        # Trim back to the last complete word rather than cutting at the
+        # exact character boundary -- a raw character cut regularly
+        # landed mid-word (e.g. "...journey, k...", "...directly t..."),
+        # a confusing fragment for something an agent reads directly as
+        # its own session-start context (CLAUDE.md/AGENTS.md/.trae/rules'
+        # generated section, specs/039). No-op if there's no space in
+        # the truncated string at all -- mirrors install.sh's
+        # ${desc% *} exactly.
+        $lastSpace = $truncated.LastIndexOf(" ")
+        if ($lastSpace -ge 0) {
+            $truncated = $truncated.Substring(0, $lastSpace)
+        }
+        $desc = $truncated + "..."
     }
     [PSCustomObject]@{ Name = $name; Description = $desc }
 }

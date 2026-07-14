@@ -449,7 +449,18 @@ first_sentence() {
     desc="$cut."
   fi
   if [ "$(utf8_len "$desc")" -gt 160 ]; then
-    desc="$(utf8_truncate "$desc" 157)..."
+    desc="$(utf8_truncate "$desc" 157)"
+    # Trim back to the last complete word (last space) rather than
+    # cutting at the exact character boundary -- a raw character cut
+    # regularly landed mid-word (e.g. "...journey, k...",
+    # "...directly t..."), a confusing fragment for something an agent
+    # reads directly as its own session-start context (CLAUDE.md/
+    # AGENTS.md/.trae/rules' generated section, specs/039). No-op if
+    # there's no space in the truncated string at all.
+    case "$desc" in
+      *" "*) desc="${desc% *}" ;;
+    esac
+    desc="${desc}..."
   fi
   printf '%s' "$desc"
 }

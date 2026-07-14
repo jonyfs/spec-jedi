@@ -897,20 +897,30 @@ jobs:
         run: |
           # Reuse the two packages the previous two steps already built
           # (via $PKG_SH_OUT/$PKG_PS_OUT, each written by its own native
-          # shell to $GITHUB_ENV) rather than rebuilding a third time --
-          # a second same-job invocation of package-release.sh's own
-          # internal `tar -czf` was observed to non-deterministically
-          # fail on windows-latest with "Cannot connect to D:" (an MSYS
-          # tar/path quirk under Git Bash), even though the same command
-          # succeeds as the job's first invocation. Reading files a
-          # PowerShell step already wrote (an already Windows-style path
-          # in $PKG_PS_OUT) is a plain file-I/O read, not an argv handoff
-          # into another executable -- the operation that actually
-          # triggers MSYS's path-mangling -- so it doesn't hit that bug.
+          # shell to $GITHUB_ENV) rather than rebuilding a third time.
+          #
+          # On windows-latest, $PKG_PS_OUT is a Windows-style path (e.g.
+          # D:\a\_temp\...); on ubuntu-latest/macos-latest it's already
+          # POSIX (pwsh's $env:RUNNER_TEMP resolves natively per OS).
+          # tar applies the traditional Unix "host:path" remote-archive
+          # convention to any argument matching word-then-colon -- so a
+          # Windows drive-letter path parses as "connect to a host
+          # literally named D" ("tar (child): Cannot connect to D:
+          # resolve failed"). --force-local (the usual fix) isn't
+          # supported by every tar variant across the three OSes, so
+          # only-when-needed, convert to the POSIX-style form Git Bash's
+          # own MSYS runtime already recognizes internally
+          # (D:\a\_temp -> /d/a/_temp), which has no colon left to be
+          # ambiguous about; leave an already-POSIX path untouched.
+          if printf '%s' "$PKG_PS_OUT" | grep -qE '^[A-Za-z]:'; then
+            ps_out_posix="/$(printf '%s' "$PKG_PS_OUT" | sed -E 's#\\#/#g; s#^([A-Za-z]):#\1#' | tr '[:upper:]' '[:lower:]')"
+          else
+            ps_out_posix="$PKG_PS_OUT"
+          fi
           sh_extracted="$(mktemp -d)"
           ps_extracted="$(mktemp -d)"
           tar -xzf "$PKG_SH_OUT/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$sh_extracted"
-          tar -xzf "$PKG_PS_OUT/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$ps_extracted"
+          tar -xzf "$ps_out_posix/spec-jedi-v0.0.0-ci-check.tar.gz" -C "$ps_extracted"
           if ! diff -rq "$sh_extracted" "$ps_extracted"; then
             echo "FAIL: package-release.sh and package-release.ps1 staged different trees for the same version (Constitution Principle XIII)"
             exit 1

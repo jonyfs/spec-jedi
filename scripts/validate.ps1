@@ -20,7 +20,7 @@ $constitutionPath = Join-Path $repoRoot '.specify/memory/constitution.md'
 $lines = Get-Content -Path $constitutionPath
 $commentEndIndex = ($lines | Select-String -Pattern '-->' -List | Select-Object -First 1).LineNumber
 $bodyLines = if ($commentEndIndex) { $lines[$commentEndIndex..($lines.Count - 1)] } else { $lines }
-$placeholders = $bodyLines | Select-String -Pattern '\[[A-Z_]+\]'
+$placeholders = $bodyLines | Select-String -CaseSensitive -Pattern '\[[A-Z_]+\]'
 if ($placeholders) {
     $placeholders | ForEach-Object { Write-Host $_.Line }
     Write-Host "FAIL: unresolved [PLACEHOLDER] tokens found in constitution.md body"

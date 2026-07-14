@@ -452,6 +452,21 @@ if ($bridgeMode) {
     }
 }
 
+# specs/039-memory-file-skill-mentions: harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory get that file created or updated too -- never antigravity
+# (no confirmed convention) or the 14 bridge harnesses above (their
+# bridge file already serves this purpose).
+$memoryFileRel = ""
+switch ($Harness) {
+    "claude-code" { $memoryFileRel = "CLAUDE.md" }
+}
+if ($memoryFileRel) {
+    Write-Host ""
+    Write-Host "🧠 Updating $memoryFileRel with the installed skill set..."
+    Update-MemoryFile -MemoryPath (Join-Path $TargetDir $memoryFileRel) -SkillsDstRel $skillsDstRel
+}
+
 Write-Host ""
 Write-Host "== Validating installed skills =="
 $fail = $false

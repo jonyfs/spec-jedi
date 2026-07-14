@@ -714,15 +714,13 @@ jobs:
           exit 0
 
   # specs/024-bootstrap-installer: this project's own first release
-  # (v0.1.0) hasn't been cut yet (Principle XI — always a deliberate
-  # maintainer step), so the one thing genuinely testable in CI right now
-  # is the "no release found" graceful path against the real, current
-  # GitHub API for this repo (no mocking) plus --help. The live-download
-  # path itself was verified manually against a locally-built release
-  # artifact (specs/024-bootstrap-installer/plan.md) and gets its own CI
-  # coverage once v0.1.0 exists. Unauthenticated GitHub API calls are
-  # rate-limited per-IP; acceptable here since this is PR-triggered only,
-  # not a hot loop.
+  # (v0.1.0) now exists (Principle XI's deliberate maintainer step has
+  # happened), so this job exercises the real, live-download path against
+  # the actual GitHub API for this repo (no mocking) plus --help. Before
+  # v0.1.0 existed, this job only had a "no release found" graceful-exit
+  # path to test; that assertion is now inverted below to match reality.
+  # Unauthenticated GitHub API calls are rate-limited per-IP; acceptable
+  # here since this is PR-triggered only, not a hot loop.
   bootstrap-installer-smoke:
     name: bootstrap-installer-smoke (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -732,25 +730,37 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
-      - name: --help works and no-release path exits cleanly (bash)
+      - name: --help works and a real release installs successfully (bash)
         shell: bash
         run: |
           ./scripts/bootstrap-install.sh --help
-          if ./scripts/bootstrap-install.sh /tmp/bootstrap-smoke-sh; then
-            echo "FAIL: expected non-zero exit against a repo with no releases"
+          if ! ./scripts/bootstrap-install.sh /tmp/bootstrap-smoke-sh; then
+            echo "FAIL: expected bootstrap-install.sh to succeed now that a real release exists"
             exit 1
           fi
-          echo "OK: bootstrap-install.sh exited non-zero with no crash"
-      - name: -Help works and no-release path exits cleanly (PowerShell)
+          if [ ! -d /tmp/bootstrap-smoke-sh/.claude/skills ]; then
+            echo "FAIL: expected .claude/skills to exist after a successful install"
+            exit 1
+          fi
+          echo "OK: bootstrap-install.sh installed a real published release successfully"
+      - name: -Help works and a real release installs successfully (PowerShell)
         shell: pwsh
         run: |
+          # pwsh is cross-platform (this step also runs on ubuntu-latest/macos-latest
+          # matrix legs), so the target dir must be too -- $env:RUNNER_TEMP resolves
+          # correctly on all three OSes, unlike a hardcoded C:\ path.
+          $smokeDir = Join-Path $env:RUNNER_TEMP "bootstrap-smoke-ps"
           ./scripts/bootstrap-install.ps1 -Help
-          ./scripts/bootstrap-install.ps1 -TargetDir C:\bootstrap-smoke-ps
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "FAIL: expected non-zero exit against a repo with no releases"
+          ./scripts/bootstrap-install.ps1 -TargetDir $smokeDir
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "FAIL: expected bootstrap-install.ps1 to succeed now that a real release exists"
             exit 1
           }
-          Write-Host "OK: bootstrap-install.ps1 exited non-zero with no crash"
+          if (-not (Test-Path (Join-Path $smokeDir ".claude/skills"))) {
+            Write-Host "FAIL: expected .claude\skills to exist after a successful install"
+            exit 1
+          }
+          Write-Host "OK: bootstrap-install.ps1 installed a real published release successfully"
           exit 0
 
   # Add new battery jobs here as the project grows (unit, integration,

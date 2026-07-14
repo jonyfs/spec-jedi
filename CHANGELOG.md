@@ -9,6 +9,49 @@ this file directly.
 
 ## Unreleased
 
+## [v0.1.1] - 2026-07-14
+
+### Fixed
+
+- `scripts/bootstrap-install.ps1` splatted `-TargetDir`/`-Harness` as an
+  array, which PowerShell binds **positionally** rather than by name —
+  the literal `"-TargetDir"` string landed in `install.ps1`'s first
+  parameter and the real path landed in its second, silently misrouting
+  `TargetDir`'s value into `Harness`. Switched to hashtable splatting,
+  which binds unambiguously by name.
+- `scripts/install.ps1`'s harness auto-detection used
+  `$env:USERPROFILE`, which is Windows-only and resolves to nothing on
+  macOS/Linux; switched to `$HOME`, PowerShell Core's cross-platform
+  automatic variable.
+- `.github/workflows/validate.yml`'s `bootstrap-installer-smoke` job
+  still asserted the installer must *fail* ("no release found"), stale
+  the moment `v0.1.0` was published by the same run that shipped it —
+  inverted to assert success and a populated `.claude/skills`.
+- That same job's PowerShell smoke-test step hardcoded a Windows-only
+  `C:\` target path even though `pwsh` also runs the step on the
+  `ubuntu-latest`/`macos-latest` matrix legs — switched to
+  `$env:RUNNER_TEMP`, which resolves correctly on all three OSes.
+- Both bootstrap installers' release-lookup call collapsed a transient
+  failure (rate limit, network blip, 5xx) and a genuine "no release
+  found" into the same misleading message; added a 3-attempt retry with
+  backoff, and diagnosed (via an HTTP-status capture) that
+  `macos-latest`'s shared, heavily-reused runner IP pool was hitting
+  GitHub's real 60/hour anonymous API limit — both installers now
+  opportunistically authenticate with `GITHUB_TOKEN` when it's present
+  in the environment (5000/hour), while staying anonymous for real end
+  users running them outside CI.
+- `scripts/bootstrap-install.sh` crashed with `install_args[@]: unbound
+  variable` on macOS specifically: macOS ships bash 3.2 (Apple has
+  stayed on GPLv2 licensing for years), which treats an empty array as
+  unset under `set -u` when expanded with `"${arr[@]}"`, unlike bash
+  4.4+ (Linux, Git Bash on Windows). Applied the
+  `${arr[@]+"${arr[@]}"}` idiom already used in `session-start.sh`.
+- `.github/workflows/release.yml`'s trailing `CHANGELOG.md` commit could
+  lose a non-fast-forward race against `main` moving mid-run (the
+  actual GitHub Release and tarball still published correctly; only
+  this bookkeeping commit failed) — added a fetch+rebase+retry-with-
+  backoff loop before the final push.
+
 ## [v0.1.0] - 2026-07-14
 
 ### Added

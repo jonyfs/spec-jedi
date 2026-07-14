@@ -161,7 +161,7 @@ Skill Authoring Standard gaps.
 - [X] T028 [P] Add the `CHANGELOG.md` entry.
 - [X] T029 Run `quickstart.md`'s 5 scenarios in order (depends on T026,
       T027).
-- [ ] T030 Run `specjedi-govcheck` against this branch before opening the
+- [X] T030 Run `specjedi-govcheck` against this branch before opening the
       PR (depends on T029).
 
 ---

@@ -41,6 +41,37 @@ this file directly.
   path (`D:\...` parsed as "connect to a host named D"), fixed by
   converting to the POSIX-style form Git Bash's own MSYS runtime already
   recognizes, only when the path actually needs it.
+- **Memory-file skill mentions** (feature 039) — `scripts/install.sh`/
+  `.ps1` now create or idempotently update `CLAUDE.md` (`claude-code`),
+  `AGENTS.md` (`codex-cli`), and `.trae/rules/project_rules.md` (`trae`)
+  with a marker-delimited (`<!-- SPEC-JEDI:SKILLS:START/END -->`)
+  section naming the installed skills — closing the gap where these
+  three "skills-dir" harnesses got nothing, unlike the 14 "bridge"
+  harnesses that already generate an equivalent file. Preserves every
+  byte of a pre-existing file's own content outside the section;
+  re-running the installer with no skill-set change leaves the file
+  byte-for-byte unchanged. Deliberately untouched: `antigravity` (no
+  confirmed separate memory-file convention — inventing one would be a
+  fabricated capability claim) and the 14 bridge harnesses (their
+  existing bridge file already serves this purpose). New
+  `memory-file-injection` CI job (3-OS matrix) proves fresh creation,
+  content preservation, idempotency, CRLF handling, and marker-
+  corruption failure against a real installer run.
+
+### Fixed
+
+- Four more real cross-platform bugs, three found only once the new CI
+  job actually ran on `windows-latest`: a stale `$LASTEXITCODE` from an
+  intentionally-failing test scenario falsely marking a passing step as
+  failed; `Get-ChildItem`'s unsorted enumeration order breaking
+  `install.sh`/`.ps1` output parity (fixed with an explicit
+  `Sort-Object`); PowerShell's regex over-stripping a CRLF file's
+  trailing `\r` down to a bare LF; and bash's own `${#var}`/
+  `${var:0:N}` counting *bytes* instead of *characters* under Windows
+  Git Bash's locale, silently breaking cross-script parity on any
+  description containing an em-dash — fixed with a locale-independent
+  UTF-8-aware length/truncate implementation, verified to never produce
+  invalid UTF-8.
 
 ## [v0.1.1] - 2026-07-14
 

@@ -264,6 +264,15 @@ yourself — the full list is right below in
 `.\scripts\bootstrap-install.ps1 -Help`) any time you want the complete
 option list, `--auto` included.
 
+For `claude-code`, `codex-cli`, and `trae`, the installer also creates
+or updates that harness's own project-memory file (`CLAUDE.md`,
+`AGENTS.md`, or `.trae/rules/project_rules.md`) with a short,
+marker-delimited section naming the installed skills — so the harness's
+own context already knows they're there, not just the skills directory
+itself. If that file already exists with your own content, nothing of
+yours is touched; the section is appended and only that section gets
+refreshed on later re-installs.
+
 ### Supported harnesses
 
 The constitution ([Principle III](.specify/memory/constitution.md))

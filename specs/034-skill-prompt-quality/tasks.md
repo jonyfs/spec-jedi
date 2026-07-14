@@ -28,10 +28,10 @@ already-shipped shape.
 **Independent Test**: Read both files; confirm each has an explicit
 audience-calibration boundary note.
 
-- [ ] T001 [P] [US1] Add the audience-calibration boundary note to
+- [X] T001 [P] [US1] Add the audience-calibration boundary note to
       `.claude/skills/specjedi-constitution/SKILL.md` per `research.md`'s
       Fix 1 (FR-001) (depends on nothing).
-- [ ] T002 [P] [US1] Add the audience-calibration boundary note to
+- [X] T002 [P] [US1] Add the audience-calibration boundary note to
       `.claude/skills/specjedi-specify/SKILL.md` per `research.md`'s
       Fix 2 (FR-002) (depends on nothing).
 
@@ -49,7 +49,7 @@ reasoning.
 **Independent Test**: Read the file; confirm the note names install
 count/source/GitHub stars specifically, not a generic restatement.
 
-- [ ] T003 [US2] Add the scoped audience-calibration note to
+- [X] T003 [US2] Add the scoped audience-calibration note to
       `.claude/skills/specjedi-find-skills/SKILL.md` per `research.md`'s
       Fix 3 (FR-003) (depends on nothing).
 
@@ -65,7 +65,7 @@ explicit chain-of-thought instruction.
 **Independent Test**: Read the file's Step 2; confirm a "reason through
 this explicitly" instruction is present in the step itself.
 
-- [ ] T004 [US3] Add the chain-of-thought instruction to
+- [X] T004 [US3] Add the chain-of-thought instruction to
       `.claude/skills/specjedi-onboard/SKILL.md`'s Step 2 per
       `research.md`'s Fix 4 (FR-004) (depends on nothing).
 
@@ -81,7 +81,7 @@ explicit chain-of-thought instruction.
 **Independent Test**: Read the file's Step 1; confirm the instruction is
 present directly in that step.
 
-- [ ] T005 [US4] Add the chain-of-thought instruction to
+- [X] T005 [US4] Add the chain-of-thought instruction to
       `.claude/skills/specjedi-quick/SKILL.md`'s Step 1 per
       `research.md`'s Fix 5 (FR-005) (depends on nothing).
 
@@ -91,7 +91,7 @@ present directly in that step.
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T006 Run `quickstart.md`'s 6 scenarios in order, including the
+- [X] T006 Run `quickstart.md`'s 6 scenarios in order, including the
       per-file word-count check (SC-003/FR-007) and the "exactly 5 files
       touched" check (SC-002/FR-006) (depends on T001-T005).
 - [ ] T007 Run `specjedi-govcheck` against this branch before opening

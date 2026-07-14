@@ -36,10 +36,13 @@ relevant — never before.
      lettered list with a recommended option beats an open-ended prompt
      for a beginner who doesn't know what's even askable yet).
    - If the request is genuinely open-ended ("I want to build something
-     for my team" with nothing more concrete), surface **2-3 candidate
-     directions** with a one-line trade-off each and a clear
-     recommendation — not an exhaustive menu, just enough to unstick the
-     conversation.
+     for my team" with nothing more concrete), **reason through the
+     candidate directions explicitly before presenting them** — this is
+     a real judgment call, not a formality: which 2-3 directions actually
+     fit the little context given, and what's the real one-line
+     trade-off each one carries? Surface those 2-3 candidate directions
+     with that trade-off and a clear recommendation — not an exhaustive
+     menu, just enough to unstick the conversation.
    - Keep this loop scoped to *forming* the idea, nothing more: stop the
      moment a real one-sentence idea exists and move to step 3. Do not
      draft a design document, do not enumerate requirements, do not ask

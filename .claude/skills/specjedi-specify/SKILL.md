@@ -73,6 +73,12 @@ Test/Acceptance Scenarios), `### Edge Cases`, `## Requirements` (Functional
 Requirements + Key Entities), `## Success Criteria` (Measurable Outcomes),
 `## Assumptions`.
 
+**Audience calibration boundary**: `spec.md`'s own content stays precise
+and testable (Principle V/XII exemption); calibration (Principle XIX)
+applies only to the skill's own narration — Step 1's idea-shaping
+conversation with the user — never to the spec's own written
+requirement/criteria text.
+
 ## Example (input → output)
 
 **User**: *"I want users to be able to export their data as a CSV."*

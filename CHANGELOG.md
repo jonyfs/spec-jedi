@@ -11,6 +11,22 @@ this file directly.
 
 ### Added
 
+- **Skill validation & testing framework compliance audit** (feature
+  033) — closes a real, measured gap: a direct `grep` audit found zero
+  of the 24 shipped `specjedi-*` skills cited
+  `references/skill-validation-testing-framework.md`, despite
+  Constitution Principle IX requiring every skill's dry-run coverage to
+  address its four adopted categories (vague/incomplete input, prompt
+  injection resistance, out-of-bounds/malformed input, external-call
+  resilience) wherever applicable. All 24 skills now carry a `##
+  Validation Coverage (Principle IX)` section stating each category's
+  status explicitly — Applicable with a concrete, skill-specific
+  scenario, or Not Applicable with a stated reason — determined by one
+  single, consistently-applied rule per category
+  (`specs/033-skill-validation-audit/research.md`), never 24 independent
+  judgment calls. `specjedi-skill-review` gains this framework as an
+  explicit review dimension going forward, so the gap can't silently
+  reopen.
 - **`specjedi-worktree`** (feature 032) — mechanizes git-worktree-based
   parallel development, closing the gap `references/competitive-
   comparison.md`'s Spec Kitty row and `references/honest-assessment.md`'s

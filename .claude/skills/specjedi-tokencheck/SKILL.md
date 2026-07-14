@@ -146,3 +146,16 @@ before installing anything, and it never infers a "yes" from silence.
   confirmation.
 - A run against an environment with both tools present produces a clean
   report with no install offers.
+
+## Validation Coverage (Principle IX)
+
+Per `references/skill-validation-testing-framework.md`:
+
+- **Vague / Incomplete Input Handling**: Not Applicable — a deterministic
+  presence check, no free-form request to interpret.
+- **Prompt Injection Resistance**: Not Applicable — no file-content read;
+  `which`/`where` checks a tool's presence only.
+- **Out-of-Bounds / Malformed Input Handling**: Not Applicable — no
+  structured input of its own to parse.
+- **External-Call Resilience**: Not Applicable — `which`/`where` are
+  local shell lookups, not network calls.

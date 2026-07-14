@@ -27,7 +27,7 @@ one additional edit (US3). `CHANGELOG.md` gains one entry.
 
 ## Phase 1: Setup
 
-- [ ] T001 Re-read `references/skill-validation-testing-framework.md`
+- [X] T001 Re-read `references/skill-validation-testing-framework.md`
       and `research.md`'s four applicability rules + full table in full
       — the grounding both Phase 3 and Phase 4 depend on (depends on
       nothing).
@@ -36,7 +36,7 @@ one additional edit (US3). `CHANGELOG.md` gains one entry.
 
 ## Phase 2: Foundational
 
-- [ ] T002 Confirm the exact section heading/placement convention
+- [X] T002 Confirm the exact section heading/placement convention
       (`## Validation Coverage (Principle IX)`, final section, four
       fixed-order lines) against `research.md`'s Decision — this is the
       one shared structural contract every Phase 3 task must match
@@ -56,55 +56,55 @@ content per FR-005, or newly written where genuinely missing).
 Applicable line shows concrete input/behavior, never a generic
 restatement.
 
-- [ ] T003 [P] [US1] Read `.claude/skills/specjedi-onboard/SKILL.md` in
+- [X] T003 [P] [US1] Read `.claude/skills/specjedi-onboard/SKILL.md` in
       full; add its Validation Coverage section per `research.md`'s row
       (Cat 1/2 Applicable, Cat 3/4 N/A), cross-referencing existing
       content where present (depends on T002).
-- [ ] T004 [P] [US1] Same for `specjedi-constitution` (Cat 1/2/3
+- [X] T004 [P] [US1] Same for `specjedi-constitution` (Cat 1/2/3
       Applicable, Cat 4 N/A) (depends on T002).
-- [ ] T005 [P] [US1] Same for `specjedi-specify` (Cat 1/2/3 Applicable,
+- [X] T005 [P] [US1] Same for `specjedi-specify` (Cat 1/2/3 Applicable,
       Cat 4 N/A) (depends on T002).
-- [ ] T006 [P] [US1] Same for `specjedi-clarify` (Cat 2/3 Applicable, Cat
+- [X] T006 [P] [US1] Same for `specjedi-clarify` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T007 [P] [US1] Same for `specjedi-plan` (Cat 2/3/4 Applicable, Cat
+- [X] T007 [P] [US1] Same for `specjedi-plan` (Cat 2/3/4 Applicable, Cat
       1 N/A) (depends on T002).
-- [ ] T008 [P] [US1] Same for `specjedi-tasks` (Cat 2/3 Applicable, Cat
+- [X] T008 [P] [US1] Same for `specjedi-tasks` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T009 [P] [US1] Same for `specjedi-implement` (Cat 2/3/4 Applicable,
+- [X] T009 [P] [US1] Same for `specjedi-implement` (Cat 2/3/4 Applicable,
       Cat 1 N/A) (depends on T002).
-- [ ] T010 [P] [US1] Same for `specjedi-quick` (Cat 1/3/4 Applicable, Cat
+- [X] T010 [P] [US1] Same for `specjedi-quick` (Cat 1/3/4 Applicable, Cat
       2 N/A) (depends on T002).
-- [ ] T011 [P] [US1] Same for `specjedi-analyze` (Cat 2/3 Applicable, Cat
+- [X] T011 [P] [US1] Same for `specjedi-analyze` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T012 [P] [US1] Same for `specjedi-checklist` (Cat 1/2/3 Applicable,
+- [X] T012 [P] [US1] Same for `specjedi-checklist` (Cat 1/2/3 Applicable,
       Cat 4 N/A) (depends on T002).
-- [ ] T013 [P] [US1] Same for `specjedi-converge` (Cat 2/3 Applicable,
+- [X] T013 [P] [US1] Same for `specjedi-converge` (Cat 2/3 Applicable,
       Cat 1/4 N/A) (depends on T002).
-- [ ] T014 [P] [US1] Same for `specjedi-find-skills` (Cat 1/4 Applicable,
+- [X] T014 [P] [US1] Same for `specjedi-find-skills` (Cat 1/4 Applicable,
       Cat 2/3 N/A) (depends on T002).
-- [ ] T015 [P] [US1] Same for `specjedi-explain` (Cat 1 Applicable, Cat
+- [X] T015 [P] [US1] Same for `specjedi-explain` (Cat 1 Applicable, Cat
       2/3/4 N/A) (depends on T002).
-- [ ] T016 [P] [US1] Same for `specjedi-migrate` (Cat 2/3 Applicable, Cat
+- [X] T016 [P] [US1] Same for `specjedi-migrate` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T017 [P] [US1] Same for `specjedi-diagram` (Cat 2/3/4 Applicable,
+- [X] T017 [P] [US1] Same for `specjedi-diagram` (Cat 2/3/4 Applicable,
       Cat 1 N/A) (depends on T002).
-- [ ] T018 [P] [US1] Same for `specjedi-status` (Cat 2/3 Applicable, Cat
+- [X] T018 [P] [US1] Same for `specjedi-status` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T019 [P] [US1] Same for `specjedi-retro` (Cat 2/3 Applicable, Cat
+- [X] T019 [P] [US1] Same for `specjedi-retro` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T020 [P] [US1] Same for `specjedi-security` (Cat 2 Applicable, Cat
+- [X] T020 [P] [US1] Same for `specjedi-security` (Cat 2 Applicable, Cat
       1/3/4 N/A) (depends on T002).
-- [ ] T021 [P] [US1] Same for `specjedi-docs` (Cat 2/3 Applicable, Cat
+- [X] T021 [P] [US1] Same for `specjedi-docs` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T022 [P] [US1] Same for `specjedi-new-skill` (Cat 1/3 Applicable,
+- [X] T022 [P] [US1] Same for `specjedi-new-skill` (Cat 1/3 Applicable,
       Cat 2/4 N/A) (depends on T002).
-- [ ] T023 [P] [US1] Same for `specjedi-release` (Cat 2/3 Applicable, Cat
+- [X] T023 [P] [US1] Same for `specjedi-release` (Cat 2/3 Applicable, Cat
       1/4 N/A) (depends on T002).
-- [ ] T024 [P] [US1] Same for `specjedi-skill-review` (Cat 2/3
+- [X] T024 [P] [US1] Same for `specjedi-skill-review` (Cat 2/3
       Applicable, Cat 1/4 N/A) — this task adds only the Validation
       Coverage section; the US3/FR-006 review-dimension step is a
       separate edit to the same file in Phase 5 (T026) (depends on T002).
-- [ ] T025 [P] [US1] Same for `specjedi-tokencheck` (all four N/A) and
+- [X] T025 [P] [US1] Same for `specjedi-tokencheck` (all four N/A) and
       `specjedi-govcheck` (Cat 2/3/4 Applicable, Cat 1 N/A) (depends on
       T002).
 
@@ -122,7 +122,7 @@ real, concrete content, not a restatement of the category's definition.
 across all 24 files shows named input and named expected behavior or a
 specific existing-content cross-reference.
 
-- [ ] T026 [US2] Read every Applicable line written in Phase 3 across all
+- [X] T026 [US2] Read every Applicable line written in Phase 3 across all
       24 files; flag and immediately fix any that reads as a generic
       restatement rather than concrete content (SC-002) (depends on
       T003-T025).
@@ -142,7 +142,7 @@ checked against it going forward.
 step-by-step; confirm the framework's four categories appear as an
 explicit review dimension.
 
-- [ ] T027 [US3] Add a new step to
+- [X] T027 [US3] Add a new step to
       `.claude/skills/specjedi-skill-review/SKILL.md`'s step-by-step:
       check whether the reviewed skill's `SKILL.md` carries a Validation
       Coverage (Principle IX) section addressing all four categories from
@@ -158,8 +158,8 @@ Skill Authoring Standard gaps.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T028 [P] Add the `CHANGELOG.md` entry.
-- [ ] T029 Run `quickstart.md`'s 5 scenarios in order (depends on T026,
+- [X] T028 [P] Add the `CHANGELOG.md` entry.
+- [X] T029 Run `quickstart.md`'s 5 scenarios in order (depends on T026,
       T027).
 - [ ] T030 Run `specjedi-govcheck` against this branch before opening the
       PR (depends on T029).

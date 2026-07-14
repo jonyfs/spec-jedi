@@ -47,11 +47,19 @@ if ($Version) {
 
 Write-Host "📡 Looking up Spec Jedi release ($(if ($Version) { $Version } else { 'latest' }))..."
 
+# A transient failure (rate limit, network blip, 5xx) and a genuine "no
+# release" both surface as a caught exception here -- retry a few times
+# before concluding it's the latter, rather than surfacing a misleading
+# permanent-looking message for what might just be a passing hiccup.
 $release = $null
-try {
-    $release = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "spec-jedi-bootstrap-installer" } -ErrorAction Stop
-} catch {
-    $release = $null
+for ($attempt = 1; $attempt -le 3; $attempt++) {
+    try {
+        $release = Invoke-RestMethod -Uri $apiUrl -Headers @{ "User-Agent" = "spec-jedi-bootstrap-installer" } -ErrorAction Stop
+        break
+    } catch {
+        $release = $null
+        if ($attempt -lt 3) { Start-Sleep -Seconds $attempt }
+    }
 }
 
 if (-not $release -or -not $release.tag_name) {

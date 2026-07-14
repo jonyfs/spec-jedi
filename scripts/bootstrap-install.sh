@@ -69,7 +69,21 @@ if [ -n "$version" ]; then
 fi
 
 echo "📡 Looking up Spec Jedi release (${version:-latest})..."
-response="$(curl -fsSL "$api_url" 2>/dev/null || true)"
+# curl -f suppresses the response body on any HTTP error (404, 403
+# rate-limit, 5xx alike), so a transient failure and a genuine "no
+# release" look identical here -- retry a few times before concluding
+# it's the latter, rather than surfacing a misleading permanent-looking
+# message for what might just be a rate limit or network blip.
+response=""
+for attempt in 1 2 3; do
+  response="$(curl -fsSL "$api_url" 2>/dev/null || true)"
+  if [ -n "$response" ]; then
+    break
+  fi
+  if [ "$attempt" -lt 3 ]; then
+    sleep "$attempt"
+  fi
+done
 
 if [ -z "$response" ] || printf '%s' "$response" | grep -q '"message": *"Not Found"'; then
   echo

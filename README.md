@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#what-you-get-today)
-[![Skills](https://img.shields.io/badge/specjedi_skills-24_shipped-success)](#what-you-get-today)
+[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#what-you-get-today)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
@@ -69,12 +69,12 @@ research discipline (Principle II), never rushed.
 > *"A Jedi's strength flows from the Force. So too does a project's, from
 > its skills."* — a wise Master, probably.
 
-Twenty-four strong, this Order is — trained not for combat, but for
+Twenty-five strong, this Order is — trained not for combat, but for
 Spec-Driven Development. Four disciplines it keeps:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 24 skills"))
+  root(("Spec Jedi — 25 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -94,7 +94,7 @@ mindmap
       skill-review
       govcheck
       retro
-    Meta and Tooling - 8
+    Meta and Tooling - 9
       quick
       diagram
       status
@@ -103,6 +103,7 @@ mindmap
       new-skill
       release
       tokencheck
+      worktree
 ```
 
 **Ships today, install and use now:**
@@ -133,6 +134,7 @@ mindmap
 | `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
 | `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
 | `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 20 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
+| `specjedi-worktree` 🌳 | Mechanizes git-worktree-based parallel development — creates a real worktree for a named feature on demand, preferring a native harness relocation tool (e.g. Claude Code's `EnterWorktree`/`ExitWorktree`) and falling back to a project-local, `.gitignore`-verified `.worktrees/` directory otherwise. Self-invoked by `specjedi-specify`/`specjedi-quick` to proactively offer a worktree before real uncommitted work on another branch would collide; paired with a `specjedi-status` extension that unifies status reporting across every worktree in one report |
 
 See [`references/skill-roadmap.md`](references/skill-roadmap.md) for what's
 proposed beyond the core pipeline (diagrams,
@@ -389,7 +391,7 @@ exactly which skill handles which part of the practice.
 
 ## Quickstart
 
-Twenty-four product skills ship today ([What you get today](#what-you-get-today))
+Twenty-five product skills ship today ([What you get today](#what-you-get-today))
 — the full `specjedi-*` pipeline is complete. Never used an SDD tool
 before? Start with step 0.
 

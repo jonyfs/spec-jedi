@@ -3,7 +3,10 @@
 *Last reviewed: 2026-07-13 (updated: the "Quick Flow" gap this document
 named as its top improvement point shipped the same day as
 `specjedi-quick`, feature 028 — Disadvantage #1 and the corresponding
-Improvement Point below are revised to reflect that, not left stale).*
+Improvement Point below were revised to reflect that. Also updated the
+same day: worktree-awareness, previously Disadvantage #5 and another
+Improvement Point below, shipped as `specjedi-worktree`, feature 032 —
+both entries closed to reflect that, not left stale).*
 
 A candid answer to "why would — or wouldn't — I use Spec Jedi's
 `specjedi-*` skills today." This is not a marketing page: every
@@ -73,10 +76,6 @@ checkable against this repository's real state, not a hedge.
 4. **Single-maintainer project.** Compare Tessl ($125M raised) or Kiro
    (AWS-backed, GA product) — Spec Jedi has no comparable funding,
    dedicated team, or support capacity behind it.
-5. **Worktree-awareness stayed a documented option, not a mechanized
-   feature.** `references/competitive-comparison.md`'s own Spec Kitty row
-   says as much directly — no `specjedi-*` skill actually detects or
-   manages git worktrees; a user has to know to do it themselves.
 
 ## Improvement Points
 
@@ -95,10 +94,6 @@ prioritizable roadmap signals, not vague aspirations.
   (at the real cost of Kiro locking you into one IDE, which Principle
   III explicitly trades away — this isn't a call to become an IDE, just
   a note that "no install step" is a real UX bar Spec Jedi hasn't hit).
-- **Mechanize worktree-awareness** into an actual tested feature (a
-  `--worktree` flag, or a `specjedi-*` skill that detects and offers to
-  use one) rather than leaving it as prose advice, closing the gap Spec
-  Kitty's own git-worktree-based parallel development already closes.
 
 ## Maintenance
 

@@ -250,9 +250,33 @@ its own research pass per Principle II before it's built.
   found." See [specs/028-specjedi-quick/](../specs/028-specjedi-quick/)
   for the full research/spec/plan.
 
+## Shipped (fourth wave, from a `references/` audit)
+
+- **`specjedi-worktree`** 🌳 (feature 032, shipped 2026-07-13) —
+  mechanizes git-worktree-based parallel development, closing the gap
+  `references/competitive-comparison.md`'s Spec Kitty row and
+  `references/honest-assessment.md`'s Improvement Points previously only
+  documented as advice. Creates a real worktree for a named feature on
+  demand, preferring a native harness relocation tool (Claude Code's
+  `EnterWorktree`/`ExitWorktree`, confirmed by fetching their real tool
+  schemas this cycle) and falling back to a project-local,
+  `.gitignore`-verified `.worktrees/` directory via raw `git worktree`
+  commands otherwise — the native-tool-first/portable-fallback design
+  adopted directly from Superpowers' `using-git-worktrees` skill
+  (inspected in full, not just cited). Also provides the reusable
+  proactive-offer detection step `specjedi-specify` and `specjedi-quick`
+  now self-invoke before starting a new feature atop real uncommitted
+  work on a non-trunk branch. Genuine contribution: `specjedi-status`'s
+  paired extension unifies status reporting *across* every worktree of
+  the repository in one report — a capability neither Spec Kitty's own
+  mechanism nor Superpowers' skill provides, since both treat "set up one
+  isolated workspace" as the whole job. See
+  [specs/032-worktree-awareness/](../specs/032-worktree-awareness/) for
+  the full research/spec/plan.
+
 ## Proposed, not yet built (prioritized by expected impact)
 
-Empty as of feature 024 — both items previously here have shipped.
+Empty as of feature 032 — every item previously here has shipped.
 
 ## Not proposed (deliberately)
 

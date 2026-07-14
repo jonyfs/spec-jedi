@@ -45,6 +45,7 @@ reason to quietly leave a stale claim standing.
 | 025 | Diagram theme safety | Caught a real cross-platform bug (BSD `sed`'s silent `\s` failure) during its own manual testing, before it ever reached CI. | [research.md](../specs/025-diagram-readability/research.md) |
 | 026 | Mandatory render verification | Grounded in first-hand, this-session evidence (a real render call returning "exceeds maximum allowed tokens") rather than a hypothetical failure mode. | [research.md](../specs/026-mandatory-render-verify/research.md) |
 | 028 | `specjedi-quick` | The first researched lightweight SDD path required to still satisfy a live, versioned, enforced constitution on its fast path — neither BMAD's Quick Flow nor OpenSpec's three-command model runs inside a project that also gates every artifact this way. | [research.md](../specs/028-specjedi-quick/research.md) |
+| 032 | `specjedi-worktree` | A single status report spanning every git worktree of the repository — neither Spec Kitty's own worktree mechanism nor Superpowers' `using-git-worktrees` skill (inspected directly, not just cited) unifies status reporting across multiple already-created worktrees; both treat "set up one isolated workspace" as the whole job. | [research.md](../specs/032-worktree-awareness/research.md) |
 
 ## Maintenance
 

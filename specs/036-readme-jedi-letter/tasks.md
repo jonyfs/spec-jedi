@@ -26,10 +26,10 @@ Dependencies, not hidden.
 
 ## Phase 1: Setup
 
-- [ ] T001 Re-read the current `README.md` in full (post PR #100's
+- [X] T001 Re-read the current `README.md` in full (post PR #100's
       informal-voice rewrite) to ground the letter rewrite in today's
       actual baseline text (depends on nothing).
-- [ ] T002 [P] Re-read `specs/035-comic-panel-illustrations/research.md`
+- [X] T002 [P] Re-read `specs/035-comic-panel-illustrations/research.md`
       for the exact Pollinations.ai URL pattern and style descriptor to
       reuse verbatim (depends on nothing).
 
@@ -46,16 +46,16 @@ opening and section transitions read as an intentional letter, and
 confirm every badge/install command/harness-table row/link still
 resolves to exactly what it did before this feature.
 
-- [ ] T003 [US1] Rewrite the opening pitch in `README.md` (the
+- [X] T003 [US1] Rewrite the opening pitch in `README.md` (the
       paragraphs between the badge row and the first Mermaid diagram) as
       an addressed letter opening — a clear voice, a sense of who's
       writing to whom — per FR-001 (depends on T001).
-- [ ] T004 [US1] Rewrite "Who this is for" in letter voice (depends on
+- [X] T004 [US1] Rewrite "Who this is for" in letter voice (depends on
       T003, same file).
-- [ ] T005 [US1] Rewrite "What you get today"'s intro paragraph (before
+- [X] T005 [US1] Rewrite "What you get today"'s intro paragraph (before
       the skill table) in letter voice — the skill table itself stays
       untouched (depends on T004).
-- [ ] T006 [US1] Rewrite the Quickstart section's intro paragraph and
+- [X] T006 [US1] Rewrite the Quickstart section's intro paragraph and
       its closing paragraph (after step 22, before "The pipeline, end to
       end") in letter voice — the "Which path should I use?" table and
       the 23 individual numbered steps stay exactly as PR #100 left
@@ -79,13 +79,13 @@ genuinely funny.
 connecting discipline to "the right side of the Force," and a specific
 passage that's genuinely funny, not just thematically decorated.
 
-- [ ] T007 [US3] Deepen the existing discipline paragraph (the one
+- [X] T007 [US3] Deepen the existing discipline paragraph (the one
       currently ending "No shortcuts to the Dark Side of vibe-coding
       here") into an explicit "right side of the Force" framing,
       connecting constitution-first/test-first/no-self-approval
       practice to that framing directly, per FR-006 (depends on T003,
       same paragraph region T003 already touched).
-- [ ] T008 [US3] Ensure at least one genuinely funny passage exists
+- [X] T008 [US3] Ensure at least one genuinely funny passage exists
       somewhere in the rewritten letter sections (T003-T007) — add one
       if the current pass reads as inspirational but not actually funny
       anywhere; this is a real judgment call, reason through whether
@@ -110,17 +110,17 @@ existing comic panels.
 Star-Wars-signature exclusion review, and confirm no existing Mermaid
 diagram lost technical content or accuracy.
 
-- [ ] T009 [US2] Generate `docs/comic/letter-open.jpg` via the
+- [X] T009 [US2] Generate `docs/comic/letter-open.jpg` via the
       Pollinations.ai mechanism (T002), using research.md's exact
       prompt; review against Principle XII's exclusion list before
       accepting (depends on T002).
-- [ ] T010 [US2] Generate `docs/comic/letter-path.jpg` the same way,
+- [X] T010 [US2] Generate `docs/comic/letter-path.jpg` the same way,
       using research.md's exact prompt; review against Principle XII's
       exclusion list before accepting (depends on T002).
-- [ ] T011 [US2] Insert `letter-open.jpg` into `README.md` at the
+- [X] T011 [US2] Insert `letter-open.jpg` into `README.md` at the
       letter's opening, per research.md's placement decision (depends
       on T003, T009).
-- [ ] T012 [US2] Insert `letter-path.jpg` into `README.md` at the
+- [X] T012 [US2] Insert `letter-path.jpg` into `README.md` at the
       now-finalized discipline passage, per research.md's placement
       decision (depends on T007, T010) — placed after T007 specifically
       because the image's placement point is the paragraph US3 just
@@ -135,14 +135,14 @@ Mermaid diagrams and 8 comic panels are byte-for-byte unchanged.
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T013 [P] Update `research.md`'s Verification note with the actual
+- [X] T013 [P] Update `research.md`'s Verification note with the actual
       seeds/URLs used for both images and the outcome of the Principle
       XII exclusion review (depends on T009, T010).
-- [ ] T014 [P] Add the `CHANGELOG.md` entry (depends on nothing else in
+- [X] T014 [P] Add the `CHANGELOG.md` entry (depends on nothing else in
       this phase).
-- [ ] T015 Run `quickstart.md`'s 6 scenarios in order (depends on T006,
+- [X] T015 Run `quickstart.md`'s 6 scenarios in order (depends on T006,
       T008, T011, T012).
-- [ ] T016 Badge-row review per the Distribution & Ecosystem Standards
+- [X] T016 Badge-row review per the Distribution & Ecosystem Standards
       section (Principle X's pre-PR requirement) — this feature doesn't
       warrant a new badge (depends on T015).
 - [ ] T017 Run `specjedi-govcheck` against this branch before opening

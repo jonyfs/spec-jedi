@@ -105,7 +105,27 @@ generation, per Principle XX (never assume compliance, verify it).
 
 ## Verification note (updated post-generation during implementation)
 
-Per this project's established discipline (feature 035), this section
-gets updated with the actual seeds/URLs used and the outcome of the
-Principle XII exclusion review once images are generated during
-`/speckit-implement` — not assumed clean in advance.
+Both images were generated for real via
+`https://image.pollinations.ai/prompt/{url-encoded prompt}?width=768&height=512&seed=N&nologo=true&model=flux`
+during `/speckit-implement`, downloaded directly (`curl`), and viewed
+before being accepted:
+
+- `docs/comic/letter-open.jpg` — seed `2001`. Depicts a scroll and
+  glowing quill on a stone desk before an arched window showing
+  starlight and a single moon. Reviewed: no glowing-blade weapon, no
+  starship, no twin suns (one moon, not two), no Jedi-robe-specific
+  silhouette (no figure present at all), no logo/wordmark. Passed on
+  the first generation — no revision needed.
+- `docs/comic/letter-path.jpg` — seed `2002`. Depicts a single small,
+  dark-coated figure walking away along a lantern-lit stone path
+  through a rocky canyon. Reviewed: no glowing-blade weapon, no
+  starship, no twin-sun desert framing (a canyon, not a desert, and
+  only ambient sky, no visible suns), no Jedi-robe-specific silhouette
+  (a generic dark coat, not the distinctive hooded Jedi-robe cut), no
+  logo/wordmark. Passed on the first generation — no revision needed.
+
+Both images shipped 2/2 clean on the first attempt, same as feature
+035's 8/8 clean first-attempt result — the reused style descriptor and
+the deliberately abstract, weapon-free/character-free prompt content
+(a desk, a path — never a named figure) continues to avoid the
+exclusion list by construction, not by luck.

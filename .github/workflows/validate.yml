@@ -927,6 +927,277 @@ jobs:
           fi
           echo "OK: package-release.sh and .ps1 stage identical trees"
 
+  # specs/039-memory-file-skill-mentions: harnesses with a confirmed,
+  # separate project-memory-file convention distinct from their skills
+  # directory (CLAUDE.md, AGENTS.md, .trae/rules/project_rules.md) get
+  # that file created or idempotently updated with the installed skill
+  # set -- verified against a real installer run and real file contents,
+  # never asserted in docs alone (Principle IX).
+  memory-file-injection:
+    name: memory-file-injection (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert memory-file injection (bash)
+        shell: bash
+        run: |
+          fail=0
+          start_marker="<!-- SPEC-JEDI:SKILLS:START -->"
+          end_marker="<!-- SPEC-JEDI:SKILLS:END -->"
+
+          # Scenario 1: fresh creation
+          dir1="$(mktemp -d)"
+          ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
+          if [ ! -f "$dir1/CLAUDE.md" ]; then
+            echo "FAIL scenario1: CLAUDE.md not created"; fail=1
+          fi
+          if ! grep -qF "$start_marker" "$dir1/CLAUDE.md" || ! grep -qF "$end_marker" "$dir1/CLAUDE.md"; then
+            echo "FAIL scenario1: markers missing"; fail=1
+          fi
+          for skill_dir in .claude/skills/specjedi-*/; do
+            skill_name="$(basename "$skill_dir")"
+            if ! grep -qF "$skill_name" "$dir1/CLAUDE.md"; then
+              echo "FAIL scenario1: $skill_name missing from CLAUDE.md"; fail=1
+            fi
+          done
+          echo "OK: scenario1 (fresh creation)"
+
+          # Scenario 2: preserve existing content -- byte-exact prefix
+          # check via head -c N + diff, not $(...) capture (strips
+          # trailing newlines asymmetrically) or `cmp -n` (behaves
+          # inconsistently across platforms).
+          dir2="$(mktemp -d)"
+          printf '# My Project\n\nRun tests with pytest.\n' > "$dir2/CLAUDE.md"
+          cp "$dir2/CLAUDE.md" /tmp/pre-backup-s2.md
+          orig_size=$(wc -c < /tmp/pre-backup-s2.md | tr -d ' ')
+          ./scripts/install.sh "$dir2" --harness claude-code >/dev/null
+          head -c "$orig_size" "$dir2/CLAUDE.md" > /tmp/post-prefix-s2.md
+          if ! diff -q /tmp/pre-backup-s2.md /tmp/post-prefix-s2.md >/dev/null; then
+            echo "FAIL scenario2: pre-existing content not preserved exactly"; fail=1
+          fi
+          if ! grep -qF "$start_marker" "$dir2/CLAUDE.md"; then
+            echo "FAIL scenario2: markers missing"; fail=1
+          fi
+          echo "OK: scenario2 (preserve existing content)"
+
+          # Scenario 3: idempotent re-run
+          hash1="$(sha256sum "$dir1/CLAUDE.md" | awk '{print $1}')"
+          ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
+          hash2="$(sha256sum "$dir1/CLAUDE.md" | awk '{print $1}')"
+          if [ "$hash1" != "$hash2" ]; then
+            echo "FAIL scenario3: re-run not idempotent"; fail=1
+          fi
+          echo "OK: scenario3 (idempotent re-run)"
+
+          # Scenario 4: CRLF preservation + section refresh (byte-exact
+          # prefix AND suffix via head -c / tail -c)
+          dir4="$(mktemp -d)"
+          printf '# My Project\r\n\r\n%s\r\nSTALE OLD CONTENT\r\n%s\r\n\r\nMore stuff.\r\n' "$start_marker" "$end_marker" > "$dir4/CLAUDE.md"
+          cp "$dir4/CLAUDE.md" /tmp/pre-backup-s4.md
+          prefix_size=$(grep -abo "$start_marker" /tmp/pre-backup-s4.md | head -1 | cut -d: -f1)
+          total_size=$(wc -c < /tmp/pre-backup-s4.md | tr -d ' ')
+          suffix_start=$(grep -abo "$end_marker" /tmp/pre-backup-s4.md | head -1 | cut -d: -f1)
+          suffix_start=$((suffix_start + ${#end_marker}))
+          suffix_size=$((total_size - suffix_start))
+          head -c "$prefix_size" /tmp/pre-backup-s4.md > /tmp/pre-prefix-s4.md
+          tail -c "$suffix_size" /tmp/pre-backup-s4.md > /tmp/pre-suffix-s4.md
+          ./scripts/install.sh "$dir4" --harness claude-code >/dev/null
+          if grep -qF "STALE OLD CONTENT" "$dir4/CLAUDE.md"; then
+            echo "FAIL scenario4: stale section content was not refreshed (silent no-op)"; fail=1
+          fi
+          head -c "$prefix_size" "$dir4/CLAUDE.md" > /tmp/post-prefix-s4.md
+          if ! diff -q /tmp/pre-prefix-s4.md /tmp/post-prefix-s4.md >/dev/null; then
+            echo "FAIL scenario4: CRLF prefix content not preserved"; fail=1
+          fi
+          tail -c "$suffix_size" "$dir4/CLAUDE.md" > /tmp/post-suffix-s4.md
+          if ! diff -q /tmp/pre-suffix-s4.md /tmp/post-suffix-s4.md >/dev/null; then
+            echo "FAIL scenario4: CRLF suffix content not preserved"; fail=1
+          fi
+          echo "OK: scenario4 (CRLF preservation + refresh)"
+
+          # Scenario 5: mismatched marker failure
+          dir5="$(mktemp -d)"
+          printf '# My Project\n\n%s\nsomething\n' "$start_marker" > "$dir5/CLAUDE.md"
+          cp "$dir5/CLAUDE.md" /tmp/pre-backup-s5.md
+          if ./scripts/install.sh "$dir5" --harness claude-code >/tmp/scenario5-out.txt 2>&1; then
+            echo "FAIL scenario5: expected non-zero exit on mismatched markers"; fail=1
+          fi
+          if ! grep -qF "$dir5/CLAUDE.md" /tmp/scenario5-out.txt; then
+            echo "FAIL scenario5: error message doesn't name the file"; fail=1
+          fi
+          if ! diff -q /tmp/pre-backup-s5.md "$dir5/CLAUDE.md" >/dev/null; then
+            echo "FAIL scenario5: file was modified despite marker mismatch"; fail=1
+          fi
+          echo "OK: scenario5 (marker-mismatch failure)"
+
+          # Scenario 6: codex-cli / AGENTS.md, path genuinely parameterized
+          dir6="$(mktemp -d)"
+          ./scripts/install.sh "$dir6" --harness codex-cli >/dev/null
+          if [ ! -f "$dir6/AGENTS.md" ]; then
+            echo "FAIL scenario6: AGENTS.md not created"; fail=1
+          fi
+          if ! grep -qF "installed at \`.agents/skills/\`" "$dir6/AGENTS.md"; then
+            echo "FAIL scenario6: installed-at path not genuinely parameterized"; fail=1
+          fi
+          echo "OK: scenario6 (codex-cli/AGENTS.md)"
+
+          # Scenario 7: trae / .trae/rules/project_rules.md
+          dir7="$(mktemp -d)"
+          ./scripts/install.sh "$dir7" --harness trae >/dev/null
+          if [ ! -f "$dir7/.trae/rules/project_rules.md" ]; then
+            echo "FAIL scenario7: project_rules.md not created"; fail=1
+          fi
+          echo "OK: scenario7 (trae/.trae/rules/project_rules.md)"
+
+          # Scenario 8: antigravity -- no memory file, no confirmed convention
+          dir8="$(mktemp -d)"
+          ./scripts/install.sh "$dir8" --harness antigravity >/dev/null
+          if [ -f "$dir8/CLAUDE.md" ] || [ -f "$dir8/AGENTS.md" ] || [ -d "$dir8/.trae" ]; then
+            echo "FAIL scenario8: unexpected memory file created for antigravity"; fail=1
+          fi
+          echo "OK: scenario8 (antigravity, no memory file)"
+
+          # Scenario 9: cursor bridge-file generation unaffected
+          dir9="$(mktemp -d)"
+          ./scripts/install.sh "$dir9" --harness cursor >/dev/null
+          skill_count=$(find .claude/skills -maxdepth 1 -name 'specjedi-*' -type d | wc -l | tr -d ' ')
+          bridge_count=$(find "$dir9/.cursor/rules" -name '*.md' | wc -l | tr -d ' ')
+          if [ "$skill_count" != "$bridge_count" ] || [ -f "$dir9/CLAUDE.md" ]; then
+            echo "FAIL scenario9: bridge-file behavior regressed"; fail=1
+          fi
+          echo "OK: scenario9 (cursor bridge unaffected)"
+
+          rm -f /tmp/pre-backup-s2.md /tmp/post-prefix-s2.md /tmp/pre-backup-s4.md /tmp/pre-prefix-s4.md /tmp/pre-suffix-s4.md /tmp/post-prefix-s4.md /tmp/post-suffix-s4.md /tmp/pre-backup-s5.md /tmp/scenario5-out.txt
+          rm -rf "$dir2" "$dir4" "$dir5" "$dir6" "$dir7" "$dir8" "$dir9"
+
+          if [ "$fail" -ne 0 ]; then
+            echo "FAIL: one or more memory-file-injection scenarios failed (bash)"
+            exit 1
+          fi
+          echo "OK: all bash memory-file-injection scenarios passed"
+          # $dir1's CLAUDE.md (scenario 1's install, already re-validated
+          # idempotent by scenario 3) is kept for the cross-script parity
+          # step below, handed off via $GITHUB_ENV rather than passed as
+          # a pwsh command-line argument -- passing a bash-generated
+          # POSIX-style path into a `pwsh -Command "..."` invocation was
+          # found (feature 038) to get mangled by Git Bash's MSYS
+          # auto-translation on windows-latest.
+          echo "MEMORY_SH_DIR=$dir1" >> "$GITHUB_ENV"
+      - name: Assert memory-file injection (PowerShell)
+        shell: pwsh
+        run: |
+          $fail = $false
+          $startMarker = "<!-- SPEC-JEDI:SKILLS:START -->"
+          $endMarker = "<!-- SPEC-JEDI:SKILLS:END -->"
+
+          # Scenario 1: fresh creation
+          $dir1 = New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP ([System.IO.Path]::GetRandomFileName()))
+          ./scripts/install.ps1 -TargetDir $dir1.FullName -Harness claude-code | Out-Null
+          $claudeMd1 = Join-Path $dir1.FullName "CLAUDE.md"
+          if (-not (Test-Path $claudeMd1)) { Write-Host "FAIL scenario1: CLAUDE.md not created"; $fail = $true }
+          $content1 = Get-Content $claudeMd1 -Raw
+          if (-not $content1.Contains($startMarker) -or -not $content1.Contains($endMarker)) { Write-Host "FAIL scenario1: markers missing"; $fail = $true }
+          Get-ChildItem -Path ".claude/skills" -Directory -Filter "specjedi-*" | ForEach-Object {
+              if (-not $content1.Contains($_.Name)) { Write-Host "FAIL scenario1: $($_.Name) missing"; $fail = $true }
+          }
+          Write-Host "OK: scenario1 (fresh creation)"
+
+          # Scenario 2: preserve existing content
+          $dir2 = New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP ([System.IO.Path]::GetRandomFileName()))
+          $claudeMd2 = Join-Path $dir2.FullName "CLAUDE.md"
+          [System.IO.File]::WriteAllText($claudeMd2, "# My Project`n`nRun tests with pytest.`n")
+          $preBytes2 = [System.IO.File]::ReadAllBytes($claudeMd2)
+          ./scripts/install.ps1 -TargetDir $dir2.FullName -Harness claude-code | Out-Null
+          $postBytes2 = [System.IO.File]::ReadAllBytes($claudeMd2)
+          $prefixBytes2 = $postBytes2[0..($preBytes2.Length - 1)]
+          if (-not [System.Linq.Enumerable]::SequenceEqual([byte[]]$preBytes2, [byte[]]$prefixBytes2)) {
+              Write-Host "FAIL scenario2: pre-existing content not preserved exactly"; $fail = $true
+          }
+          Write-Host "OK: scenario2 (preserve existing content)"
+
+          # Scenario 3: idempotent re-run
+          $hash1 = (Get-FileHash $claudeMd1).Hash
+          ./scripts/install.ps1 -TargetDir $dir1.FullName -Harness claude-code | Out-Null
+          $hash2 = (Get-FileHash $claudeMd1).Hash
+          if ($hash1 -ne $hash2) { Write-Host "FAIL scenario3: not idempotent"; $fail = $true }
+          Write-Host "OK: scenario3 (idempotent re-run)"
+
+          # Scenario 4: CRLF preservation + refresh
+          $dir4 = New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP ([System.IO.Path]::GetRandomFileName()))
+          $claudeMd4 = Join-Path $dir4.FullName "CLAUDE.md"
+          $crlfContent = "# My Project`r`n`r`n$startMarker`r`nSTALE OLD CONTENT`r`n$endMarker`r`n`r`nMore stuff.`r`n"
+          [System.IO.File]::WriteAllText($claudeMd4, $crlfContent)
+          $preIdx = $crlfContent.IndexOf($startMarker)
+          $prePrefix = $crlfContent.Substring(0, $preIdx)
+          $sufIdx = $crlfContent.LastIndexOf($endMarker) + $endMarker.Length
+          $preSuffix = $crlfContent.Substring($sufIdx)
+          ./scripts/install.ps1 -TargetDir $dir4.FullName -Harness claude-code | Out-Null
+          $postContent4 = [System.IO.File]::ReadAllText($claudeMd4)
+          if ($postContent4.Contains("STALE OLD CONTENT")) { Write-Host "FAIL scenario4: not refreshed"; $fail = $true }
+          $postPrefix = $postContent4.Substring(0, $preIdx)
+          if ($postPrefix -ne $prePrefix) { Write-Host "FAIL scenario4: prefix not preserved"; $fail = $true }
+          $postSuffix = $postContent4.Substring($postContent4.Length - $preSuffix.Length)
+          if ($postSuffix -ne $preSuffix) { Write-Host "FAIL scenario4: suffix not preserved"; $fail = $true }
+          Write-Host "OK: scenario4 (CRLF preservation + refresh)"
+
+          # Scenario 5: mismatched marker failure
+          $dir5 = New-Item -ItemType Directory -Path (Join-Path $env:RUNNER_TEMP ([System.IO.Path]::GetRandomFileName()))
+          $claudeMd5 = Join-Path $dir5.FullName "CLAUDE.md"
+          $origContent5 = "# My Project`n`n$startMarker`nsomething`n"
+          [System.IO.File]::WriteAllText($claudeMd5, $origContent5)
+          $errFile = Join-Path $env:RUNNER_TEMP "scenario5-ps-out.txt"
+          & ./scripts/install.ps1 -TargetDir $dir5.FullName -Harness claude-code *> $errFile
+          if ($LASTEXITCODE -eq 0) { Write-Host "FAIL scenario5: expected non-zero exit"; $fail = $true }
+          $errOut = Get-Content $errFile -Raw
+          if (-not $errOut.Contains($claudeMd5)) { Write-Host "FAIL scenario5: error doesn't name file"; $fail = $true }
+          $postContent5 = [System.IO.File]::ReadAllText($claudeMd5)
+          if ($postContent5 -ne $origContent5) { Write-Host "FAIL scenario5: file modified despite mismatch"; $fail = $true }
+          Write-Host "OK: scenario5 (marker-mismatch failure)"
+
+          if ($fail) {
+              Write-Host "FAIL: one or more memory-file-injection scenarios failed (PowerShell)"
+              exit 1
+          }
+          Write-Host "OK: all PowerShell memory-file-injection scenarios passed"
+
+          Remove-Item -Recurse -Force $dir2, $dir4, $dir5 -ErrorAction SilentlyContinue
+          Remove-Item -Force $errFile -ErrorAction SilentlyContinue
+          # $dir1's CLAUDE.md (scenario 1's install, re-validated
+          # idempotent by scenario 3) is kept for the cross-script parity
+          # step below.
+          Add-Content -Path $env:GITHUB_ENV -Value "MEMORY_PS_DIR=$($dir1.FullName)"
+          # Scenario 5 intentionally invokes install.ps1 expecting a
+          # non-zero exit, which leaves $LASTEXITCODE=1 with nothing
+          # after it to reset that value -- GitHub Actions' pwsh step
+          # runner treats a stale non-zero $LASTEXITCODE at script end as
+          # step failure even though every $fail check above passed.
+          # Explicit exit 0 overrides it.
+          exit 0
+      - name: Assert install.sh and install.ps1 produce identical CLAUDE.md output
+        shell: bash
+        run: |
+          # Reuse the two directories the preceding two steps already
+          # built (via $MEMORY_SH_DIR/$MEMORY_PS_DIR, each written by its
+          # own native shell to $GITHUB_ENV) rather than a third/fourth
+          # install run. $MEMORY_PS_DIR may be a Windows-style path (e.g.
+          # D:\a\_temp\...) on windows-latest; diff (unlike tar) has no
+          # "host:path" remote-archive convention to misinterpret a
+          # colon in the argument, so no path conversion is needed here
+          # -- confirmed against feature 038's own equivalent parity
+          # check, which needed conversion specifically because `tar`
+          # does have that convention.
+          if ! diff -q "$MEMORY_SH_DIR/CLAUDE.md" "$MEMORY_PS_DIR/CLAUDE.md" >/dev/null; then
+            echo "FAIL: install.sh and install.ps1 produced different CLAUDE.md output for the same input (Constitution Principle XIII)"
+            diff "$MEMORY_SH_DIR/CLAUDE.md" "$MEMORY_PS_DIR/CLAUDE.md" || true
+            exit 1
+          fi
+          echo "OK: install.sh and install.ps1 produce byte-identical CLAUDE.md output"
+          rm -rf "$MEMORY_SH_DIR" "$MEMORY_PS_DIR"
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -935,7 +1206,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, memory-file-injection, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

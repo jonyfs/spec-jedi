@@ -269,6 +269,102 @@ function Get-SkillMeta {
     [PSCustomObject]@{ Name = $name; Description = $desc }
 }
 
+# specs/039-memory-file-skill-mentions: for harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory (CLAUDE.md, AGENTS.md, .trae/rules/project_rules.md), create
+# or idempotently update a marker-delimited section naming the installed
+# skills -- never for antigravity (no confirmed convention) or the 14
+# bridge harnesses (their existing bridge file already serves this
+# purpose).
+function Get-MemorySection {
+    param([string]$SkillsDstRel)
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add("<!-- SPEC-JEDI:SKILLS:START -->")
+    $lines.Add("## Spec Jedi skills available in this project")
+    $lines.Add("")
+    $lines.Add("This project has the Spec Jedi spec-driven-development skill set")
+    $lines.Add("installed at ``$SkillsDstRel/``. When a request matches one of")
+    $lines.Add("the skills below, open and follow the full instructions in its")
+    $lines.Add("``SKILL.md`` before responding. New to Spec Jedi? Start with")
+    $lines.Add("``specjedi-onboard``.")
+    $lines.Add("")
+    $lines.Add("| Skill | What it does |")
+    $lines.Add("|---|---|")
+    # Sort explicitly: bash's `for f in "$skills_dst"/specjedi-*/SKILL.md`
+    # glob expansion is alphabetically ordered by the shell itself, but
+    # Get-ChildItem's enumeration order is filesystem-dependent, not
+    # alphabetical -- without this, the two scripts would produce a
+    # different skill order in the table for the same skill set,
+    # breaking FR-008/SC-004's byte-parity requirement (verified locally:
+    # unsorted Get-ChildItem returned a different order than bash's glob
+    # for the same three test directories).
+    Get-ChildItem -Path $skillsDst -Recurse -Filter "SKILL.md" | Sort-Object FullName | ForEach-Object {
+        $meta = Get-SkillMeta -SkillFile $_.FullName
+        $lines.Add("| ``$($meta.Name)`` | $($meta.Description) |")
+    }
+    $lines.Add("<!-- SPEC-JEDI:SKILLS:END -->")
+    [string]::Join("`n", $lines)
+}
+
+function Update-MemoryFile {
+    param([string]$MemoryPath, [string]$SkillsDstRel)
+    $startMarker = "<!-- SPEC-JEDI:SKILLS:START -->"
+    $endMarker = "<!-- SPEC-JEDI:SKILLS:END -->"
+    $newSection = Get-MemorySection -SkillsDstRel $SkillsDstRel
+
+    $parentDir = Split-Path -Parent $MemoryPath
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    if (-not (Test-Path $MemoryPath)) {
+        [System.IO.File]::WriteAllText($MemoryPath, "$newSection`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) created"
+        return
+    }
+
+    $rawContent = [System.IO.File]::ReadAllText($MemoryPath)
+    $hasStart = $rawContent.Contains($startMarker)
+    $hasEnd = $rawContent.Contains($endMarker)
+
+    if ($hasStart -ne $hasEnd) {
+        Write-Host "FAIL: $MemoryPath has a Spec Jedi marker without its matching pair -- refusing to guess where the managed section ends. Remove the stray marker manually and re-run."
+        exit 1
+    }
+
+    if ($hasStart) {
+        # Drop exactly one trailing LF before slicing, mirroring bash's
+        # $(cat file) command-substitution semantics EXACTLY: bash's
+        # command substitution strips only a trailing \n, not a
+        # preceding \r -- a CRLF-terminated file keeps its trailing \r
+        # after stripping, which the final "...$after`n" reconstruction
+        # below then completes back into a proper CRLF. Stripping
+        # `\r?\n` instead (both characters as one unit) was tried first
+        # and rejected: it strips the \r too, so a CRLF-terminated file
+        # loses its trailing \r and ends in a bare LF after re-append --
+        # a real, verified FR-002 byte-preservation gap AND an FR-008
+        # cross-script mismatch against install.sh, which doesn't have
+        # this problem (confirmed by inspecting both scripts' raw output
+        # bytes against the same CRLF fixture). Whole-content substring
+        # slicing (.IndexOf()/.Substring()), never a line-array rebuild
+        # -- CRLF-safe by construction, since there's no per-line
+        # comparison to be defeated by a trailing \r.
+        $content = $rawContent -replace '\n$', ''
+        $startIdx = $content.IndexOf($startMarker)
+        $endIdx = $content.LastIndexOf($endMarker) + $endMarker.Length
+        $before = $content.Substring(0, $startIdx)
+        $after = $content.Substring($endIdx)
+        [System.IO.File]::WriteAllText($MemoryPath, "$before$newSection$after`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) updated (existing Spec Jedi section refreshed)"
+    } else {
+        # Raw append onto the file's existing bytes exactly as they are
+        # -- no rewrite of pre-existing content -- matching install.sh's
+        # own `printf '\n%s\n' "$new_section" >> file` append semantics.
+        [System.IO.File]::AppendAllText($MemoryPath, "`n$newSection`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) updated (Spec Jedi section appended)"
+    }
+}
+
 if ($bridgeMode) {
     Write-Host ""
     Write-Host "🌉 Generating $Harness bridge file(s)..."
@@ -362,6 +458,23 @@ if ($bridgeMode) {
             Write-Host "     bridge harnesses — see specs/023-full-harness-coverage/research.md)"
         }
     }
+}
+
+# specs/039-memory-file-skill-mentions: harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory get that file created or updated too -- never antigravity
+# (no confirmed convention) or the 14 bridge harnesses above (their
+# bridge file already serves this purpose).
+$memoryFileRel = ""
+switch ($Harness) {
+    "claude-code" { $memoryFileRel = "CLAUDE.md" }
+    "codex-cli" { $memoryFileRel = "AGENTS.md" }
+    "trae" { $memoryFileRel = ".trae/rules/project_rules.md" }
+}
+if ($memoryFileRel) {
+    Write-Host ""
+    Write-Host "🧠 Updating $memoryFileRel with the installed skill set..."
+    Update-MemoryFile -MemoryPath (Join-Path $TargetDir $memoryFileRel) -SkillsDstRel $skillsDstRel
 }
 
 Write-Host ""

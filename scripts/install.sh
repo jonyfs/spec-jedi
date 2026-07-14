@@ -390,6 +390,49 @@ json_escape() {
   printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
 }
 
+utf8_len() {
+  # Counts Unicode characters, not bytes, regardless of the runtime's
+  # ambient locale. ${#str} and ${str:offset:length} both count/slice by
+  # BYTE under a byte-oriented locale (e.g. C/POSIX) but by CHARACTER
+  # under a UTF-8 locale -- confirmed to actually differ across GitHub-
+  # hosted runners (Windows Git Bash counted this repo's em-dash-heavy
+  # skill descriptions by byte, Ubuntu/macOS by character), producing a
+  # different 160-char truncation point on Windows and breaking
+  # install.sh/.ps1 cross-script byte-parity (Constitution Principle
+  # XIII). Forcing LC_ALL=C here doesn't request byte-counting -- it
+  # forces a KNOWN, CONSISTENT byte-oriented view so this function can
+  # reliably identify and strip UTF-8 continuation bytes (0x80-0xBF)
+  # itself, which is what actually makes the result locale-independent.
+  local LC_ALL=C
+  local str="$1" stripped
+  stripped="${str//[$'\200'-$'\277']/}"
+  printf '%s' "${#stripped}"
+}
+
+utf8_truncate() {
+  # Truncates $1 to at most $2 Unicode characters (never splitting a
+  # multi-byte character in half, unlike a naive byte-based ${str:0:N}),
+  # locale-independent for the same reason utf8_len is.
+  local LC_ALL=C
+  local str="$1" max="$2" char_count=0 byte_pos=0 len=${#1} byte
+  while [ "$byte_pos" -lt "$len" ]; do
+    byte="${str:$byte_pos:1}"
+    case "$byte" in
+      [$'\200'-$'\277'])
+        byte_pos=$((byte_pos + 1))
+        ;;
+      *)
+        if [ "$char_count" -ge "$max" ]; then
+          break
+        fi
+        char_count=$((char_count + 1))
+        byte_pos=$((byte_pos + 1))
+        ;;
+    esac
+  done
+  printf '%s' "${str:0:$byte_pos}"
+}
+
 first_sentence() {
   # Truncates a description to its first sentence (up to the first ". " --
   # period-then-space, not just any period, so abbreviations like
@@ -405,8 +448,8 @@ first_sentence() {
   if [ "$cut" != "$desc" ]; then
     desc="$cut."
   fi
-  if [ "${#desc}" -gt 160 ]; then
-    desc="${desc:0:157}..."
+  if [ "$(utf8_len "$desc")" -gt 160 ]; then
+    desc="$(utf8_truncate "$desc" 157)..."
   fi
   printf '%s' "$desc"
 }
@@ -417,6 +460,98 @@ skill_meta() {
   name="$(grep -m1 -E '^name:[[:space:]]*' "$skill_file" | sed -E 's/^name:[[:space:]]*//')"
   desc="$(grep -m1 -E '^description:[[:space:]]*' "$skill_file" | sed -E 's/^description:[[:space:]]*//')"
   printf '%s\t%s\n' "$name" "$(first_sentence "$desc")"
+}
+
+# specs/039-memory-file-skill-mentions: for harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory (CLAUDE.md, AGENTS.md, .trae/rules/project_rules.md), create
+# or idempotently update a marker-delimited section naming the installed
+# skills -- never for antigravity (no confirmed convention) or the 14
+# bridge harnesses (their existing bridge file already serves this
+# purpose).
+memory_section() {
+  # $1 = skills_dst_rel (e.g. ".claude/skills"), for the "installed at"
+  # sentence. Reads skill metadata from $skills_dst (already populated
+  # by the copy loop above skill_meta is already used in).
+  local skills_dst_rel="$1"
+  echo "<!-- SPEC-JEDI:SKILLS:START -->"
+  echo "## Spec Jedi skills available in this project"
+  echo
+  echo "This project has the Spec Jedi spec-driven-development skill set"
+  echo "installed at \`$skills_dst_rel/\`. When a request matches one of"
+  echo "the skills below, open and follow the full instructions in its"
+  echo "\`SKILL.md\` before responding. New to Spec Jedi? Start with"
+  echo "\`specjedi-onboard\`."
+  echo
+  echo "| Skill | What it does |"
+  echo "|---|---|"
+  for f in "$skills_dst"/specjedi-*/SKILL.md; do
+    IFS=$'\t' read -r name desc < <(skill_meta "$f")
+    echo "| \`$name\` | $desc |"
+  done
+  echo "<!-- SPEC-JEDI:SKILLS:END -->"
+}
+
+update_memory_file() {
+  # $1 = absolute path to the memory file, $2 = skills_dst_rel.
+  local memory_path="$1" skills_dst_rel="$2"
+  local start_marker="<!-- SPEC-JEDI:SKILLS:START -->"
+  local end_marker="<!-- SPEC-JEDI:SKILLS:END -->"
+  local new_section
+  new_section="$(memory_section "$skills_dst_rel")"
+
+  mkdir -p "$(dirname "$memory_path")"
+
+  if [ ! -f "$memory_path" ]; then
+    printf '%s\n' "$new_section" > "$memory_path"
+    echo "  ✅ $(basename "$memory_path") created"
+    return
+  fi
+
+  # Capture the file's raw bytes losslessly (a sentinel "x" appended
+  # inside the same command substitution absorbs $(...)'s own trailing-
+  # newline stripping, so the file's actual trailing bytes -- whatever
+  # they are -- survive untouched), then strip exactly one trailing \n
+  # ourselves. Plain "$(cat "$memory_path")" was tried first and found
+  # to behave inconsistently across bash builds: on Windows Git Bash it
+  # strips a trailing \r along with the \n (unlike macOS/Linux bash,
+  # which strips only \n), silently losing a CRLF-terminated file's
+  # trailing \r and producing a bare-LF ending after the later printf
+  # re-append -- confirmed via CI byte diagnostics showing the suffix
+  # one byte short on windows-latest only. Mirrors install.ps1's
+  # `-replace '\n$', ''`, which strips the same single character.
+  local content
+  content="$(cat "$memory_path"; echo x)"
+  content="${content%x}"
+  content="${content%$'\n'}"
+
+  local has_start=0 has_end=0
+  case "$content" in *"$start_marker"*) has_start=1 ;; esac
+  case "$content" in *"$end_marker"*) has_end=1 ;; esac
+
+  if [ "$has_start" -ne "$has_end" ]; then
+    echo "FAIL: $memory_path has a Spec Jedi marker without its matching pair -- refusing to guess where the managed section ends. Remove the stray marker manually and re-run."
+    exit 1
+  fi
+
+  if [ "$has_start" -eq 1 ]; then
+    # Whole-content substring slicing, not a line-by-line rewrite: %%
+    # removes the longest suffix starting at the FIRST occurrence of
+    # start_marker (everything before it, untouched); ## removes the
+    # longest prefix ending at the LAST occurrence of end_marker
+    # (leaving everything after it, untouched). This is CRLF-safe by
+    # construction -- there's no per-line $0-style comparison to be
+    # defeated by a trailing \r. Bytes outside the markers -- CRLF or
+    # not -- are never touched, only sliced around.
+    local before after
+    before="${content%%"$start_marker"*}"
+    after="${content##*"$end_marker"}"
+    printf '%s%s%s\n' "$before" "$new_section" "$after" > "$memory_path"
+    echo "  ✅ $(basename "$memory_path") updated (existing Spec Jedi section refreshed)"
+  else
+    printf '\n%s\n' "$new_section" >> "$memory_path"
+    echo "  ✅ $(basename "$memory_path") updated (Spec Jedi section appended)"
+  fi
 }
 
 if [ -n "$bridge_mode" ]; then
@@ -511,6 +646,23 @@ if [ -n "$bridge_mode" ]; then
       echo "     bridge harnesses — see specs/023-full-harness-coverage/research.md)"
       ;;
   esac
+fi
+
+# specs/039-memory-file-skill-mentions: harnesses with a confirmed,
+# separate project-memory-file convention distinct from their skills
+# directory get that file created or updated too -- never antigravity
+# (no confirmed convention) or the 14 bridge harnesses above (their
+# bridge file already serves this purpose).
+memory_file_rel=""
+case "$harness" in
+  claude-code) memory_file_rel="CLAUDE.md" ;;
+  codex-cli) memory_file_rel="AGENTS.md" ;;
+  trae) memory_file_rel=".trae/rules/project_rules.md" ;;
+esac
+if [ -n "$memory_file_rel" ]; then
+  echo
+  echo "🧠 Updating $memory_file_rel with the installed skill set..."
+  update_memory_file "$target_dir/$memory_file_rel" "$skills_dst_rel"
 fi
 
 echo

@@ -746,13 +746,17 @@ jobs:
       - name: -Help works and a real release installs successfully (PowerShell)
         shell: pwsh
         run: |
+          # pwsh is cross-platform (this step also runs on ubuntu-latest/macos-latest
+          # matrix legs), so the target dir must be too -- $env:RUNNER_TEMP resolves
+          # correctly on all three OSes, unlike a hardcoded C:\ path.
+          $smokeDir = Join-Path $env:RUNNER_TEMP "bootstrap-smoke-ps"
           ./scripts/bootstrap-install.ps1 -Help
-          ./scripts/bootstrap-install.ps1 -TargetDir C:\bootstrap-smoke-ps
+          ./scripts/bootstrap-install.ps1 -TargetDir $smokeDir
           if ($LASTEXITCODE -ne 0) {
             Write-Host "FAIL: expected bootstrap-install.ps1 to succeed now that a real release exists"
             exit 1
           }
-          if (-not (Test-Path C:\bootstrap-smoke-ps\.claude\skills)) {
+          if (-not (Test-Path (Join-Path $smokeDir ".claude/skills"))) {
             Write-Host "FAIL: expected .claude\skills to exist after a successful install"
             exit 1
           }

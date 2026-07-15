@@ -364,11 +364,22 @@ if [ -z "$harness" ]; then
   fi
 fi
 
+# specs/041-release-hooks-settings: shareable hooks/settings (the
+# generic safety hook + git-aware permissions, never the two
+# repo-internal-only hooks) default on for every non-interactive
+# invocation (FR-001c); an interactive session gets asked once, as part
+# of the same summary/confirmation moment, not a separate later prompt.
+install_shared_hooks=1
+
 if [ "$interactive_mode" -eq 1 ]; then
   echo
   echo "Summary:"
   echo "  Directory: $target_dir"
   echo "  Harness:   $harness"
+  read -r -p "Also install shareable hooks/settings (safety hook, git-aware permissions)? [Y/n]: " hooks_answer
+  case "$hooks_answer" in
+    n|N|no|No) install_shared_hooks=0 ;;
+  esac
   read -r -p "Continue with installation? [Y/n]: " proceed
   case "$proceed" in
     n|N|no|No)
@@ -704,6 +715,130 @@ update_memory_file() {
     printf '\n%s\n' "$new_section" >> "$memory_path"
     echo "  ✅ $(basename "$memory_path") updated (Spec Jedi section appended)"
   fi
+}
+
+# specs/041-release-hooks-settings: detects the TARGET repo's actual
+# default/trunk branch so the shared dangerous-command-guard's
+# force-push check protects the branch that's really in use there
+# (develop/trunk/release/...), not a hardcoded main/master that may not
+# even exist in that repo. git symbolic-ref reads local metadata (fast,
+# no network); git remote show origin is the fallback when that
+# metadata was never set locally (e.g. right after a shallow clone).
+# Returns the literal two-word string "main master" -- never nothing --
+# when neither detection path succeeds, so the installed hook always
+# has at least the same protection this repo's own copy has.
+detect_trunk_branch() {
+  local dir="$1" branch
+  branch="$(git -C "$dir" symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null | sed 's@^origin/@@')"
+  if [ -z "$branch" ]; then
+    branch="$(git -C "$dir" remote show origin 2>/dev/null | sed -n 's/^ *HEAD branch: //p')"
+  fi
+  if [ -n "$branch" ]; then
+    printf '%s' "$branch"
+  else
+    printf '%s' "main master"
+  fi
+}
+
+# specs/041-release-hooks-settings: merges the shareable statusLine/
+# permissions keys into the TARGET's own .claude/settings.json without
+# touching anything else already there (FR-003/FR-004). NOTE this
+# deliberately does not use the marker-delimited substring-slicing
+# technique update_memory_file() uses for Markdown files -- Claude
+# Code's settings.json is confirmed STRICT JSON (no // comments; see
+# multiple open anthropics/claude-code feature requests asking for
+# JSONC support, still unimplemented as of this research), so a
+# "// SPEC-JEDI:...:START" marker would itself be invalid JSON. Instead:
+# each of the two keys is added independently, only if genuinely absent
+# (idempotent, and safe against a target that already customized one but
+# not the other); if a key already exists, it is left completely alone
+# rather than attempting a deep-merge without a real JSON parser (the
+# project's established zero-jq precedent) -- non-destructive by
+# refusing to touch what it can't safely parse, not by guessing.
+update_shared_settings() {
+  local target="$1"
+  mkdir -p "$(dirname "$target")"
+
+  local statusline_block='  "statusLine": {
+    "type": "command",
+    "command": "bash",
+    "args": ["${CLAUDE_PROJECT_DIR}/.claude/statusline.sh"]
+  }'
+  local permissions_block='  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)"
+    ]
+  }'
+
+  if [ ! -f "$target" ]; then
+    printf '{\n%s,\n%s\n}\n' "$statusline_block" "$permissions_block" > "$target"
+    echo "  ✅ $(basename "$target") created with statusLine/permissions"
+    return
+  fi
+
+  local content
+  content="$(cat "$target"; echo x)"
+  content="${content%x}"
+
+  local has_statusline=0 has_permissions=0
+  case "$content" in *'"statusLine"'*) has_statusline=1 ;; esac
+  case "$content" in *'"permissions"'*) has_permissions=1 ;; esac
+
+  if [ "$has_statusline" -eq 1 ] && [ "$has_permissions" -eq 1 ]; then
+    echo "  ℹ️  $(basename "$target") already has statusLine and permissions — leaving as-is."
+    return
+  fi
+
+  content="$(printf '%s' "$content" | sed -e 's/[[:space:]]*$//')"
+  # Brace-balance check, not just "ends with }": a file like
+  # '{ "hooks": {} ' (missing the real outer close) still ends in '}'
+  # (the inner object's), which a bare last-character check would miss
+  # -- confirmed by this exact case during T014's test-first pass.
+  # Counting isn't a full parser (a literal '{'/'}' inside a string
+  # value would throw it off) but is a real, meaningful step up from a
+  # last-character check, within the zero-dependency constraint.
+  local open_count close_count
+  open_count="$(grep -o '{' <<<"$content" | wc -l | tr -d ' ')"
+  close_count="$(grep -o '}' <<<"$content" | wc -l | tr -d ' ')"
+  if [ "$open_count" != "$close_count" ] || [[ "$content" != *"}" ]]; then
+    echo "FAIL: $target has unbalanced braces ($open_count '{' vs $close_count '}') — not valid JSON, refusing to guess. Fix it manually and re-run."
+    exit 1
+  fi
+  local body="${content%\}}"
+  body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+
+  local new_keys=""
+  if [ "$has_statusline" -eq 0 ]; then
+    new_keys="$statusline_block"
+  fi
+  if [ "$has_permissions" -eq 0 ]; then
+    if [ -n "$new_keys" ]; then
+      new_keys="${new_keys},
+${permissions_block}"
+    else
+      new_keys="$permissions_block"
+    fi
+  fi
+
+  if [[ "$body" == *"{" ]]; then
+    # Original file was just "{}" -- no leading comma needed.
+    printf '%s\n%s\n}\n' "$body" "$new_keys" > "$target"
+  else
+    printf '%s,\n%s\n}\n' "$body" "$new_keys" > "$target"
+  fi
+  echo "  ✅ $(basename "$target") updated (statusLine/permissions added)"
 }
 
 if [ -n "$bridge_mode" ]; then

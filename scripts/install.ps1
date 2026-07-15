@@ -273,11 +273,22 @@ if (-not $Harness) {
     }
 }
 
+# specs/041-release-hooks-settings: shareable hooks/settings (the
+# generic safety hook + git-aware permissions, never the two
+# repo-internal-only hooks) default on for every non-interactive
+# invocation (FR-001c); an interactive session gets asked once, as part
+# of the same summary/confirmation moment, not a separate later prompt.
+$installSharedHooks = $true
+
 if ($interactiveMode) {
     Write-Host ""
     Write-Host "Summary:"
     Write-Host "  Directory: $TargetDir"
     Write-Host "  Harness:   $Harness"
+    $hooksAnswer = Read-Host "Also install shareable hooks/settings (safety hook, git-aware permissions)? [Y/n]"
+    if ($hooksAnswer -in @("n", "N", "no", "No")) {
+        $installSharedHooks = $false
+    }
     $proceed = Read-Host "Continue with installation? [Y/n]"
     if ($proceed -in @("n", "N", "no", "No")) {
         Write-Host "Installation cancelled — nothing was changed."
@@ -499,6 +510,114 @@ function Update-MemoryFile {
         [System.IO.File]::AppendAllText($MemoryPath, "`n$newSection`n")
         Write-Host "  ✅ $(Split-Path -Leaf $MemoryPath) updated (Spec Jedi section appended)"
     }
+}
+
+# specs/041-release-hooks-settings: native PowerShell counterpart of
+# detect_trunk_branch() (install.sh) -- see that function for the full
+# rationale. Returns the literal two-word string "main master" when
+# neither detection path succeeds.
+function Get-TrunkBranch {
+    param([string]$Dir)
+    $branch = (git -C $Dir symbolic-ref refs/remotes/origin/HEAD --short 2>$null)
+    if ($branch) { $branch = $branch -replace '^origin/', '' }
+    if (-not $branch) {
+        $remoteInfo = (git -C $Dir remote show origin 2>$null)
+        if ($remoteInfo) {
+            $headLine = $remoteInfo | Where-Object { $_ -match '^\s*HEAD branch:\s*(.+)$' }
+            if ($headLine -and $Matches) { $branch = $Matches[1].Trim() }
+        }
+    }
+    if ($branch) { return $branch } else { return "main master" }
+}
+
+# specs/041-release-hooks-settings: native PowerShell counterpart of
+# update_shared_settings() (install.sh) -- see that function for the
+# full rationale, including why this deliberately avoids
+# ConvertFrom-Json/ConvertTo-Json: a parse-then-reserialize round-trip
+# risks reformatting/reordering content the target project's own
+# maintainers already wrote, the same reformatting risk
+# Update-MemoryFile already avoids for CLAUDE.md/AGENTS.md via
+# whole-content substring slicing rather than a structured rewrite.
+function Update-SharedSettings {
+    param([string]$Target)
+    $parentDir = Split-Path -Parent $Target
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    $statusLineBlock = @'
+  "statusLine": {
+    "type": "command",
+    "command": "bash",
+    "args": ["${CLAUDE_PROJECT_DIR}/.claude/statusline.sh"]
+  }
+'@
+    $permissionsBlock = @'
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)"
+    ]
+  }
+'@
+
+    if (-not (Test-Path $Target)) {
+        [System.IO.File]::WriteAllText($Target, "{`n$statusLineBlock,`n$permissionsBlock`n}`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $Target) created with statusLine/permissions"
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($Target)
+    $hasStatusLine = $content.Contains('"statusLine"')
+    $hasPermissions = $content.Contains('"permissions"')
+
+    if ($hasStatusLine -and $hasPermissions) {
+        Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has statusLine and permissions — leaving as-is."
+        return
+    }
+
+    $trimmed = $content.TrimEnd()
+    # Brace-balance check, not just EndsWith('}'): a file like
+    # '{ "hooks": {} ' (missing the real outer close) still ends in
+    # '}' (the inner object's) -- confirmed as a real bug caught by
+    # install.sh's own T014 test-first pass, fixed identically here.
+    $openCount = ([regex]::Matches($trimmed, '\{')).Count
+    $closeCount = ([regex]::Matches($trimmed, '\}')).Count
+    if ($openCount -ne $closeCount -or -not $trimmed.EndsWith('}')) {
+        Write-Host "FAIL: $Target has unbalanced braces ($openCount '{' vs $closeCount '}') -- not valid JSON, refusing to guess. Fix it manually and re-run."
+        exit 1
+    }
+    $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+
+    $newKeys = ""
+    if (-not $hasStatusLine) {
+        $newKeys = $statusLineBlock
+    }
+    if (-not $hasPermissions) {
+        if ($newKeys) {
+            $newKeys = "$newKeys,`n$permissionsBlock"
+        } else {
+            $newKeys = $permissionsBlock
+        }
+    }
+
+    if ($body.EndsWith('{')) {
+        [System.IO.File]::WriteAllText($Target, "$body`n$newKeys`n}`n")
+    } else {
+        [System.IO.File]::WriteAllText($Target, "$body,`n$newKeys`n}`n")
+    }
+    Write-Host "  ✅ $(Split-Path -Leaf $Target) updated (statusLine/permissions added)"
 }
 
 if ($bridgeMode) {

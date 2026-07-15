@@ -88,37 +88,37 @@ reference real files instead of planned ones.
 
 **⚠️ CRITICAL**: Blocks Phase 3 and Phase 4 entirely.
 
-- [ ] T007 Define the shareable/repo-internal classification as a
+- [x] T007 Define the shareable/repo-internal classification as a
   literal list in `scripts/install.sh` (comment-documented, per spec.md
   Assumptions): shareable = `dangerous-command-guard`, `statusline`
   settings, `permissions` settings; repo-internal = `skill-quality-
   guard`, `cross-platform-parity-guard` (never touched by this
   feature's own install logic at all).
-- [ ] T008 [P] Implement the interactive-hooks prompt in `scripts/
+- [x] T008 [P] Implement the interactive-hooks prompt in `scripts/
   install.sh` per `plan.md`'s exact snippet (`install_shared_hooks`
   variable, `[Y/n]` prompt inside the existing `interactive_mode` block,
   default-on for every non-interactive path) — FR-001b/FR-001c.
-- [ ] T009 [P] Implement the identical prompt in `scripts/install.ps1`,
+- [x] T009 [P] Implement the identical prompt in `scripts/install.ps1`,
   PowerShell idiom, same variable/default semantics.
-- [ ] T010 [P] Implement `detect_trunk_branch()` in `scripts/install.sh`
+- [x] T010 [P] Implement `detect_trunk_branch()` in `scripts/install.sh`
   per `plan.md`'s exact snippet (`git symbolic-ref` primary, `git
   remote show origin` fallback, `main master` literal fallback string)
   — FR-002a.
-- [ ] T011 [P] Implement the identical `Get-TrunkBranch` function in
+- [x] T011 [P] Implement the identical `Get-TrunkBranch` function in
   `scripts/install.ps1`.
-- [ ] T012 Implement the non-destructive settings-merge function in
+- [x] T012 Implement the non-destructive settings-merge function in
   `scripts/install.sh` (`// SPEC-JEDI:HOOKS:START`/`:END` marker
   slicing inside the target's `.claude/settings.json`, mirroring
   `update_memory_file`'s whole-content substring-slicing exactly, per
   `plan.md`) — FR-003/FR-004. Depends on T007.
-- [ ] T013 Implement the identical `Update-SharedSettings` function in
+- [x] T013 Implement the identical `Update-SharedSettings` function in
   `scripts/install.ps1`. Depends on T007.
-- [ ] T014 Write a failing test in `.claude/hooks/test-hooks.sh` for the
+- [x] T014 Write a failing test in `.claude/hooks/test-hooks.sh` for the
   merge function against a target with a pre-existing, unrelated
   `.claude/settings.json` entry (SC-003) and a malformed-marker-pair
   case (Edge Cases — fails loudly, never guesses). Depends on T012.
-- [ ] T015 Implement against T014 until it passes.
-- [ ] T016 [P] Mirror T014/T015 in `.claude/hooks/test-hooks.ps1` against
+- [x] T015 Implement against T014 until it passes.
+- [x] T016 [P] Mirror T014/T015 in `.claude/hooks/test-hooks.ps1` against
   `Update-SharedSettings`. Depends on T013.
 
 **Checkpoint**: Prompt, trunk detection, and settings-merge primitives

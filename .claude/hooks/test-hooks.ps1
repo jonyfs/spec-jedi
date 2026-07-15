@@ -146,6 +146,85 @@ if ($out -match '🌿') {
 }
 Remove-Item -Recurse -Force $tmpDir
 
+Write-Host "=== Update-SharedSettings (scripts/install.ps1, specs/041) ==="
+
+$installPs1 = Get-Content (Join-Path $repoRoot "scripts/install.ps1") -Raw
+if ($installPs1 -notmatch '(?s)(function Update-SharedSettings \{.*?\n\})') {
+    Test-Fail "could not extract Update-SharedSettings from install.ps1"
+} else {
+    $mergeFnSrc = $matches[1]
+
+    function Invoke-MergeFn($fnSrc, $target) {
+        $tmpScript = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName() + ".ps1")
+        "$fnSrc`nUpdate-SharedSettings -Target '$target'" | Set-Content $tmpScript
+        $out = & pwsh -NoProfile -File $tmpScript 2>&1
+        $code = $LASTEXITCODE
+        Remove-Item $tmpScript
+        # Return a single object (not a stream) so the exit code and
+        # output text never get mixed together in the caller's pipeline.
+        return [PSCustomObject]@{ ExitCode = $code; Output = ($out -join "`n") }
+    }
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    Invoke-MergeFn $mergeFnSrc $target | Out-Null
+    try {
+        $null = Get-Content $target -Raw | ConvertFrom-Json
+        $content = Get-Content $target -Raw
+        if ($content -match '"statusLine"' -and $content -match '"permissions"') {
+            Test-Pass "fresh file: valid JSON with both keys"
+        } else {
+            Test-Fail "fresh file: missing expected keys"
+        }
+    } catch {
+        Test-Fail "fresh file: invalid JSON"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{
+  "hooks": {
+    "SessionStart": [{"hooks": [{"type": "command", "command": "echo hi"}]}]
+  }
+}' | Set-Content $target
+    Invoke-MergeFn $mergeFnSrc $target | Out-Null
+    $content = Get-Content $target -Raw
+    try {
+        $null = $content | ConvertFrom-Json
+        if ($content -match '"SessionStart"' -and $content -match '"statusLine"' -and $content -match '"permissions"') {
+            Test-Pass "pre-existing unrelated content preserved, new keys added (SC-003)"
+        } else {
+            Test-Fail "existing-content-preserved check failed"
+        }
+    } catch {
+        Test-Fail "merged file is not valid JSON"
+    }
+
+    $firstContent = Get-Content $target -Raw
+    Invoke-MergeFn $mergeFnSrc $target | Out-Null
+    $secondContent = Get-Content $target -Raw
+    if ($firstContent -eq $secondContent) {
+        Test-Pass "idempotent re-run: byte-identical (FR-004)"
+    } else {
+        Test-Fail "idempotent re-run: content changed on second run"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{ "hooks": {} ' | Set-Content $target -NoNewline
+    $result = Invoke-MergeFn $mergeFnSrc $target
+    if ($result.ExitCode -ne 0 -and $result.Output -match "FAIL:" -and $result.Output -match "unbalanced braces") {
+        Test-Pass "malformed JSON fails loudly with a clear message, never guesses"
+    } else {
+        Test-Fail "malformed JSON should have failed loudly with a clear message, got exit=$($result.ExitCode) output=$($result.Output)"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+}
+
 Write-Host ""
 if ($script:failCount -eq 0) {
     Write-Host "All hook tests passed."

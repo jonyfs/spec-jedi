@@ -48,8 +48,82 @@ if ($Help) {
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 
+# specs/040-interactive-install: fully-interactive mode only triggers
+# when truly NO parameters were given at all (no -TargetDir, no
+# -Harness, no -Auto) AND a real terminal is available to prompt
+# through -- any explicit parameter, or a non-interactive context (CI,
+# redirected input), preserves the exact prior default/silent-auto-
+# detect behavior completely untouched. Existing scripted/CI usage
+# (always passes -Harness explicitly) never triggers this.
+$interactiveMode = $false
+if (-not $PSBoundParameters.ContainsKey('TargetDir') -and -not $Harness -and -not $Auto -and -not [Console]::IsInputRedirected) {
+    $interactiveMode = $true
+}
+
+if ($interactiveMode) {
+    Write-Host "🧙 No parameters were given — let's set this up together, step by step."
+    Write-Host "   (Type 'c' at any time to cancel without installing anything.)"
+    Write-Host ""
+    Write-Host "[1/2] Which directory should this install into?"
+    $answer = Read-Host "      Current directory [$(Get-Location)], another path, or 'c' to cancel"
+    if ($answer -in @("c", "C", "cancel", "Cancel")) {
+        Write-Host "Installation cancelled — nothing was changed."
+        exit 0
+    }
+    if ($answer) {
+        $TargetDir = $answer
+    }
+    Write-Host ""
+}
+
 New-Item -ItemType Directory -Force -Path $TargetDir | Out-Null
 $TargetDir = (Resolve-Path $TargetDir).Path
+
+# specs/040-interactive-install: presents all 18 -Harness values (the
+# 20-harness compatibility matrix minus opencode/warp, which piggyback
+# on claude-code/codex-cli with no separate flag) so a user in
+# $interactiveMode can pick one directly instead of being forced back
+# to the command line with an explicit -Harness. Returns the chosen
+# value, or "cancel" if the user backs out -- callers check for that
+# sentinel themselves rather than this function exiting, so a caller
+# mid-flow (e.g. the one-match confirmation declining) can choose how
+# to unwind.
+function Show-FullHarnessList {
+    Write-Host "Choose a harness (or 'c' to cancel):"
+    Write-Host "   1. claude-code    -- Claude Code"
+    Write-Host "   2. codex-cli      -- Codex CLI (OpenAI)"
+    Write-Host "   3. trae           -- Trae"
+    Write-Host "   4. antigravity    -- Antigravity (Google)"
+    Write-Host "   5. cursor         -- Cursor"
+    Write-Host "   6. windsurf       -- Windsurf (Codeium)"
+    Write-Host "   7. cline          -- Cline"
+    Write-Host "   8. continue       -- Continue"
+    Write-Host "   9. amazon-q       -- Amazon Q Developer"
+    Write-Host "  10. jetbrains-ai   -- JetBrains AI Assistant"
+    Write-Host "  11. tabnine        -- Tabnine"
+    Write-Host "  12. gemini-cli     -- Gemini CLI"
+    Write-Host "  13. zed            -- Zed"
+    Write-Host "  14. replit         -- Replit Agent"
+    Write-Host "  15. aider          -- Aider"
+    Write-Host "  16. copilot        -- GitHub Copilot (Chat/Workspace)"
+    Write-Host "  17. devin          -- Devin (Cognition)"
+    Write-Host "  18. cody           -- Sourcegraph Cody"
+    $map = @{
+        "1" = "claude-code"; "2" = "codex-cli"; "3" = "trae"; "4" = "antigravity"
+        "5" = "cursor"; "6" = "windsurf"; "7" = "cline"; "8" = "continue"
+        "9" = "amazon-q"; "10" = "jetbrains-ai"; "11" = "tabnine"; "12" = "gemini-cli"
+        "13" = "zed"; "14" = "replit"; "15" = "aider"; "16" = "copilot"
+        "17" = "devin"; "18" = "cody"
+    }
+    $validNames = $map.Values
+    while ($true) {
+        $pick = Read-Host ">"
+        if ($pick -in @("c", "C", "cancel", "Cancel")) { return "cancel" }
+        if ($map.ContainsKey($pick)) { return $map[$pick] }
+        if ($pick -in $validNames) { return $pick }
+        Write-Host "🔭 '$pick' is not a valid option."
+    }
+}
 
 # Harness auto-detection (specs/021-harness-auto-detection): only runs
 # when -Harness was omitted. Scoped to the three harnesses with a real
@@ -107,14 +181,46 @@ if (-not $Harness) {
     $matched = @($ranks.Keys | Where-Object { $null -ne $ranks[$_] })
 
     if ($matched.Count -eq 0) {
-        $Harness = "claude-code"
-        Write-Host "🔭 No harness detected on this machine/target directory — falling"
-        Write-Host "back to the default: claude-code (this is a fallback, not a"
-        Write-Host "detected match)."
+        if ($interactiveMode) {
+            Write-Host "[2/2] No harness was detected automatically."
+            $Harness = Show-FullHarnessList
+            if ($Harness -eq "cancel") {
+                Write-Host "Installation cancelled — nothing was changed."
+                exit 0
+            }
+        }
+        else {
+            $Harness = "claude-code"
+            Write-Host "🔭 No harness detected on this machine/target directory — falling"
+            Write-Host "back to the default: claude-code (this is a fallback, not a"
+            Write-Host "detected match)."
+        }
     }
     elseif ($matched.Count -eq 1) {
-        $Harness = $matched[0]
-        Write-Host "🔭 Detected $Harness ($($evidence[$Harness])) — installing automatically."
+        $detectedHarness = $matched[0]
+        $detectedEvidence = $evidence[$detectedHarness]
+        if ($interactiveMode) {
+            Write-Host "[2/2] Detected $detectedHarness ($detectedEvidence)."
+            $confirm = Read-Host "      Install for $detectedHarness? [Y/n, or 'c' to cancel]"
+            if ($confirm -in @("n", "N", "no", "No")) {
+                $Harness = Show-FullHarnessList
+                if ($Harness -eq "cancel") {
+                    Write-Host "Installation cancelled — nothing was changed."
+                    exit 0
+                }
+            }
+            elseif ($confirm -in @("c", "C", "cancel", "Cancel")) {
+                Write-Host "Installation cancelled — nothing was changed."
+                exit 0
+            }
+            else {
+                $Harness = $detectedHarness
+            }
+        }
+        else {
+            $Harness = $detectedHarness
+            Write-Host "🔭 Detected $detectedHarness ($detectedEvidence) — installing automatically."
+        }
     }
     else {
         $priorityOrder = @("claude-code", "codex-cli", "trae")
@@ -151,8 +257,12 @@ if (-not $Harness) {
                 }
             }
             $recommendedLetter = ($letterMap.Keys | Where-Object { $letterMap[$_] -eq $recommended })
-            $choice = Read-Host "Choice [$recommendedLetter]"
+            $choice = Read-Host "Choice [$recommendedLetter] (or 'c' to cancel)"
             if (-not $choice) { $choice = $recommendedLetter }
+            if ($choice -in @("c", "C", "cancel", "Cancel")) {
+                Write-Host "Installation cancelled — nothing was changed."
+                exit 0
+            }
             $Harness = $recommended
             foreach ($letter in $letterMap.Keys) {
                 if ($choice -eq $letter -or $choice -eq $letterMap[$letter]) {
@@ -161,6 +271,19 @@ if (-not $Harness) {
             }
         }
     }
+}
+
+if ($interactiveMode) {
+    Write-Host ""
+    Write-Host "Summary:"
+    Write-Host "  Directory: $TargetDir"
+    Write-Host "  Harness:   $Harness"
+    $proceed = Read-Host "Continue with installation? [Y/n]"
+    if ($proceed -in @("n", "N", "no", "No")) {
+        Write-Host "Installation cancelled — nothing was changed."
+        exit 0
+    }
+    Write-Host ""
 }
 
 # Harness Target mapping (specs/023-full-harness-coverage/data-model.md):

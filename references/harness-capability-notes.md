@@ -27,6 +27,16 @@ per harness). At the time, nothing here had been installed, pointed at a
 real `specjedi-*` `SKILL.md`, and run — that gap is what
 specs/023-full-harness-coverage closed.
 
+**Scope note (specs/041-release-hooks-settings, 2026-07-15)**: this
+document has only ever covered one capability — reading a plain-Markdown
+custom-instructions/rules file. It says nothing about hooks (event-driven
+script interception), permissions (allow/ask/deny tool-access rules), or
+a statusline-equivalent display, across any of the 19 harnesses below.
+`specs/041-release-hooks-settings/research.md` researches and classifies
+all 19 for that separate, previously-unresearched dimension — see that
+document directly rather than assuming this file's own Findings table
+below says anything about hooks/settings capability.
+
 ## Findings
 
 | Harness | Markdown custom-instructions support? | Mechanism | Source |

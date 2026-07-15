@@ -18,6 +18,11 @@
           {
             "type": "command",
             "command": "graphify hook-guard search"
+          },
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.sh"]
           }
         ]
       },
@@ -27,6 +32,23 @@
           {
             "type": "command",
             "command": "graphify hook-guard read"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/skill-quality-guard.sh"]
+          },
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/cross-platform-parity-guard.sh"]
           }
         ]
       }

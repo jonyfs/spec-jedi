@@ -65,10 +65,16 @@ relevant — never before.
    (Principle VIII) — a quick, proactive check for `rtk`/`graphify`
    belongs here, after the user has something real to show for the
    session, not before (matching this skill's own "never front-load"
-   discipline). Then **report, and offer the next step(s) as a short
-   bulleted list** (Principle XIV): `specjedi-clarify`, the natural next
-   pipeline stage after a first spec exists, plus `specjedi-explain` if
-   any concept from the walkthrough still feels unclear.
+   discipline). Then self-invoke `specjedi-master` — the project's real
+   shape (language, harness, domain) is visible for the first time now
+   that a constitution and spec exist, making this the natural first
+   checkpoint for its proactive aitmpl.com suggestions; it presents
+   candidates and asks before installing anything on its own, this skill
+   just triggers the check. Then **report, and offer the next step(s) as
+   a short bulleted list** (Principle XIV): `specjedi-clarify`, the
+   natural next pipeline stage after a first spec exists, plus
+   `specjedi-explain` if any concept from the walkthrough still feels
+   unclear.
 
 If the project idea clearly needs domain expertise nothing installed
 covers even to draft an initial constitution around (e.g., a heavily

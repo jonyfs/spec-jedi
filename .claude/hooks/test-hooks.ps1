@@ -95,6 +95,57 @@ Test-Command "cat real .env blocked" 'cat .env' "block"
 Test-Command "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' "block"
 Test-Command "cat .pem blocked" 'cat server.pem' "block"
 
+Write-Host "=== statusline.ps1 ==="
+
+function Invoke-Statusline($model, $dir) {
+    $payload = @{ model = @{ display_name = $model }; workspace = @{ current_dir = $dir } } | ConvertTo-Json -Compress
+    $payload | pwsh -NoProfile -File (Join-Path $repoRoot ".claude/statusline.ps1")
+}
+
+$tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
+Push-Location $tmpDir
+git init -q
+git config user.email "test@example.com"
+git config user.name "Test"
+git checkout -q -b clean-branch
+New-Item -ItemType File -Path "placeholder" | Out-Null
+git add placeholder
+git commit -q -m "init"
+Pop-Location
+
+$out = Invoke-Statusline "Sonnet" $tmpDir
+if ($out -match '\[Sonnet\]' -and $out -match 'clean-branch') {
+    if ($out -match '\(\d+\)') {
+        Test-Fail "clean tree statusline should have no change count, got: $out"
+    } else {
+        Test-Pass "clean tree shows model, folder, and branch with no change count"
+    }
+} else {
+    Test-Fail "clean tree statusline missing expected content: $out"
+}
+
+Add-Content -Path (Join-Path $tmpDir "placeholder") -Value "dirty"
+$out = Invoke-Statusline "Sonnet" $tmpDir
+if ($out -match 'clean-branch \(1\)') {
+    Test-Pass "dirty tree shows a (1) change count"
+} else {
+    Test-Fail "dirty tree statusline missing change count: $out"
+}
+Remove-Item -Recurse -Force $tmpDir
+
+$tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
+$out = Invoke-Statusline "Sonnet" $tmpDir
+if ($out -match '🌿') {
+    Test-Fail "non-git dir statusline should have no branch segment, got: $out"
+} elseif ($out -match '\[Sonnet\]') {
+    Test-Pass "non-git dir degrades to model+folder, no error"
+} else {
+    Test-Fail "non-git dir statusline missing expected content: $out"
+}
+Remove-Item -Recurse -Force $tmpDir
+
 Write-Host ""
 if ($script:failCount -eq 0) {
     Write-Host "All hook tests passed."

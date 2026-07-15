@@ -48,7 +48,7 @@ feature's own new logic can be written against real source content.
 actually present in this repo before any new code in this feature
 depends on them.
 
-- [ ] T001 Merge PR #119, or if it's still blocked when this phase
+- [x] T001 Merge PR #119, or if it's still blocked when this phase
   starts, cherry-pick `.claude/hooks/dangerous-command-guard.sh`,
   `.claude/hooks/dangerous-command-guard.ps1`, `.claude/hooks/skill-
   quality-guard.sh`/`.ps1`, `.claude/hooks/cross-platform-parity-
@@ -56,21 +56,21 @@ depends on them.
   `research-claude-code-hooks` onto this feature's own branch, so the
   files this feature's own FR-002/FR-006 reference actually exist
   locally.
-- [ ] T002 [P] Implement `.claude/statusline.sh` per
+- [x] T002 [P] Implement `.claude/statusline.sh` per
   `specs/040-aitmpl-settings-improvements/plan.md`'s FR-001a/FR-001b
   design (grep/sed field extraction, no `jq`, `git -C` branch/status
   detection, graceful degradation outside a git repo).
-- [ ] T003 [P] Implement `.claude/statusline.ps1`, identical behavior,
+- [x] T003 [P] Implement `.claude/statusline.ps1`, identical behavior,
   PowerShell idiom, per the same spec-040 plan.
-- [ ] T004 Add `statusLine`, `permissions.allow`, and `permissions.deny`
+- [x] T004 Add `statusLine`, `permissions.allow`, and `permissions.deny`
   keys to this repo's own `.claude/settings.json`, per specs/040's
   `research.md` Decisions (the exact JSON content already fetched and
   verified there from `davila7/claude-code-templates`).
-- [ ] T005 [P] Add specs/040's own test cases (statusline output for
+- [x] T005 [P] Add specs/040's own test cases (statusline output for
   clean/dirty tree/non-git-dir) to `.claude/hooks/test-hooks.sh`/`.ps1`
   (from T001), completing specs/040's own untested SC-001/SC-002/
   Acceptance-Scenario-3 before this feature builds on top of it.
-- [ ] T006 Run `.claude/hooks/test-hooks.sh` and `.ps1` (bash and
+- [x] T006 Run `.claude/hooks/test-hooks.sh` and `.ps1` (bash and
   PowerShell) end-to-end; confirm all cases pass, including the new
   T005 additions, before proceeding to Phase 2.
 

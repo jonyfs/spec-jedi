@@ -89,6 +89,53 @@ check_cmd "cat real .env blocked" 'cat .env' block
 check_cmd "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' block
 check_cmd "cat .pem blocked" 'cat server.pem' block
 
+# --- statusline.sh (specs/040-aitmpl-settings-improvements) -------------
+echo "=== statusline.sh ==="
+
+statusline_input() {
+  python3 -c "import json,sys; print(json.dumps({'model':{'display_name':sys.argv[1]},'workspace':{'current_dir':sys.argv[2]}}))" "$1" "$2"
+}
+
+tmpdir="$(mktemp -d)"
+(
+  cd "$tmpdir"
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test"
+  git checkout -q -b clean-branch
+  touch placeholder
+  git add placeholder
+  git commit -q -m "init"
+)
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"[Sonnet]"*"clean-branch"*)
+    if printf '%s' "$out" | grep -qE '\([0-9]+\)'; then
+      fail "clean tree statusline should have no change count, got: $out"
+    else
+      pass "clean tree shows model, folder, and branch with no change count"
+    fi
+    ;;
+  *) fail "clean tree statusline missing expected content: $out" ;;
+esac
+
+echo "dirty" >> "$tmpdir/placeholder"
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"clean-branch (1)"*) pass "dirty tree shows a (1) change count" ;;
+  *) fail "dirty tree statusline missing change count: $out" ;;
+esac
+rm -rf "$tmpdir"
+
+tmpdir="$(mktemp -d)"
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"🌿"*) fail "non-git dir statusline should have no branch segment, got: $out" ;;
+  *"[Sonnet]"*) pass "non-git dir degrades to model+folder, no error" ;;
+  *) fail "non-git dir statusline missing expected content: $out" ;;
+esac
+rm -rf "$tmpdir"
+
 echo
 if [ "$fail" -eq 0 ]; then
   echo "All hook tests passed."

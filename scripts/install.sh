@@ -20,6 +20,7 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 target_dir="."
+target_dir_given=0
 harness=""
 auto_mode=0
 
@@ -70,13 +71,100 @@ while [ "$#" -gt 0 ]; do
       ;;
     *)
       target_dir="$1"
+      target_dir_given=1
       shift
       ;;
   esac
 done
 
+# specs/040-interactive-install: fully-interactive mode only triggers
+# when truly NO arguments were given at all (no target dir, no
+# --harness, no --auto) AND a real terminal is available to prompt
+# through -- any explicit flag, or a non-interactive context (CI,
+# piped input, no TTY), preserves the exact prior default/silent-auto-
+# detect behavior completely untouched. Existing scripted/CI usage
+# (always passes --harness explicitly) never triggers this.
+interactive_mode=0
+if [ "$target_dir_given" -eq 0 ] && [ -z "$harness" ] && [ "$auto_mode" -eq 0 ] && [ -t 0 ]; then
+  interactive_mode=1
+fi
+
+if [ "$interactive_mode" -eq 1 ]; then
+  echo "🧙 No parameters were given — let's set this up together, step by step."
+  echo "   (Type 'c' at any time to cancel without installing anything.)"
+  echo
+  echo "[1/2] Which directory should this install into?"
+  read -r -p "      Current directory [$(pwd)], another path, or 'c' to cancel: " answer
+  case "$answer" in
+    c|C|cancel|Cancel)
+      echo "Installation cancelled — nothing was changed."
+      exit 0
+      ;;
+    "") ;;
+    *) target_dir="$answer" ;;
+  esac
+  echo
+fi
+
 mkdir -p "$target_dir"
 target_dir="$(cd "$target_dir" && pwd)"
+
+# specs/040-interactive-install: presents all 18 --harness values (the
+# 20-harness compatibility matrix minus opencode/warp, which piggyback
+# on claude-code/codex-cli with no separate flag) so a user in
+# interactive_mode can pick one directly instead of being forced back
+# to the command line with an explicit --harness. Sets $harness to the
+# chosen value, or to "cancel" if the user backs out -- callers check
+# for that sentinel themselves rather than this function exiting, so a
+# caller mid-flow (e.g. the one-match confirmation declining) can
+# choose how to unwind.
+prompt_full_harness_list() {
+  echo "Choose a harness (or 'c' to cancel):"
+  echo "   1. claude-code    -- Claude Code"
+  echo "   2. codex-cli      -- Codex CLI (OpenAI)"
+  echo "   3. trae           -- Trae"
+  echo "   4. antigravity    -- Antigravity (Google)"
+  echo "   5. cursor         -- Cursor"
+  echo "   6. windsurf       -- Windsurf (Codeium)"
+  echo "   7. cline          -- Cline"
+  echo "   8. continue       -- Continue"
+  echo "   9. amazon-q       -- Amazon Q Developer"
+  echo "  10. jetbrains-ai   -- JetBrains AI Assistant"
+  echo "  11. tabnine        -- Tabnine"
+  echo "  12. gemini-cli     -- Gemini CLI"
+  echo "  13. zed            -- Zed"
+  echo "  14. replit         -- Replit Agent"
+  echo "  15. aider          -- Aider"
+  echo "  16. copilot        -- GitHub Copilot (Chat/Workspace)"
+  echo "  17. devin          -- Devin (Cognition)"
+  echo "  18. cody           -- Sourcegraph Cody"
+  read -r -p "> " pick
+  case "$pick" in
+    c|C|cancel|Cancel) harness="cancel" ;;
+    1|claude-code) harness="claude-code" ;;
+    2|codex-cli) harness="codex-cli" ;;
+    3|trae) harness="trae" ;;
+    4|antigravity) harness="antigravity" ;;
+    5|cursor) harness="cursor" ;;
+    6|windsurf) harness="windsurf" ;;
+    7|cline) harness="cline" ;;
+    8|continue) harness="continue" ;;
+    9|amazon-q) harness="amazon-q" ;;
+    10|jetbrains-ai) harness="jetbrains-ai" ;;
+    11|tabnine) harness="tabnine" ;;
+    12|gemini-cli) harness="gemini-cli" ;;
+    13|zed) harness="zed" ;;
+    14|replit) harness="replit" ;;
+    15|aider) harness="aider" ;;
+    16|copilot) harness="copilot" ;;
+    17|devin) harness="devin" ;;
+    18|cody) harness="cody" ;;
+    *)
+      echo "🔭 '$pick' is not a valid option."
+      prompt_full_harness_list
+      ;;
+  esac
+}
 
 # Harness auto-detection (specs/021-harness-auto-detection): only runs
 # when --harness was omitted. Any explicit --harness value bypasses all
@@ -160,20 +248,52 @@ if [ -z "$harness" ]; then
   [ -n "$trae_rank" ] && match_count=$((match_count + 1))
 
   if [ "$match_count" -eq 0 ]; then
-    harness="claude-code"
-    echo "🔭 No harness detected on this machine/target directory — falling"
-    echo "back to the default: claude-code (this is a fallback, not a"
-    echo "detected match)."
+    if [ "$interactive_mode" -eq 1 ]; then
+      echo "[2/2] No harness was detected automatically."
+      prompt_full_harness_list
+      if [ "$harness" = "cancel" ]; then
+        echo "Installation cancelled — nothing was changed."
+        exit 0
+      fi
+    else
+      harness="claude-code"
+      echo "🔭 No harness detected on this machine/target directory — falling"
+      echo "back to the default: claude-code (this is a fallback, not a"
+      echo "detected match)."
+    fi
   elif [ "$match_count" -eq 1 ]; then
     if [ -n "$claude_rank" ]; then
-      harness="claude-code"
-      echo "🔭 Detected claude-code (${claude_evidence}) — installing automatically."
+      detected_harness="claude-code"
+      detected_evidence="$claude_evidence"
     elif [ -n "$codex_rank" ]; then
-      harness="codex-cli"
-      echo "🔭 Detected codex-cli (${codex_evidence}) — installing automatically."
+      detected_harness="codex-cli"
+      detected_evidence="$codex_evidence"
     else
-      harness="trae"
-      echo "🔭 Detected trae (${trae_evidence}) — installing automatically."
+      detected_harness="trae"
+      detected_evidence="$trae_evidence"
+    fi
+    if [ "$interactive_mode" -eq 1 ]; then
+      echo "[2/2] Detected $detected_harness ($detected_evidence)."
+      read -r -p "      Install for $detected_harness? [Y/n, or 'c' to cancel]: " confirm
+      case "$confirm" in
+        n|N|no|No)
+          prompt_full_harness_list
+          if [ "$harness" = "cancel" ]; then
+            echo "Installation cancelled — nothing was changed."
+            exit 0
+          fi
+          ;;
+        c|C|cancel|Cancel)
+          echo "Installation cancelled — nothing was changed."
+          exit 0
+          ;;
+        *)
+          harness="$detected_harness"
+          ;;
+      esac
+    else
+      harness="$detected_harness"
+      echo "🔭 Detected $detected_harness (${detected_evidence}) — installing automatically."
     fi
   else
     recommended=""
@@ -224,8 +344,14 @@ if [ -z "$harness" ]; then
           recommended_letter="$lm_letter"
         fi
       done
-      read -r -p "Choice [$recommended_letter]: " choice
+      read -r -p "Choice [$recommended_letter] (or 'c' to cancel): " choice
       choice="${choice:-$recommended_letter}"
+      case "$choice" in
+        c|C|cancel|Cancel)
+          echo "Installation cancelled — nothing was changed."
+          exit 0
+          ;;
+      esac
       harness="$recommended"
       for lm in "${letter_map[@]}"; do
         lm_letter="${lm%%:*}"
@@ -236,6 +362,21 @@ if [ -z "$harness" ]; then
       done
     fi
   fi
+fi
+
+if [ "$interactive_mode" -eq 1 ]; then
+  echo
+  echo "Summary:"
+  echo "  Directory: $target_dir"
+  echo "  Harness:   $harness"
+  read -r -p "Continue with installation? [Y/n]: " proceed
+  case "$proceed" in
+    n|N|no|No)
+      echo "Installation cancelled — nothing was changed."
+      exit 0
+      ;;
+  esac
+  echo
 fi
 
 # Harness Target mapping (specs/023-full-harness-coverage/data-model.md):

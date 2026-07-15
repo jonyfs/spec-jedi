@@ -14,6 +14,7 @@
 
 - Q: Should shareable hooks/settings install automatically on every run, or only when explicitly requested? → A: Interactive prompt — reuse feature 040's interactive-install pattern (specs/040-aitmpl-settings-improvements): ask once during an interactive install session, default-on (no prompt, install automatically) for scripted/CI/explicit-flag invocations where no human is present to ask.
 - Q: Should this feature's v1 scope to Claude Code only, or attempt research and adaptation across all 19 non-Claude-Code harnesses? → A: All 19 — full per-harness research and adaptation is in scope for this feature, not deferred to a follow-up.
+- Q: `dangerous-command-guard`'s force-push protection hardcodes `main`/`master` — should the shared copy detect the target repo's actual trunk branch, or ship with the same hardcoded check regardless of the target's naming? → A: Detect the target's actual default/trunk branch at install time (`git symbolic-ref refs/remotes/origin/HEAD` or `git remote show origin`) and bake it into the installed copy, falling back to `main`/`master` if detection fails — a one-time detection at install, not a re-check on every hook invocation.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -56,11 +57,20 @@ Assumptions) do NOT land there either way.
    additions are present, each with the target's own
    `${CLAUDE_PROJECT_DIR}`-relative paths (not this repo's own absolute
    paths).
-4. **Given** the same run, **When** the target's resulting
+4. **Given** a target repository whose `origin` remote's default branch
+   is named `develop` (not `main`/`master`), **When**
+   `dangerous-command-guard` is installed, **Then** its force-push check
+   protects `develop`, not a hardcoded `main`/`master` that doesn't exist
+   in that repo.
+5. **Given** a target repository with no `origin` remote configured yet,
+   **When** `dangerous-command-guard` is installed, **Then** its
+   force-push check falls back to `main`/`master` rather than shipping
+   with no protection at all.
+6. **Given** the same run, **When** the target's resulting
    `.claude/hooks/` directory is inspected, **Then** `skill-quality-guard.*`
    and `cross-platform-parity-guard.*` (spec-jedi-repo-specific, see
    Assumptions) are absent.
-5. **Given** a target directory that already has its own
+7. **Given** a target directory that already has its own
    `.claude/settings.json` with unrelated `hooks`/`permissions`/
    `statusLine` content, **When** the installer runs, **Then** the
    shareable additions are merged in without deleting or overwriting the
@@ -137,6 +147,11 @@ partial adaptation, or clean skip.
   non-Claude-Code harnesses are researched and adapted-for in this same
   feature, not deferred — a `specs/023`-sized research effort is
   explicitly part of this feature's own Phase 0.
+- Trunk branch name generalization (resolved, see Clarifications): a
+  target repository with no `origin` remote configured yet (e.g., a
+  brand-new local-only project) can't have its default branch detected
+  via `git remote show origin` — FR-002a's fallback to `main`/`master`
+  covers this exact case, not just a hypothetical detection failure.
 
 ## Requirements *(mandatory)*
 
@@ -167,6 +182,17 @@ partial adaptation, or clean skip.
   `.ps1`) MUST be installed with paths rewritten relative to the
   *target's* own `${CLAUDE_PROJECT_DIR}`, never hard-coded to this repo's
   own absolute paths.
+- **FR-002a**: At install time, the installer MUST detect the target
+  repository's actual default/trunk branch (e.g. via `git symbolic-ref
+  refs/remotes/origin/HEAD` or `git remote show origin`) and bake that
+  branch name into the installed `dangerous-command-guard.sh`/`.ps1`
+  copy's force-push check, replacing the hardcoded `main`/`master`
+  check this repo's own copy uses. If detection fails (e.g. no `origin`
+  remote configured yet), the installed copy MUST fall back to checking
+  `main`/`master`, matching this repo's own existing behavior, rather
+  than shipping with no force-push protection at all. Detection happens
+  once, at install time — the installed hook itself does not re-detect
+  the branch on every invocation (Clarifications).
 - **FR-003**: Installing shareable hooks/settings into a target's
   existing `.claude/settings.json` MUST be a non-destructive merge —
   existing unrelated keys/entries in that file MUST survive unchanged,
@@ -222,6 +248,11 @@ partial adaptation, or clean skip.
   expected presence/absence of those hooks/settings each time, with no
   prompt at all appearing for a scripted/`--harness`-flagged invocation
   in between.
+- **SC-007**: Installing into a scratch repository with a `develop`
+  default branch results in an installed `dangerous-command-guard` that
+  blocks a force-push to `develop` and allows one to an arbitrarily-named
+  non-trunk branch — verified by an actual attempted force-push in the
+  test matrix, not asserted.
 
 ## Assumptions
 

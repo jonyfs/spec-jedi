@@ -32,4 +32,5 @@
 ## Notes
 
 - Items marked incomplete require spec updates before `/speckit-clarify` or `/speckit-plan`
-- Both `[NEEDS CLARIFICATION]` markers resolved during `/speckit-specify` itself (see spec.md's `## Clarifications` section): automatic-vs-opt-in installation (interactive prompt, default-on for scripted/CI) and harness research scope (all 19 non-Claude-Code harnesses in scope, not deferred). All checklist items now pass.
+- Two `[NEEDS CLARIFICATION]` markers resolved during `/speckit-specify` itself: automatic-vs-opt-in installation (interactive prompt, default-on for scripted/CI) and harness research scope (all 19 non-Claude-Code harnesses in scope, not deferred).
+- A further `/speckit-clarify` pass (2026-07-15) surfaced and resolved one additional gap not caught during specify: `dangerous-command-guard`'s hardcoded `main`/`master` force-push check needed target-repo trunk-branch detection to actually protect a repo using a different branch name. See spec.md's `## Clarifications` session for the full Q&A. All checklist items pass.

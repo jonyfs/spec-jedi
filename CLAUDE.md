@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/037-readme-professional-restructure/plan.md
+at specs/041-release-hooks-settings/plan.md
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

@@ -1,5 +1,46 @@
 <!--
 Sync Impact Report
+- Version change: 1.27.0 → 1.27.1
+- Modified principles: XV. `specjedi-` Skill Naming Convention — PATCH
+  bump, a descriptive-fact correction, not a rule change.
+  - Directly requested by the maintainer, following a question about
+    whether `speckit-*` could already be removed from this project
+    without losing any capability it has that `specjedi-*` doesn't
+    (`specs/048-retire-speckit`): once `specs/044`'s parity audit and
+    `specs/047`'s hook-dispatch parity work closed the one real gap
+    standing in the way, the maintainer confirmed executing the
+    migration rather than merely continuing to assess readiness for it.
+  - This principle's own text previously stated, as an ongoing fact,
+    "this project currently uses spec-kit's own command skills to
+    build itself" — true when written, no longer true now that all 11
+    vendored `speckit-*` skills have been removed (`specs/048`) and
+    this project's own Development Workflow/Governance sections'
+    literal command references have been rewritten to `specjedi-*`
+    (via `specjedi-migrate`, the same skill this principle's own
+    bootstrap/product-distinction rule already governs).
+  - The principle's actual *rule* — every Spec-Jedi-authored skill MUST
+    be named `specjedi-<subject>`; end-user-facing material MUST present
+    `specjedi-*` as the product and any vendored bootstrap tooling as
+    internal-only, never blurred together — is completely unchanged.
+    Only the descriptive example/fact within the principle's prose is
+    corrected, matching the constitution's own Versioning policy's
+    definition of PATCH: "clarifications, wording, or typo fixes with
+    no semantic change."
+  - Not a MINOR bump: no principle guidance was added or materially
+    expanded — the rule this principle states is identical before and
+    after this amendment, and no new governance section was introduced.
+  - This project's own Development Workflow and Governance sections'
+    literal `/speckit-*` command references (6 total: 2 in Development
+    Workflow, 2 in Governance's Amendment procedure/Compliance review)
+    were rewritten to `/specjedi-*` in the same PR, via `specjedi-migrate`
+    — that skill's own live-vs-historical judgment call correctly left
+    every Sync Impact Report entry throughout this file (including this
+    one's predecessors) untouched, since those are accurate historical
+    records of what genuinely happened at each past amendment, not
+    live instructions.
+
+<!--
+Sync Impact Report
 - Version change: 1.26.0 → 1.27.0
 - Modified principles: X. Trunk-Based Git Workflow with Self-Validating
   Pull Requests — MINOR bump, materially expanded guidance (no renaming,
@@ -1506,25 +1547,31 @@ a user should always be able to see, and pick from, the next move.
 ### XV. `specjedi-` Skill Naming Convention
 
 Every skill authored as part of this project's own product surface (as
-opposed to vendored third-party tooling this project builds on, like the
-spec-kit `speckit-*` command skills) MUST be named `specjedi-<subject>`,
-where `<subject>` is the specific problem the skill solves. This applies
-going forward to every new Spec-Jedi-authored skill; it does not require
-renaming already-vendored, non-Spec-Jedi-authored skills.
+opposed to any vendored third-party tooling this project might build
+on) MUST be named `specjedi-<subject>`, where `<subject>` is the
+specific problem the skill solves. This applies going forward to every
+new Spec-Jedi-authored skill; it does not require renaming
+already-vendored, non-Spec-Jedi-authored skills.
 
-The `speckit-*` skills are **bootstrap tooling, not the product**: this
-project currently uses spec-kit's own command skills to build itself
-(dogfooding the incumbent to construct its replacement — the same
-"bootstrap a compiler with an older compiler" pattern), while Spec Jedi's
-actual competitive offering to end users is the `specjedi-*` surface.
-End-user-facing material (README, quickstarts, installers) MUST present
-`specjedi-*` skills as the product and `speckit-*` skills as internal
-bootstrap tooling — never the reverse, and never blurred together as if
-Spec Jedi were merely a themed reskin of spec-kit. Where the full
-`specjedi-*` pipeline doesn't exist yet for a given capability, docs MUST
-say so plainly (what ships today vs. what's roadmap) rather than
-substituting a `speckit-*` walkthrough and calling it the product
-experience.
+**Vendored bootstrap tooling is never the product.** This project used
+to dogfood spec-kit's own `speckit-*` command skills to build itself
+(the same "bootstrap a compiler with an older compiler" pattern) while
+Spec Jedi's actual competitive offering to end users was the
+`specjedi-*` surface. As of feature 048 (2026-07-18), that bootstrap
+phase is complete: `specs/044`'s parity audit and `specs/047`'s
+hook-dispatch parity work closed the one real gap standing in the way,
+and all 11 vendored `speckit-*` skills have since been removed —
+this project's own development now runs entirely on `specjedi-*`, the
+same tool it ships to end users. Should this project ever vendor
+different third-party bootstrap tooling in the future, the same rule
+applies: end-user-facing material (README, quickstarts, installers)
+MUST present `specjedi-*` skills as the product and any such vendored
+tooling as internal-only — never the reverse, and never blurred
+together as if Spec Jedi were merely a themed reskin of an incumbent.
+Where the full `specjedi-*` pipeline doesn't exist yet for a given
+capability, docs MUST say so plainly (what ships today vs. what's
+roadmap) rather than substituting a vendored walkthrough and calling
+it the product experience.
 
 **Rationale**: Directly requested (naming), then directly requested again
 (positioning): a consistent prefix makes Spec Jedi's own skills instantly
@@ -1950,8 +1997,8 @@ validation steps above before requesting review.
 
 New skills and material changes to existing skills MUST follow this
 project's own SDD pipeline, dogfooding the tool it ships: research
-(Principle II) → `/speckit-specify` → `/speckit-clarify` as needed →
-`/speckit-plan` → `/speckit-tasks` → implementation → validation
+(Principle II) → `/specjedi-specify` → `/specjedi-clarify` as needed →
+`/specjedi-plan` → `/specjedi-tasks` → implementation → validation
 (Principle IX) → commit on a feature branch → open a PR against `main` →
 automated validation workflow runs → auto-merge on green, blocked on red
 (Principle X). Localization (Principle I) runs on its own cadence, not
@@ -2022,7 +2069,7 @@ documentation conflicts with this constitution, the constitution wins and
 the skill documentation MUST be corrected.
 
 **Amendment procedure**: Amendments are proposed by editing this file
-through the `/speckit-constitution` command (or an equivalent reviewed PR),
+through the `/specjedi-constitution` command (or an equivalent reviewed PR),
 must state the reason for the change, and must update the Sync Impact
 Report at the top of the file plus any dependent templates
 (`plan-template.md`, `spec-template.md`, `tasks-template.md`,
@@ -2034,10 +2081,10 @@ MINOR — a principle or governance section is added, or existing guidance is
 materially expanded. PATCH — clarifications, wording, or typo fixes with no
 semantic change.
 
-**Compliance review**: Every `/speckit-plan` run MUST pass the Constitution
+**Compliance review**: Every `/specjedi-plan` run MUST pass the Constitution
 Check gate derived from this document before Phase 0 research begins, and
 again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.27.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18
+**Version**: 1.27.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18

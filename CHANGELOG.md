@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.2.0] - 2026-07-18
+
 ### Added
 
 - **SDD friction reduction** (feature 045) — real, cited community

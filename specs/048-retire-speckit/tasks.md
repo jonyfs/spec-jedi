@@ -60,9 +60,9 @@ Single repository. Paths are repo-root-relative.
 
 ### Implementation for User Story 2
 
-- [ ] T005 [US2] Delete all 11 `.claude/skills/speckit-*/` directories (`speckit-agent-context-update`, `speckit-analyze`, `speckit-checklist`, `speckit-clarify`, `speckit-constitution`, `speckit-converge`, `speckit-implement`, `speckit-plan`, `speckit-specify`, `speckit-tasks`, `speckit-taskstoissues`) (depends on T004 — User Story 1 checkpoint reached)
-- [ ] T006 [US2] Confirm `scripts/install.sh`/`.ps1` and `scripts/package-release.sh`/`.ps1` reference zero `speckit-*` skills (expected: none did before this removal either, per plan.md's Technical Context — this task confirms that expectation holds, not a new fix) (depends on T005)
-- [ ] T007 [US2] Run `scripts/validate.sh`/`.ps1`; confirm it PASSES with no new failure caused by the removal (Acceptance Scenario 3) (depends on T005)
+- [x] T005 [US2] Deleted all 11 `.claude/skills/speckit-*/` directories (`speckit-agent-context-update`, `speckit-analyze`, `speckit-checklist`, `speckit-clarify`, `speckit-constitution`, `speckit-converge`, `speckit-implement`, `speckit-plan`, `speckit-specify`, `speckit-tasks`, `speckit-taskstoissues`) — confirmed `ls .claude/skills/ | grep speckit- | wc -l` returns 0 (depends on T004 — User Story 1 checkpoint reached)
+- [x] T006 [US2] Confirmed `scripts/install.sh`/`.ps1`/`package-release.sh`/`.ps1`/`bootstrap-install.sh`/`.ps1` reference zero `speckit-*` skills — the only matches are comment lines explicitly stating "never speckit-* bootstrap tooling," no actual script logic ever touched them (depends on T005)
+- [x] T007 [US2] Ran `scripts/validate.sh`/`.ps1`: PASSED, no new failure caused by the removal (pre-existing i18n WARN unrelated) (Acceptance Scenario 3) (depends on T005)
 
 **Checkpoint**: All vendored `speckit-*` tooling is removed from the repository; the project's own skill set is now `specjedi-*` only.
 

@@ -11,6 +11,27 @@ this file directly.
 
 ### Added
 
+- **Release-ship shareable hooks & settings, per harness** (feature 041)
+  — `scripts/install.sh`/`.ps1` now install a shareable safety hook
+  (`dangerous-command-guard`) and git-aware `statusLine`/`permissions`
+  settings, trunk-branch-aware and non-destructively merged, for
+  `claude-code` (default-on, interactive-prompt opt-out). Extended with
+  real, harness-native translations for seven more harnesses: Wave 1
+  (`gemini-cli`, `antigravity`, `codex-cli`) get a translated declarative
+  JSON hook — never a copy of Claude Code's own hook-output shape; Wave 2
+  (`opencode`, `zed`, `amazon-q`) get translated allow/ask/deny-shaped
+  permissions; `warp` gets an honest advisory instead of a file write,
+  since its only confirmed settings file is global-user-level, not
+  project-scoped, and this installer never touches state outside the
+  target project. The 9 researched-as-None harnesses and
+  Cursor/Windsurf/Copilot (explicitly deferred, not silently dropped)
+  are unchanged. Two new CI job families
+  (`install-test-shared-hooks-wave1`/`-wave2`, 3-OS matrix plus native
+  Windows PowerShell) prove idempotency, JSON validity, and translation
+  correctness for real scratch installs — never asserted in docs alone.
+  See `specs/041-release-hooks-settings/research.md` for the full
+  per-harness classification and citations.
+
 - **Expanded release package** (feature 038) — `scripts/package-release.sh`/
   `.ps1` (the artifact `scripts/bootstrap-install.sh`/`.ps1` download)
   now also stage `README.md`; three user-facing reference docs

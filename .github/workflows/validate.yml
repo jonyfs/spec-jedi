@@ -1319,6 +1319,232 @@ jobs:
           $null = $settings | ConvertFrom-Json
           Write-Host "OK: pre-existing settings.json content preserved"
 
+  # specs/041-release-hooks-settings (User Story 2, Wave 1): declarative-
+  # JSON-hook harnesses -- gemini-cli/antigravity get a translated
+  # BeforeTool hook (not a copy of Claude Code's own hooks shape);
+  # codex-cli gets a hooks.json identical in shape to Claude Code's own
+  # plus the required /hooks trust-workflow message.
+  install-test-shared-hooks-wave1:
+    name: install-test-shared-hooks-wave1 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: gemini-cli install produces a translated BeforeTool hook, not a copy of Claude Code's own hooks
+        shell: bash
+        run: |
+          dir1=$(mktemp -d)
+          ./scripts/install.sh "$dir1" --harness gemini-cli >/dev/null
+          test -f "$dir1/.gemini/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          grep -q '"BeforeTool"' "$dir1/.gemini/settings.json" || { echo "FAIL: BeforeTool hook missing"; exit 1; }
+          if grep -q 'hookSpecificOutput' "$dir1/.gemini/hooks/dangerous-command-guard.sh"; then
+            echo "FAIL: script still uses Claude Code's own output shape, not translated"
+            exit 1
+          fi
+          grep -q '"decision"' "$dir1/.gemini/hooks/dangerous-command-guard.sh" || { echo "FAIL: translated decision/reason output shape missing"; exit 1; }
+          python3 -m json.tool "$dir1/.gemini/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
+          echo "OK: gemini-cli hook translated, not copied"
+      - name: antigravity install produces a translated hook in its own confirmed settings location
+        shell: bash
+        run: |
+          dir2=$(mktemp -d)
+          ./scripts/install.sh "$dir2" --harness antigravity >/dev/null
+          test -f "$dir2/.agents/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          grep -q '"BeforeTool"' "$dir2/.agents/hooks.json" || { echo "FAIL: BeforeTool hook missing"; exit 1; }
+          python3 -m json.tool "$dir2/.agents/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
+          echo "OK: antigravity hooks.json present and valid"
+      - name: codex-cli install produces hooks.json and tells the user to run /hooks to trust it
+        shell: bash
+        run: |
+          dir3=$(mktemp -d)
+          out=$(./scripts/install.sh "$dir3" --harness codex-cli)
+          test -f "$dir3/.codex/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          grep -q '"PreToolUse"' "$dir3/.codex/hooks.json" || { echo "FAIL: PreToolUse hook missing"; exit 1; }
+          python3 -m json.tool "$dir3/.codex/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
+          echo "$out" | grep -q '/hooks' || { echo "FAIL: trust-workflow message missing"; exit 1; }
+          echo "OK: codex-cli hooks.json present, trust-workflow message shown"
+      - name: Idempotent re-run produces byte-identical output for all three Wave 1 harnesses
+        shell: bash
+        run: |
+          for h in gemini-cli antigravity codex-cli; do
+            dir=$(mktemp -d)
+            ./scripts/install.sh "$dir" --harness "$h" >/dev/null
+            case "$h" in
+              gemini-cli) f="$dir/.gemini/settings.json" ;;
+              antigravity) f="$dir/.agents/hooks.json" ;;
+              codex-cli) f="$dir/.codex/hooks.json" ;;
+            esac
+            cp "$f" "/tmp/before-$h.json"
+            ./scripts/install.sh "$dir" --harness "$h" >/dev/null
+            diff "/tmp/before-$h.json" "$f" || { echo "FAIL: $h output changed on re-run"; exit 1; }
+          done
+          echo "OK: idempotent re-run for all Wave 1 harnesses"
+
+  # Native PowerShell counterpart of install-test-shared-hooks-wave1, same
+  # reasoning as install-test-shared-hooks-windows-native.
+  install-test-shared-hooks-wave1-windows-native:
+    name: install-test-shared-hooks-wave1 (windows-latest, native PowerShell)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: gemini-cli install produces a translated BeforeTool hook, not a copy of Claude Code's own hooks
+        shell: pwsh
+        run: |
+          $dir1 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir1 -Harness gemini-cli | Out-Null
+          if (-not (Test-Path (Join-Path $dir1 ".gemini/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          $settings = Get-Content (Join-Path $dir1 ".gemini/settings.json") -Raw
+          if ($settings -notmatch '"BeforeTool"') { Write-Host "FAIL: BeforeTool hook missing"; exit 1 }
+          $null = $settings | ConvertFrom-Json
+          $hookContent = Get-Content (Join-Path $dir1 ".gemini/hooks/dangerous-command-guard.ps1") -Raw
+          if ($hookContent -match 'hookSpecificOutput') { Write-Host "FAIL: script still uses Claude Code's own output shape"; exit 1 }
+          if ($hookContent -notmatch '"decision"') { Write-Host "FAIL: translated decision/reason output shape missing"; exit 1 }
+          Write-Host "OK: gemini-cli hook translated, not copied"
+      - name: antigravity install produces a translated hook in its own confirmed settings location
+        shell: pwsh
+        run: |
+          $dir2 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir2 -Harness antigravity | Out-Null
+          if (-not (Test-Path (Join-Path $dir2 ".agents/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          $hooks = Get-Content (Join-Path $dir2 ".agents/hooks.json") -Raw
+          if ($hooks -notmatch '"BeforeTool"') { Write-Host "FAIL: BeforeTool hook missing"; exit 1 }
+          $null = $hooks | ConvertFrom-Json
+          Write-Host "OK: antigravity hooks.json present and valid"
+      - name: codex-cli install produces hooks.json and tells the user to run /hooks to trust it
+        shell: pwsh
+        run: |
+          $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness codex-cli
+          if (-not (Test-Path (Join-Path $dir3 ".codex/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          $hooks = Get-Content (Join-Path $dir3 ".codex/hooks.json") -Raw
+          if ($hooks -notmatch '"PreToolUse"') { Write-Host "FAIL: PreToolUse hook missing"; exit 1 }
+          $null = $hooks | ConvertFrom-Json
+          if (($out -join "`n") -notmatch '/hooks') { Write-Host "FAIL: trust-workflow message missing"; exit 1 }
+          Write-Host "OK: codex-cli hooks.json present, trust-workflow message shown"
+
+  # specs/041-release-hooks-settings (User Story 2, Wave 2): permissions-
+  # only harnesses -- opencode/zed/amazon-q get a real, harness-native
+  # permissions translation; warp gets an honest advisory (no confirmed
+  # project-scoped mechanism to write into non-destructively, see
+  # install_permissions_warp's own comment in scripts/install.sh).
+  install-test-shared-hooks-wave2:
+    name: install-test-shared-hooks-wave2 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: opencode install produces translated allow/ask/deny rules in opencode.json
+        shell: bash
+        run: |
+          dir1=$(mktemp -d)
+          ./scripts/install.sh "$dir1" --harness opencode >/dev/null
+          test -f "$dir1/opencode.json" || { echo "FAIL: opencode.json missing"; exit 1; }
+          grep -q '"permission"' "$dir1/opencode.json" || { echo "FAIL: permission key missing"; exit 1; }
+          grep -q '"bash"' "$dir1/opencode.json" || { echo "FAIL: bash rules missing"; exit 1; }
+          python3 -m json.tool "$dir1/opencode.json" >/dev/null || { echo "FAIL: opencode.json not valid JSON"; exit 1; }
+          echo "OK: opencode.json permissions present and valid"
+      - name: zed install produces translated tool-permission settings
+        shell: bash
+        run: |
+          dir2=$(mktemp -d)
+          ./scripts/install.sh "$dir2" --harness zed >/dev/null
+          test -f "$dir2/.zed/settings.json" || { echo "FAIL: .zed/settings.json missing"; exit 1; }
+          grep -q '"tool_permissions"' "$dir2/.zed/settings.json" || { echo "FAIL: tool_permissions missing"; exit 1; }
+          python3 -m json.tool "$dir2/.zed/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
+          echo "OK: .zed/settings.json tool_permissions present and valid"
+      - name: warp install prints an honest advisory, writes no file (no confirmed project-scoped mechanism)
+        shell: bash
+        run: |
+          dir3=$(mktemp -d)
+          out=$(./scripts/install.sh "$dir3" --harness warp)
+          echo "$out" | grep -qi "global" || { echo "FAIL: advisory message missing"; exit 1; }
+          if find "$dir3" -iname "*.toml" | grep -q .; then
+            echo "FAIL: unexpectedly wrote a file"
+            exit 1
+          fi
+          echo "OK: warp advisory shown, no file written"
+      - name: amazon-q install produces a custom agent JSON with allowedTools
+        shell: bash
+        run: |
+          dir4=$(mktemp -d)
+          ./scripts/install.sh "$dir4" --harness amazon-q >/dev/null
+          test -f "$dir4/.amazonq/cli-agents/spec-jedi-shared.json" || { echo "FAIL: custom agent JSON missing"; exit 1; }
+          grep -q '"allowedTools"' "$dir4/.amazonq/cli-agents/spec-jedi-shared.json" || { echo "FAIL: allowedTools missing"; exit 1; }
+          python3 -m json.tool "$dir4/.amazonq/cli-agents/spec-jedi-shared.json" >/dev/null || { echo "FAIL: agent JSON not valid"; exit 1; }
+          echo "OK: amazon-q custom agent JSON present and valid"
+      - name: Idempotent re-run produces byte-identical output for opencode/zed/amazon-q
+        shell: bash
+        run: |
+          for h in opencode zed amazon-q; do
+            dir=$(mktemp -d)
+            ./scripts/install.sh "$dir" --harness "$h" >/dev/null
+            case "$h" in
+              opencode) f="$dir/opencode.json" ;;
+              zed) f="$dir/.zed/settings.json" ;;
+              amazon-q) f="$dir/.amazonq/cli-agents/spec-jedi-shared.json" ;;
+            esac
+            cp "$f" "/tmp/before2-$h.json"
+            ./scripts/install.sh "$dir" --harness "$h" >/dev/null
+            diff "/tmp/before2-$h.json" "$f" || { echo "FAIL: $h output changed on re-run"; exit 1; }
+          done
+          echo "OK: idempotent re-run for opencode/zed/amazon-q"
+
+  # Native PowerShell counterpart of install-test-shared-hooks-wave2, same
+  # reasoning as install-test-shared-hooks-windows-native.
+  install-test-shared-hooks-wave2-windows-native:
+    name: install-test-shared-hooks-wave2 (windows-latest, native PowerShell)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: opencode install produces translated allow/ask/deny rules in opencode.json
+        shell: pwsh
+        run: |
+          $dir1 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir1 -Harness opencode | Out-Null
+          if (-not (Test-Path (Join-Path $dir1 "opencode.json"))) { Write-Host "FAIL: opencode.json missing"; exit 1 }
+          $content = Get-Content (Join-Path $dir1 "opencode.json") -Raw
+          if ($content -notmatch '"permission"') { Write-Host "FAIL: permission key missing"; exit 1 }
+          $null = $content | ConvertFrom-Json
+          Write-Host "OK: opencode.json permissions present and valid"
+      - name: zed install produces translated tool-permission settings
+        shell: pwsh
+        run: |
+          $dir2 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir2 -Harness zed | Out-Null
+          if (-not (Test-Path (Join-Path $dir2 ".zed/settings.json"))) { Write-Host "FAIL: .zed/settings.json missing"; exit 1 }
+          $content = Get-Content (Join-Path $dir2 ".zed/settings.json") -Raw
+          if ($content -notmatch '"tool_permissions"') { Write-Host "FAIL: tool_permissions missing"; exit 1 }
+          $null = $content | ConvertFrom-Json
+          Write-Host "OK: .zed/settings.json tool_permissions present and valid"
+      - name: warp install prints an honest advisory, writes no file
+        shell: pwsh
+        run: |
+          $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness warp
+          if (($out -join "`n") -notmatch '(?i)global') { Write-Host "FAIL: advisory message missing"; exit 1 }
+          if (Test-Path $dir3) {
+            $tomlFiles = Get-ChildItem -Path $dir3 -Recurse -Filter "*.toml" -ErrorAction SilentlyContinue
+            if ($tomlFiles) { Write-Host "FAIL: unexpectedly wrote a file"; exit 1 }
+          }
+          Write-Host "OK: warp advisory shown, no file written"
+      - name: amazon-q install produces a custom agent JSON with allowedTools
+        shell: pwsh
+        run: |
+          $dir4 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir4 -Harness amazon-q | Out-Null
+          $agentFile = Join-Path $dir4 ".amazonq/cli-agents/spec-jedi-shared.json"
+          if (-not (Test-Path $agentFile)) { Write-Host "FAIL: custom agent JSON missing"; exit 1 }
+          $content = Get-Content $agentFile -Raw
+          if ($content -notmatch '"allowedTools"') { Write-Host "FAIL: allowedTools missing"; exit 1 }
+          $null = $content | ConvertFrom-Json
+          Write-Host "OK: amazon-q custom agent JSON present and valid"
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -1327,7 +1553,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, install-test-shared-hooks, install-test-shared-hooks-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, memory-file-injection, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, install-test-shared-hooks, install-test-shared-hooks-windows-native, install-test-shared-hooks-wave1, install-test-shared-hooks-wave1-windows-native, install-test-shared-hooks-wave2, install-test-shared-hooks-wave2-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, memory-file-injection, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

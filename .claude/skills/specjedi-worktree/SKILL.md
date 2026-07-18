@@ -29,8 +29,8 @@ removal.
    --porcelain` and `git branch --show-current`. Offer a worktree — never
    force one — only when **both** are true: the working tree has actual
    uncommitted changes (`git status --porcelain` is non-empty) **and**
-   the current branch is not the repo's trunk (FR-002, narrowed during
-   `/speckit-clarify` to exclude a clean, already-pushed feature branch).
+   the current branch is not the repo's trunk (FR-002 — a clean,
+   already-pushed feature branch is explicitly excluded).
    State the reason plainly ("this checkout has uncommitted work on
    `<branch>` — want a separate worktree for the new feature instead?").
    Declining leaves the caller's existing flow completely unchanged — no

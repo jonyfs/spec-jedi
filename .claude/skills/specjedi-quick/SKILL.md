@@ -36,7 +36,7 @@ change too big or too ambiguous through the fast path.
      pipeline (Principle II's competitive-research rigor, Principle
      XIX's full authoring standard), regardless of how small the skill
      seems. No exception, ever.
-   - **Not a constitution amendment** — has its own `/speckit-constitution`
+   - **Not a constitution amendment** — has its own `/specjedi-constitution`
      path already.
 2. **Before creating the new feature directory, self-invoke
    `specjedi-worktree`'s proactive-offer detection step** (Principle

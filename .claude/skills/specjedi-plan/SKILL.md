@@ -42,6 +42,17 @@ conventions named explicitly, not gestured at.
    place to file every inconvenient constraint.
 5. **Define Project Structure** — the actual directories/files this
    feature touches, not a generic template with unfilled placeholders.
+5.5. **Check the spec/plan size against this project's own history**
+   (specs/045). After writing `plan.md`, count both it and `spec.md`'s
+   own lines (`wc -l`) and compare each against the median line count of
+   every prior `specs/*/spec.md`/`specs/*/plan.md` (excluding this
+   feature itself; fall back to a fixed 400-line threshold with fewer
+   than 5 prior features to compare against). Flag either as an outlier
+   only when it exceeds roughly double that median, naming the actual
+   count, the median, and a concrete next step (e.g., "consider whether
+   User Story 3 is really one story or two") — never an unexplained size
+   warning, and never a blocking gate (advisory-only, same posture as the
+   Constitution Check is *not*: that gate blocks, this one only informs).
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
    blocking (and how to resolve it) if the Constitution Check didn't pass.
@@ -140,6 +151,11 @@ know instead of blocking on it.
   `NEEDS CLARIFICATION` markers — recommend `specjedi-clarify` instead.
 - **Never** adapt the plan's own technical field content for audience
   level — that's Principle V/XII territory, not XIX's.
+- **Always** compare `spec.md`/`plan.md` size against this project's own
+  real historical median, never an arbitrary universal number.
+- **Never** treat the size-outlier check as blocking — unlike the
+  Constitution Check, it only informs; a legitimately large feature is
+  not an error.
 
 ## Verifiable success criteria
 
@@ -149,6 +165,9 @@ know instead of blocking on it.
   bearing on this feature — no silent omissions.
 - Complexity Tracking, when present, states the specific alternative
   rejected and why — never left as a bare violation with no justification.
+- A `spec.md`/`plan.md` pair more than double this project's own real
+  historical median is flagged with the actual comparison, never silently
+  passed through.
 
 ## Validation Coverage (Principle IX)
 

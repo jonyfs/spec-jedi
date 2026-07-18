@@ -11,6 +11,54 @@ this file directly.
 
 ### Added
 
+- **Skill freshness validation & update awareness** (feature 042,
+  Constitution Principle XXII) — `scripts/install.sh`/`.ps1` now write
+  an installed-release marker (`.specify/release-marker.json`) at
+  install time: a real release tag when installed from a packaged
+  release, or an explicit `"local-checkout"` sentinel when run directly
+  from a git clone. `scripts/package-release.sh`/`.ps1` stage a new
+  `RELEASE_VERSION` stamp file into every tarball so `install.sh` can
+  determine this on its own — no changes needed to
+  `scripts/bootstrap-install.sh`/`.ps1` at all.
+  `scripts/session-start.sh`/`.ps1` gain an additive freshness-check
+  line comparing the installed marker against the latest published
+  GitHub Release, reusing `bootstrap-install.sh`'s own `releases/latest`
+  lookup and `GITHUB_TOKEN` handling but with its own short, explicit
+  timeout and a single attempt — never `bootstrap-install.sh`'s
+  multi-attempt retry loop. Silent on every incomplete state (no marker,
+  malformed marker, local-checkout sentinel, unreachable/rate-limited
+  API) — advisory only, never blocks or errors. Two new CI job families
+  (`install-test-release-marker`, `session-start-freshness-check`,
+  3-OS matrix plus native Windows PowerShell) prove both scenarios
+  against real installs.
+
+- **Whole-project constitution coverage audit** (feature 043) — a new
+  skill, `specjedi-constitution-audit`, evaluates all 22 Core Principles
+  plus the Distribution & Ecosystem Standards and Development Workflow
+  sections against the entire current project tree, never a diff —
+  complementary to `specjedi-govcheck`'s existing per-PR/per-branch
+  scope. Cross-checks every claim in
+  `references/principle-traceability.md` against what actually exists
+  today, flagging drift in both directions (an entry overstating
+  coverage, or understating it) and undocumented gaps. Its own first
+  real run found and closed two genuine drift instances: Principle
+  XXII's row still said "Not started" after feature 042 had already
+  shipped, and Principle XI's row still said the first release "has not
+  yet been cut" after v0.1.0/v0.1.1 had already been published.
+
+- **`specjedi-*`/`speckit-*` parity audit & migration readiness**
+  (feature 044) — `specs/044-speckit-parity-audit/PARITY-LEDGER.md`, an
+  evidence-based comparison of all 11 `speckit-*` pipeline commands
+  against `specjedi-*`'s command set. 8 of 11 full parity, 1 favorable
+  divergence (`specjedi-implement` already enforces trunk-based PR
+  discipline `speckit-implement` doesn't), 2 no-equivalent (one never
+  used in this project's real history, one architecturally superseded
+  by `specjedi-status`'s zero-tracking design). Verdict: not yet safe
+  for a full internal migration off `speckit-*` — the one real blocker
+  (no `specjedi-*` pipeline skill implements
+  `.specify/extensions.yml`'s hook-dispatch mechanism) is explicitly
+  deferred to its own future spec cycle, not silently dropped.
+
 - **Release-ship shareable hooks & settings, per harness** (feature 041)
   — `scripts/install.sh`/`.ps1` now install a shareable safety hook
   (`dangerous-command-guard`) and git-aware `statusLine`/`permissions`

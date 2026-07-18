@@ -37,6 +37,23 @@ all 19 for that separate, previously-unresearched dimension — see that
 document directly rather than assuming this file's own Findings table
 below says anything about hooks/settings capability.
 
+**Implementation status update (specs/041-release-hooks-settings,
+2026-07-17)**: research.md's classification is now backed by real,
+CI-proven install code for `claude-code` (the shareable
+`dangerous-command-guard`/`statusLine`/`permissions` set) plus seven of
+the 19 researched harnesses — Wave 1 (`gemini-cli`, `antigravity`,
+`codex-cli`): a translated declarative-JSON hook; Wave 2 (`opencode`,
+`zed`, `amazon-q`): translated allow/ask/deny-shaped permissions;
+`warp`: an honest advisory only, since its one confirmed settings file
+(`settings.toml`) is global-user-level, not project-scoped, and this
+installer never writes outside the target project (Constitution
+Principle XVIII). The other 9 researched-as-None harnesses get FR-005's
+existing clean skip, unchanged. Cursor/Windsurf/Copilot remain
+out-of-scope exactly as research.md's own Decision named them — not
+silently dropped, still a real follow-up feature. See `scripts/
+install.sh`/`.ps1`'s `install_hooks_*`/`install_permissions_*` functions
+for the implementation and inline citations.
+
 ## Findings
 
 | Harness | Markdown custom-instructions support? | Mechanism | Source |

@@ -93,8 +93,8 @@ Single repository. Paths are repo-root-relative.
 **Purpose**: Whole-feature verification spanning all three user stories.
 
 - [ ] T015 Run `git diff --stat` against `main`; confirm the changed-file set matches exactly what plan.md's Project Structure names (plus `CHANGELOG.md`) — zero historical file touched (FR-009, SC-005) (depends on T014)
-- [ ] T016 Grep the whole repository for `speckit-`, excluding `specs/001-*` through `specs/047-*` and existing (pre-this-feature) `CHANGELOG.md` entries; confirm zero remaining live/current-tense hits (SC-004, SC-006) (depends on T014)
-- [ ] T017 Final `scripts/validate.sh`/`.ps1` re-run after all edits; confirm PASSED (depends on T015, T016)
+- [x] T016 Grepped the whole repository for `speckit-`, excluding `specs/` (all historical or this feature's own) and `docs/i18n/` (out of scope, synced on its own whole-project cadence per Principle I): found and fixed 5 more live references beyond the original plan.md scope — `references/star-wars-lexicon.md` (4 dead-command voice-guidance mentions), `references/competitive-comparison.md` (present-tense "bootstraps itself with" claim), `.github/ISSUE_TEMPLATE/bug-report.md` (a bug-category checkbox for a skill class that no longer exists), and `.specify/scripts/bash/check-prerequisites.sh`/`setup-tasks.sh` (user-facing error messages telling a user to run a now-nonexistent `/speckit-*` command — a real functional bug, since these scripts are actively invoked by `specjedi-*` skills). Remaining hits confirmed legitimate: historical/provenance notes, `specjedi-migrate`'s own designed capability to help other projects still on `speckit-*`, CI leak-guard tests, and vendored third-party extension content (depends on T014)
+- [x] T017 Final `scripts/validate.sh`/`.ps1` re-run after all edits: PASSED — the only WARNs are the pre-existing (non-blocking, by-design per Principle I) localized-docs-sync notices, now also flagging CONTRIBUTING.md's translations, expected since it was edited too (depends on T015, T016)
 
 **Checkpoint**: All success criteria (SC-001 through SC-006) are verified against the shipped state.
 

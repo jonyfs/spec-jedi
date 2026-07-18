@@ -25,8 +25,10 @@ if ($Help -or -not $Version -or -not $OutputDir) {
     Write-Host ""
     Write-Host "Produces a tarball containing .claude/skills/specjedi-*/, the four"
     Write-Host ".specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,"
-    Write-Host "scripts/session-start.sh, scripts/session-start.ps1, README.md, four"
-    Write-Host "user-facing references/*.md files (quickstart-guide.md, what-is-sdd.md,"
+    Write-Host "scripts/session-start.sh, scripts/session-start.ps1,"
+    Write-Host ".claude/hooks/dangerous-command-guard.sh/.ps1, a RELEASE_VERSION stamp"
+    Write-Host "file, README.md, four user-facing references/*.md files"
+    Write-Host "(quickstart-guide.md, what-is-sdd.md,"
     Write-Host "specjedi-and-sdd.md, session-start-hook-guide.md), and LICENSE -- never"
     Write-Host "specs/, CONTRIBUTING.md, or this project's own internal skill-authoring/"
     Write-Host "governance reference docs (specs/038-expand-release-package)."
@@ -80,8 +82,33 @@ try {
     Write-Host "  ✅ scripts/session-start.sh"
     Write-Host "  ✅ scripts/session-start.ps1"
 
+    # specs/042-skill-freshness-validation: pre-existing bug found while
+    # testing this feature -- install.sh/.ps1's shareable-hooks step
+    # (specs/041) reads $repoRoot/.claude/hooks/dangerous-command-guard.sh
+    # /.ps1 unconditionally for claude-code and every Wave 1/2 harness,
+    # but this staging script never packaged it, so install.ps1 run from
+    # ANY extracted release tarball (bootstrap-install.ps1's entire
+    # purpose) has always exited non-zero here. Fixed as part of this
+    # feature since it directly blocks testing the marker-writing
+    # behavior end-to-end from a real package.
+    $hooksDst = Join-Path $stageRoot ".claude/hooks"
+    New-Item -ItemType Directory -Force -Path $hooksDst | Out-Null
+    Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/dangerous-command-guard.sh") -Destination (Join-Path $hooksDst "dangerous-command-guard.sh")
+    Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/dangerous-command-guard.ps1") -Destination (Join-Path $hooksDst "dangerous-command-guard.ps1")
+    Write-Host "  ✅ .claude/hooks/dangerous-command-guard.sh"
+    Write-Host "  ✅ .claude/hooks/dangerous-command-guard.ps1"
+
     Copy-Item -Path (Join-Path $repoRoot "LICENSE") -Destination (Join-Path $stageRoot "LICENSE")
     Write-Host "  ✅ LICENSE"
+
+    # specs/042-skill-freshness-validation: a plain-text stamp of the
+    # version being packaged, read by install.ps1 at install time to
+    # write a real release tag into the target's installed-release
+    # marker instead of the "local-checkout" sentinel -- the only way
+    # install.ps1 can know its own version when running from an
+    # extracted tarball (no .git directory).
+    [System.IO.File]::WriteAllText((Join-Path $stageRoot "RELEASE_VERSION"), $Version)
+    Write-Host "  ✅ RELEASE_VERSION"
 
     New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
     $OutputDir = (Resolve-Path $OutputDir).Path

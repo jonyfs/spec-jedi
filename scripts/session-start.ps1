@@ -127,11 +127,46 @@ if (Test-Path $lexicon) {
     }
 }
 
+# --- Part 4: skill freshness check (Constitution Principle XXII) -----------
+# Advisory-only: any incomplete state (no marker, malformed marker, the
+# "local-checkout" sentinel, unreachable/rate-limited API) degrades
+# silently to an empty $freshnessLine -- never an error, never a guess.
+# Single attempt, short explicit timeout -- deliberately NOT
+# bootstrap-install.ps1's own retry loop (specs/042 research.md Decision
+# 3): that loop has no per-attempt cap and would make every session
+# start's worst case unbounded.
+$freshnessLine = ""
+$marker = Join-Path $repoRoot ".specify/release-marker.json"
+if (Test-Path $marker) {
+    try {
+        $markerJson = Get-Content $marker -Raw | ConvertFrom-Json
+        $installed = $markerJson.installed_release
+        if ($installed -and $installed -ne "local-checkout") {
+            $headers = @{}
+            if ($env:GITHUB_TOKEN) {
+                $headers["Authorization"] = "Bearer $($env:GITHUB_TOKEN)"
+            }
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" -Headers $headers -TimeoutSec 2 -ErrorAction Stop
+            $latest = $release.tag_name
+            if ($latest -and $latest -ne $installed) {
+                $freshnessLine = "Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
+            }
+        }
+    } catch {
+        # Degrade silently -- malformed marker, unreachable API, timeout,
+        # rate limit: none of these should ever surface as an error here.
+    }
+}
+
 # --- Assemble and emit ------------------------------------------------------
 Write-Output $banner
 Write-Output ""
 Write-Output $statusLine
 Write-Output ""
 Write-Output $yodaLine
+if ($freshnessLine) {
+    Write-Output ""
+    Write-Output $freshnessLine
+}
 
 exit 0

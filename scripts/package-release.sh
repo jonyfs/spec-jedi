@@ -15,10 +15,12 @@ Usage: package-release.sh VERSION OUTPUT_DIR
 
 Produces a tarball containing .claude/skills/specjedi-*/, the four
 .specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,
-scripts/session-start.sh, scripts/session-start.ps1, README.md, four
-user-facing references/*.md files (quickstart-guide.md, what-is-sdd.md,
-specjedi-and-sdd.md, session-start-hook-guide.md), and LICENSE -- never
-specs/, CONTRIBUTING.md, or this project's own internal skill-authoring/
+scripts/session-start.sh, scripts/session-start.ps1,
+.claude/hooks/dangerous-command-guard.sh/.ps1, a RELEASE_VERSION stamp
+file, README.md, four user-facing references/*.md files
+(quickstart-guide.md, what-is-sdd.md, specjedi-and-sdd.md,
+session-start-hook-guide.md), and LICENSE -- never specs/,
+CONTRIBUTING.md, or this project's own internal skill-authoring/
 governance reference docs (specs/038-expand-release-package).
 EOF
 }
@@ -76,8 +78,32 @@ echo "  ✅ scripts/install.ps1"
 echo "  ✅ scripts/session-start.sh"
 echo "  ✅ scripts/session-start.ps1"
 
+# specs/042-skill-freshness-validation: pre-existing bug found while
+# testing this feature -- install.sh/.ps1's shareable-hooks step
+# (specs/041) reads $repo_root/.claude/hooks/dangerous-command-guard.sh
+# /.ps1 unconditionally for claude-code and every Wave 1/2 harness, but
+# this staging script never packaged it, so install.sh run from ANY
+# extracted release tarball (bootstrap-install.sh's entire purpose) has
+# always exited 1 here. Fixed as part of this feature since it directly
+# blocks testing the marker-writing behavior end-to-end from a real
+# package.
+hooks_dst="$stage_root/.claude/hooks"
+mkdir -p "$hooks_dst"
+cp "$repo_root/.claude/hooks/dangerous-command-guard.sh" "$hooks_dst/dangerous-command-guard.sh"
+cp "$repo_root/.claude/hooks/dangerous-command-guard.ps1" "$hooks_dst/dangerous-command-guard.ps1"
+echo "  ✅ .claude/hooks/dangerous-command-guard.sh"
+echo "  ✅ .claude/hooks/dangerous-command-guard.ps1"
+
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"
+
+# specs/042-skill-freshness-validation: a plain-text stamp of the version
+# being packaged, read by install.sh at install time to write a real
+# release tag into the target's installed-release marker instead of the
+# "local-checkout" sentinel -- the only way install.sh can know its own
+# version when running from an extracted tarball (no .git directory).
+printf '%s' "$version" > "$stage_root/RELEASE_VERSION"
+echo "  ✅ RELEASE_VERSION"
 
 mkdir -p "$output_dir"
 output_dir="$(cd "$output_dir" && pwd)"

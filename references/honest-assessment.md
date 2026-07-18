@@ -33,7 +33,7 @@ authoritative status of any principle these tie back to.
    render-check and revises on failure — feature 004's original research
    found no comparable check in any of the 11 tools surveyed, and it's
    still true today.
-3. **A per-PR governance compliance check against all 20 constitution
+3. **A per-PR governance compliance check against all 22 constitution
    principles**, not just a code-quality lint. `specjedi-govcheck`
    (feature 013) is proactively self-invoked before every PR opens.
 4. **A project status dashboard with zero separately-maintained tracking

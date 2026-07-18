@@ -21,7 +21,7 @@ project's own self-description to.
 | Implement | `specjedi-implement` (full path) or `specjedi-quick` (small, well-understood changes) | Executes the task breakdown in dependency order, test-first where code is involved — commits only through a feature branch and pull request, never directly to the trunk. `specjedi-quick` (feature 028) is the lightweight variant: one combined artifact instead of four separate files, for changes that genuinely fit on about one page of notes — quality gates never shorten, only planning ceremony does. |
 | Verify the finished work | `specjedi-analyze` | Strictly read-only cross-check of spec/plan/tasks (and the constitution) for gaps, duplication, and contradictions — reports findings, never edits a file itself. |
 | Catch drift after manual changes | `specjedi-converge` | Scans the actual codebase for capability with no corresponding task, appending it as new work instead of letting it silently drift out of sync with the task breakdown. |
-| Governance compliance before shipping | `specjedi-govcheck` | Strictly read-only per-PR check against all 20 constitution principles, self-invoked before `specjedi-implement`/`specjedi-quick` open a pull request. |
+| Governance compliance before shipping | `specjedi-govcheck` | Strictly read-only per-PR check against all 22 constitution principles, self-invoked before `specjedi-implement`/`specjedi-quick` open a pull request. |
 
 ## Genuine contributions beyond generic SDD practice
 

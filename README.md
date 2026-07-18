@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#how-spec-jedi-implements-sdd)
-[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#how-spec-jedi-implements-sdd)
+[![Skills](https://img.shields.io/badge/specjedi_skills-27_shipped-success)](#how-spec-jedi-implements-sdd)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
@@ -45,21 +45,21 @@ surfaced for a decision, and nothing outlives the conversation — close
 the chat, lose the reasoning.
 
 Spec-Driven Development (SDD) inverts that order. Before any code
-exists, write down what's being built and why, as a structured,
-reviewable document — a **constitution** 📜 (the non-negotiable rules),
-a **specification** 🎯 (what, and for whom), a **plan** 🛠️ (how,
-technically), and a **task list** ✅ (the ordered steps). Code gets
-generated *against* those artifacts, not the other way around — the
-same discipline the Jedi Code asks of anyone tempted to skip the
-boring parts of training. Full explanation, zero Spec-Jedi-specific
-branding:
+exists, write down what's being built and why, as four structured,
+reviewable documents: a **constitution** 📜 written by
+`specjedi-constitution` (the project's non-negotiable rules), a
+**specification** 🎯 written by `specjedi-specify` (what, and for
+whom), a **plan** 🛠️ written by `specjedi-plan` (how, technically),
+and a **task list** ✅ written by `specjedi-tasks` (the ordered steps).
+Code gets generated *against* those four artifacts, not the other way
+around. Full explanation, zero Spec-Jedi-specific branding:
 [`references/what-is-sdd.md`](references/what-is-sdd.md).
 
 ```mermaid
 flowchart TD
     Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
-    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
-    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>4 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>5 skills"]
     Const --> Meta["📊 Meta & Tooling<br/>9 skills"]
 ```
 
@@ -69,14 +69,15 @@ it runs.
 
 ## How Spec Jedi Implements SDD
 
-Spec Jedi is a genuine **competitor** to
-[spec-kit](https://github.com/github/spec-kit), not a reskin wearing its
-robes ([Principle XV](.specify/memory/constitution.md)) — twenty coding
-agents supported, for real, not just in theory (see
-[Installation](#installation) below). The full `specjedi-*` SDD pipeline
-— constitution through convergence — shipped in full a while back: all 9
-stages, each one built off real competitive research before a single
-line of it got written
+Spec Jedi is a **competitor** to
+[spec-kit](https://github.com/github/spec-kit)
+([Principle XV](.specify/memory/constitution.md)), built as a
+`specjedi-*` skill set that a project installs alongside — or instead
+of — spec-kit's own `speckit-*` commands, with all twenty target coding
+agents supported (see [Installation](#installation) below). The full
+`specjedi-*` SDD pipeline — constitution through convergence — shipped
+in full a while back: all 9 stages, each one built off real competitive
+research before a single line of it got written
 ([research.md](specs/001-specjedi-pipeline/research.md), Principle II).
 
 Every SDD activity above maps to a real, currently-shipped `specjedi-*`
@@ -85,13 +86,41 @@ skill, not an aspiration: `specjedi-constitution` establishes the rules,
 resolves flagged ambiguity, `specjedi-plan` and `specjedi-tasks` produce
 the technical plan and task breakdown, and `specjedi-implement` (or
 `specjedi-quick` for small, well-understood changes) executes it
-test-first, through a feature branch and pull request only. Twenty-five
-skills ship today in total, across four disciplines — the full catalog,
-both diagrams, and the 23-step walkthrough live in
+test-first, through a feature branch and pull request only.
+Twenty-seven skills ship today in total, across four disciplines — the
+full catalog, both diagrams, and the 23-step walkthrough live in
 [`references/quickstart-guide.md`](references/quickstart-guide.md); the
 complete activity-to-skill mapping, including three genuine
 contributions beyond generic SDD practice, lives in
 [`references/specjedi-and-sdd.md`](references/specjedi-and-sdd.md).
+
+### `specjedi-*` versus `speckit-*`, by the numbers
+
+An evidence-based, command-by-command comparison —
+[`specs/044-speckit-parity-audit/PARITY-LEDGER.md`](specs/044-speckit-parity-audit/PARITY-LEDGER.md)
+— checked every one of `speckit-*`'s 11 pipeline commands against its
+`specjedi-*` counterpart by actual described behavior, not name
+similarity:
+
+- **8 of 11** are at full parity — same job, same inputs/outputs.
+- **1 of 11** (`specjedi-implement` vs. `speckit-implement`) is a
+  favorable divergence: `specjedi-implement` requires committing only
+  through a feature branch and pull request, never directly to the
+  trunk branch; `speckit-implement`'s own instructions contain no git
+  branch or commit discipline at all.
+- **2 of 11** have no `specjedi-*` equivalent — both already resolved,
+  not open gaps: GitHub-issue task conversion (never used in this
+  project's own real history) and a persistent "current plan" pointer
+  (superseded by `specjedi-status`'s zero-parallel-tracking design and
+  Constitution Principle XXI's own session-start status re-surfacing).
+- **18 of the 27** shipped `specjedi-*` skills have no `speckit-*`
+  counterpart at all — `specjedi-diagram`, `specjedi-docs`,
+  `specjedi-explain`, `specjedi-find-skills`, `specjedi-govcheck`,
+  `specjedi-constitution-audit`, `specjedi-master`, `specjedi-migrate`,
+  `specjedi-new-skill`, `specjedi-onboard`, `specjedi-quick`,
+  `specjedi-release`, `specjedi-retro`, `specjedi-security`,
+  `specjedi-skill-review`, `specjedi-status`, `specjedi-tokencheck`, and
+  `specjedi-worktree` — real added capability, not a restated pipeline.
 
 Curious what's next?
 [`references/skill-roadmap.md`](references/skill-roadmap.md) tracks
@@ -332,12 +361,17 @@ table is built from.
 
 Real advantages, real current limitations — not a marketing page.
 Twenty of twenty target harnesses have a real, CI-tested install path,
-diagrams get render-verified before they're shown, and the constitution
-is a living, versioned document at v1.24.0 with a documented amendment
-history. The candid other half: no release has been cut yet
-(`git tag -l` returns nothing as of this writing), and most bridge-file
-harness install paths rest on desk research rather than a hands-on
-session inside the actual third-party product. Full, unfiltered picture:
+diagrams get render-verified before they're shown, three real releases
+have shipped (`v0.1.0`, `v0.1.1`, `v0.2.0`), and the constitution is a
+living, versioned document at v1.27.0 with a documented amendment
+history. The candid other half: most bridge-file harness install paths
+rest on desk research rather than a hands-on session inside the actual
+third-party product (see below), and this project's own localized
+documentation lags its English source more often than not —
+`scripts/validate.sh` currently flags all 10 translated `README.md`
+copies as out of sync with the latest English changes, a real,
+recurring gap this project hasn't yet closed structurally. Full,
+unfiltered picture:
 [`references/honest-assessment.md`](references/honest-assessment.md).
 
 Twenty harnesses named individually, all CI-proven — but 18 of the 19

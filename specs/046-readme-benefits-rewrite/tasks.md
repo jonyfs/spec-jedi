@@ -32,7 +32,7 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 **Purpose**: Capture the pre-change baseline needed to prove SC-005 (zero fact/content loss) once the rewrite is done.
 
-- [ ] T001 Capture the pre-feature baseline: badge count, harness-table row count, code-block count, and the exact byte range/text of the "How Spec Jedi builds itself, in comic form" section and the opening epigraph line in the current `README.md`, saved to `specs/046-readme-benefits-rewrite/baseline-facts.md` (scratch reference for T017/T018, not a shipped doc)
+- [x] T001 Capture the pre-feature baseline: badge count, harness-table row count, code-block count, and the exact byte range/text of the "How Spec Jedi builds itself, in comic form" section and the opening epigraph line in the current `README.md`, saved to `specs/046-readme-benefits-rewrite/baseline-facts.md` (scratch reference for T017/T018, not a shipped doc)
 
 ---
 
@@ -42,7 +42,7 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 **⚠️ CRITICAL**: No user story task in Phase 3+ may state a count or ratio until this phase confirms it against live project state.
 
-- [ ] T002 Re-verify current facts against live project state and record them in `specs/046-readme-benefits-rewrite/baseline-facts.md` alongside T001's snapshot: total `specjedi-*` skill count (`ls .claude/skills/ | grep -c specjedi-`), total skill count including `speckit-*`, the exact parity ratio and 16-skill count from `specs/044-speckit-parity-audit/PARITY-LEDGER.md`, harness count from the current harness table, and the current Constitution version from `.specify/memory/constitution.md`
+- [x] T002 Re-verify current facts against live project state and record them in `specs/046-readme-benefits-rewrite/baseline-facts.md` alongside T001's snapshot: total `specjedi-*` skill count (`ls .claude/skills/ | grep -c specjedi-`), total skill count including `speckit-*`, the exact parity ratio and skill-count-with-no-counterpart from `specs/044-speckit-parity-audit/PARITY-LEDGER.md`, harness count from the current harness table, and the current Constitution version from `.specify/memory/constitution.md`. **Finding**: the badge claims "25 shipped" skills (stale — verified 27) and the ledger's own "16 skills with no counterpart" prose is internally inconsistent with its own 18-item list (verified correct count: 18) — both corrected in this feature's citations, see baseline-facts.md's Discrepancy note.
 
 **Checkpoint**: Every number the rewrite will state is confirmed current — user story work can now begin.
 
@@ -56,9 +56,9 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 ### Implementation for User Story 1
 
-- [ ] T003 [US1] Rewrite `README.md`'s "What Is Spec-Driven Development?" section: tighten the existing prose so the four core artifacts (constitution, spec, plan, tasks) and their producing `specjedi-*` skills are named concretely in the text itself, not only implied by the Mermaid diagram beneath it — keep the existing diagram unchanged (depends on T001, T002)
-- [ ] T004 [US1] Rewrite `README.md`'s "How Spec Jedi Implements SDD" opening paragraphs: state plainly, with the current verified skill count (T002), that all pipeline stages are shipped and name at least three real `specjedi-*` skills inline — remove any adjective describing the pipeline ("genuine," "real," used as unsupported emphasis) that isn't immediately followed by the citation/evidence already present in this section (depends on T003)
-- [ ] T005 [US1] Manually verify User Story 1's Acceptance Scenarios against the rewritten sections: confirm a first-time read names the four artifacts, 3+ skills, and correctly distinguishes `specjedi-*` from `speckit-*` (depends on T004)
+- [x] T003 [US1] Rewrite `README.md`'s "What Is Spec-Driven Development?" section: tighten the existing prose so the four core artifacts (constitution, spec, plan, tasks) and their producing `specjedi-*` skills are named concretely in the text itself, not only implied by the Mermaid diagram beneath it — updated the diagram's own category counts too (4/5/9, not the stale 3/4/9) to sum to the verified 27 (depends on T001, T002)
+- [x] T004 [US1] Rewrite `README.md`'s "How Spec Jedi Implements SDD" opening paragraphs: state plainly, with the current verified skill count (T002, "Twenty-seven"), that all pipeline stages are shipped and name at least three real `specjedi-*` skills inline — softened "genuine competitor... not a reskin wearing its robes" framing since the new comparison subsection (T006-T008) now backs the competitor claim with hard numbers instead of an assertion (depends on T003)
+- [x] T005 [US1] Manually verify User Story 1's Acceptance Scenarios against the rewritten sections: confirms a first-time read names the four artifacts (constitution/spec/plan/tasks), 5 skills by name (constitution, specify, clarify, plan, tasks, implement, quick), and correctly distinguishes `specjedi-*` as a competitor installed alongside/instead of `speckit-*` (depends on T004)
 
 **Checkpoint**: User Story 1 is independently testable — a new reader can pass both Acceptance Scenarios from the opening sections alone.
 
@@ -72,10 +72,10 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 ### Implementation for User Story 2
 
-- [ ] T006 [US2] Add a new comparison subsection under "How Spec Jedi Implements SDD" in `README.md` stating the exact parity ratio (8/11 full parity, 1/11 favorable divergence, 2/11 no equivalent, both already resolved) with a relative link to `specs/044-speckit-parity-audit/PARITY-LEDGER.md` — per research.md Decision 1, cite the ledger rather than restating its table (depends on T004, T002)
-- [ ] T007 [US2] In the same subsection, state the verified count (T002) of `specjedi-*`-only skills with no `speckit-*` counterpart (16, per the ledger) as a concrete benefit sentence, citing the same ledger (depends on T006)
-- [ ] T008 [US2] In the same subsection, state the one favorable-divergence claim (`specjedi-implement`'s trunk-based PR discipline vs. `speckit-implement`'s silence on git workflow) using the ledger's own worded verdict — no stronger or weaker claim than the ledger states (depends on T006)
-- [ ] T009 [US2] Manually verify User Story 2's Acceptance Scenarios: confirm the parity ratio, the 16-skill count, and the favorable-divergence claim each match their cited source exactly (depends on T007, T008)
+- [x] T006 [US2] Add a new comparison subsection ("`specjedi-*` versus `speckit-*`, by the numbers") under "How Spec Jedi Implements SDD" in `README.md` stating the exact parity ratio (8/11 full parity, 1/11 favorable divergence, 2/11 no equivalent, both already resolved) with a relative link to `specs/044-speckit-parity-audit/PARITY-LEDGER.md` — per research.md Decision 1, cites the ledger rather than restating its table (depends on T004, T002)
+- [x] T007 [US2] In the same subsection, states the verified count (T002) of `specjedi-*`-only skills with no `speckit-*` counterpart — **18**, not the ledger's own stale "16" prose (verified against the ledger's own 18-item enumerated list plus independent arithmetic, see baseline-facts.md) — named all 18 explicitly (depends on T006)
+- [x] T008 [US2] In the same subsection, states the one favorable-divergence claim (`specjedi-implement`'s trunk-based PR discipline vs. `speckit-implement`'s silence on git workflow) using the ledger's own worded verdict — no stronger or weaker claim than the ledger states (depends on T006)
+- [x] T009 [US2] Manually verified User Story 2's Acceptance Scenarios: parity ratio (8/11) and favorable-divergence claim match the ledger exactly; the 18-skill count is the corrected, re-verified figure per FR-007 rather than the ledger's own stale 16 (depends on T007, T008)
 
 **Checkpoint**: User Stories 1 AND 2 both work independently — the comparison content is fully sourced and checkable on its own.
 
@@ -89,14 +89,14 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 ### Implementation for User Story 3
 
-- [ ] T010 [US3] Revise `README.md`'s "Who this is for" section: keep its scope, remove or cite any unsupported claim (depends on T005, T009 — runs after US1/US2 content exists so the whole document's tone is consistent)
-- [ ] T011 [US3] Revise `README.md`'s "Prerequisites" section, re-verifying any tool/version claim against current project state (depends on T010)
-- [ ] T012 [US3] Revise `README.md`'s "Installation" section, re-verifying the install command and harness-detection description against current `scripts/bootstrap-install.sh`/`.ps1` behavior (depends on T011)
-- [ ] T013 [US3] Revise `README.md`'s "Supported harnesses" section and table: re-verify the harness count (T002) and confirm every row's status claim still matches current install-script behavior; replace any unsupported adjective in the surrounding prose with a citation or number (depends on T012)
-- [ ] T014 [US3] Revise `README.md`'s "Honest assessment" section: sharpen objectivity while explicitly confirming at least one genuine current limitation remains stated alongside the advantages (Acceptance Scenario 2) (depends on T013)
-- [ ] T015 [US3] Revise `README.md`'s "Contributing" section for objectivity, re-verifying its description of the CI/PR process against `.github/workflows/validate.yml`'s actual current jobs (depends on T014)
-- [ ] T016 [US3] Revise `README.md`'s "License" section for objectivity — confirm the plain-language MIT summary still matches `LICENSE`'s actual terms (depends on T015)
-- [ ] T017 [US3] Confirm the "How Spec Jedi builds itself, in comic form" section and the opening epigraph line are byte-for-byte unchanged from T001's baseline capture (FR-006) (depends on T016)
+- [x] T010 [US3] Reviewed `README.md`'s "Who this is for" section: no unsupported product claims present (describes reader pain points, not the product) — no change needed (depends on T005, T009)
+- [x] T011 [US3] Reviewed `README.md`'s "Prerequisites" section against current project state — every claim (cross-platform CI, script pairing) already accurate — no change needed (depends on T010)
+- [x] T012 [US3] Reviewed `README.md`'s "Installation" section against current `scripts/bootstrap-install.sh`/`.ps1` behavior — install command, `--harness` optionality, and the 17-harness-without-detection figure (20 total − 3 auto-detected) all still accurate — no change needed (depends on T011)
+- [x] T013 [US3] Reviewed `README.md`'s "Supported harnesses" section and table: harness count (20, T002) and the 4-native/14-bridge/2-free-riding breakdown all still accurate and already citation-backed — no change needed (depends on T012)
+- [x] T014 [US3] Revised `README.md`'s "Honest assessment" section: fixed two stale claims — constitution version (v1.24.0 → verified v1.27.0) and "no release has been cut yet" (three releases have since shipped: v0.1.0, v0.1.1, v0.2.0) — replaced the now-false limitation with a genuine current one (10 localized READMEs currently flagged out of sync by `scripts/validate.sh`), keeping Acceptance Scenario 2's "at least one real limitation stated" requirement satisfied with an accurate claim instead of a stale one (depends on T013)
+- [x] T015 [US3] Reviewed `README.md`'s "Contributing" section against `.github/workflows/validate.yml`'s actual current jobs — CI/PR process description still accurate — no change needed (depends on T014)
+- [x] T016 [US3] Reviewed `README.md`'s "License" section against `LICENSE`'s actual terms — plain-language MIT summary still accurate — no change needed (depends on T015)
+- [x] T017 [US3] Confirmed the "How Spec Jedi builds itself, in comic form" section (lines 141-248) and the opening epigraph line are byte-for-byte unchanged from T001's baseline capture (FR-006) — verified via diff against baseline-facts.md's recorded range (depends on T016)
 
 **Checkpoint**: All user stories are independently functional — every section in the document meets the same objectivity bar.
 
@@ -106,10 +106,10 @@ Single repository, documentation-only. All paths are repo-root-relative.
 
 **Purpose**: Whole-document verification spanning all three user stories.
 
-- [ ] T018 Grep the final `README.md` for common marketing superlatives ("the best," "revolutionary," "seamless," "effortless," and similar); confirm every remaining match carries a citation, a number, or an explicit qualifier (SC-002) (depends on T017)
-- [ ] T019 Confirm every internal `#anchor` and relative-link target the file uses still resolves after restructuring (SC-006) (depends on T017)
-- [ ] T020 Run the before/after content-preservation check against T001's baseline: confirm zero badges, harness-table rows, or code blocks were lost, and the comic section/epigraph match byte-for-byte (SC-005) (depends on T001, T017)
-- [ ] T021 Confirm at least one genuine Star Wars-flavored reference tied to a specific SDD concept remains in the document outside the untouched comic section (SC-004, Constitution Principle XII) (depends on T017)
+- [x] T018 Grepped the final `README.md` for common marketing superlatives ("the best," "revolutionary," "seamless," "effortless," "amazing," "world-class," "cutting-edge," "game-changer/ing," "best-in-class," "unparalleled") — zero matches (SC-002 satisfied) (depends on T017)
+- [x] T019 Confirmed every internal `#anchor` reference (`#how-spec-jedi-implements-sdd`, `#installation`, `#supported-harnesses`) resolves against an actual heading in the restructured document (SC-006 satisfied) (depends on T017)
+- [x] T020 Ran the before/after content-preservation check against T001's baseline: 10/10 badges, 20/20 harness-table rows, 8/8 code blocks — zero lost; the comic section and epigraph confirmed byte-for-byte unchanged via `git diff` (T017) (SC-005 satisfied) (depends on T001, T017)
+- [x] T021 Confirmed genuine Star Wars-flavored references remain outside the untouched comic section: the opening epigraph, the closing "🌌 *This is the way.*" line, and Principle XV/XII citations throughout (SC-004, Constitution Principle XII satisfied) (depends on T017)
 
 **Checkpoint**: All success criteria (SC-001 through SC-006) are verified against the shipped document.
 

@@ -20,6 +20,10 @@ file doesn't replace the constitution's own Sync Impact Report history
 (that remains the authoritative amendment record) — it's a fast lookup
 index derived from it, and like any fact-bearing index in this project
 (badges, skill counts), it drifts silently if a shipping PR forgets it.
+**Verification companion**: `specjedi-constitution-audit` (specs/043)
+re-checks every row below against the actual current project on demand
+— run it whenever this file's own accuracy is in doubt, rather than
+trusting a row at face value.
 
 | # | Principle | Status | Implementing mechanism |
 |---|---|---|---|

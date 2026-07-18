@@ -32,7 +32,7 @@ Single repository. Paths are repo-root-relative.
 
 **Purpose**: Capture the pre-removal baseline needed to prove FR-009/SC-005 (zero historical file touched) once this feature ships.
 
-- [ ] T001 Capture the pre-removal baseline: list all 11 `.claude/skills/speckit-*/` directory names, the current full content of `.specify/extensions.yml`, and the current constitution version (1.27.0), saved to `specs/048-retire-speckit/baseline-facts.md` (scratch reference for T015, not a shipped doc)
+- [x] T001 Capture the pre-removal baseline: list all 11 `.claude/skills/speckit-*/` directory names, the current full content of `.specify/extensions.yml`, and the current constitution version (1.27.0), saved to `specs/048-retire-speckit/baseline-facts.md` (scratch reference for T015, not a shipped doc)
 
 ---
 
@@ -44,9 +44,9 @@ Single repository. Paths are repo-root-relative.
 
 ### Implementation for User Story 1
 
-- [ ] T002 [US1] Remove the `after_specify` and `after_plan` hook entries from `.specify/extensions.yml`; if `agent-context` under `installed:` and the `settings:`/`auto_execute_hooks` block have no other purpose once both hooks are gone, remove those too (confirm via a full read of the file first) (depends on T001)
-- [ ] T003 [US1] Add a native "update `CLAUDE.md`'s plan-reference pointer" step to `.claude/skills/specjedi-plan/SKILL.md`'s Step-by-step (mirroring `speckit-plan`'s own existing Phase 1 step 4) — retiring the hook removes the only mechanism that ever automated or documented this, and this project has been doing it manually, undocumented, for the entire session; this closes that gap for real (Acceptance Scenario 3) (depends on T002)
-- [ ] T004 [US1] Verify: confirm `.specify/extensions.yml` has zero remaining hook registrations (read the file directly), and confirm each of the 9 `specjedi-*` pipeline skills' Pre-flight hook check step would find nothing registered for its own stage anymore (Acceptance Scenarios 1-2) (depends on T002)
+- [x] T002 [US1] Confirmed the entire `.specify/extensions.yml` existed only to support the two `after_specify`/`after_plan` hooks (`installed:`/`settings:` had no other purpose) — deleted the file entirely rather than leaving an orphaned `installed: agent-context` declaration with zero hooks referencing it (depends on T001)
+- [x] T003 [US1] Added a native "update `CLAUDE.md`'s plan-reference pointer" step (5.7) to `.claude/skills/specjedi-plan/SKILL.md`'s Step-by-step, right after the (now-inert) after-hook check step and before the final report step — mirrors `speckit-plan`'s own Phase 1 step 4, closing the gap the retired hook left (Acceptance Scenario 3, FR-011) (depends on T002)
+- [x] T004 [US1] Verified: `.specify/extensions.yml` no longer exists — every `specjedi-*` pipeline skill's Pre-flight hook check ("skip silently if the file is missing") correctly finds nothing registered for any stage (Acceptance Scenarios 1-2) (depends on T002)
 
 **Checkpoint**: The hook dependency on `speckit-*` is fully retired and its gap is closed — User Story 2 can now safely delete `speckit-*` files.
 

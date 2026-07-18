@@ -89,6 +89,113 @@ check_cmd "cat real .env blocked" 'cat .env' block
 check_cmd "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' block
 check_cmd "cat .pem blocked" 'cat server.pem' block
 
+# --- statusline.sh (specs/040-aitmpl-settings-improvements) -------------
+echo "=== statusline.sh ==="
+
+statusline_input() {
+  python3 -c "import json,sys; print(json.dumps({'model':{'display_name':sys.argv[1]},'workspace':{'current_dir':sys.argv[2]}}))" "$1" "$2"
+}
+
+tmpdir="$(mktemp -d)"
+(
+  cd "$tmpdir"
+  git init -q
+  git config user.email "test@example.com"
+  git config user.name "Test"
+  git checkout -q -b clean-branch
+  touch placeholder
+  git add placeholder
+  git commit -q -m "init"
+)
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"[Sonnet]"*"clean-branch"*)
+    if printf '%s' "$out" | grep -qE '\([0-9]+\)'; then
+      fail "clean tree statusline should have no change count, got: $out"
+    else
+      pass "clean tree shows model, folder, and branch with no change count"
+    fi
+    ;;
+  *) fail "clean tree statusline missing expected content: $out" ;;
+esac
+
+echo "dirty" >> "$tmpdir/placeholder"
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"clean-branch (1)"*) pass "dirty tree shows a (1) change count" ;;
+  *) fail "dirty tree statusline missing change count: $out" ;;
+esac
+rm -rf "$tmpdir"
+
+tmpdir="$(mktemp -d)"
+out="$(statusline_input "Sonnet" "$tmpdir" | "$repo_root/.claude/statusline.sh")"
+case "$out" in
+  *"🌿"*) fail "non-git dir statusline should have no branch segment, got: $out" ;;
+  *"[Sonnet]"*) pass "non-git dir degrades to model+folder, no error" ;;
+  *) fail "non-git dir statusline missing expected content: $out" ;;
+esac
+rm -rf "$tmpdir"
+
+# --- update_shared_settings() (scripts/install.sh, specs/041) -----------
+echo "=== update_shared_settings() ==="
+
+# Sourced into a function-only subshell scope via eval so its own
+# `exit 1` (matching update_memory_file's established fail-loudly
+# convention) only terminates that one check, not this whole test run.
+merge_fn_src="$(sed -n '/^update_shared_settings()/,/^}/p' "$repo_root/scripts/install.sh")"
+
+tmpdir="$(mktemp -d)"
+target="$tmpdir/.claude/settings.json"
+bash -c "$merge_fn_src"'; update_shared_settings "'"$target"'"' >/dev/null
+if python3 -m json.tool "$target" >/dev/null 2>&1 && grep -q '"statusLine"' "$target" && grep -q '"permissions"' "$target"; then
+  pass "fresh file: valid JSON with both keys"
+else
+  fail "fresh file: invalid JSON or missing keys"
+fi
+rm -rf "$tmpdir"
+
+tmpdir="$(mktemp -d)"
+mkdir -p "$tmpdir/.claude"
+target="$tmpdir/.claude/settings.json"
+cat > "$target" << 'SETTINGSEOF'
+{
+  "hooks": {
+    "SessionStart": [{"hooks": [{"type": "command", "command": "echo hi"}]}]
+  }
+}
+SETTINGSEOF
+bash -c "$merge_fn_src"'; update_shared_settings "'"$target"'"' >/dev/null
+if python3 -m json.tool "$target" >/dev/null 2>&1 && grep -q '"SessionStart"' "$target" && grep -q '"statusLine"' "$target" && grep -q '"permissions"' "$target"; then
+  pass "pre-existing unrelated content preserved, new keys added (SC-003)"
+else
+  fail "existing-content-preserved check failed"
+fi
+
+first_content="$(cat "$target")"
+bash -c "$merge_fn_src"'; update_shared_settings "'"$target"'"' >/dev/null
+second_content="$(cat "$target")"
+if [ "$first_content" = "$second_content" ]; then
+  pass "idempotent re-run: byte-identical (FR-004)"
+else
+  fail "idempotent re-run: content changed on second run"
+fi
+rm -rf "$tmpdir"
+
+tmpdir="$(mktemp -d)"
+mkdir -p "$tmpdir/.claude"
+target="$tmpdir/.claude/settings.json"
+printf '{ "hooks": {} ' > "$target"
+if bash -c "$merge_fn_src"'; update_shared_settings "'"$target"'"' >/tmp/merge-test-out.txt 2>&1; then
+  fail "malformed JSON (unbalanced braces) should have failed loudly, but succeeded"
+else
+  if grep -q "FAIL:" /tmp/merge-test-out.txt && grep -q "unbalanced braces" /tmp/merge-test-out.txt; then
+    pass "malformed JSON fails loudly with a clear message, never guesses"
+  else
+    fail "malformed JSON failed but without the expected clear message: $(cat /tmp/merge-test-out.txt)"
+  fi
+fi
+rm -rf "$tmpdir" /tmp/merge-test-out.txt
+
 echo
 if [ "$fail" -eq 0 ]; then
   echo "All hook tests passed."

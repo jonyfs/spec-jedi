@@ -140,16 +140,16 @@ vanishes the moment the chat window closes is the intended reader here.
 
 ## How Spec Jedi builds *itself*, in comic form
 
-> ⚠️ **This section is about our internal bootstrap process, not the Spec Jedi
-> product.** The `/speckit-*` commands below are [spec-kit](https://github.com/github/spec-kit)'s
-> own tooling — Spec Jedi currently dogfoods spec-kit to construct itself (the
-> same "bootstrap a compiler with an older compiler" pattern), the way any
-> competitor might use an incumbent's tools while building its replacement.
-> **If you're evaluating Spec Jedi as a product, skip to
-> [Installation](#installation) below** — the actual product surface
-> is the `specjedi-*` skills, not these. See
-> [Principle XV](.specify/memory/constitution.md) for the full policy on why
-> these are kept clearly separate.
+> ⚠️ **This section shows this project's own real development pipeline in
+> action** — the `specjedi-*` commands below are the exact same product
+> surface described above, used on Spec Jedi itself. Until feature 048
+> (2026-07-18), this project bootstrapped itself with spec-kit's own
+> vendored `speckit-*` commands (the same "bootstrap a compiler with an
+> older compiler" pattern any competitor might use while building its
+> replacement) before its own `specjedi-*` pipeline was complete enough to
+> take over. That bootstrap phase is over — see
+> [Principle XV](.specify/memory/constitution.md) for the full policy this
+> migration completed.
 >
 > Also, a note on format: the panels below pair text-and-emoji dialogue with
 > original illustrations — never actual Star Wars imagery (characters, ships,
@@ -169,7 +169,7 @@ that won't stop blinking until you give it something to do.
 > 🧑‍💻 *"I have an idea for a feature. ...Now what?"*
 
 That's when the mentor shows up — no lightsaber, just a scroll, because
-the first fight here is never the last one. `/speckit-constitution`
+the first fight here is never the last one. `/specjedi-constitution`
 writes the rules down once, so nobody has to relearn them the hard way
 three features from now.
 
@@ -178,15 +178,15 @@ three features from now.
 
 The idea goes up on the wall next, circled by every question it hasn't
 answered yet — what you're actually building, and who it's actually
-for. `/speckit-specify` turns that into a real `spec.md`; `/speckit-clarify`
+for. `/specjedi-specify` turns that into a real `spec.md`; `/specjedi-clarify`
 goes hunting for the ambiguity before it turns into a bug nobody wants
 to own later.
 
 ![a corkboard covered in holographic sticky-notes and glowing question marks](docs/comic/panel-3.jpg)
 > 🌀 *"What are you really building — and for whom?"*
 
-Then the blueprint comes out. `/speckit-plan` becomes `plan.md`,
-`/speckit-tasks` breaks it into an ordered, dependency-aware `tasks.md`
+Then the blueprint comes out. `/specjedi-plan` becomes `plan.md`,
+`/specjedi-tasks` breaks it into an ordered, dependency-aware `tasks.md`
 — nothing skipped, nothing out of sequence, the kind of plan a Padawan
 could follow without asking twice.
 
@@ -194,7 +194,7 @@ could follow without asking twice.
 > 🛠️ *"Now the how."*
 
 Tools start whirring. Tests fail red, one after another — and then,
-slowly, they don't. `/speckit-implement` works `tasks.md` test-first
+slowly, they don't. `/specjedi-implement` works `tasks.md` test-first
 wherever it applies ([Principle VI](.specify/memory/constitution.md)),
 because a build that skips this step is just a guess with extra steps.
 
@@ -228,7 +228,7 @@ behind this project's own recent pull requests — [#82](https://github.com/jony
 [#84](https://github.com/jonyfs/spec-jedi/pull/84), [#87](https://github.com/jonyfs/spec-jedi/pull/87),
 to name a few — start to finish, for real, every time.
 
-### The same internal-bootstrap story, as a diagram
+### The same story, as a diagram
 
 ```mermaid
 sequenceDiagram
@@ -236,8 +236,8 @@ sequenceDiagram
     participant Repo as 📜 Repo (main)
     participant PR as 🔀 Pull Request
     participant CI as 🤖 ci-gate
-    Dev->>Repo: /speckit-constitution, /speckit-specify, /speckit-plan, /speckit-tasks
-    Dev->>Dev: /speckit-implement (test-first)
+    Dev->>Repo: /specjedi-constitution, /specjedi-specify, /specjedi-plan, /specjedi-tasks
+    Dev->>Dev: /specjedi-implement (test-first)
     Dev->>PR: open PR on a feature branch
     PR->>CI: trigger validation battery (Linux/macOS/Windows)
     CI-->>PR: 🔴 red? fix and push again

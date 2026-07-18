@@ -9,6 +9,27 @@ this file directly.
 
 ## Unreleased
 
+### Removed
+
+- **`speckit-*` vendored bootstrap tooling** (feature 048) — following a
+  direct question about whether it could already be removed without
+  losing any capability `specjedi-*` doesn't have, all 11 vendored
+  `speckit-*` skills are removed from `.claude/skills/`. The two
+  `.specify/extensions.yml` hooks that still depended on one
+  (`after_specify`/`after_plan` → `speckit.agent-context.update`) are
+  retired, with `specjedi-plan` gaining a native step to keep
+  `CLAUDE.md`'s plan-reference pointer current in its place.
+  `install.sh`/`package-release.sh` never packaged `speckit-*` for end
+  users, so external Spec Jedi users are unaffected. Constitution
+  Principle XV amended (v1.27.0 → v1.27.1, PATCH) to state the
+  bootstrap phase is complete rather than ongoing; every live
+  `/speckit-*` tooling reference in the constitution (via
+  `specjedi-migrate`), README, `CONTRIBUTING.md`, and
+  `references/principle-traceability.md` is rewritten to `/specjedi-*`.
+  This project's own development now runs entirely on `specjedi-*`, the
+  same tool it ships — closing the loop `specs/044`/`specs/047`
+  assessed readiness for.
+
 ### Added
 
 - **README objectivity & evidence-based benefits rewrite** (feature 046)

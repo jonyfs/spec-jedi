@@ -273,11 +273,22 @@ if (-not $Harness) {
     }
 }
 
+# specs/041-release-hooks-settings: shareable hooks/settings (the
+# generic safety hook + git-aware permissions, never the two
+# repo-internal-only hooks) default on for every non-interactive
+# invocation (FR-001c); an interactive session gets asked once, as part
+# of the same summary/confirmation moment, not a separate later prompt.
+$installSharedHooks = $true
+
 if ($interactiveMode) {
     Write-Host ""
     Write-Host "Summary:"
     Write-Host "  Directory: $TargetDir"
     Write-Host "  Harness:   $Harness"
+    $hooksAnswer = Read-Host "Also install shareable hooks/settings (safety hook, git-aware permissions)? [Y/n]"
+    if ($hooksAnswer -in @("n", "N", "no", "No")) {
+        $installSharedHooks = $false
+    }
     $proceed = Read-Host "Continue with installation? [Y/n]"
     if ($proceed -in @("n", "N", "no", "No")) {
         Write-Host "Installation cancelled — nothing was changed."
@@ -328,6 +339,20 @@ switch ($Harness) {
     "copilot" { $skillsDstRel = ".claude/skills"; $bridgeMode = "single"; $bridgeDstRel = ".github/copilot-instructions.md" }
     "devin" { $skillsDstRel = ".claude/skills"; $bridgeMode = "devin"; $bridgeDstRel = ".devin.md" }
     "cody" { $skillsDstRel = ".claude/skills"; $bridgeMode = "cody"; $bridgeDstRel = ".vscode/cody.json" }
+    "opencode" {
+        # specs/041-release-hooks-settings: previously "piggybacked" on
+        # claude-code/codex-cli's own skills output with no dedicated
+        # value -- both already satisfy OpenCode's scanning convention
+        # (see opencode-compatibility's own CI job). A real -Harness
+        # opencode value is needed now that this feature adds
+        # OpenCode-native permissions translation (opencode.json).
+        $skillsDstRel = ".claude/skills"
+    }
+    "warp" {
+        # Same reasoning as opencode above -- Warp's Skills system
+        # already scans .claude/skills/ directly (warp-compatibility).
+        $skillsDstRel = ".claude/skills"
+    }
     default {
         Write-Host "🔭 '$Harness' isn't a recognized harness. See -Help for the full"
         Write-Host "list of 20 supported values (Constitution Principle III)."
@@ -501,6 +526,124 @@ function Update-MemoryFile {
     }
 }
 
+# specs/041-release-hooks-settings: native PowerShell counterpart of
+# detect_trunk_branch() (install.sh) -- see that function for the full
+# rationale. Returns the literal two-word string "main master" when
+# neither detection path succeeds.
+function Get-TrunkBranch {
+    param([string]$Dir)
+    $branch = (git -C $Dir symbolic-ref refs/remotes/origin/HEAD --short 2>$null)
+    if ($branch) { $branch = $branch -replace '^origin/', '' }
+    if (-not $branch) {
+        $remoteInfo = (git -C $Dir remote show origin 2>$null)
+        if ($remoteInfo) {
+            $headLine = $remoteInfo | Where-Object { $_ -match '^\s*HEAD branch:\s*(.+)$' }
+            if ($headLine -and $Matches) { $branch = $Matches[1].Trim() }
+        }
+    }
+    # Both git calls above are expected to fail (non-zero exit) on a target
+    # with no origin remote -- that's the documented fallback path, not an
+    # error. $LASTEXITCODE isn't reset by any PowerShell cmdlet in between
+    # (Where-Object, string ops, etc. don't touch it), so a real CI failure
+    # was observed here: it stayed non-zero all the way to this function's
+    # return and then to install.ps1's own natural end, where GitHub
+    # Actions' own pwsh step wrapper exits the whole step with whatever
+    # $LASTEXITCODE last held -- failing an otherwise fully successful run.
+    # Reset explicitly since both git failures above are already handled.
+    $global:LASTEXITCODE = 0
+    if ($branch) { return $branch } else { return "main master" }
+}
+
+# specs/041-release-hooks-settings: native PowerShell counterpart of
+# update_shared_settings() (install.sh) -- see that function for the
+# full rationale, including why this deliberately avoids
+# ConvertFrom-Json/ConvertTo-Json: a parse-then-reserialize round-trip
+# risks reformatting/reordering content the target project's own
+# maintainers already wrote, the same reformatting risk
+# Update-MemoryFile already avoids for CLAUDE.md/AGENTS.md via
+# whole-content substring slicing rather than a structured rewrite.
+function Update-SharedSettings {
+    param([string]$Target)
+    $parentDir = Split-Path -Parent $Target
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    $statusLineBlock = @'
+  "statusLine": {
+    "type": "command",
+    "command": "bash",
+    "args": ["${CLAUDE_PROJECT_DIR}/.claude/statusline.sh"]
+  }
+'@
+    $permissionsBlock = @'
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)"
+    ]
+  }
+'@
+
+    if (-not (Test-Path $Target)) {
+        [System.IO.File]::WriteAllText($Target, "{`n$statusLineBlock,`n$permissionsBlock`n}`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $Target) created with statusLine/permissions"
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($Target)
+    $hasStatusLine = $content.Contains('"statusLine"')
+    $hasPermissions = $content.Contains('"permissions"')
+
+    if ($hasStatusLine -and $hasPermissions) {
+        Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has statusLine and permissions — leaving as-is."
+        return
+    }
+
+    $trimmed = $content.TrimEnd()
+    # Brace-balance check, not just EndsWith('}'): a file like
+    # '{ "hooks": {} ' (missing the real outer close) still ends in
+    # '}' (the inner object's) -- confirmed as a real bug caught by
+    # install.sh's own T014 test-first pass, fixed identically here.
+    $openCount = ([regex]::Matches($trimmed, '\{')).Count
+    $closeCount = ([regex]::Matches($trimmed, '\}')).Count
+    if ($openCount -ne $closeCount -or -not $trimmed.EndsWith('}')) {
+        Write-Host "FAIL: $Target has unbalanced braces ($openCount '{' vs $closeCount '}') -- not valid JSON, refusing to guess. Fix it manually and re-run."
+        exit 1
+    }
+    $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+
+    $newKeys = ""
+    if (-not $hasStatusLine) {
+        $newKeys = $statusLineBlock
+    }
+    if (-not $hasPermissions) {
+        if ($newKeys) {
+            $newKeys = "$newKeys,`n$permissionsBlock"
+        } else {
+            $newKeys = $permissionsBlock
+        }
+    }
+
+    if ($body.EndsWith('{')) {
+        [System.IO.File]::WriteAllText($Target, "$body`n$newKeys`n}`n")
+    } else {
+        [System.IO.File]::WriteAllText($Target, "$body,`n$newKeys`n}`n")
+    }
+    Write-Host "  ✅ $(Split-Path -Leaf $Target) updated (statusLine/permissions added)"
+}
+
 if ($bridgeMode) {
     Write-Host ""
     Write-Host "🌉 Generating $Harness bridge file(s)..."
@@ -611,6 +754,456 @@ if ($memoryFileRel) {
     Write-Host ""
     Write-Host "🧠 Updating $memoryFileRel with the installed skill set..."
     Update-MemoryFile -MemoryPath (Join-Path $TargetDir $memoryFileRel) -SkillsDstRel $skillsDstRel
+}
+
+# specs/041-release-hooks-settings (User Story 1): shareable hooks/
+# settings for claude-code -- never skill-quality-guard or
+# cross-platform-parity-guard, which check spec-jedi-repo-specific
+# conventions. Wave 1/2 per-harness adaptations are separate, later work.
+if ($Harness -eq "claude-code" -and $installSharedHooks) {
+    Write-Host ""
+    Write-Host "🛡️  Installing shareable hooks/settings..."
+    $trunkBranch = Get-TrunkBranch -Dir $TargetDir
+    $trunkCases = ($trunkBranch -split ' ' | ForEach-Object {
+        "        '$_' { `$hasMainOrMaster = `$true }`n        '$($_):$($_)' { `$hasMainOrMaster = `$true }"
+    }) -join "`n"
+
+    $targetHooksDir = Join-Path $TargetDir ".claude/hooks"
+    New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
+    $hookSource = Get-Content (Join-Path $repoRoot ".claude/hooks/dangerous-command-guard.ps1") -Raw
+    $originalCases = "        'main' { `$hasMainOrMaster = `$true }`n        'master' { `$hasMainOrMaster = `$true }`n        'main:main' { `$hasMainOrMaster = `$true }`n        'master:master' { `$hasMainOrMaster = `$true }"
+    $hookContent = $hookSource.Replace($originalCases, $trunkCases)
+    [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
+    Write-Host "  ✅ dangerous-command-guard.ps1 (protecting: $trunkBranch)"
+
+    $targetSettings = Join-Path $TargetDir ".claude/settings.json"
+    Update-SharedSettings -Target $targetSettings
+
+    $settingsContent = [System.IO.File]::ReadAllText($targetSettings)
+    if (-not $settingsContent.Contains("dangerous-command-guard.ps1")) {
+        if ($settingsContent -match '"PreToolUse"') {
+            Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add dangerous-command-guard.ps1 to it manually ($targetHooksDir/dangerous-command-guard.ps1), not overwritten automatically."
+        } else {
+            $trimmed = $settingsContent.TrimEnd()
+            $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+            $hooksBlock = @'
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.ps1"]
+          }
+        ]
+      }
+    ]
+  }
+'@
+            if ($body.EndsWith('{')) {
+                [System.IO.File]::WriteAllText($targetSettings, "$body`n$hooksBlock`n}`n")
+            } else {
+                [System.IO.File]::WriteAllText($targetSettings, "$body,`n$hooksBlock`n}`n")
+            }
+            Write-Host "  ✅ Wired dangerous-command-guard.ps1 into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
+        }
+    }
+}
+
+# specs/041-release-hooks-settings (User Story 2): native PowerShell
+# counterpart of merge_json_key() (install.sh) -- see that function for
+# the full rationale.
+function Merge-JsonKey {
+    param([string]$Target, [string]$KeyCheck, [string]$Block, [string]$OkMessage)
+    $parentDir = Split-Path -Parent $Target
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    if (-not (Test-Path $Target)) {
+        [System.IO.File]::WriteAllText($Target, "{`n$Block`n}`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $Target) created ($OkMessage)"
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($Target)
+    if ($content.Contains($KeyCheck)) {
+        Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has this key — leaving as-is."
+        return
+    }
+
+    $trimmed = $content.TrimEnd()
+    $openCount = ([regex]::Matches($trimmed, '\{')).Count
+    $closeCount = ([regex]::Matches($trimmed, '\}')).Count
+    if ($openCount -ne $closeCount -or -not $trimmed.EndsWith('}')) {
+        Write-Host "FAIL: $Target has unbalanced braces ($openCount '{' vs $closeCount '}') -- not valid JSON, refusing to guess. Fix it manually and re-run."
+        exit 1
+    }
+    $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+
+    if ($body.EndsWith('{')) {
+        [System.IO.File]::WriteAllText($Target, "$body`n$Block`n}`n")
+    } else {
+        [System.IO.File]::WriteAllText($Target, "$body,`n$Block`n}`n")
+    }
+    Write-Host "  ✅ $(Split-Path -Leaf $Target) updated ($OkMessage)"
+}
+
+# specs/041-release-hooks-settings (User Story 2): factors out the exact
+# trunk-case-block expression the claude-code block above already builds
+# inline, so every Wave 1 harness needing the identical pattern doesn't
+# repeat it.
+function Get-TrunkCases {
+    param([string]$TrunkBranch)
+    ($TrunkBranch -split ' ' | ForEach-Object {
+        "        '$_' { `$hasMainOrMaster = `$true }`n        '$($_):$($_)' { `$hasMainOrMaster = `$true }"
+    }) -join "`n"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): native
+# PowerShell counterpart of render_gemini_style_guard() (install.sh) --
+# see that function for the full rationale (BeforeTool-shaped hook
+# contract, shared by Gemini CLI (confirmed) and Antigravity (reasoned
+# inference, documented at the Install-HooksAntigravity call site).
+# Single-quoted here-string (no interpolation) plus one placeholder
+# .Replace(), matching this file's own existing statusLineBlock/
+# hooksBlock technique exactly -- avoids having to backtick-escape every
+# one of the ~20 `$variable` references a double-quoted here-string would
+# otherwise require.
+function Get-GeminiStyleGuardScript {
+    param([string]$TrunkCases)
+    $template = @'
+#!/usr/bin/env pwsh
+# Translated from .claude/hooks/dangerous-command-guard.ps1 (specs/
+# 041-release-hooks-settings, User Story 2) for a BeforeTool-shaped hook
+# contract: stdin carries tool_input.command, stdout is
+# {"decision":"deny","reason":"..."} with exit code 2 to block.
+$ErrorActionPreference = 'Stop'
+$input_json = [Console]::In.ReadToEnd()
+
+if ($input_json -match '"command"\s*:\s*"([^"]*)"') {
+    $command = $matches[1]
+} else {
+    exit 0
+}
+
+if ([string]::IsNullOrEmpty($command)) { exit 0 }
+
+function Deny($reason) {
+    $output = @{ decision = "deny"; reason = $reason } | ConvertTo-Json -Compress
+    Write-Output $output
+    exit 2
+}
+
+$words = $command -split '\s+' | Where-Object { $_ -ne '' }
+
+$hasRm = $false
+$hasRecursiveForce = $false
+$hasGit = $false
+$hasPush = $false
+$hasForceFlag = $false
+$hasMainOrMaster = $false
+$readCmd = $false
+
+foreach ($w in $words) {
+    switch -Exact ($w) {
+        'rm' { $hasRm = $true }
+        'git' { $hasGit = $true }
+        'push' { $hasPush = $true }
+        '--force' { $hasForceFlag = $true }
+        '--force-with-lease' { $hasForceFlag = $true }
+        '-f' { $hasForceFlag = $true }
+__TRUNK_CASES__
+        'cat' { $readCmd = $true }
+        'head' { $readCmd = $true }
+        'tail' { $readCmd = $true }
+        'less' { $readCmd = $true }
+        'more' { $readCmd = $true }
+        default {
+            if ($w -match '^-[^-]' -and $w -match '[rR]' -and $w -match 'f') {
+                $hasRecursiveForce = $true
+            }
+        }
+    }
+
+    if ($hasRm -and $hasRecursiveForce) {
+        if ($w -eq '/' -or $w -eq '/*') {
+            Deny "Blocked: rm -rf targeting the filesystem root."
+        }
+        if ($w -eq '~' -or $w -eq '$HOME' -or $w -eq '${HOME}') {
+            Deny "Blocked: rm -rf targeting the home directory."
+        }
+    }
+}
+
+if ($hasGit -and $hasPush -and $hasForceFlag -and $hasMainOrMaster) {
+    Deny "Blocked: force-push to the trunk branch. This project's own git-workflow discipline forbids force-pushing the trunk branch."
+}
+
+if ($readCmd) {
+    foreach ($w in $words) {
+        $base = Split-Path $w -Leaf -ErrorAction SilentlyContinue
+        if (-not $base) { $base = $w }
+        if ($base -in @('.env.example', '.env.sample', '.env.template')) { continue }
+        if ($base -in @('.env', 'id_rsa', 'id_ed25519') -or $base -like '*.pem') {
+            Deny "Blocked: reading what looks like a real secret/credential file."
+        }
+    }
+}
+
+exit 0
+'@
+    $template.Replace('__TRUNK_CASES__', $TrunkCases)
+}
+
+function Install-HooksGeminiCli {
+    $trunkBranch = Get-TrunkBranch -Dir $TargetDir
+    $trunkCases = Get-TrunkCases -TrunkBranch $trunkBranch
+    $targetHooksDir = Join-Path $TargetDir ".gemini/hooks"
+    New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
+    $guardScript = Get-GeminiStyleGuardScript -TrunkCases $trunkCases
+    [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $guardScript)
+    Write-Host "  ✅ dangerous-command-guard.ps1 (Gemini CLI translation, protecting: $trunkBranch)"
+
+    $hooksBlock = @'
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File .gemini/hooks/dangerous-command-guard.ps1"
+          }
+        ]
+      }
+    ]
+  }
+'@
+    Merge-JsonKey -Target (Join-Path $TargetDir ".gemini/settings.json") -KeyCheck '"hooks"' -Block $hooksBlock -OkMessage "BeforeTool hook wired"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): Antigravity's
+# own hooks.json schema was not independently confirmed beyond a
+# marketing announcement (research.md's own citation) -- reuses the
+# confirmed Gemini CLI BeforeTool contract per Get-GeminiStyleGuardScript's
+# own documented reasoning (shared ~/.gemini/ config namespace), targeting
+# Antigravity's confirmed project-level path <project_root>/.agents/
+# hooks.json.
+function Install-HooksAntigravity {
+    $trunkBranch = Get-TrunkBranch -Dir $TargetDir
+    $trunkCases = Get-TrunkCases -TrunkBranch $trunkBranch
+    $targetHooksDir = Join-Path $TargetDir ".agents/hooks"
+    New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
+    $guardScript = Get-GeminiStyleGuardScript -TrunkCases $trunkCases
+    [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $guardScript)
+    Write-Host "  ✅ dangerous-command-guard.ps1 (Antigravity translation, protecting: $trunkBranch)"
+
+    $hooksBlock = @'
+  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File .agents/hooks/dangerous-command-guard.ps1"
+          }
+        ]
+      }
+    ]
+  }
+'@
+    Merge-JsonKey -Target (Join-Path $TargetDir ".agents/hooks.json") -KeyCheck '"hooks"' -Block $hooksBlock -OkMessage "hooks wired (schema inferred shared with Gemini CLI)"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): Codex CLI's own
+# hooks.json schema is confirmed structurally identical to Claude Code's
+# own, so this reuses the exact same proven trunk-substitution technique
+# as the claude-code (User Story 1) block above, just targeting .codex/
+# instead of .claude/.
+function Install-HooksCodexCli {
+    $trunkBranch = Get-TrunkBranch -Dir $TargetDir
+    $trunkCases = Get-TrunkCases -TrunkBranch $trunkBranch
+    $targetHooksDir = Join-Path $TargetDir ".codex/hooks"
+    New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
+    $hookSource = Get-Content (Join-Path $repoRoot ".claude/hooks/dangerous-command-guard.ps1") -Raw
+    $originalCases = "        'main' { `$hasMainOrMaster = `$true }`n        'master' { `$hasMainOrMaster = `$true }`n        'main:main' { `$hasMainOrMaster = `$true }`n        'master:master' { `$hasMainOrMaster = `$true }"
+    $hookContent = $hookSource.Replace($originalCases, $trunkCases)
+    [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
+    Write-Host "  ✅ dangerous-command-guard.ps1 (Codex CLI translation, protecting: $trunkBranch)"
+
+    $hooksJson = Join-Path $TargetDir ".codex/hooks.json"
+    if (-not (Test-Path $hooksJson)) {
+        $parentDir = Split-Path -Parent $hooksJson
+        if ($parentDir -and -not (Test-Path $parentDir)) {
+            New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+        }
+        $hooksJsonContent = @'
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File .codex/hooks/dangerous-command-guard.ps1"
+          }
+        ]
+      }
+    ]
+  }
+}
+'@
+        [System.IO.File]::WriteAllText($hooksJson, $hooksJsonContent)
+        Write-Host "  ✅ .codex/hooks.json created (PreToolUse -> dangerous-command-guard.ps1)"
+    } elseif (-not ([System.IO.File]::ReadAllText($hooksJson).Contains("dangerous-command-guard"))) {
+        Write-Host "  ℹ️  .codex/hooks.json already exists — add dangerous-command-guard.ps1 to its PreToolUse array manually ($targetHooksDir/dangerous-command-guard.ps1), not overwritten automatically."
+    } else {
+        Write-Host "  ℹ️  .codex/hooks.json already references dangerous-command-guard — leaving as-is."
+    }
+
+    Write-Host "  ⚠️  Codex CLI requires explicit trust: run /hooks inside Codex CLI and"
+    Write-Host "     approve dangerous-command-guard.ps1 before it actually runs — the"
+    Write-Host "     installer cannot pre-approve a hook inside Codex CLI's own trust"
+    Write-Host "     store (developers.openai.com/codex/hooks)."
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): OpenCode's own
+# permission schema is confirmed at opencode.ai/docs/permissions/.
+function Install-PermissionsOpencode {
+    $permissionBlock = @'
+  "permission": {
+    "bash": {
+      "git status": "allow",
+      "git diff *": "allow",
+      "git add *": "allow",
+      "git commit *": "allow",
+      "git push *": "allow",
+      "git pull *": "allow",
+      "git log *": "allow"
+    },
+    "read": {
+      ".env": "deny",
+      ".env.*": "deny",
+      "secrets/**": "deny",
+      "config/credentials.json": "deny"
+    }
+  }
+'@
+    Merge-JsonKey -Target (Join-Path $TargetDir "opencode.json") -KeyCheck '"permission"' -Block $permissionBlock -OkMessage "git-aware permissions added"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Zed's own
+# tool-permission mechanism is confirmed at zed.dev/docs/ai/tool-
+# permissions; the "terminal" tool key is a reasoned inference, documented
+# per Principle XX rather than silently asserted (see install.sh's own
+# install_permissions_zed comment for the full citation).
+function Install-PermissionsZed {
+    $agentBlock = @'
+  "agent": {
+    "tool_permissions": {
+      "terminal": {
+        "always_allow": [
+          "git status",
+          "git diff .*",
+          "git add .*",
+          "git commit .*",
+          "git push .*",
+          "git pull .*",
+          "git log .*"
+        ]
+      }
+    }
+  }
+'@
+    Merge-JsonKey -Target (Join-Path $TargetDir ".zed/settings.json") -KeyCheck '"agent"' -Block $agentBlock -OkMessage "tool_permissions added"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Warp discovery
+# -- docs.warp.dev/terminal/settings/ confirms settings.toml is a single
+# GLOBAL user-level file, never project-scoped. See install.sh's own
+# install_permissions_warp comment for the full zero-footprint reasoning.
+function Install-PermissionsWarp {
+    Write-Host "  ℹ️  Warp stores agent permissions in a single global"
+    Write-Host "     settings.toml (or platform equivalent) — there is no"
+    Write-Host "     project-scoped permissions file for this installer to write"
+    Write-Host "     into (docs.warp.dev/terminal/settings/). Configure allow/ask"
+    Write-Host "     autonomy for git commands yourself under Settings > AI >"
+    Write-Host "     Agents > Permissions."
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Amazon Q
+# Developer CLI's custom-agent JSON schema is confirmed at aws.github.io/
+# amazon-q-developer-cli/agent-format.html.
+function Install-PermissionsAmazonQ {
+    $agentsDir = Join-Path $TargetDir ".amazonq/cli-agents"
+    New-Item -ItemType Directory -Force -Path $agentsDir | Out-Null
+    $agentFile = Join-Path $agentsDir "spec-jedi-shared.json"
+    if (Test-Path $agentFile) {
+        Write-Host "  ℹ️  .amazonq/cli-agents/spec-jedi-shared.json already exists — leaving as-is."
+        return
+    }
+    $agentContent = @'
+{
+  "name": "spec-jedi-shared",
+  "description": "Shareable git-aware tool permissions installed by Spec Jedi (specs/041-release-hooks-settings).",
+  "prompt": "You are a general-purpose coding assistant.",
+  "tools": ["fs_read", "fs_write", "execute_bash"],
+  "allowedTools": ["fs_read"],
+  "toolsSettings": {}
+}
+'@
+    [System.IO.File]::WriteAllText($agentFile, $agentContent)
+    Write-Host "  ✅ .amazonq/cli-agents/spec-jedi-shared.json created (fs_read pre-approved; execute_bash/fs_write still prompt per use)"
+}
+
+# specs/041-release-hooks-settings (User Story 2): Wave 1 (declarative
+# JSON hooks) and Wave 2 (permissions-only) per-harness translations --
+# never runs for the 9 no-mechanism harnesses (FR-005's existing
+# clean-skip already covers them) or the 3 explicitly deferred Full
+# harnesses (Cursor/Windsurf/Copilot).
+if ($installSharedHooks) {
+    switch ($Harness) {
+        "gemini-cli" {
+            Write-Host ""
+            Write-Host "🛡️  Installing shareable hooks (Gemini CLI translation)..."
+            Install-HooksGeminiCli
+        }
+        "antigravity" {
+            Write-Host ""
+            Write-Host "🛡️  Installing shareable hooks (Antigravity translation)..."
+            Install-HooksAntigravity
+        }
+        "codex-cli" {
+            Write-Host ""
+            Write-Host "🛡️  Installing shareable hooks (Codex CLI translation)..."
+            Install-HooksCodexCli
+        }
+        "opencode" {
+            Write-Host ""
+            Write-Host "🔐 Installing shareable permissions (OpenCode translation)..."
+            Install-PermissionsOpencode
+        }
+        "zed" {
+            Write-Host ""
+            Write-Host "🔐 Installing shareable permissions (Zed translation)..."
+            Install-PermissionsZed
+        }
+        "warp" {
+            Write-Host ""
+            Write-Host "🔐 Shareable permissions (Warp)..."
+            Install-PermissionsWarp
+        }
+        "amazon-q" {
+            Write-Host ""
+            Write-Host "🔐 Installing shareable permissions (Amazon Q Developer translation)..."
+            Install-PermissionsAmazonQ
+        }
+    }
 }
 
 Write-Host ""

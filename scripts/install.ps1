@@ -527,6 +527,16 @@ function Get-TrunkBranch {
             if ($headLine -and $Matches) { $branch = $Matches[1].Trim() }
         }
     }
+    # Both git calls above are expected to fail (non-zero exit) on a target
+    # with no origin remote -- that's the documented fallback path, not an
+    # error. $LASTEXITCODE isn't reset by any PowerShell cmdlet in between
+    # (Where-Object, string ops, etc. don't touch it), so a real CI failure
+    # was observed here: it stayed non-zero all the way to this function's
+    # return and then to install.ps1's own natural end, where GitHub
+    # Actions' own pwsh step wrapper exits the whole step with whatever
+    # $LASTEXITCODE last held -- failing an otherwise fully successful run.
+    # Reset explicitly since both git failures above are already handled.
+    $global:LASTEXITCODE = 0
     if ($branch) { return $branch } else { return "main master" }
 }
 

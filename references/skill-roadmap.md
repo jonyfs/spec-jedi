@@ -162,8 +162,10 @@ That's the concrete gap `specjedi-explain` (built this cycle, see below) closes.
   the full research/spec/plan.
 - **`specjedi-govcheck`** ⚖️ (feature 013, shipped 2026-07-11) —
   strictly read-only per-PR/per-branch governance compliance checklist
-  against all 20 Core Principles plus the Distribution & Ecosystem
-  Standards and Development Workflow sections. Three-state per-principle
+  against all 22 Core Principles (20 at original shipping; the
+  constitution has since grown via later amendments, and this skill's
+  own scope grows with it automatically) plus the Distribution &
+  Ecosystem Standards and Development Workflow sections. Three-state per-principle
   report (Not Applicable / Compliant / Non-Compliant) rather than a
   binary pass/fail, with any confirmed constitution conflict marked
   CRITICAL unconditionally. Mechanizes the Development Workflow section's

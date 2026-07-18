@@ -10,12 +10,12 @@ does.
 
 ## Skills, by discipline
 
-Twenty-five skills deep at this point — trained not for combat, but for
+Twenty-seven skills deep at this point — trained not for combat, but for
 Spec-Driven Development, across four disciplines:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 25 skills"))
+  root(("Spec Jedi — 27 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -26,15 +26,17 @@ mindmap
       analyze
       checklist
       converge
-    Onboarding and Guidance - 3
+    Onboarding and Guidance - 4
       onboard
       explain
       find-skills
-    Quality and Review - 4
+      master
+    Quality and Review - 5
       security
       skill-review
       govcheck
       retro
+      constitution-audit
     Meta and Tooling - 9
       quick
       diagram
@@ -74,12 +76,14 @@ mindmap
 | `specjedi-release` 🚀 | Wraps `scripts/suggest-release.sh` with Spec Jedi's own voice — narrates the last tag, suggested next version, and contributing commits; declines and names the manual command if asked to actually cut a release |
 | `specjedi-skill-review` 🎓 | Strictly read-only audit of a `specjedi-*` skill's `SKILL.md` against the Skill Authoring Standard — checks section content, not just headings, cross-references the matching `plan.md` for legitimate exemptions, reports findings or a clean pass, never edits the reviewed file |
 | `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
-| `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 20 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
+| `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 22 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
+| `specjedi-constitution-audit` ⚖️ | Strictly read-only whole-project constitution coverage audit — never a diff, unlike `specjedi-govcheck`'s per-PR scope — assesses all 22 Core Principles plus the two cross-cutting sections against the entire current project tree, cross-checking every claim in `references/principle-traceability.md` for drift in both directions |
+| `specjedi-master` 🧙 | Proactive, project-aware advisor that reads what a project actually is — language, harness, domain, what's already installed — and suggests skills, agents, commands, and settings from aitmpl.com that would genuinely help; self-invoked by `specjedi-onboard` once a first constitution+spec exist, always asks explicit permission before installing anything |
 | `specjedi-worktree` 🌳 | Mechanizes git-worktree-based parallel development — creates a real worktree for a named feature on demand, preferring a native harness relocation tool (e.g. Claude Code's `EnterWorktree`/`ExitWorktree`) and falling back to a project-local, `.gitignore`-verified `.worktrees/` directory otherwise. Self-invoked by `specjedi-specify`/`specjedi-quick` to proactively offer a worktree before real uncommitted work on another branch would collide; paired with a `specjedi-status` extension that unifies status reporting across every worktree in one report |
 
 ## Quickstart
 
-Twenty-five product skills, all live, the full `specjedi-*` pipeline
+Twenty-seven product skills, all live, the full `specjedi-*` pipeline
 done, not partial. Never used an SDD tool before? Start at step 0 — it's
 short.
 
@@ -203,7 +207,7 @@ ceremony. It never shortens verification.
     installing it. Never without explicit confirmation.
 22. `specjedi-implement` already runs this before every PR it opens,
     but `specjedi-govcheck` ⚖️ works standalone too — a per-branch or
-    per-PR checklist against all 20 constitution principles, each one
+    per-PR checklist against all 22 constitution principles, each one
     reported as not applicable, compliant, or non-compliant, with any
     real conflict marked CRITICAL. Strictly read-only — it never edits
     anything, and it never blocks a PR from opening on its own.

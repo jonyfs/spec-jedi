@@ -9,6 +9,46 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **README objectivity & evidence-based benefits rewrite** (feature 046)
+  — every substantive claim in `README.md` now cites a specific project
+  artifact instead of an unsupported adjective. Adds a new
+  "`specjedi-*` versus `speckit-*`, by the numbers" subsection citing
+  `specs/044-speckit-parity-audit/PARITY-LEDGER.md` directly: 8/11 full
+  parity, 1/11 favorable divergence, 2/11 no-equivalent (both resolved),
+  18 `specjedi-*`-only skills. Fixes three stale numbers found during
+  re-verification (the Skills badge, the skill-category diagram, and
+  the ledger's own internally-inconsistent skill count) and two stale
+  claims in "Honest assessment" (constitution version; a since-outdated
+  "no release has been cut yet"). Leaves the comic-panel section and
+  opening epigraph untouched, per precedent already settled in specs/036
+  and specs/037.
+- **`specjedi-*` pipeline hook dispatch** (feature 047) — closes the one
+  real engineering blocker `specs/044`'s parity audit identified for a
+  full internal migration off `speckit-*`: all 9 core `specjedi-*`
+  pipeline skills (`specjedi-constitution` through `specjedi-converge`)
+  now implement the same `.specify/extensions.yml`
+  `hooks.before_<stage>`/`hooks.after_<stage>` dispatch check every
+  matching `speckit-*` skill already had individually, verified via a
+  real dry-run against this project's own two live registered hooks.
+  With this and the two prior recommendation items already resolved by
+  maintainer decision, no known engineering gap remains blocking a full
+  internal migration — whether and when to execute one stays a separate,
+  later decision.
+
+### Fixed
+
+- Corrected a stale internal count in
+  `specs/044-speckit-parity-audit/PARITY-LEDGER.md` (said 16
+  `specjedi-*`-only skills; its own enumerated list and independent
+  arithmetic both say 18) and refreshed several reference docs
+  (`references/quickstart-guide.md`, `references/specjedi-and-sdd.md`,
+  `references/honest-assessment.md`, `references/skill-roadmap.md`)
+  whose skill/principle counts had drifted from the constitution's
+  actual current state (22 principles, 27 `specjedi-*` skills) —
+  surfaced by a whole-project `specjedi-constitution-audit` run.
+
 ## [v0.2.0] - 2026-07-18
 
 ### Added

@@ -20,6 +20,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   release:
@@ -109,31 +110,37 @@ jobs:
           ' CHANGELOG.md > CHANGELOG.md.new
           mv CHANGELOG.md.new CHANGELOG.md
 
-      - name: Commit CHANGELOG.md (real run only)
+      - name: Open CHANGELOG.md PR (real run only)
         if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # main's branch protection requires the ci-gate status check on
+          # every change, including a direct github-actions[bot] push --
+          # confirmed the hard way when v0.2.0's release job tried exactly
+          # that and was rejected (GH006, "Required status check ci-gate
+          # is expected"). Route this commit through the same PR path
+          # every other change on this repo takes, with auto-merge so the
+          # release job doesn't have to block on ci-gate's own runtime.
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          branch="release/${{ inputs.version }}-changelog"
+          git checkout -b "$branch"
           git add CHANGELOG.md
           git commit -m "docs: release ${{ inputs.version }}"
+          git push origin "$branch"
 
-          # main can move during this job's earlier steps (validate,
-          # packaging) -- rebase onto whatever landed and retry the push
-          # a bounded number of times instead of failing on the first
-          # non-fast-forward rejection.
-          for attempt in 1 2 3 4 5; do
-            git fetch origin main
-            if ! git rebase origin/main; then
-              echo "FAIL: CHANGELOG.md commit conflicts with origin/main -- manual intervention required"
-              git rebase --abort
-              exit 1
-            fi
-            if git push origin HEAD:main; then
-              echo "OK: pushed on attempt $attempt"
-              exit 0
-            fi
-            echo "Push rejected (attempt $attempt/5), retrying after backoff..."
-            sleep $((attempt * 3))
-          done
-          echo "FAIL: could not push CHANGELOG.md commit to main after 5 attempts"
-          exit 1
+          pr_url=$(gh pr create \
+            --title "docs: release ${{ inputs.version }}" \
+            --body "Automated CHANGELOG.md update for ${{ inputs.version }}, moving the Unreleased section under a dated version heading. Opened as a PR (never a direct push) because main's branch protection requires the ci-gate status check on every change. Auto-merge is enabled -- this merges on its own once CI passes." \
+            --base main \
+            --head "$branch")
+
+          gh pr merge "$branch" --squash --auto --delete-branch
+
+          {
+            echo "### CHANGELOG.md update"
+            echo ""
+            echo "Opened $pr_url with auto-merge enabled -- it will merge on its own once ci-gate passes."
+          } >> "$GITHUB_STEP_SUMMARY"

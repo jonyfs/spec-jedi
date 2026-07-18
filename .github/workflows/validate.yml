@@ -1434,6 +1434,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+    # Same reasoning as bootstrap-installer-smoke: shared runner IP pools
+    # (macos-latest especially) routinely exhaust GitHub's 60/hour
+    # anonymous API quota from unrelated global traffic. The "stale
+    # marker" scenario below needs a real releases/latest lookup to
+    # succeed to prove anything -- GITHUB_TOKEN raises the effective
+    # limit to 5000/hour for this job's own runs, same as the two
+    # installer scripts already do internally when the variable happens
+    # to be set.
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Silent states -- no marker, malformed marker, local-checkout sentinel
@@ -1524,6 +1534,9 @@ jobs:
   session-start-freshness-check-windows-native:
     name: session-start-freshness-check (windows-latest, native PowerShell)
     runs-on: windows-latest
+    # Same GITHUB_TOKEN reasoning as session-start-freshness-check above.
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
       - name: Silent states -- no marker, malformed marker, local-checkout sentinel

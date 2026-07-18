@@ -120,13 +120,15 @@ fi
 # Minimal JSON field extraction (grep/sed only, no jq dependency) --
 # keeps this a true zero-dependency one-liner, consistent with the
 # Homebrew/SDKMAN-style bootstrap this script is modeled on.
-tag_name="$(printf '%s' "$response" | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
-# grep -m1 stops after the first matching line itself, unlike piping
-# through `head -1` -- under `set -o pipefail`, head closing the pipe
-# early can SIGPIPE the upstream grep/printf ("write error: Broken
-# pipe"), aborting the script even though the extraction would have
-# succeeded.
-asset_url="$(printf '%s' "$response" | grep -m1 -o '"browser_download_url": *"[^"]*spec-jedi-[^"]*\.tar\.gz"' | sed -E 's/.*"(https:[^"]+)"$/\1/')"
+# Here-strings (<<<), not `printf ... | grep -m1 ...` pipes: bash writes
+# the whole string to grep's stdin up front rather than streaming it
+# concurrently, so grep -m1 finding its match early and closing its
+# input can never SIGPIPE a still-writing upstream `printf` -- caught as
+# a real, intermittent "write error: Broken pipe" CI failure (large
+# response body, match found in the first line) that `grep -m1` alone
+# (the previous mitigation attempt) did not fully eliminate.
+tag_name="$(grep -m1 '"tag_name"' <<< "$response" | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
+asset_url="$(grep -m1 -o '"browser_download_url": *"[^"]*spec-jedi-[^"]*\.tar\.gz"' <<< "$response" | sed -E 's/.*"(https:[^"]+)"$/\1/')"
 
 if [ -z "$asset_url" ]; then
   echo "FAIL: release '$tag_name' has no spec-jedi-*.tar.gz asset — is this a valid Spec Jedi release?"

@@ -41,6 +41,31 @@ engineering gap:
    hook-check/dispatch logic, or confirm the currently-registered hooks
    are non-essential and retire them before migrating.
 
+## Resolution (2026-07-18, post-merge)
+
+Maintainer decision on all three recommendation items:
+
+1. **`speckit-taskstoissues` — confirmed not needed internally.** No
+   change to this repository's own workflow. If GitHub-issue conversion
+   is ever wanted, it ships as a genuine `specjedi-taskstoissues` product
+   feature (dual value) through its own `/speckit-specify` cycle — not
+   retrofitted here.
+2. **`speckit-agent-context-update` — confirmed intentional, closed.**
+   No `specjedi-*` equivalent will be built; `specjedi-status`'s
+   zero-parallel-tracking design and Principle XXI's `SessionStart`
+   re-surfacing already cover this need more robustly. No further action.
+3. **`.specify/extensions.yml` hook-dispatch gap — deferred, not
+   dropped.** Extending every `specjedi-*` pipeline skill with equivalent
+   hook-check/dispatch logic is real, multi-skill engineering work, not a
+   one-line fix — it needs its own `/speckit-specify` → `/speckit-plan`
+   cycle if and when a full internal migration is actually prioritized.
+   Until then, this repository continues developing itself with
+   `speckit-*`, which remains fully functional and unaffected by any of
+   the `specjedi-*` work shipped in specs/042/043/044. This is a
+   deliberate scope boundary, not an oversight: today's task was
+   producing the evidence-based readiness assessment, not executing a
+   migration nothing had actually requested yet.
+
 ## Parity Ledger (User Story 1)
 
 Verdicts are based on each skill's actual described behavior (frontmatter

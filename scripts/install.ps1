@@ -732,6 +732,63 @@ if ($memoryFileRel) {
     Update-MemoryFile -MemoryPath (Join-Path $TargetDir $memoryFileRel) -SkillsDstRel $skillsDstRel
 }
 
+# specs/041-release-hooks-settings (User Story 1): shareable hooks/
+# settings for claude-code -- never skill-quality-guard or
+# cross-platform-parity-guard, which check spec-jedi-repo-specific
+# conventions. Wave 1/2 per-harness adaptations are separate, later work.
+if ($Harness -eq "claude-code" -and $installSharedHooks) {
+    Write-Host ""
+    Write-Host "🛡️  Installing shareable hooks/settings..."
+    $trunkBranch = Get-TrunkBranch -Dir $TargetDir
+    $trunkCases = ($trunkBranch -split ' ' | ForEach-Object {
+        "        '$_' { `$hasMainOrMaster = `$true }`n        '$($_):$($_)' { `$hasMainOrMaster = `$true }"
+    }) -join "`n"
+
+    $targetHooksDir = Join-Path $TargetDir ".claude/hooks"
+    New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
+    $hookSource = Get-Content (Join-Path $repoRoot ".claude/hooks/dangerous-command-guard.ps1") -Raw
+    $originalCases = "        'main' { `$hasMainOrMaster = `$true }`n        'master' { `$hasMainOrMaster = `$true }`n        'main:main' { `$hasMainOrMaster = `$true }`n        'master:master' { `$hasMainOrMaster = `$true }"
+    $hookContent = $hookSource.Replace($originalCases, $trunkCases)
+    [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
+    Write-Host "  ✅ dangerous-command-guard.ps1 (protecting: $trunkBranch)"
+
+    $targetSettings = Join-Path $TargetDir ".claude/settings.json"
+    Update-SharedSettings -Target $targetSettings
+
+    $settingsContent = [System.IO.File]::ReadAllText($targetSettings)
+    if (-not $settingsContent.Contains("dangerous-command-guard.ps1")) {
+        if ($settingsContent -match '"PreToolUse"') {
+            Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add dangerous-command-guard.ps1 to it manually ($targetHooksDir/dangerous-command-guard.ps1), not overwritten automatically."
+        } else {
+            $trimmed = $settingsContent.TrimEnd()
+            $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+            $hooksBlock = @'
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.ps1"]
+          }
+        ]
+      }
+    ]
+  }
+'@
+            if ($body.EndsWith('{')) {
+                [System.IO.File]::WriteAllText($targetSettings, "$body`n$hooksBlock`n}`n")
+            } else {
+                [System.IO.File]::WriteAllText($targetSettings, "$body,`n$hooksBlock`n}`n")
+            }
+            Write-Host "  ✅ Wired dangerous-command-guard.ps1 into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
+        }
+    }
+}
+
+
 Write-Host ""
 Write-Host "== Validating installed skills =="
 $fail = $false

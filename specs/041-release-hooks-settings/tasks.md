@@ -140,40 +140,61 @@ using `develop` as its default branch.
 
 ### Tests for User Story 1 (write first, confirm failing)
 
-- [ ] T017 [P] [US1] Write a failing test in `.claude/hooks/test-
-  hooks.sh` asserting a `claude-code` scratch install produces
-  `dangerous-command-guard.sh` + the `statusLine`/`permissions` keys in
-  the target, and does NOT produce `skill-quality-guard.sh`/
-  `cross-platform-parity-guard.sh` (SC-001, Acceptance Scenarios 3/6).
-- [ ] T018 [P] [US1] Write a failing test for idempotent re-run
+**Design correction made during implementation**: T017-T021 originally
+targeted `.claude/hooks/test-hooks.sh`/`.ps1`, but those scenarios test
+`scripts/install.sh`'s own full-installer behavior (real git scratch
+repos, real installed-file assertions), not an individual hook script
+in isolation the way `test-hooks.sh` is scoped. Moved to a real CI job
+(`.github/workflows/validate.yml`'s `install-test-shared-hooks`,
+matching `install-test`'s own established per-harness pattern) instead
+— same "write it as a real, reproducible check" requirement, better-fit
+location. All scenarios below were also manually verified end-to-end
+(real `install.sh`/`.ps1` runs against scratch git repos) before being
+written into CI.
+
+- [x] T017 [P] [US1] Write a failing test in `.github/workflows/
+  validate.yml`'s new `install-test-shared-hooks` job asserting a
+  `claude-code` scratch install produces `dangerous-command-guard.sh` +
+  the `statusLine`/`permissions` keys in the target, and does NOT
+  produce `skill-quality-guard.sh`/`cross-platform-parity-guard.sh`
+  (SC-001, Acceptance Scenarios 3/6).
+- [x] T018 [P] [US1] Write a failing test for idempotent re-run
   (byte-identical output after a second install) — SC-002.
-- [ ] T019 [P] [US1] Write a failing test for trunk-branch detection: a
+- [x] T019 [P] [US1] Write a failing test for trunk-branch detection: a
   scratch target repo with `origin`'s default branch set to `develop`
   gets an installed `dangerous-command-guard` whose force-push check
   matches `develop`, not `main`/`master` — SC-007, Acceptance Scenario 4.
-- [ ] T020 [P] [US1] Write a failing test for the no-`origin`-remote
+- [x] T020 [P] [US1] Write a failing test for the no-`origin`-remote
   fallback case — installed hook checks `main`/`master` — Acceptance
   Scenario 5.
-- [ ] T021 [P] [US1] Mirror T017-T020 in `.claude/hooks/test-hooks.ps1`.
+- [x] T021 [P] [US1] Mirror T017-T020 in `install-test-shared-hooks-
+  windows-native` (native PowerShell CI job).
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] In `scripts/install.sh`, after the existing skills-copy
+- [x] T022 [US1] In `scripts/install.sh`, after the existing skills-copy
   loop, call the T007 classification + T008/T010/T012 primitives to
   copy `dangerous-command-guard.sh` into the target's `.claude/hooks/`
   with `${CLAUDE_PROJECT_DIR}`-relative paths (FR-002) and the
   detected-trunk-branch substitution (FR-002a) applied to its force-push
-  check.
-- [ ] T023 [US1] In the same location, merge `statusLine`/`permissions`
+  check. Also wires the copied hook into the target's `PreToolUse`
+  hooks array (not originally broken out as its own sub-task, but
+  required for the hook to actually do anything).
+- [x] T023 [US1] In the same location, merge `statusLine`/`permissions`
   into the target's `.claude/settings.json` via T012.
-- [ ] T024 [US1] Mirror T022/T023 in `scripts/install.ps1` using T009/
-  T011/T013.
-- [ ] T025 [US1] Add an `install-test-shared-hooks` job to `.github/
+- [x] T024 [US1] Mirror T022/T023 in `scripts/install.ps1` using T009/
+  T011/T013. Caught and fixed a real bug during this task: the PowerShell
+  wiring initially pointed `"command": "bash"` at the `.ps1` hook file
+  (which bash cannot execute) — corrected to `"command": "powershell"`.
+- [x] T025 [US1] Add an `install-test-shared-hooks` job to `.github/
   workflows/validate.yml` (3-OS matrix, matching `install-test`'s
   existing pattern) running T017-T021's scenarios for real, wired into
   `ci-gate`'s `needs:`.
-- [ ] T026 [US1] Run T017-T021 (bash and PowerShell) and confirm all
-  pass.
+- [x] T026 [US1] Run T017-T021 (bash and PowerShell) and confirm all
+  pass. Verified via direct `install.sh`/`.ps1` runs against scratch git
+  repositories (fresh install, idempotent re-run, `develop`-branch
+  detection, no-remote fallback, interactive accept/decline via a `pty`
+  harness) — all passing — before committing the equivalent CI job.
 
 **Checkpoint**: User Story 1 is fully functional and independently
 testable — `claude-code` installs get the shareable hooks/settings,
@@ -227,6 +248,7 @@ behaves per its own classification.
   `codex-cli`), wired into `ci-gate`. Depends on T028-T035.
 - [ ] T037 [US2] Run T027/T030/T033 (bash and PowerShell) and confirm
   all pass.
+
 
 ### Wave 2: permissions-only harnesses
 

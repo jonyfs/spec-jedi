@@ -952,6 +952,77 @@ if [ -n "$memory_file_rel" ]; then
   update_memory_file "$target_dir/$memory_file_rel" "$skills_dst_rel"
 fi
 
+# specs/041-release-hooks-settings (User Story 1): shareable hooks/
+# settings for claude-code -- never skill-quality-guard or
+# cross-platform-parity-guard, which check spec-jedi-repo-specific
+# conventions (spec.md Assumptions). Wave 1/2 per-harness adaptations
+# for other harnesses are separate, later work.
+if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
+  echo
+  echo "🛡️  Installing shareable hooks/settings..."
+  trunk_branch="$(detect_trunk_branch "$target_dir")"
+  # Build a case-pattern list covering each detected branch plus its own
+  # name:name refspec form, matching the existing main:main/
+  # master:master refspec coverage in this repo's own copy of the hook
+  # -- e.g. "develop|develop:develop", or for the "main master" fallback,
+  # "main|main:main|master|master:master".
+  trunk_pattern=""
+  for b in $trunk_branch; do
+    if [ -n "$trunk_pattern" ]; then
+      trunk_pattern="${trunk_pattern}|${b}|${b}:${b}"
+    else
+      trunk_pattern="${b}|${b}:${b}"
+    fi
+  done
+
+  target_hooks_dir="$target_dir/.claude/hooks"
+  mkdir -p "$target_hooks_dir"
+  sed "s@main|master|main:main|master:master) has_main_or_master=1 ;;@${trunk_pattern}) has_main_or_master=1 ;;@" \
+    "$repo_root/.claude/hooks/dangerous-command-guard.sh" > "$target_hooks_dir/dangerous-command-guard.sh"
+  chmod +x "$target_hooks_dir/dangerous-command-guard.sh"
+  echo "  ✅ dangerous-command-guard.sh (protecting: $trunk_branch)"
+
+  update_shared_settings "$target_dir/.claude/settings.json"
+
+  # Wire the newly-copied hook into the target's own settings.json, the
+  # same way this repo's own settings.json wires it (PreToolUse/Bash) --
+  # update_shared_settings only adds statusLine/permissions, since the
+  # hooks wiring itself needs the target's own resolved hooks_dst_rel
+  # path, not a static block.
+  target_settings="$target_dir/.claude/settings.json"
+  if ! grep -q "dangerous-command-guard.sh" "$target_settings" 2>/dev/null; then
+    settings_content="$(cat "$target_settings"; echo x)"
+    settings_content="${settings_content%x}"
+    if printf '%s' "$settings_content" | grep -q '"PreToolUse"'; then
+      echo "  ℹ️  Target already has a PreToolUse hooks array — add dangerous-command-guard.sh to it manually (${target_hooks_dir}/dangerous-command-guard.sh), not overwritten automatically."
+    else
+      settings_content="$(printf '%s' "$settings_content" | sed -e 's/[[:space:]]*$//')"
+      body="${settings_content%\}}"
+      body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+      hooks_block='  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.sh"]
+          }
+        ]
+      }
+    ]
+  }'
+      if [[ "$body" == *"{" ]]; then
+        printf '%s\n%s\n}\n' "$body" "$hooks_block" > "$target_settings"
+      else
+        printf '%s,\n%s\n}\n' "$body" "$hooks_block" > "$target_settings"
+      fi
+      echo "  ✅ Wired dangerous-command-guard.sh into $(basename "$target_settings")'s PreToolUse hooks"
+    fi
+  fi
+fi
+
 echo
 echo "== Validating installed skills =="
 fail=0

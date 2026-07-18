@@ -16,6 +16,22 @@ test-first where the plan calls for code (Principle VI), committed only
 through a feature branch and pull request, never directly to `main` or
 whatever branch the target repo protects (Principle X).
 
+## Pre-flight hook check
+
+Before Step 1's branch check — the one thing that precedes even
+"before touching any file, every single run" — check
+`.specify/extensions.yml` for hooks registered under
+`hooks.before_implement` (parity with `speckit-implement`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Branch check — before touching any file, every single run.** Run
@@ -77,6 +93,11 @@ whatever branch the target repo protects (Principle X).
    remaining failure to the user rather than looping unattended. This
    governs getting the PR back to all-green only — merging itself stays
    the repo's own decision, per Step 7 above.
+7.6. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_implement` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 8. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): a follow-up `specjedi-analyze` run once a slice is
    *merged* (not just opened), to catch any drift between spec/plan/tasks

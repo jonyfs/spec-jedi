@@ -10,10 +10,16 @@ using `speckit-*` internally in favor of `specjedi-*`.
 
 ## Recommendation (read this first)
 
-**Not yet safe for a full, immediate internal migration.** Three
-concrete blockers were found; two require no engineering work at all —
-only a maintainer decision — and one is a genuine, narrowly-scoped
-engineering gap:
+> **Status update (2026-07-18, specs/047)**: all three items below are
+> now resolved — see the Resolution section beneath this one for
+> current status. The text immediately below is preserved as the
+> original, as-found recommendation from this feature's initial audit,
+> not rewritten in place.
+
+**Not yet safe for a full, immediate internal migration** (as of this
+audit's original writing). Three concrete blockers were found; two
+require no engineering work at all — only a maintainer decision — and
+one is a genuine, narrowly-scoped engineering gap:
 
 1. **Confirm `speckit-taskstoissues`'s GitHub-issue-conversion capability
    isn't actually needed internally.** This project's real history has
@@ -54,17 +60,23 @@ Maintainer decision on all three recommendation items:
    No `specjedi-*` equivalent will be built; `specjedi-status`'s
    zero-parallel-tracking design and Principle XXI's `SessionStart`
    re-surfacing already cover this need more robustly. No further action.
-3. **`.specify/extensions.yml` hook-dispatch gap — deferred, not
-   dropped.** Extending every `specjedi-*` pipeline skill with equivalent
-   hook-check/dispatch logic is real, multi-skill engineering work, not a
-   one-line fix — it needs its own `/speckit-specify` → `/speckit-plan`
-   cycle if and when a full internal migration is actually prioritized.
-   Until then, this repository continues developing itself with
-   `speckit-*`, which remains fully functional and unaffected by any of
-   the `specjedi-*` work shipped in specs/042/043/044. This is a
-   deliberate scope boundary, not an oversight: today's task was
-   producing the evidence-based readiness assessment, not executing a
-   migration nothing had actually requested yet.
+3. **`.specify/extensions.yml` hook-dispatch gap — resolved
+   (2026-07-18, specs/047).** All 9 core `specjedi-*` pipeline skills
+   (`specjedi-constitution`, `specjedi-specify`, `specjedi-clarify`,
+   `specjedi-plan`, `specjedi-tasks`, `specjedi-implement`,
+   `specjedi-analyze`, `specjedi-checklist`, `specjedi-converge`) now
+   implement a "Pre-flight hook check" and an after-hook dispatch step
+   matching their `speckit-*` counterpart's exact
+   `hooks.before_<stage>`/`hooks.after_<stage>` behavior — verified via
+   a real dry-run against this project's own two live registered hooks
+   (`after_specify`/`after_plan` → `speckit.agent-context.update`, see
+   `specs/047-specjedi-hook-dispatch/tasks.md` T005). This was the last
+   remaining migration blocker; with all three recommendation items now
+   closed, a full internal migration from `speckit-*` to `specjedi-*`
+   is no longer blocked on any known engineering gap. Whether and when
+   to actually execute that migration (switching this repository's own
+   day-to-day development workflow) remains a separate maintainer
+   decision, not something specs/047 itself performs.
 
 ## Parity Ledger (User Story 1)
 

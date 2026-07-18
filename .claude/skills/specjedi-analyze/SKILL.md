@@ -17,6 +17,20 @@ inconsistencies, duplications, ambiguity, and underspecified items across
 the three artifacts — runnable at any point in the pipeline, before or
 after implementation — without modifying any of them.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_analyze` (parity with `speckit-analyze`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Load all three artifacts** (plus the constitution, if present) without
@@ -57,6 +71,11 @@ after implementation — without modifying any of them.
 5. **Build the findings table** (see Format) — Category, Location,
    Severity, Recommendation. An empty table is a valid, good outcome; do
    not invent findings to have something to report.
+5.5. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_analyze` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV) — never a single line of prose: whichever skill owns
    the artifact with the highest-severity finding (e.g., `specjedi-plan`

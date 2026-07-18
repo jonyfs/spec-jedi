@@ -15,6 +15,20 @@ the pipeline's final stage precisely because it closes the loop.
 no corresponding task, and append new tasks describing that gap —
 never silently ignoring drift, never touching anything already written.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_converge` (parity with `speckit-converge`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Scan the actual codebase** for user-observable capabilities. Prefer
@@ -40,6 +54,11 @@ never silently ignoring drift, never touching anything already written.
 4. **Verify the append didn't touch anything else** — diff the file before
    and after; everything except the new section must be byte-for-byte
    identical.
+4.5. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_converge` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 5. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-implement` to work the newly appended tasks,
    or `specjedi-analyze` first if a contradiction (not just a gap) was

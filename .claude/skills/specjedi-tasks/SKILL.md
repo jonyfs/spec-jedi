@@ -12,6 +12,20 @@ do" still open isn't a task, it's a reminder to write one later.
 **Task**: turn `plan.md` into `tasks.md` — concrete, dependency-ordered work
 items grouped by user story, each story independently completable.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_tasks` (parity with `speckit-tasks`'s own identical
+check, Constitution Principle XV migration-readiness work, specs/047):
+skip silently if the file is missing or unparseable; filter out hooks
+with `enabled: false`; skip (don't evaluate) any hook with a non-empty
+`condition`, leaving that to whatever executes conditions; for each
+remaining hook, surface an optional hook (`optional: true`) as a
+suggested command, or execute a mandatory hook (`optional: false`,
+`EXECUTE_COMMAND:`) and wait for its result before continuing. No
+hooks registered, or no `extensions.yml` at all? Stay silent — nothing
+about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Confirm the plan is actually planned.** If `plan.md`'s Constitution
@@ -36,6 +50,11 @@ items grouped by user story, each story independently completable.
    to uphold.
 6. **Write the Dependencies section** stating what blocks what across
    phases, not just within them.
+6.5. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_tasks` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 7. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-implement` once ready, plus
    `specjedi-analyze` first if the task breakdown itself feels worth a

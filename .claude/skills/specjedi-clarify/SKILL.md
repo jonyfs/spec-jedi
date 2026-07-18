@@ -14,6 +14,20 @@ thorough is a failure mode, not thoroughness.
 downstream if left unresolved, ask about it, and write the answer back into
 the spec before anyone plans against a guess.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_clarify` (parity with `speckit-clarify`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Scan** `spec.md` against a fixed taxonomy: functional scope & edge
@@ -41,6 +55,11 @@ the spec before anyone plans against a guess.
 5. **Stop** at 5 questions, when the user signals done, or when nothing
    Partial/Missing remains above the skip threshold — whichever comes
    first.
+5.5. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_clarify` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 6. **Report** a coverage summary (category → Resolved/Deferred/Clear), then
    **offer the next step(s) as a short bulleted list** (Principle XIV):
    `specjedi-plan` if clean, or the still-Deferred categories and why if

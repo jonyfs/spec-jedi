@@ -17,6 +17,20 @@ checklist whose every item traces back to something those artifacts
 actually say — never a template item that would apply to any project
 regardless of what it does.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_checklist` (parity with `speckit-checklist`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Confirm the focus area.** If none was given, ask for one — a
@@ -41,6 +55,11 @@ regardless of what it does.
 6. **Group items by natural subcategory** within the requested focus area
    rather than one flat list.
 7. **Write the checklist** to `specs/<feature>/checklists/<focus-area>.md`.
+7.5. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_checklist` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 8. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV) — never a single line of prose: revisit
    `specjedi-clarify` or `specjedi-plan` for any item the checklist

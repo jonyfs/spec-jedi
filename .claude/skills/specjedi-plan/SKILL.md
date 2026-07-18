@@ -22,12 +22,36 @@ under `hooks.before_plan` (parity with `speckit-plan`'s own identical
 check, Constitution Principle XV migration-readiness work, specs/047):
 skip silently if the file is missing or unparseable; filter out hooks
 with `enabled: false`; skip (don't evaluate) any hook with a non-empty
-`condition`, leaving that to whatever executes conditions; for each
-remaining hook, surface an optional hook (`optional: true`) as a
-suggested command, or execute a mandatory hook (`optional: false`,
-`EXECUTE_COMMAND:`) and wait for its result before continuing. No
-hooks registered, or no `extensions.yml` at all? Stay silent — nothing
-about the rest of this skill changes.
+`condition`, leaving that to whatever executes conditions. When
+turning a hook's `command` field into a slash command, replace dots
+(`.`) with hyphens (`-`) — e.g., `speckit.git.commit` →
+`/speckit-git-commit`. For each remaining hook:
+
+- **Optional** (`optional: true`): surface it as a suggested command:
+  ```text
+  ## Extension Hooks
+
+  **Optional Pre-Hook**: {extension}
+  Command: `/{command}`
+  Description: {description}
+
+  Prompt: {prompt}
+  To execute: `/{command}`
+  ```
+- **Mandatory** (`optional: false`): execute it and wait for its
+  result before continuing:
+  ```text
+  ## Extension Hooks
+
+  **Automatic Pre-Hook**: {extension}
+  Executing: `/{command}`
+  EXECUTE_COMMAND: {command}
+
+  Wait for the result of the hook command before proceeding.
+  ```
+
+No hooks registered, or no `extensions.yml` at all? Stay silent —
+nothing about the rest of this skill changes.
 
 ## Step-by-step
 
@@ -68,9 +92,12 @@ about the rest of this skill changes.
    warning, and never a blocking gate (advisory-only, same posture as the
    Constitution Check is *not*: that gate blocks, this one only informs).
 5.6. **Check for after-hook dispatch** before reporting: same rule set
-   as the Pre-flight hook check above, this time against
-   `hooks.after_plan` — surface optional hooks, execute mandatory ones
-   and wait for their result, stay silent when nothing is registered.
+   as the Pre-flight hook check above (missing/malformed-file
+   handling, `enabled`/`condition` filtering, dots→hyphens command
+   construction), this time against `hooks.after_plan` — same
+   `## Extension Hooks` format, but with post-execution labels
+   (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
+   nothing is registered.
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
    blocking (and how to resolve it) if the Constitution Check didn't pass.

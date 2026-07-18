@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.3.0] - 2026-07-18
+
 ### Removed
 
 - **`speckit-*` vendored bootstrap tooling** (feature 048) — following a

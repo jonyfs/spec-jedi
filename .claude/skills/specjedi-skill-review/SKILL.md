@@ -63,6 +63,16 @@ never an edit.
    definition rather than concrete skill-specific content), is a finding
    under this same dimension — not silently passed because the other
    dimensions look fine.
+5.6. **Check the token budget** (Constitution Principle XIX, specs/045).
+   `wc -c` the target `SKILL.md`, divide by 4 (the standard ~4-characters-
+   per-token English-prose approximation — no tokenizer dependency).
+   Compare against Principle XIX's own stated budget: ~500 tokens as a
+   soft target, 5,000 as a hard cap. Report the approximate count and
+   both numbers explicitly, labeled as an approximation — flag as a
+   finding only when the hard cap is exceeded; a skill over the soft
+   target but under the hard cap is informational, never a finding
+   (advisory-only, per specs/045's own Clarification: this check never
+   blocks anything, including a PASS/FAIL verdict here).
 6. **Build the findings report** (see Format). An explicit clean pass is a
    valid, good outcome when every dimension is satisfied — never leave an
    empty or ambiguous report.
@@ -105,6 +115,7 @@ follow-up rather than silently crossing that boundary.
 | Chain-of-thought framing (Principle XX) | PASS/MISSING/WEAK/EXEMPT | ... |
 | Genuine voice (Principle XII) | PASS/MISSING/WEAK | ... |
 | Skill validation testing framework (Principle IX) | PASS/MISSING/WEAK | ... |
+| Token budget (Principle XIX, specs/045) | PASS/OVER HARD CAP | ~N tokens (chars÷4 approximation) vs. 500 target / 5,000 hard cap |
 
 Overall: CLEAN PASS / N finding(s).
 ```
@@ -180,6 +191,11 @@ dimension or relaxes the read-only constraint.
   apply it manually and re-run this review to confirm.
 - **Never** review a `speckit-*` bootstrap skill — decline and state that
   Principle XIX scopes to `specjedi-*` product skills only.
+- **Always** label the token count as an approximation (chars÷4), never
+  present it as an exact count — no tokenizer is actually run.
+- **Never** flag a skill under the 5,000-token hard cap as a finding,
+  even if over the 500-token soft target — the soft target is
+  informational only (specs/045 Clarification: advisory, never blocking).
 
 ## Verifiable success criteria
 
@@ -194,6 +210,9 @@ dimension or relaxes the read-only constraint.
   section, or one containing only a generic restatement of a category's
   definition, reports a finding under that dimension — never a silent
   pass.
+- Every review states the target's approximate token count against
+  Principle XIX's stated budget, flagging only skills over the 5,000
+  hard cap as a finding.
 
 ## Validation Coverage (Principle IX)
 

@@ -1,7 +1,7 @@
 ---
 name: specjedi-quick
-description: A lightweight, one-artifact path for small, well-understood changes — replaces spec.md/research.md/plan.md/tasks.md with a single quick.md, then implements directly. Never shortens quality gates (test-first, specjedi-govcheck, PR-only), only planning ceremony. Triggers on "quick fix," "small change," "just do X," or an explicit request to skip the full pipeline for something small.
-compatibility: No external dependencies beyond `git` (matches specjedi-implement). Writes specs/NNN-name/quick.md, code/config per its Concrete Changes section, self-invokes specjedi-govcheck before opening a PR, and opens the PR. Declines and redirects to specjedi-specify for anything failing its eligibility checklist.
+description: A lightweight, one-artifact path for small, well-understood changes — replaces spec.md/research.md/plan.md/tasks.md with a single quick.md (small features) or bugfix.md (genuine bug fixes: reproduction, root cause, fix, regression test), then implements directly. Never shortens quality gates (test-first, specjedi-govcheck, PR-only), only planning ceremony. Triggers on "quick fix," "small change," "just do X," a bug report, or an explicit request to skip the full pipeline for something small.
+compatibility: No external dependencies beyond `git` (matches specjedi-implement). Writes specs/NNN-name/quick.md or bugfix.md depending on eligibility classification, code/config per the chosen artifact's own change list, self-invokes specjedi-govcheck before opening a PR, and opens the PR. Declines and redirects to specjedi-specify for anything failing its eligibility checklist.
 ---
 
 # ⚡ Spec Jedi Quick
@@ -38,6 +38,14 @@ change too big or too ambiguous through the fast path.
      seems. No exception, ever.
    - **Not a constitution amendment** — has its own `/specjedi-constitution`
      path already.
+1.5. **Determine bug-shaped vs. feature-shaped** (specs/045). Reason
+   through this explicitly, don't guess from the word "bug" alone in the
+   request: is there existing, previously-correct behavior to regress to
+   (something worked, now it doesn't), or is this a net-new capability
+   that never existed? Bug-shaped → produce `bugfix.md` (step 3's second
+   template); feature-shaped → produce `quick.md` as today. If genuinely
+   ambiguous which one this is, treat it as feature-shaped — `quick.md`'s
+   Concrete Changes section is the more general shape of the two.
 2. **Before creating the new feature directory, self-invoke
    `specjedi-worktree`'s proactive-offer detection step** (Principle
    XVII): if the current checkout has actual uncommitted changes on a
@@ -60,20 +68,44 @@ change too big or too ambiguous through the fast path.
    ## Acceptance checks
    - [ ] <checkable item>
    ```
+   **Or, when step 1.5 classified this bug-shaped, write
+   `specs/NNN-name/bugfix.md`** instead — four different sections, same
+   single-file discipline:
+   ```markdown
+   # Bugfix: <one-line title>
+
+   **Status**: Proposed
+
+   ## Reproduction
+   <exact steps that trigger the incorrect behavior>
+
+   ## Root cause
+   <what's actually wrong, traced to a specific file/line — never a
+   guess>
+
+   ## Fix
+   - <file/behavior changed>
+
+   ## Regression test
+   - [ ] <the test that fails before the fix and passes after>
+   ```
 4. **Branch check — before touching any other file.** Run `git branch
    --show-current`; if on trunk (`main` by default), create and check out
    a short-lived feature branch first (`specjedi-implement`'s Step 1,
    reused verbatim).
-5. **Implement directly from `quick.md`'s Concrete Changes list** — no
-   separate `specjedi-plan`/`specjedi-tasks` invocation. Where the change
-   involves code, test-first for real (Principle VI): write the test,
-   run it, observe it fail, implement, run it again, observe it pass —
+5. **Implement directly from the artifact's own change list** —
+   `quick.md`'s Concrete Changes, or `bugfix.md`'s Root Cause + Fix — no
+   separate `specjedi-plan`/`specjedi-tasks` invocation either way. Where
+   the change involves code, test-first for real (Principle VI): write
+   the test (for `bugfix.md`, this is the Regression Test itself), run
+   it, observe it fail, implement, run it again, observe it pass —
    exactly `specjedi-implement`'s Step 4, applied here.
 6. **Self-invoke `specjedi-govcheck`** against the branch's diff before
    opening a PR — surface any CRITICAL finding prominently, but never let
    it block the PR from opening; the CI battery is the actual gate
    (Principle X), same as `specjedi-implement`'s Step 6.5.
-7. **Set `Status: Implemented`** in `quick.md`, open the PR, and request
+7. **Set `Status: Implemented`** in whichever artifact was written
+   (`quick.md` or `bugfix.md`), open the PR, and request
    merge via the repo's own supported mechanism (e.g. `gh pr merge
    --auto`) where available — whether it actually merges is the target
    repo's CI/branch-protection decision, never this skill's to claim or
@@ -105,10 +137,13 @@ can override.
 
 ## Format
 
-`quick.md`'s four-section template (step 2) is the only new document
-format this skill introduces. Everything after that is code/config
-changes plus `quick.md`'s own `Status:` line updated in place — no new
-narration format beyond what `specjedi-implement` already establishes.
+`quick.md`'s four-section template (step 3) is one of two document
+formats this skill introduces; `bugfix.md`'s own four-section template
+(reproduction/root cause/fix/regression test, also step 3) is the other,
+a sibling shape for bug-shaped requests, never a replacement for
+`quick.md`. Everything after either is code/config changes plus the
+chosen artifact's own `Status:` line updated in place — no new narration
+format beyond what `specjedi-implement` already establishes.
 
 **Audience calibration boundary**: `quick.md`'s content and the code it
 describes stay precise, same exemption as every other generated artifact
@@ -153,9 +188,42 @@ unconditional exclusion, no partial credit for the other four criteria.
 research rigor and Principle XIX's authoring standard apply regardless
 of scope. Redirecting to `specjedi-specify` to start it properly."
 
+**Bug-shaped request (input)**: "The `--harness` flag used to accept
+`claude-code` case-insensitively; now it errors on `Claude-Code`."
+
+**Agent reasons** (step 1.5): existing, previously-correct behavior
+(case-insensitive matching worked before) now broken → bug-shaped, not
+feature-shaped.
+
+**Agent writes** `specs/046-fix-harness-case/bugfix.md`:
+```markdown
+# Bugfix: --harness flag lost case-insensitive matching
+
+**Status**: Proposed
+
+## Reproduction
+`./scripts/install.sh --harness Claude-Code` exits with "unknown
+harness," but `--harness claude-code` (lowercase) works.
+
+## Root cause
+scripts/install.sh's harness-matching case statement compares the raw
+input directly instead of lowercasing it first (regression from a recent
+edit).
+
+## Fix
+- scripts/install.sh: lowercase $harness before the case match
+- scripts/install.ps1: same fix (Principle XIII)
+
+## Regression test
+- [ ] `--harness Claude-Code` (mixed case) installs successfully,
+      identically to `--harness claude-code`
+```
+
 **Not this**: writing a `quick.md` for the video-onboarding skill anyway
 because the request "sounded small," or silently picking one of the five
-criteria to check while skipping the others.
+criteria to check while skipping the others; or forcing this bug report
+through `quick.md`'s Concrete Changes shape instead of naming the actual
+root cause.
 
 ## `--auto` mode
 
@@ -181,8 +249,14 @@ it does not silently force the fast path.
   matter how small it seems.
 - **Never** claim a PR has merged — only that it was opened and requested
   for auto-merge.
-- **Never** silently discard `quick.md` content when escalating to
-  `specjedi-specify` — hand it forward as a starting point.
+- **Never** silently discard `quick.md`/`bugfix.md` content when
+  escalating to `specjedi-specify` — hand it forward as a starting point.
+- **Always** reason through bug-shaped vs. feature-shaped explicitly
+  (step 1.5) — never route on the word "bug" appearing in the request
+  alone.
+- **Never** force a genuine bug report through `quick.md`'s
+  Concrete-Changes shape when a real root cause exists to name in
+  `bugfix.md` instead, and vice versa for a genuine new capability.
 
 ## Verifiable success criteria
 
@@ -193,8 +267,11 @@ it does not silently force the fast path.
   repo's trunk.
 - Every code change traces to a bullet in `quick.md`'s Concrete Changes
   section — no untracked edits.
-- `quick.md`'s `Status:` line reads `Implemented` only once the PR is
-  actually open, never before.
+- `quick.md`'s/`bugfix.md`'s `Status:` line reads `Implemented` only once
+  the PR is actually open, never before.
+- A `bugfix.md` names a specific root cause and a regression test that
+  fails before the fix and passes after — never a fix with no named
+  cause or no regression test.
 
 ## Validation Coverage (Principle IX)
 

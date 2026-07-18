@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/044-speckit-parity-audit/plan.md
+at specs/045-sdd-friction-reduction/plan.md
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

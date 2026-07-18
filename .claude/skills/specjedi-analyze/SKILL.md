@@ -28,6 +28,24 @@ after implementation — without modifying any of them.
    and silently absent downstream is exactly the class of gap this skill
    exists to catch — reason through each one explicitly, don't
    pattern-match superficially.
+2a. **For each requirement already confirmed to have a task (Step 2),
+   check for real evidence it's actually correct** — not just that a task
+   claims it's done. Evidence is either: a named, currently-passing
+   automated test whose assertions map to the requirement's own
+   language, or an explicit manual-verification note already present in
+   `tasks.md`/`quickstart.md` (this project's own established convention
+   when no automated test fits — e.g. `specs/042`'s `tasks.md` records
+   manual dry-run results inline). Classify each requirement/Acceptance
+   Scenario **Verified** (evidence found, cited), **Unverified** (neither
+   found — name specifically what was searched for), or **Not
+   Applicable** (already-documented out-of-scope/deferred). This closes
+   the "missing testing layer" gap: a task can be checked off without
+   ever having been confirmed correct (specs/045 research).
+2b. **Check the reverse direction too**: scan for substantial new code or
+   test files with no traceable origin in any `spec.md` FR/Acceptance
+   Scenario — flagged only when genuinely unexplained (a small,
+   obviously-supporting helper isn't a finding; a whole new test file or
+   feature-shaped module with zero connection to any requirement is).
 3. **Check for duplication and contradiction** across the three files —
    the same requirement described two incompatible ways, or a task that
    contradicts what the plan it's supposedly implementing actually says.
@@ -66,10 +84,18 @@ A structured findings table:
 |---|---|---|---|
 | Ambiguity / Inconsistency / Duplication / Underspecification / Constitution Violation | file + section | CRITICAL / HIGH / MEDIUM / LOW | what a human or a follow-up skill run should do — never applied automatically |
 
-**Audience calibration boundary**: the findings table itself stays precise
-(Principle V/XII exemption, same as every other pipeline artifact);
-calibration (Principle XIX) applies only to the skill's own narration
-introducing or summarizing the report.
+A second, exhaustive **Traceability Verdict** table (Steps 2a/2b) — every
+FR/Acceptance Scenario gets a row, unlike the sparse findings table above:
+
+| Requirement | Verdict | Evidence |
+|---|---|---|
+| FR-NNN / Acceptance Scenario N | Verified / Unverified / Not Applicable | named test, manual-verification note, or what was searched for and not found |
+| *(orphan check)* | Orphaned code/test found | the specific file, with no traceable requirement origin |
+
+**Audience calibration boundary**: both tables stay precise (Principle
+V/XII exemption, same as every other pipeline artifact); calibration
+(Principle XIX) applies only to the skill's own narration introducing or
+summarizing the report.
 
 ## Example (input → output)
 
@@ -97,6 +123,24 @@ plain; this is what the skill actually says around it):
 **Not this**: silently adding a checksum task to `tasks.md` because the
 gap is obvious — this skill reports, it never edits.
 
+**Traceability example**: `spec.md` has FR-006 ("MUST be self-invoked
+before every PR-open"), a passing CI job named
+`session-start-freshness-check` covers FR-005 by matching its own
+acceptance-scenario language, and `tasks.md`'s T020 has an inline manual
+dry-run note for a UX-only requirement no automated test fits. A new,
+unexplained `debug-scratch.sh` script appears in the diff with no FR
+citing it anywhere.
+
+**Agent writes**:
+```markdown
+| Requirement | Verdict | Evidence |
+|---|---|---|
+| FR-005 | Verified | `session-start-freshness-check` CI job asserts the exact behavior described |
+| FR-006 | Unverified | No test or manual-verification note found confirming self-invocation actually happens before PR-open |
+| Acceptance Scenario 3 (UX-only) | Verified | `tasks.md` T020's inline manual dry-run note |
+| *(orphan check)* | Orphaned code found | `debug-scratch.sh` — no FR/Scenario anywhere cites it |
+```
+
 ## `--auto` mode
 
 Proceed through the full trace and constitution check without stopping for
@@ -114,6 +158,12 @@ constraint.
   no step in this skill writes to any of them, ever.
 - **Never** report a finding that isn't traceable to something actually
   read in the three artifacts — an invented gap is as bad as a missed one.
+- **Always** back a Verified verdict with a named test or an explicit
+  manual-verification note — never mark something Verified because a
+  task's checkbox is ticked.
+- **Never** fabricate an Unverified/orphaned finding to look thorough —
+  an empty (all-Verified) Traceability Verdict table is a valid, good
+  outcome, same as an empty findings table.
 
 ## Verifiable success criteria
 
@@ -125,6 +175,9 @@ constraint.
   requirement silently unaccounted for.
 - Every finding names a specific file + section, not a vague "something
   seems off."
+- Every FR/Acceptance Scenario appears in the Traceability Verdict table
+  with an explicit Verified/Unverified/Not Applicable classification —
+  none silently omitted (specs/045 FR-001/SC-001).
 
 ## Validation Coverage (Principle IX)
 

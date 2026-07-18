@@ -1,7 +1,7 @@
 ---
 name: specjedi-implement
 description: Executes tasks.md in dependency order, test-first where the plan calls for code, committing only through a feature branch and pull request — never directly to the trunk. Triggers after specjedi-tasks finishes, or on an explicit request to start building.
-compatibility: No external dependencies beyond `git`. Reads the target feature's tasks.md and plan.md; writes code/config per each task, updates tasks.md's checkboxes in place, self-invokes specjedi-govcheck before opening a PR, and opens the PR.
+compatibility: No external dependencies beyond `git`. Reads the target feature's tasks.md and plan.md; writes code/config per each task, updates tasks.md's checkboxes in place, self-invokes specjedi-govcheck and specjedi-analyze's Traceability Verdict check before opening a PR, and opens the PR.
 ---
 
 # 🔨 Spec Jedi Implement
@@ -55,6 +55,12 @@ whatever branch the target repo protects (Principle X).
    block the PR from opening: PR-opening stays autonomous per this
    skill's own Autonomous vs. confirm-first section, and the CI battery
    remains the actual merge-blocking mechanism (Principle X).
+6.6. **Self-invoke `specjedi-analyze`'s Traceability Verdict check
+   (specs/045)** — same trigger point and posture as Step 6.5: surface any
+   Unverified requirement or orphaned code finding prominently in the
+   PR-opening narration, but never block the PR opening on it. This
+   closes the "missing testing layer" gap directly — a task's checkbox
+   alone never again stands in for confirmed, evidenced correctness.
 7. **Open the PR once a story's task group is done.** Request merge via
    the repo's own supported mechanism (e.g. `gh pr merge --auto`) where
    available — whether that merge actually happens is the target repo's
@@ -72,9 +78,11 @@ whatever branch the target repo protects (Principle X).
    governs getting the PR back to all-green only — merging itself stays
    the repo's own decision, per Step 7 above.
 8. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): `specjedi-analyze` once a slice is shipped, to catch
-   any drift between spec/plan/tasks and what just landed, plus
-   `specjedi-checklist` if a targeted review is warranted before moving on.
+   (Principle XIV): a follow-up `specjedi-analyze` run once a slice is
+   *merged* (not just opened), to catch any drift between spec/plan/tasks
+   and what actually landed after review/CI — distinct from Step 6.6's
+   own pre-PR traceability check — plus `specjedi-checklist` if a
+   targeted review is warranted before moving on.
 
 If a task needs implementation expertise nothing installed covers (a
 language-specific linter or framework with no matching skill here),

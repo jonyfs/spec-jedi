@@ -1417,7 +1417,7 @@ jobs:
         shell: pwsh
         run: |
           $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
-          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness codex-cli
+          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness codex-cli 6>&1
           if (-not (Test-Path (Join-Path $dir3 ".codex/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
           $hooks = Get-Content (Join-Path $dir3 ".codex/hooks.json") -Raw
           if ($hooks -notmatch '"PreToolUse"') { Write-Host "FAIL: PreToolUse hook missing"; exit 1 }
@@ -1526,7 +1526,7 @@ jobs:
         shell: pwsh
         run: |
           $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
-          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness warp
+          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness warp 6>&1
           if (($out -join "`n") -notmatch '(?i)global') { Write-Host "FAIL: advisory message missing"; exit 1 }
           if (Test-Path $dir3) {
             $tomlFiles = Get-ChildItem -Path $dir3 -Recurse -Filter "*.toml" -ErrorAction SilentlyContinue

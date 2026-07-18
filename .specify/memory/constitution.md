@@ -1,5 +1,134 @@
 <!--
 Sync Impact Report
+- Version change: 1.26.0 → 1.27.0
+- Modified principles: X. Trunk-Based Git Workflow with Self-Validating
+  Pull Requests — MINOR bump, materially expanded guidance (no renaming,
+  no removal).
+  - Directly requested by the maintainer: "always monitor this project's
+    pull requests to check whether they merged into main; on any error,
+    try to auto-fix it and make the necessary commits/push to correct
+    the PR."
+  - Extends this principle rather than creating a new one: Principle X
+    already required "a PR whose checks fail MUST be fixed (new commits
+    re-run the battery) or closed" — that clause named the *outcome*
+    but was silent on *who* does the fixing and *how actively* the PR
+    should be watched. This amendment closes that gap rather than
+    introducing a structurally separate concern (unlike Principle XXII's
+    addition earlier this same session, which added a genuinely new
+    mechanism — version markers, release-comparison — this is a
+    refinement of an existing clause in the same principle).
+  - New mandate: an agent that opens a PR (per `specjedi-implement`'s own
+    workflow) MUST treat "opened" as a checkpoint, not a finish line —
+    it MUST continue monitoring that PR's CI status, and on a failing
+    required check, MUST diagnose the actual failure from real job logs
+    (never guess from a job's name alone) before pushing a fix, per
+    Principle XX's existing grounded-output discipline. A genuine
+    root-cause fix MUST land as a new commit pushed to the same PR
+    branch — re-running the same validation battery this principle
+    already mandates — never a history-rewriting force-push unless the
+    fix genuinely requires one (e.g. reconciling a real merge conflict),
+    and that MUST be stated when it happens.
+  - New bound, to prevent a runaway unattended loop: the diagnose-and-fix
+    cycle MUST be bounded, not indefinite — once attempts stop
+    converging on a genuinely new root cause, the agent MUST stop and
+    report the remaining failure to the user rather than looping
+    silently forever.
+  - Explicit non-expansion: this amendment does not touch who may
+    *merge* a PR — the owner/non-owner approval split and the
+    self-approval-spoofing prohibition (both already in this principle,
+    unchanged) still govern that decision entirely. Auto-fixing a
+    failing check only gets a PR back to all-green; it never merges it
+    on its own.
+  - Grounded in this same session's own real practice, not a hypothetical:
+    specs/041-release-hooks-settings's PR #122 was found blocked by a
+    genuine `$LASTEXITCODE`-bleed bug in `Get-TrunkBranch`
+    (`scripts/install.ps1`) failing 3 unrelated Windows-native CI jobs;
+    diagnosed from actual job logs (not guessed), reproduced locally,
+    fixed with one targeted commit, and repushed — exactly the pattern
+    this amendment now names as the expected, standing behavior rather
+    than one-off initiative.
+- Added sections: none (extends Principle X's existing text)
+- Removed sections: none
+- Templates requiring updates: none — Constitution Check gates in
+  `plan-template.md` are derived dynamically per-feature, not statically
+  enumerated in the template itself.
+- Follow-up TODOs: none. `specjedi-implement/SKILL.md` gained a new Step
+  7.5 mirroring this mandate directly (the same "constitution states
+  policy, the skill that executes it carries the instruction" pattern
+  Principle XXI's own CLAUDE.md render-instruction already established);
+  `references/principle-traceability.md`'s row X updated in the same
+  pass. No script/CI changes required — this is agent-workflow policy,
+  not a new mechanism to build.
+-->
+
+<!--
+Sync Impact Report
+- Version change: 1.25.0 → 1.26.0
+- Added principles: XXII. Skill Freshness Validation & Update Awareness
+  — MINOR bump, new principle, no existing principle renamed or removed.
+  - Directly requested by the maintainer: "always validate, when
+    starting the specjedi-* skills context, whether the user is on the
+    latest version of the skill list, and give the user installed with
+    the skills the ability to run a script that automatically downloads
+    the release package and updates the specjedi-* skills."
+  - Deliberately a new principle rather than an extension of Principle
+    XXI (Session-Start Orientation): XXI governs a fixed three-part
+    orientation *payload* (banner/status/Yoda line); this principle adds
+    a genuinely new *mechanism* (version comparison against a published
+    GitHub Release, plus an update path) that happens to fire at the
+    same moment, the same distinction that already separates XI
+    (release cutting) from XVIII (installer) as separate principles
+    despite both touching "shipping the product."
+  - Explicitly reuses two mechanisms this project already shipped rather
+    than inventing new ones: the `SessionStart` hook contract Principle
+    XXI already establishes (not a second, competing hook), and the
+    `api.github.com/repos/<owner>/<repo>/releases/latest` lookup
+    `scripts/bootstrap-install.sh`/`.ps1` (specs/024-bootstrap-installer)
+    already performs with opportunistic `GITHUB_TOKEN` auth — per
+    Principle II's "avoid internal redundancy" discipline.
+  - Names one real, previously-undocumented gap this principle's own
+    mechanism requires closing before it can function at all: neither
+    `scripts/install.sh`/`.ps1` nor `scripts/bootstrap-install.sh`/`.ps1`
+    currently records which release produced a given installation — a
+    version marker to compare against does not yet exist. This gap is
+    named in the principle text itself, not left implicit, so the first
+    implementing feature knows its own starting line.
+  - Mandates fail-silent degradation (no network, no marker, rate-limited
+    API) per Principle XX's existing "an unconfirmed claim is worse than
+    no claim" discipline — this is an advisory check, and MUST NOT block,
+    error, or stall a session over it.
+  - No implementing mechanism exists yet as of this amendment — this is
+    a policy-only change; a future `specjedi-specify` → `specjedi-plan`
+    → `specjedi-tasks` → `specjedi-implement` run builds it, the same
+    sequence every other principle-driven capability in this project
+    followed (Principle II applies to building this, not to stating it,
+    same carve-out Principle XXI's own text already establishes).
+- Templates requiring updates: none — Constitution Check gates in
+  `plan-template.md` are derived dynamically per-feature from this file,
+  not statically enumerated in the template itself (confirmed by
+  inspection before this amendment was finalized).
+- Other files updated in this same amendment (propagation, not scope
+  creep): `.claude/skills/specjedi-govcheck/SKILL.md`'s own instruction
+  text said "Core Principle (I-XX)", already stale before this amendment
+  (21 principles existed, not 20, since Principle XXI shipped) —
+  corrected to "(I-XXII)" so the live instruction matches the live
+  principle count going forward. `references/principle-traceability.md`
+  gets a new XXII row, status Not started (no mechanism shipped yet).
+  Historical Sync Impact Report entries and `references/skill-roadmap.md`
+  changelog entries that say "20 Core Principles" are deliberately left
+  untouched — each is a dated, append-only record of what was true at
+  that entry's own timestamp, not a live claim to keep in sync.
+- Follow-up TODOs: the version-marker mechanism (what file, what format,
+  written by which script) is intentionally left to the implementing
+  feature's own `research.md`/`plan.md` rather than fixed here — this
+  amendment states the requirement precisely enough to be testable
+  without pre-designing the implementation, consistent with how this
+  constitution treats every other principle that leaves file-level
+  detail to the feature that builds it.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.24.1 → 1.25.0
 - Modified principles: XII. Star Wars-Flavored End-User Voice — Jedi
   Master Fluency — MINOR bump, materially expanded guidance (no
@@ -1148,6 +1277,26 @@ that judgment call belongs to the owner, not to `ci-gate`. This is a
 distinct, real reviewer (the owner) reviewing someone else's PR — not the
 self-approval spoofing the paragraph above forbids.
 
+**PRs the agent opens MUST be actively monitored to a terminal state, not
+abandoned at "opened."** Opening a PR (per `specjedi-implement`'s own
+workflow) is a checkpoint, not the end of the task. The agent MUST check
+that PR's CI status, and when a required check fails, MUST diagnose the
+actual failure from the real job logs — never guess from a job's name
+alone — before pushing any fix, per Principle XX's grounded-output
+discipline. A genuine root-cause fix MUST land as a new commit pushed to
+the same PR branch, re-running the same validation battery this
+principle already requires — never a history-rewriting force-push unless
+the fix genuinely requires one (e.g. reconciling a real merge conflict),
+and that MUST be stated when it happens, not done silently.
+
+This diagnose-and-fix loop MUST be bounded, not indefinite: once further
+attempts stop converging on a genuinely new root cause, the agent MUST
+stop and report the remaining failure to the user rather than looping
+unattended forever. This mandate governs getting a PR back to all-green
+only — it does not touch who may *merge* it: the owner/non-owner
+approval split and the self-approval-spoofing prohibition above still
+govern that decision entirely, unchanged.
+
 **Rationale**: Directly requested: every commit ships through a PR that the
 project validates and merges itself. The constraint against self-approval
 spoofing exists because the alternative is a known privilege-escalation
@@ -1685,6 +1834,63 @@ consistent with Principle XII's "recognizable by tone alone" goal but
 scoped tightly enough not to overwhelm every other interaction with the
 same inverted-syntax bit.
 
+### XXII. Skill Freshness Validation & Update Awareness
+
+Every session-start orientation (Principle XXI) MUST also answer a
+question a returning contributor has no other way to ask without leaving
+their editor: is the `specjedi-*` skill set installed in this project
+the latest one this project has published? A prior install MUST NOT be
+assumed current forever — the check MUST run, and its result MUST be
+surfaced plainly, every session, not just once at install time.
+
+**One mechanism, not a second one**: this check runs inside the same
+`SessionStart` hook Principle XXI already establishes — never a second,
+competing hook. It compares an on-disk version marker recorded at
+install time against the latest published GitHub Release tag, using the
+same `api.github.com/repos/<owner>/<repo>/releases/latest` lookup
+`scripts/bootstrap-install.sh`/`.ps1` (specs/024-bootstrap-installer)
+already performs, including that script's own opportunistic
+`GITHUB_TOKEN` authentication — never an independently-reimplemented
+version-lookup call.
+
+**A marker MUST exist to compare against**: as of this principle's
+adoption, neither `scripts/install.sh`/`.ps1` nor
+`scripts/bootstrap-install.sh`/`.ps1` records which release produced a
+given installation. The implementing feature MUST close this gap first
+— writing an installed-release marker (or an explicit "local checkout,
+not an installed release" sentinel when a user runs directly from a
+cloned repo rather than a packaged release) is a prerequisite for this
+principle's check to have anything to compare against, not an optional
+nice-to-have alongside it.
+
+**Advisory only — never block, never fail loudly, never guess**: this
+check MUST degrade silently to "no freshness line this session" whenever
+it cannot complete cleanly — no network access, no marker present (an
+install that predates this principle), a rate-limited or unreachable
+GitHub API. Per Principle XX's "grounded, honest output" discipline, an
+unconfirmed staleness claim is worse than none at all, and a session
+MUST NOT stall, retry indefinitely, or error over a check that exists
+purely to inform.
+
+**The update path MUST be the one that already exists**: when the
+installed marker is genuinely behind the latest release, the orientation
+output MUST name `scripts/bootstrap-install.sh`/`.ps1` — specs/024's
+already-shipped download-latest-release-and-install mechanism — as the
+one way to update. This principle MUST NOT invent a second update flow,
+and MUST NOT instruct a user to re-clone the whole repository when a
+one-line script already does the job.
+
+**Rationale**: Directly requested: a user who installed `specjedi-*`'s
+skills once has no ambient signal that a newer, improved release exists
+unless something in their own daily workflow tells them. The same
+session-start moment Principle XXI already claims for orientation is the
+natural, already-established place to also answer "am I current?" — this
+principle solves two halves of one problem (checking, and updating)
+where one half already has a real, shipped answer (specs/024's bootstrap
+installer) and the other half is a genuine, previously-undocumented gap
+(nothing records what was installed) that the implementing feature MUST
+close before the check can mean anything.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -1834,4 +2040,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.25.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-13
+**Version**: 1.27.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18

@@ -1,6 +1,6 @@
 ---
 name: specjedi-govcheck
-description: Strictly read-only per-PR/per-branch governance compliance checklist against all 20 Constitution Core Principles plus the Distribution & Ecosystem Standards and Development Workflow sections — three-state per-principle report (N/A / Compliant / Non-Compliant), any constitution conflict CRITICAL. Proactively self-invoked by specjedi-implement right before opening a PR; also runs standalone against the current branch or a named open PR.
+description: Strictly read-only per-PR/per-branch governance compliance checklist against all 22 Constitution Core Principles plus the Distribution & Ecosystem Standards and Development Workflow sections — three-state per-principle report (N/A / Compliant / Non-Compliant), any constitution conflict CRITICAL. Proactively self-invoked by specjedi-implement right before opening a PR; also runs standalone against the current branch or a named open PR.
 compatibility: Requires `git` (default local-branch-diff mode) and, for the named-PR mode, the `gh` CLI already used project-wide. Reads references/principle-traceability.md; writes nothing.
 ---
 
@@ -12,7 +12,7 @@ reports exactly what's there. Never editorializes about whether a rule
 itself is a good idea, only whether the change follows it.
 
 **Task**: given the current branch's diff against `main` (or a named open
-PR's diff), assess every Core Principle (I-XX) plus the Distribution &
+PR's diff), assess every Core Principle (I-XXII) plus the Distribution &
 Ecosystem Standards and Development Workflow sections as Not Applicable,
 Compliant, or Non-Compliant, mark any confirmed constitution conflict
 CRITICAL, and report — never edit anything.

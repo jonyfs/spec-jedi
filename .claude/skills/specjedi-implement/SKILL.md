@@ -59,6 +59,18 @@ whatever branch the target repo protects (Principle X).
    the repo's own supported mechanism (e.g. `gh pr merge --auto`) where
    available — whether that merge actually happens is the target repo's
    CI/branch-protection decision, never this skill's to claim or force.
+7.5. **Opening the PR is a checkpoint, not the finish line** (Constitution
+   Principle X, v1.27.0). Monitor the PR's CI status; on a failing
+   required check, diagnose the actual failure from the real job logs —
+   never guess from a job's name alone — before pushing a fix. A genuine
+   root-cause fix lands as a new commit on the same PR branch, re-running
+   the battery; never a history-rewriting force-push unless the fix
+   genuinely requires one (e.g. a real merge conflict), stated as such
+   when it happens. Bound this loop: once further attempts stop
+   converging on a genuinely new root cause, stop and report the
+   remaining failure to the user rather than looping unattended. This
+   governs getting the PR back to all-green only — merging itself stays
+   the repo's own decision, per Step 7 above.
 8. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-analyze` once a slice is shipped, to catch
    any drift between spec/plan/tasks and what just landed, plus

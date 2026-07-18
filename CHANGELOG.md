@@ -11,6 +11,24 @@ this file directly.
 
 ### Added
 
+- **SDD friction reduction** (feature 045) — real, cited community
+  pain-point research (GitHub `spec-kit` issues/discussions, engineering
+  blogs, academic papers) identified three distinct gaps in this
+  project's own `specjedi-*` pipeline, closed by extending five existing
+  skills rather than adding new ones. `specjedi-analyze` gains a
+  requirement-to-verification traceability check ("the missing testing
+  layer" — the single most heavily-corroborated complaint found),
+  classifying every FR/Acceptance Scenario Verified/Unverified/Not
+  Applicable against real evidence, plus reverse-direction orphaned-code
+  detection; `specjedi-implement` now self-invokes it before every
+  PR-open, alongside its existing `specjedi-govcheck` self-invoke.
+  `specjedi-skill-review` measures a reviewed skill's own token count
+  against Constitution Principle XIX's stated budget (previously
+  aspirational text with no check); `specjedi-plan` compares a new
+  feature's spec/plan size against this project's own real historical
+  median. `specjedi-quick` gains a `bugfix.md` artifact shape
+  (reproduction, root cause, fix, regression test) as a sibling to its
+  existing `quick.md`, sharing every quality gate identically.
 - **Skill freshness validation & update awareness** (feature 042,
   Constitution Principle XXII) — `scripts/install.sh`/`.ps1` now write
   an installed-release marker (`.specify/release-marker.json`) at

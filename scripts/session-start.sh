@@ -140,21 +140,30 @@ fi
 freshness_line=""
 marker="$repo_root/.specify/release-marker.json"
 if [ -f "$marker" ]; then
-  installed="$(grep -o '"installed_release":[[:space:]]*"[^"]*"' "$marker" 2>/dev/null \
-    | sed -E 's/.*"([^"]*)"$/\1/')" || true
-  if [ -n "$installed" ] && [ "$installed" != "local-checkout" ]; then
-    auth_header=()
-    if [ -n "${GITHUB_TOKEN:-}" ]; then
-      auth_header=(-H "Authorization: Bearer $GITHUB_TOKEN")
+  # Isolated in its own subshell, ending in an explicit `true`: no matter
+  # what fails inside (curl, grep, pipefail interaction from an empty
+  # response, etc.), the subshell itself always exits 0, so this can
+  # never propagate a nonzero status out to the rest of this script or
+  # to whatever invoked it. The outer `|| true` is a second, redundant
+  # layer of the same guarantee.
+  freshness_line="$( (
+    installed="$(grep -o '"installed_release":[[:space:]]*"[^"]*"' "$marker" 2>/dev/null \
+      | sed -E 's/.*"([^"]*)"$/\1/')"
+    if [ -n "$installed" ] && [ "$installed" != "local-checkout" ]; then
+      auth_header=()
+      if [ -n "${GITHUB_TOKEN:-}" ]; then
+        auth_header=(-H "Authorization: Bearer $GITHUB_TOKEN")
+      fi
+      response="$(curl -sSL --max-time 2 ${auth_header[@]+"${auth_header[@]}"} \
+        "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" 2>/dev/null)"
+      latest="$(printf '%s' "$response" | grep -m1 '"tag_name"' 2>/dev/null \
+        | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
+      if [ -n "$latest" ] && [ "$latest" != "$installed" ]; then
+        printf '%s' "Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
+      fi
     fi
-    response="$(curl -sSL --max-time 2 ${auth_header[@]+"${auth_header[@]}"} \
-      "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" 2>/dev/null || true)"
-    latest="$(printf '%s' "$response" | grep -m1 '"tag_name"' 2>/dev/null \
-      | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')" || true
-    if [ -n "$latest" ] && [ "$latest" != "$installed" ]; then
-      freshness_line="Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
-    fi
-  fi
+    true
+  ) 2>/dev/null )" || true
 fi
 
 # --- Assemble and emit ------------------------------------------------------

@@ -1482,10 +1482,19 @@ jobs:
           mkdir -p "$proj/scripts" "$proj/.specify"
           cp scripts/session-start.sh "$proj/scripts/session-start.sh"
 
-          latest="$(curl -sSL --max-time 5 https://api.github.com/repos/jonyfs/spec-jedi/releases/latest 2>/dev/null | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
+          latest="$(curl -sSL --max-time 5 https://api.github.com/repos/jonyfs/spec-jedi/releases/latest 2>/dev/null | grep -m1 '"tag_name"' | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')" || true
           if [ -n "$latest" ]; then
             printf '{"installed_release": "%s"}\n' "$latest" > "$proj/.specify/release-marker.json"
-            out="$(bash "$proj/scripts/session-start.sh")"
+            # `out=$(cmd)` under this job's own `set -e` would abort this
+            # step immediately if session-start.sh ever exited nonzero,
+            # skipping every check below it -- guard with `|| exit_code=$?`
+            # so a real regression is reported with full context instead
+            # of silently killing the step.
+            exit_code=0
+            out="$(bash "$proj/scripts/session-start.sh" 2>&1)" || exit_code=$?
+            if [ "$exit_code" -ne 0 ]; then
+              echo "FAIL: session-start.sh exited $exit_code on a current marker. Output:"; printf '%s\n' "$out"; exit 1
+            fi
             if printf '%s' "$out" | grep -q "Update available:"; then
               echo "FAIL: current marker produced a freshness line"; exit 1
             fi
@@ -1496,11 +1505,11 @@ jobs:
 
           echo '{"installed_release": "v0.0.0-network-blocked"}' > "$proj/.specify/release-marker.json"
           start=$(date +%s)
-          out="$(env http_proxy="http://127.0.0.1:1" https_proxy="http://127.0.0.1:1" bash "$proj/scripts/session-start.sh")"
-          exit_code=$?
+          exit_code=0
+          out="$(env http_proxy="http://127.0.0.1:1" https_proxy="http://127.0.0.1:1" bash "$proj/scripts/session-start.sh" 2>&1)" || exit_code=$?
           elapsed=$(( $(date +%s) - start ))
           if [ "$exit_code" -ne 0 ]; then
-            echo "FAIL: session-start.sh exited $exit_code with a blocked network"; exit 1
+            echo "FAIL: session-start.sh exited $exit_code with a blocked network. Output:"; printf '%s\n' "$out"; exit 1
           fi
           if printf '%s' "$out" | grep -q "Update available:"; then
             echo "FAIL: blocked-network state produced a freshness line"; exit 1

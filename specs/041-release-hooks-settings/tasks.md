@@ -218,72 +218,100 @@ behaves per its own classification.
 
 ### Wave 1: declarative-JSON-hook harnesses
 
-- [ ] T027 [P] [US2] Write a failing test: `gemini-cli` install produces
+- [x] T027 [P] [US2] Write a failing test: `gemini-cli` install produces
   a translated hook block inside `.gemini/settings.json` (not a copy of
   Claude Code's own `.claude/hooks/*.json` shape) — Acceptance Scenario
   2 (US2).
-- [ ] T028 [US2] Implement `install_hooks_gemini_cli()` in `scripts/
+- [x] T028 [US2] Implement `install_hooks_gemini_cli()` in `scripts/
   install.sh`, writing the translated hook into `.gemini/settings.json`
   per `research.md`'s Gemini CLI row (event name `BeforeTool`, same
   stdin/stdout JSON shape as Claude Code's own hooks). Depends on T007,
   T012.
-- [ ] T029 [P] [US2] Mirror T028 in `scripts/install.ps1`.
-- [ ] T030 [P] [US2] Write a failing test: `antigravity` install
+- [x] T029 [P] [US2] Mirror T028 in `scripts/install.ps1`.
+- [x] T030 [P] [US2] Write a failing test: `antigravity` install
   produces a translated hook in Antigravity's own confirmed settings
   location (per `research.md`) — Acceptance Scenario 2 (US2).
-- [ ] T031 [US2] Implement `install_hooks_antigravity()` in `scripts/
+- [x] T031 [US2] Implement `install_hooks_antigravity()` in `scripts/
   install.sh`. Depends on T007, T012.
-- [ ] T032 [P] [US2] Mirror T031 in `scripts/install.ps1`.
-- [ ] T033 [P] [US2] Write a failing test: `codex-cli` install produces
+- [x] T032 [P] [US2] Mirror T031 in `scripts/install.ps1`.
+- [x] T033 [P] [US2] Write a failing test: `codex-cli` install produces
   a `hooks.json` translation, and install output explicitly tells the
   user to run `/hooks` inside Codex CLI to trust it before it's active
   (`plan.md`'s Codex CLI trust-workflow note) — Acceptance Scenario 2
   (US2) plus Principle XX.
-- [ ] T034 [US2] Implement `install_hooks_codex_cli()` in `scripts/
+- [x] T034 [US2] Implement `install_hooks_codex_cli()` in `scripts/
   install.sh`, including the trust-workflow output message. Depends on
   T007, T012.
-- [ ] T035 [P] [US2] Mirror T034 in `scripts/install.ps1`.
-- [ ] T036 [US2] Add `install-test-shared-hooks-wave1` job to `.github/
+- [x] T035 [P] [US2] Mirror T034 in `scripts/install.ps1`.
+- [x] T036 [US2] Add `install-test-shared-hooks-wave1` job to `.github/
   workflows/validate.yml` (3-OS matrix, `gemini-cli`/`antigravity`/
   `codex-cli`), wired into `ci-gate`. Depends on T028-T035.
-- [ ] T037 [US2] Run T027/T030/T033 (bash and PowerShell) and confirm
+- [x] T037 [US2] Run T027/T030/T033 (bash and PowerShell) and confirm
   all pass.
 
+  **Design corrections made during implementation**: (1) `opencode` and
+  `warp` had no `--harness` value at all in `install.sh`/`.ps1` prior to
+  this feature (research.md's own note: they "piggyback on claude-code/
+  codex-cli with no separate flag" for the *skills* install path only).
+  T038/T044 require a real `--harness opencode`/`--harness warp`
+  invocation, so both were added as first-class harness values
+  (`skills_dst_rel=".claude/skills"`, matching what already satisfies
+  `opencode-compatibility`/`warp-compatibility`'s own CI checks). (2) Warp
+  discovery: `docs.warp.dev/terminal/settings/` confirms `settings.toml`
+  is a single GLOBAL user-level file, never project-scoped — writing
+  shareable permissions there from a project-scoped `install.sh
+  TARGET_DIR` run would mutate state outside `TARGET_DIR`, a materially
+  more invasive action than every other harness this installer touches
+  (Principle XVIII). `install_permissions_warp()` prints an honest
+  advisory instead of writing to a file outside the target project. (3)
+  Antigravity's own hooks.json schema was never independently confirmed
+  beyond a marketing announcement (research.md's own citation gap) —
+  `install_hooks_antigravity()` reuses the confirmed Gemini CLI
+  `BeforeTool` contract per a documented, cited inference (shared
+  `~/.gemini/` config namespace), not a separately-confirmed
+  Antigravity-native schema — flagged in code comments per Principle XX
+  rather than silently asserted. (4) Zed's exact `tool_permissions` tool
+  key (`"terminal"`) and Amazon Q's `toolsSettings` sub-schema for
+  fs_read/fs_write path exclusions were not fully confirmed in available
+  documentation; both are implemented against only the confirmed portions
+  of each schema, with the gap documented inline rather than guessed.
 
 ### Wave 2: permissions-only harnesses
 
-- [ ] T038 [P] [US2] Write a failing test: `opencode` install produces
+- [x] T038 [P] [US2] Write a failing test: `opencode` install produces
   translated `allow`/`ask`/`deny` rules in `opencode.json` (per
   `research.md`'s OpenCode row) — no hook translation attempted for
   this harness.
-- [ ] T039 [US2] Implement `install_permissions_opencode()` in `scripts/
+- [x] T039 [US2] Implement `install_permissions_opencode()` in `scripts/
   install.sh`. Depends on T007, T012.
-- [ ] T040 [P] [US2] Mirror T039 in `scripts/install.ps1`.
-- [ ] T041 [P] [US2] Write a failing test: `zed` install produces
+- [x] T040 [P] [US2] Mirror T039 in `scripts/install.ps1`.
+- [x] T041 [P] [US2] Write a failing test: `zed` install produces
   translated tool-permission settings in Zed's own confirmed location.
-- [ ] T042 [US2] Implement `install_permissions_zed()` in `scripts/
+- [x] T042 [US2] Implement `install_permissions_zed()` in `scripts/
   install.sh`. Depends on T007, T012.
-- [ ] T043 [P] [US2] Mirror T042 in `scripts/install.ps1`.
-- [ ] T044 [P] [US2] Write a failing test: `warp` install produces
+- [x] T043 [P] [US2] Mirror T042 in `scripts/install.ps1`.
+- [x] T044 [P] [US2] Write a failing test: `warp` install produces
   translated agent-profile permissions in Warp's own confirmed location.
-- [ ] T045 [US2] Implement `install_permissions_warp()` in `scripts/
-  install.sh`. Depends on T007, T012.
-- [ ] T046 [P] [US2] Mirror T045 in `scripts/install.ps1`.
-- [ ] T047 [P] [US2] Write a failing test: `amazon-q` install produces
+- [x] T045 [US2] Implement `install_permissions_warp()` in `scripts/
+  install.sh` — resolved as an honest advisory-only message, not a file
+  write (see Wave 1's own "Design corrections" note above: Warp's only
+  confirmed settings file is global, not project-scoped).
+- [x] T046 [P] [US2] Mirror T045 in `scripts/install.ps1`.
+- [x] T047 [P] [US2] Write a failing test: `amazon-q` install produces
   translated `allowedTools`/`toolsSettings` in the target's custom-agent
   JSON config.
-- [ ] T048 [US2] Implement `install_permissions_amazon_q()` in `scripts/
+- [x] T048 [US2] Implement `install_permissions_amazon_q()` in `scripts/
   install.sh`. Depends on T007, T012.
-- [ ] T049 [P] [US2] Mirror T048 in `scripts/install.ps1`.
-- [ ] T050 [US2] Add `install-test-shared-hooks-wave2` job to `.github/
+- [x] T049 [P] [US2] Mirror T048 in `scripts/install.ps1`.
+- [x] T050 [US2] Add `install-test-shared-hooks-wave2` job to `.github/
   workflows/validate.yml` (3-OS matrix, `opencode`/`zed`/`warp`/
   `amazon-q`), wired into `ci-gate`. Depends on T039-T049.
-- [ ] T051 [US2] Run T038/T041/T044/T047 (bash and PowerShell) and
+- [x] T051 [US2] Run T038/T041/T044/T047 (bash and PowerShell) and
   confirm all pass.
 
 ### No-mechanism harnesses (clean skip, no new code)
 
-- [ ] T052 [P] [US2] Write a failing test: installing for `cline` (one
+- [x] T052 [P] [US2] Write a failing test: installing for `cline` (one
   representative of the 9 no-mechanism harnesses: `cline`, `continue`,
   `aider`, `jetbrains-ai`, `tabnine`, `replit`, `devin`, `cody`, `trae`)
   produces a successful skills install with zero hooks/settings-related
@@ -291,9 +319,11 @@ behaves per its own classification.
   already passes with NO new code (FR-005's existing behavior already
   covers it) — if it fails, that's a regression to fix, not a feature to
   build.
-- [ ] T053 [US2] Confirm T052 passes as-is. No implementation task
+- [x] T053 [US2] Confirm T052 passes as-is. No implementation task
   follows — this is the explicit "clean skip costs nothing" check,
-  matching `plan.md`'s own Scale/Scope reasoning.
+  matching `plan.md`'s own Scale/Scope reasoning. Verified against all 9
+  no-mechanism harnesses locally (not just `cline`): zero hooks/
+  permissions output for every one, no regression.
 
 **Checkpoint**: All 19 non-Claude-Code harnesses now behave per their
 `research.md` classification — Wave 1/2 harnesses get a real,
@@ -305,18 +335,23 @@ and `plan.md`, not silently absent from this task list either.
 
 ## Phase 5: Polish & Cross-Cutting Concerns
 
-- [ ] T054 [P] Add a CHANGELOG.md entry for this feature, naming the
+- [x] T054 [P] Add a CHANGELOG.md entry for this feature, naming the
   shareable hooks/settings shipped and the Wave 1/2 harnesses covered,
   following this project's existing Keep-a-Changelog format.
-- [ ] T055 [P] Confirm `references/harness-capability-notes.md`'s scope
+- [x] T055 [P] Confirm `references/harness-capability-notes.md`'s scope
   note (added during the plan phase) still accurately reflects what
   shipped — update if Wave 1/2's actual scope changed during
-  implementation.
-- [ ] T056 Self-invoke `specjedi-govcheck` against the full branch diff
-  before opening the PR, per `specjedi-implement`'s own Step 6.5.
-- [ ] T057 Full end-to-end run of `.claude/hooks/test-hooks.sh`/`.ps1`
+  implementation. Added a 2026-07-17 implementation-status update
+  confirming actual shipped scope (7 of 19 researched harnesses) matches
+  research.md's own Decision exactly.
+- [x] T056 Self-invoke `specjedi-govcheck` against the full branch diff
+  before opening the PR, per `specjedi-implement`'s own Step 6.5. Result:
+  CLEAN, 0 Non-Compliant, 0 CRITICAL.
+- [x] T057 Full end-to-end run of `.claude/hooks/test-hooks.sh`/`.ps1`
   plus the two new CI job families (T025, T036, T050) — confirm nothing
-  regressed from Phase 1's baseline (T006).
+  regressed from Phase 1's baseline (T006). All passed locally (bash and
+  PowerShell); Wave 1/2 CI scenarios also verified locally against
+  `install.sh` before being committed.
 
 ---
 

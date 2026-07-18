@@ -497,6 +497,22 @@ case "$harness" in
     bridge_mode="cody"
     bridge_dst_rel=".vscode/cody.json"
     ;;
+  opencode)
+    # specs/041-release-hooks-settings: previously "piggybacked" on
+    # claude-code/codex-cli's own skills output with no dedicated flag --
+    # both already satisfy OpenCode's scanning convention (see
+    # opencode-compatibility's own CI job, which verifies both paths). A
+    # real --harness opencode value is needed now that this feature adds
+    # OpenCode-native permissions translation (opencode.json), which has
+    # no equivalent reachable under claude-code/codex-cli's own harness
+    # value.
+    skills_dst_rel=".claude/skills"
+    ;;
+  warp)
+    # Same reasoning as opencode above -- see warp-compatibility's own CI
+    # job; Warp's Skills system already scans .claude/skills/ directly.
+    skills_dst_rel=".claude/skills"
+    ;;
   *)
     echo "🔭 '$harness' isn't a recognized harness. See --help for the full"
     echo "list of 20 supported values (Constitution Principle III)."
@@ -1021,6 +1037,437 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
       echo "  ✅ Wired dangerous-command-guard.sh into $(basename "$target_settings")'s PreToolUse hooks"
     fi
   fi
+fi
+
+# specs/041-release-hooks-settings (User Story 2): shared non-destructive
+# single-top-level-key JSON merge -- the exact same brace-balance-check-
+# and-slice algorithm update_shared_settings already uses for statusLine/
+# permissions, generalized once a fourth target settings file (Gemini/
+# Antigravity/OpenCode/Zed) needed the identical merge -- a real, repeated
+# pattern now, not a premature abstraction (plan.md's own "third/fourth
+# harness proves a pattern" reasoning for when to factor).
+merge_json_key() {
+  local target="$1" key_check="$2" block="$3" ok_message="$4"
+  mkdir -p "$(dirname "$target")"
+
+  if [ ! -f "$target" ]; then
+    printf '{\n%s\n}\n' "$block" > "$target"
+    echo "  ✅ $(basename "$target") created ($ok_message)"
+    return
+  fi
+
+  local content
+  content="$(cat "$target"; echo x)"
+  content="${content%x}"
+
+  case "$content" in
+    *"$key_check"*)
+      echo "  ℹ️  $(basename "$target") already has this key — leaving as-is."
+      return
+      ;;
+  esac
+
+  content="$(printf '%s' "$content" | sed -e 's/[[:space:]]*$//')"
+  local open_count close_count
+  open_count="$(grep -o '{' <<<"$content" | wc -l | tr -d ' ')"
+  close_count="$(grep -o '}' <<<"$content" | wc -l | tr -d ' ')"
+  if [ "$open_count" != "$close_count" ] || [[ "$content" != *"}" ]]; then
+    echo "FAIL: $target has unbalanced braces ($open_count '{' vs $close_count '}') — not valid JSON, refusing to guess. Fix it manually and re-run."
+    exit 1
+  fi
+  local body="${content%\}}"
+  body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+
+  if [[ "$body" == *"{" ]]; then
+    printf '%s\n%s\n}\n' "$body" "$block" > "$target"
+  else
+    printf '%s,\n%s\n}\n' "$body" "$block" > "$target"
+  fi
+  echo "  ✅ $(basename "$target") updated ($ok_message)"
+}
+
+# specs/041-release-hooks-settings (User Story 2): builds the same
+# branch|branch:branch case-pattern list detect_trunk_branch's caller
+# already builds inline for claude-code (User Story 1) -- factored out
+# here so every Wave 1 harness needing the identical pattern doesn't
+# repeat the loop.
+build_trunk_pattern() {
+  local trunk_branch="$1" pattern="" b
+  for b in $trunk_branch; do
+    if [ -n "$pattern" ]; then
+      pattern="${pattern}|${b}|${b}:${b}"
+    else
+      pattern="${b}|${b}:${b}"
+    fi
+  done
+  printf '%s' "$pattern"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): translated
+# dangerous-command-guard.sh for a BeforeTool-shaped hook contract --
+# confirmed for Gemini CLI at geminicli.com/docs/hooks/reference/: stdin
+# carries tool_input.command, stdout is {"decision":"deny","reason":"..."}
+# with exit code 2 to block -- NOT Claude Code's own hookSpecificOutput/
+# permissionDecision shape (Acceptance Scenario 2, US2: a real
+# translation, not a copy). Also used for Antigravity: its own hooks.json
+# lives under the same ~/.gemini/ namespace as Gemini CLI's (community-
+# confirmed path ~/.gemini/antigravity-cli/hooks.json), a real signal it
+# shares the same hook engine/contract -- documented here as a reasoned
+# inference, not a separately-confirmed Antigravity-native schema
+# (Principle XX). Detection logic itself (rm -rf root/home, force-push to
+# trunk, reading real secret files) is otherwise unchanged from the
+# Claude Code original.
+render_gemini_style_guard() {
+  local trunk_pattern="$1"
+  cat <<EOF
+#!/usr/bin/env bash
+# Translated from .claude/hooks/dangerous-command-guard.sh (specs/
+# 041-release-hooks-settings, User Story 2) for a BeforeTool-shaped hook
+# contract: stdin carries tool_input.command, stdout is
+# {"decision":"deny","reason":"..."} with exit code 2 to block.
+set -euo pipefail
+
+input="\$(cat)"
+command="\$(printf '%s' "\$input" | grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed -E 's/.*"command"[[:space:]]*:[[:space:]]*"([^"]*)".*/\\1/')"
+
+[ -n "\$command" ] || exit 0
+
+deny() {
+  printf '{"decision":"deny","reason":"%s"}\n' "\$1"
+  exit 2
+}
+
+set -f
+# shellcheck disable=SC2206
+words=(\$command)
+set +f
+
+has_rm=0
+has_recursive_force=0
+has_git=0
+has_push=0
+has_force_flag=0
+has_main_or_master=0
+read_cmd=0
+
+for w in "\${words[@]}"; do
+  case "\$w" in
+    rm) has_rm=1 ;;
+    git) has_git=1 ;;
+    push) has_push=1 ;;
+    --force|--force-with-lease|-f) has_force_flag=1 ;;
+    ${trunk_pattern}) has_main_or_master=1 ;;
+    cat|head|tail|less|more) read_cmd=1 ;;
+    --*) : ;;
+    -*)
+      body="\${w#-}"
+      case "\$body" in
+        *[rR]*) case "\$body" in *f*) has_recursive_force=1 ;; esac ;;
+      esac
+      ;;
+  esac
+  if [ "\$has_rm" -eq 1 ] && [ "\$has_recursive_force" -eq 1 ]; then
+    case "\$w" in
+      /|/\*) deny "Blocked: rm -rf targeting the filesystem root." ;;
+      "~"|'\$HOME'|'\${HOME}') deny "Blocked: rm -rf targeting the home directory." ;;
+    esac
+  fi
+done
+
+if [ "\$has_git" -eq 1 ] && [ "\$has_push" -eq 1 ] && [ "\$has_force_flag" -eq 1 ] && [ "\$has_main_or_master" -eq 1 ]; then
+  deny "Blocked: force-push to the trunk branch. This project's own git-workflow discipline forbids force-pushing the trunk branch."
+fi
+
+if [ "\$read_cmd" -eq 1 ]; then
+  for w in "\${words[@]}"; do
+    base="\$(basename "\$w" 2>/dev/null || printf '%s' "\$w")"
+    case "\$base" in
+      .env.example|.env.sample|.env.template) continue ;;
+      .env|id_rsa|id_ed25519)
+        deny "Blocked: reading what looks like a real secret/credential file."
+        ;;
+      *.pem)
+        deny "Blocked: reading what looks like a real secret/credential file."
+        ;;
+    esac
+  done
+fi
+
+exit 0
+EOF
+}
+
+install_hooks_gemini_cli() {
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block
+  trunk_branch="$(detect_trunk_branch "$target_dir")"
+  trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
+
+  target_hooks_dir="$target_dir/.gemini/hooks"
+  mkdir -p "$target_hooks_dir"
+  guard_script="$target_hooks_dir/dangerous-command-guard.sh"
+  render_gemini_style_guard "$trunk_pattern" > "$guard_script"
+  chmod +x "$guard_script"
+  echo "  ✅ dangerous-command-guard.sh (Gemini CLI translation, protecting: $trunk_branch)"
+
+  hooks_block='  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .gemini/hooks/dangerous-command-guard.sh"
+          }
+        ]
+      }
+    ]
+  }'
+  merge_json_key "$target_dir/.gemini/settings.json" '"hooks"' "$hooks_block" "BeforeTool hook wired"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): Antigravity's
+# own hooks.json schema was not independently confirmed beyond a marketing
+# announcement (research.md's own citation) -- this reuses the confirmed
+# Gemini CLI BeforeTool contract per render_gemini_style_guard's own
+# documented reasoning (shared ~/.gemini/ config namespace), targeting
+# Antigravity's confirmed project-level path <project_root>/.agents/
+# hooks.json (matching this installer's own existing .agents/skills
+# convention for the same harness).
+install_hooks_antigravity() {
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block
+  trunk_branch="$(detect_trunk_branch "$target_dir")"
+  trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
+
+  target_hooks_dir="$target_dir/.agents/hooks"
+  mkdir -p "$target_hooks_dir"
+  guard_script="$target_hooks_dir/dangerous-command-guard.sh"
+  render_gemini_style_guard "$trunk_pattern" > "$guard_script"
+  chmod +x "$guard_script"
+  echo "  ✅ dangerous-command-guard.sh (Antigravity translation, protecting: $trunk_branch)"
+
+  hooks_block='  "hooks": {
+    "BeforeTool": [
+      {
+        "matcher": "run_shell_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .agents/hooks/dangerous-command-guard.sh"
+          }
+        ]
+      }
+    ]
+  }'
+  merge_json_key "$target_dir/.agents/hooks.json" '"hooks"' "$hooks_block" "hooks wired (schema inferred shared with Gemini CLI — see research.md)"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 1): Codex CLI's own
+# hooks.json schema is confirmed structurally identical to Claude Code's
+# own (matcher: "Bash", command-type hooks array — learn.chatgpt.com/docs/
+# hooks) so this reuses the exact same proven trunk-substitution technique
+# as the claude-code (User Story 1) block above, just targeting .codex/
+# instead of .claude/. The trust-workflow message is required (plan.md's
+# Codex CLI trust-workflow note, Principle XX): the installer cannot
+# pre-approve a hook inside Codex CLI's own trust store.
+install_hooks_codex_cli() {
+  local trunk_branch trunk_pattern target_hooks_dir hooks_json
+  trunk_branch="$(detect_trunk_branch "$target_dir")"
+  trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
+
+  target_hooks_dir="$target_dir/.codex/hooks"
+  mkdir -p "$target_hooks_dir"
+  sed "s@main|master|main:main|master:master) has_main_or_master=1 ;;@${trunk_pattern}) has_main_or_master=1 ;;@" \
+    "$repo_root/.claude/hooks/dangerous-command-guard.sh" > "$target_hooks_dir/dangerous-command-guard.sh"
+  chmod +x "$target_hooks_dir/dangerous-command-guard.sh"
+  echo "  ✅ dangerous-command-guard.sh (Codex CLI translation, protecting: $trunk_branch)"
+
+  hooks_json="$target_dir/.codex/hooks.json"
+  if [ ! -f "$hooks_json" ]; then
+    mkdir -p "$(dirname "$hooks_json")"
+    cat > "$hooks_json" <<'EOF'
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .codex/hooks/dangerous-command-guard.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+EOF
+    echo "  ✅ .codex/hooks.json created (PreToolUse -> dangerous-command-guard.sh)"
+  elif ! grep -q "dangerous-command-guard" "$hooks_json"; then
+    echo "  ℹ️  .codex/hooks.json already exists — add dangerous-command-guard.sh to its PreToolUse array manually (${target_hooks_dir}/dangerous-command-guard.sh), not overwritten automatically."
+  else
+    echo "  ℹ️  .codex/hooks.json already references dangerous-command-guard — leaving as-is."
+  fi
+
+  echo "  ⚠️  Codex CLI requires explicit trust: run /hooks inside Codex CLI and"
+  echo "     approve dangerous-command-guard.sh before it actually runs — the"
+  echo "     installer cannot pre-approve a hook inside Codex CLI's own trust"
+  echo "     store (developers.openai.com/codex/hooks)."
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): OpenCode's own
+# permission schema is confirmed at opencode.ai/docs/permissions/ —
+# top-level "permission" key, per-tool allow/ask/deny rules, last-match-
+# wins. No hook translation attempted (research.md classifies OpenCode's
+# hooks as plugin-code-only, not a clean mapping for this feature's
+# shareable content).
+install_permissions_opencode() {
+  local permission_block
+  permission_block='  "permission": {
+    "bash": {
+      "git status": "allow",
+      "git diff *": "allow",
+      "git add *": "allow",
+      "git commit *": "allow",
+      "git push *": "allow",
+      "git pull *": "allow",
+      "git log *": "allow"
+    },
+    "read": {
+      ".env": "deny",
+      ".env.*": "deny",
+      "secrets/**": "deny",
+      "config/credentials.json": "deny"
+    }
+  }'
+  merge_json_key "$target_dir/opencode.json" '"permission"' "$permission_block" "git-aware permissions added"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Zed's own
+# tool-permission mechanism (agent.tool_permissions, always_allow/
+# always_deny/always_confirm rules with regex patterns) is confirmed at
+# zed.dev/docs/ai/tool-permissions; project-level settings live at
+# .zed/settings.json per Zed's documented settings hierarchy. The
+# "terminal" tool key is a reasoned inference (Zed's own shell-execution
+# tool), not independently re-confirmed against a full JSON example —
+# documented here per Principle XX rather than silently asserted.
+install_permissions_zed() {
+  local agent_block
+  agent_block='  "agent": {
+    "tool_permissions": {
+      "terminal": {
+        "always_allow": [
+          "git status",
+          "git diff .*",
+          "git add .*",
+          "git commit .*",
+          "git push .*",
+          "git pull .*",
+          "git log .*"
+        ]
+      }
+    }
+  }'
+  merge_json_key "$target_dir/.zed/settings.json" '"agent"' "$agent_block" "tool_permissions added — zed.dev/docs/ai/tool-permissions"
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Warp
+# discovery — docs.warp.dev/terminal/settings/ confirms settings.toml is
+# a single GLOBAL user-level file (~/.warp/settings.toml or platform
+# equivalent), never a project-scoped one. Writing shareable per-project
+# permissions there from a project-scoped `install.sh TARGET_DIR` run
+# would mutate state far outside TARGET_DIR — a materially different,
+# more invasive action than every other harness this installer touches
+# (Constitution Principle XVIII's zero-footprint discipline). This
+# installer prints an honest advisory instead of writing to a file
+# outside the target project, matching FR-005's "never claim installed
+# where it wasn't" discipline for a mechanism that exists but isn't
+# safely reachable from here.
+install_permissions_warp() {
+  echo "  ℹ️  Warp stores agent permissions in a single global"
+  echo "     ~/.warp/settings.toml (or platform equivalent) — there is no"
+  echo "     project-scoped permissions file for this installer to write"
+  echo "     into (docs.warp.dev/terminal/settings/). Configure allow/ask"
+  echo "     autonomy for git commands yourself under Settings > AI >"
+  echo "     Agents > Permissions."
+}
+
+# specs/041-release-hooks-settings (User Story 2, Wave 2): Amazon Q
+# Developer CLI's custom-agent JSON schema (name/description/prompt/
+# tools/allowedTools/toolsSettings) is confirmed at aws.github.io/
+# amazon-q-developer-cli/agent-format.html; .amazonq/cli-agents/ is the
+# documented discovery directory. Only fs_read is pre-approved here —
+# execute_bash/fs_write intentionally left out of allowedTools (still
+# prompt per use) because toolsSettings' sub-schema for excluding specific
+# paths/commands (an fs_read/fs_write "denied paths" equivalent to specs/
+# 040's secrets deny-list) was not confirmed in the fetched documentation;
+# guessing an unconfirmed sub-key would violate Principle XX.
+install_permissions_amazon_q() {
+  local agents_dir agent_file
+  agents_dir="$target_dir/.amazonq/cli-agents"
+  mkdir -p "$agents_dir"
+  agent_file="$agents_dir/spec-jedi-shared.json"
+  if [ -f "$agent_file" ]; then
+    echo "  ℹ️  .amazonq/cli-agents/spec-jedi-shared.json already exists — leaving as-is."
+    return
+  fi
+  cat > "$agent_file" <<'EOF'
+{
+  "name": "spec-jedi-shared",
+  "description": "Shareable git-aware tool permissions installed by Spec Jedi (specs/041-release-hooks-settings).",
+  "prompt": "You are a general-purpose coding assistant.",
+  "tools": ["fs_read", "fs_write", "execute_bash"],
+  "allowedTools": ["fs_read"],
+  "toolsSettings": {}
+}
+EOF
+  echo "  ✅ .amazonq/cli-agents/spec-jedi-shared.json created (fs_read pre-approved; execute_bash/fs_write still prompt per use)"
+}
+
+# specs/041-release-hooks-settings (User Story 2): Wave 1 (declarative
+# JSON hooks) and Wave 2 (permissions-only) per-harness translations —
+# research.md's Full/Partial classifications. Never runs for the 9
+# no-mechanism harnesses (FR-005's existing clean-skip already covers
+# them — no new code path needed, T052/T053) or the 3 explicitly deferred
+# Full harnesses (Cursor/Windsurf/Copilot — different hook dialects,
+# follow-up feature per research.md's own Decision).
+if [ "$install_shared_hooks" -eq 1 ]; then
+  case "$harness" in
+    gemini-cli)
+      echo
+      echo "🛡️  Installing shareable hooks (Gemini CLI translation)..."
+      install_hooks_gemini_cli
+      ;;
+    antigravity)
+      echo
+      echo "🛡️  Installing shareable hooks (Antigravity translation)..."
+      install_hooks_antigravity
+      ;;
+    codex-cli)
+      echo
+      echo "🛡️  Installing shareable hooks (Codex CLI translation)..."
+      install_hooks_codex_cli
+      ;;
+    opencode)
+      echo
+      echo "🔐 Installing shareable permissions (OpenCode translation)..."
+      install_permissions_opencode
+      ;;
+    zed)
+      echo
+      echo "🔐 Installing shareable permissions (Zed translation)..."
+      install_permissions_zed
+      ;;
+    warp)
+      echo
+      echo "🔐 Shareable permissions (Warp)..."
+      install_permissions_warp
+      ;;
+    amazon-q)
+      echo
+      echo "🔐 Installing shareable permissions (Amazon Q Developer translation)..."
+      install_permissions_amazon_q
+      ;;
+  esac
 fi
 
 echo

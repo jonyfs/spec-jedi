@@ -24,6 +24,20 @@ implementation — including a genuinely rough, one-line starting point. If
 doesn't exist yet, but suggest running `specjedi-constitution` first as the
 next step once the spec is done.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_specify` (parity with `speckit-specify`'s own
+identical check, Constitution Principle XV migration-readiness work,
+specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Steps
 
 1. **Understand the idea.** If it's already detailed, extract the shape
@@ -49,6 +63,11 @@ next step once the spec is done.
    Don't invent detail that wasn't given and isn't a safe default.
 6. **Define measurable success criteria** — technology-agnostic, numeric or
    otherwise checkable, never "the system should work well."
+6.5. **Check for after-hook dispatch** before reporting completion: same
+   rule set as the Pre-flight hook check above, this time against
+   `hooks.after_specify` — surface optional hooks, execute mandatory
+   ones and wait for their result, stay silent when nothing is
+   registered.
 7. **Offer the next step(s) as a short bulleted list** (Principle XIV): if
    any `NEEDS CLARIFICATION` markers remain, `specjedi-clarify` as the
    primary option; otherwise `specjedi-plan` to move to technical planning.

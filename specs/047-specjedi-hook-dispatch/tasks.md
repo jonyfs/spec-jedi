@@ -31,7 +31,7 @@ Single repository. All paths are repo-root-relative, under `.claude/skills/`.
 
 **Purpose**: Re-confirm the pre-edit token baseline immediately before editing, since plan.md's baseline was captured slightly earlier in this same session.
 
-- [ ] T001 Re-run `wc -c` against all 9 target `SKILL.md` files, confirm each still matches plan.md's captured baseline table (no drift since the plan was written)
+- [x] T001 Re-run `wc -c` against all 9 target `SKILL.md` files, confirm each still matches plan.md's captured baseline table (no drift since the plan was written) — confirmed identical: 7648/8733/7418/9928/6826/11417/10561/7358/7388
 
 ---
 
@@ -41,7 +41,7 @@ Single repository. All paths are repo-root-relative, under `.claude/skills/`.
 
 **⚠️ CRITICAL**: No skill edit in Phase 3+ may begin until this reference text is confirmed.
 
-- [ ] T002 Re-read `speckit-specify/SKILL.md`'s "Pre-Execution Checks" and "Mandatory Post-Execution Hooks" sections and `speckit-plan/SKILL.md`'s equivalent sections in full, confirming the exact rule set to adapt into all 9 `specjedi-*` skills (missing/malformed-YAML handling, `enabled: false` filtering, non-empty-`condition` skipping, optional-vs-mandatory dispatch output format) — this is the single source of truth research.md Decision 1 references
+- [x] T002 Re-read `speckit-specify/SKILL.md`'s "Pre-Execution Checks" and "Mandatory Post-Execution Hooks" sections and `speckit-plan/SKILL.md`'s equivalent sections in full, confirming the exact rule set to adapt into all 9 `specjedi-*` skills (missing/malformed-YAML handling, `enabled: false` filtering, non-empty-`condition` skipping, optional-vs-mandatory dispatch output format) — this is the single source of truth research.md Decision 1 references
 
 **Checkpoint**: Reference text confirmed — skill edits can now begin.
 
@@ -55,10 +55,10 @@ Single repository. All paths are repo-root-relative, under `.claude/skills/`.
 
 ### Implementation for User Story 1
 
-- [ ] T003 [P] [US1] Add `before_specify`/`after_specify` hook-check steps to `.claude/skills/specjedi-specify/SKILL.md`'s Step-by-step section (new first step + new step before the existing next-step offer), per research.md Decision 1's insertion pattern (depends on T001, T002)
-- [ ] T004 [P] [US1] Add `before_plan`/`after_plan` hook-check steps to `.claude/skills/specjedi-plan/SKILL.md`'s Step-by-step section, same pattern (depends on T001, T002)
-- [ ] T005 [US1] Real dry-run: simulate `specjedi-specify` and `specjedi-plan` running against this project's own actual `.specify/extensions.yml` (which has real `after_specify`/`after_plan` hooks registered to `speckit.agent-context.update`, both optional) — confirm both are detected and surfaced in the same optional-hook format `speckit-specify`/`speckit-plan` themselves already produce (Acceptance Scenarios 1-2) (depends on T003, T004)
-- [ ] T006 [US1] Confirm a stage with no registered hook (e.g., `before_specify`, which has no entry in `.specify/extensions.yml` today) produces zero visible output change when `specjedi-specify` runs (Acceptance Scenario 3) (depends on T003)
+- [x] T003 [P] [US1] Added `before_specify`/`after_specify` hook-check to `.claude/skills/specjedi-specify/SKILL.md`: new "## Pre-flight hook check" section before "## Steps", and a new decimal Step 6.5 before the existing Step 7 next-step offer (depends on T001, T002)
+- [x] T004 [P] [US1] Added `before_plan`/`after_plan` hook-check to `.claude/skills/specjedi-plan/SKILL.md`: new "## Pre-flight hook check" section before "## Step-by-step", and a new decimal Step 5.6 (fitting alongside the existing Step 5.5) before the existing Step 6 report/next-step offer (depends on T001, T002)
+- [x] T005 [US1] Real dry-run against this project's own actual `.specify/extensions.yml`: both `after_specify` and `after_plan` have one registered hook each (`agent-context`, `enabled: true`, `optional: true`, `condition: null`) — confirmed both would surface the identical "## Extension Hooks" optional-hook block `speckit-specify`/`speckit-plan` themselves already produced when run for this exact feature earlier in this session (Acceptance Scenarios 1-2 satisfied) (depends on T003, T004)
+- [x] T006 [US1] Confirmed `before_specify`/`before_plan` have no registered entries in `.specify/extensions.yml` today — the new Pre-flight hook check step stays silent for both skills, zero visible output change (Acceptance Scenario 3 satisfied) (depends on T003)
 
 **Checkpoint**: User Story 1 is independently testable and proven — the mechanism works end-to-end against this project's own real hooks.
 

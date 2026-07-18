@@ -15,6 +15,20 @@ that's a plan that shipped incomplete. Nothing convenient gets deferred to
 `specjedi-implement` can execute without stopping to search — codebase
 conventions named explicitly, not gestured at.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_plan` (parity with `speckit-plan`'s own identical
+check, Constitution Principle XV migration-readiness work, specs/047):
+skip silently if the file is missing or unparseable; filter out hooks
+with `enabled: false`; skip (don't evaluate) any hook with a non-empty
+`condition`, leaving that to whatever executes conditions; for each
+remaining hook, surface an optional hook (`optional: true`) as a
+suggested command, or execute a mandatory hook (`optional: false`,
+`EXECUTE_COMMAND:`) and wait for its result before continuing. No
+hooks registered, or no `extensions.yml` at all? Stay silent — nothing
+about the rest of this skill changes.
+
 ## Step-by-step
 
 1. **Confirm the spec is actually clarified.** If `NEEDS CLARIFICATION`
@@ -53,6 +67,10 @@ conventions named explicitly, not gestured at.
    User Story 3 is really one story or two") — never an unexplained size
    warning, and never a blocking gate (advisory-only, same posture as the
    Constitution Check is *not*: that gate blocks, this one only informs).
+5.6. **Check for after-hook dispatch** before reporting: same rule set
+   as the Pre-flight hook check above, this time against
+   `hooks.after_plan` — surface optional hooks, execute mandatory ones
+   and wait for their result, stay silent when nothing is registered.
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
    blocking (and how to resolve it) if the Constitution Check didn't pass.

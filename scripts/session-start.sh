@@ -156,7 +156,13 @@ if [ -f "$marker" ]; then
       fi
       response="$(curl -sSL --max-time 2 ${auth_header[@]+"${auth_header[@]}"} \
         "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" 2>/dev/null)"
-      latest="$(printf '%s' "$response" | grep -m1 '"tag_name"' 2>/dev/null \
+      # Here-string (<<<), not a `printf ... | grep -m1 ...` pipe: bash
+      # writes the whole string to grep's stdin up front instead of
+      # streaming it concurrently, so grep -m1 matching early and
+      # closing its input can never SIGPIPE a still-writing upstream
+      # `printf` -- a real, intermittent CI failure caught in
+      # bootstrap-install.sh's identical pattern (research.md).
+      latest="$(grep -m1 '"tag_name"' <<< "$response" 2>/dev/null \
         | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
       if [ -n "$latest" ] && [ "$latest" != "$installed" ]; then
         printf '%s' "Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."

@@ -89,7 +89,7 @@ Verdicts are based on each skill's actual described behavior (frontmatter
 
 ## `specjedi-*`'s Own Added Capabilities (FR-005)
 
-27 `specjedi-*` skills exist as of this writing; 16 have no `speckit-*`
+27 `specjedi-*` skills exist as of this writing; 18 have no `speckit-*`
 counterpart at all — this project's own added value, not a gap:
 `specjedi-diagram`, `specjedi-docs`, `specjedi-explain`,
 `specjedi-find-skills`, `specjedi-govcheck`,

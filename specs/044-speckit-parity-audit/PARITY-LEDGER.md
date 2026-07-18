@@ -54,7 +54,7 @@ Maintainer decision on all three recommendation items:
 1. **`speckit-taskstoissues` — confirmed not needed internally.** No
    change to this repository's own workflow. If GitHub-issue conversion
    is ever wanted, it ships as a genuine `specjedi-taskstoissues` product
-   feature (dual value) through its own `/speckit-specify` cycle — not
+   feature (dual value) through its own `/specjedi-specify` cycle — not
    retrofitted here.
 2. **`speckit-agent-context-update` — confirmed intentional, closed.**
    No `specjedi-*` equivalent will be built; `specjedi-status`'s
@@ -77,6 +77,32 @@ Maintainer decision on all three recommendation items:
    to actually execute that migration (switching this repository's own
    day-to-day development workflow) remains a separate maintainer
    decision, not something specs/047 itself performs.
+
+## Migration Executed (2026-07-18, specs/048)
+
+The migration this ledger assessed readiness for has now actually been
+performed, not merely re-confirmed as safe. Following a direct
+maintainer question ("can speckit-* already be removed without losing
+anything?"), `specs/048-retire-speckit`:
+
+- Retired the two `.specify/extensions.yml` hooks
+  (`after_specify`/`after_plan` → `speckit.agent-context.update`) that
+  still depended on a `speckit-*` skill, per the maintainer's confirmed
+  decision to rely on `specjedi-status`/Principle XXI instead of keeping
+  the dependency.
+- Removed all 11 vendored `speckit-*` skill directories.
+- Rewrote every live `/speckit-*` tooling reference in this project's
+  own constitution (via `specjedi-migrate`), README, `CONTRIBUTING.md`,
+  and `references/principle-traceability.md` to `/specjedi-*`, leaving
+  every historical record (past CHANGELOG entries, past `specs/NNN-*`
+  artifacts, this file's own Recommendation/Resolution sections above)
+  untouched.
+- Amended Constitution Principle XV (v1.27.0 → v1.27.1, PATCH) to state
+  the bootstrap phase is complete rather than ongoing.
+
+This repository's own development now runs entirely on `specjedi-*` —
+the "eat your own dog food" loop this ledger's own Purpose statement
+asked about is closed.
 
 ## Parity Ledger (User Story 1)
 

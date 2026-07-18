@@ -98,6 +98,14 @@ nothing about the rest of this skill changes.
    `## Extension Hooks` format, but with post-execution labels
    (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
    nothing is registered.
+5.7. **Update `CLAUDE.md`'s plan-reference pointer**: once `plan.md` is
+   written, update the text between the `<!-- SPECKIT START -->` and
+   `<!-- SPECKIT END -->` markers in `CLAUDE.md` to point at this
+   feature's own `plan.md` path. This step exists natively here — not
+   as an external hook — since specs/048 retired `speckit-*` and its
+   `after_plan` hook was the only thing that ever automated this;
+   without a documented step, the pointer would silently drift stale
+   with no owner (Constitution Principle XV migration-readiness work).
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
    blocking (and how to resolve it) if the Constitution Check didn't pass.

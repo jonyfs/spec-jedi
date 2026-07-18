@@ -135,10 +135,14 @@ description.
 
 ## Voice and naming
 
-- Product skills are named `specjedi-*`, never `speckit-*` — the latter is
-  vendored internal bootstrap tooling this repo uses to build itself, not
-  something end users install (Principle XV). See the README's "How Spec
-  Jedi builds itself" section if this distinction is unclear.
+- Product skills are named `specjedi-*` — the naming convention this repo
+  has followed since its own first skill (Principle XV). Historical note:
+  this project used to dogfood vendored `speckit-*` bootstrap tooling to
+  build itself before its own `specjedi-*` pipeline was complete; that
+  bootstrap phase ended with feature 048 (2026-07-18) — this repo's own
+  development runs entirely on `specjedi-*` now, the same tool it ships.
+  See the README's "How Spec Jedi builds itself" section for the full
+  walkthrough.
 - End-user-facing narration (not the literal content of generated
   `spec.md`/`plan.md`/`tasks.md` fields) uses Spec Jedi's Star Wars-flavored
   voice (Principle XII) — see `references/star-wars-lexicon.md` for the

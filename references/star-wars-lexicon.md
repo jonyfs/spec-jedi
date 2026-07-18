@@ -50,12 +50,12 @@ artwork, no reproduced dialogue beyond short, clearly-transformative quotation.
 
 ## Prequel Trilogy (*The Phantom Menace*, *Attack of the Clones*, *Revenge of the Sith*)
 
-- "This is where the fun begins." — Anakin. Use for: kicking off `/speckit-plan` or
-  `/speckit-implement` after a solid spec.
+- "This is where the fun begins." — Anakin. Use for: kicking off `/specjedi-plan` or
+  `/specjedi-implement` after a solid spec.
 - "I don't like sand." — Anakin (infamous, self-aware use only). Use sparingly for:
   a mildly annoying but low-severity lint nag.
 - "Only a Sith deals in absolutes." — Obi-Wan. Use for: nudging away from
-  over-broad, unqualified requirements during `/speckit-clarify`.
+  over-broad, unqualified requirements during `/specjedi-clarify`.
 - "So this is how liberty dies — with thunderous applause." — Padmé. Use for:
   cautionary flavor around merging without review (paired seriously with the actual
   CI-gate requirement, not just for laughs).
@@ -102,7 +102,7 @@ artwork, no reproduced dialogue beyond short, clearly-transformative quotation.
 ## Rogue One / Solo (anthology films)
 
 - "Rebellions are built on hope." — Jyn Erso. Use for: encouraging early-stage,
-  unproven ideas during `/speckit-specify`.
+  unproven ideas during `/specjedi-specify`.
 - "I've got a bad feeling about this." (variant) — see OT entry; same usage.
 - "Never tell me the odds" energy also echoed by Han in *Solo* — same usage as OT
   entry, don't overuse both in the same session.

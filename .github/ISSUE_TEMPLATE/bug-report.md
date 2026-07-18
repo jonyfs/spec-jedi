@@ -13,7 +13,6 @@ assignees: ""
 ## Where
 
 - [ ] A specific `specjedi-*` skill (name it): 
-- [ ] A vendored `speckit-*` bootstrap skill (name it): 
 - [ ] `scripts/validate.sh` / `scripts/validate.ps1`
 - [ ] CI (`.github/workflows/validate.yml`)
 - [ ] Documentation (README, constitution, `references/`)

@@ -22,6 +22,20 @@ including one a `speckit-*` bootstrap skill produced — load and amend it
 rather than starting fresh; Spec Jedi reads what's there and writes forward in
 its own voice from that point on.
 
+## Pre-flight hook check
+
+Before Step 1, check `.specify/extensions.yml` for hooks registered
+under `hooks.before_constitution` (parity with `speckit-constitution`'s
+own identical check, Constitution Principle XV migration-readiness
+work, specs/047): skip silently if the file is missing or unparseable;
+filter out hooks with `enabled: false`; skip (don't evaluate) any hook
+with a non-empty `condition`, leaving that to whatever executes
+conditions; for each remaining hook, surface an optional hook
+(`optional: true`) as a suggested command, or execute a mandatory hook
+(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
+continuing. No hooks registered, or no `extensions.yml` at all? Stay
+silent — nothing about the rest of this skill changes.
+
 ## Steps
 
 1. **Load** the existing constitution (or `.specify/templates/constitution-template.md`
@@ -42,6 +56,11 @@ its own voice from that point on.
    internalized spec-kit's constitution format already this session.
 5. **Validate**: no `[PLACEHOLDER]` tokens remain, version line matches the
    Sync Impact Report, dates are ISO format.
+5.5. **Check for after-hook dispatch** before suggesting the next step:
+   same rule set as the Pre-flight hook check above, this time against
+   `hooks.after_constitution` — surface optional hooks, execute
+   mandatory ones and wait for their result, stay silent when nothing
+   is registered.
 6. **Suggest the next step** as a short bulleted list (e.g., "run
    `specjedi-specify` to spec your first feature against this").
 

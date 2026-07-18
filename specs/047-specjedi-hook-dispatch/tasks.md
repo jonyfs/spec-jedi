@@ -72,15 +72,15 @@ Single repository. All paths are repo-root-relative, under `.claude/skills/`.
 
 ### Implementation for User Story 2
 
-- [ ] T007 [P] [US2] Add `before_constitution`/`after_constitution` hook-check steps to `.claude/skills/specjedi-constitution/SKILL.md` (depends on T001, T002)
-- [ ] T008 [P] [US2] Add `before_clarify`/`after_clarify` hook-check steps to `.claude/skills/specjedi-clarify/SKILL.md` (depends on T001, T002)
-- [ ] T009 [P] [US2] Add `before_tasks`/`after_tasks` hook-check steps to `.claude/skills/specjedi-tasks/SKILL.md` (depends on T001, T002)
-- [ ] T010 [P] [US2] Add `before_implement`/`after_implement` hook-check steps to `.claude/skills/specjedi-implement/SKILL.md` (depends on T001, T002)
-- [ ] T011 [P] [US2] Add `before_analyze`/`after_analyze` hook-check steps to `.claude/skills/specjedi-analyze/SKILL.md` (depends on T001, T002)
-- [ ] T012 [P] [US2] Add `before_checklist`/`after_checklist` hook-check steps to `.claude/skills/specjedi-checklist/SKILL.md` (depends on T001, T002)
-- [ ] T013 [P] [US2] Add `before_converge`/`after_converge` hook-check steps to `.claude/skills/specjedi-converge/SKILL.md` (depends on T001, T002)
-- [ ] T014 [US2] Grep all 9 target `SKILL.md` files for hook-check language; confirm all 9 show it, matching `speckit-*`'s own 9-of-9 coverage (SC-001, Acceptance Scenario 1) (depends on T003, T004, T007-T013)
-- [ ] T015 [US2] Update `specs/044-speckit-parity-audit/PARITY-LEDGER.md`'s Recommendation item 3 and Resolution section, marking the `extensions.yml` hook-dispatch gap resolved and citing this feature (SC-004) (depends on T014)
+- [x] T007 [P] [US2] Added `before_constitution`/`after_constitution` hook-check to `.claude/skills/specjedi-constitution/SKILL.md` (new "Pre-flight hook check" section + decimal Step 5.5) (depends on T001, T002)
+- [x] T008 [P] [US2] Added `before_clarify`/`after_clarify` hook-check to `.claude/skills/specjedi-clarify/SKILL.md` (new section + decimal Step 5.5) (depends on T001, T002)
+- [x] T009 [P] [US2] Added `before_tasks`/`after_tasks` hook-check to `.claude/skills/specjedi-tasks/SKILL.md` (new section + decimal Step 6.5) (depends on T001, T002)
+- [x] T010 [P] [US2] Added `before_implement`/`after_implement` hook-check to `.claude/skills/specjedi-implement/SKILL.md` (new section placed before Step 1's branch check + decimal Step 7.6) (depends on T001, T002)
+- [x] T011 [P] [US2] Added `before_analyze`/`after_analyze` hook-check to `.claude/skills/specjedi-analyze/SKILL.md` (new section + decimal Step 5.5) (depends on T001, T002)
+- [x] T012 [P] [US2] Added `before_checklist`/`after_checklist` hook-check to `.claude/skills/specjedi-checklist/SKILL.md` (new section + decimal Step 7.5) (depends on T001, T002)
+- [x] T013 [P] [US2] Added `before_converge`/`after_converge` hook-check to `.claude/skills/specjedi-converge/SKILL.md` (new section + decimal Step 4.5) (depends on T001, T002)
+- [x] T014 [US2] Grepped all 9 target `SKILL.md` files for "Pre-flight hook check" + their own `hooks.before_<stage>`/`hooks.after_<stage>` key — all 9 confirmed present, matching `speckit-*`'s own 9-of-9 coverage (SC-001, Acceptance Scenario 1) (depends on T003, T004, T007-T013)
+- [x] T015 [US2] Updated `specs/044-speckit-parity-audit/PARITY-LEDGER.md`: Recommendation section now points to an updated status note, and item 3 in the Resolution section marks the `extensions.yml` hook-dispatch gap resolved, citing this feature and its T005 dry-run (SC-004) (depends on T014)
 
 **Checkpoint**: All 9 core pipeline skills implement hook dispatch — full parity with `speckit-*` on this dimension is achieved.
 
@@ -90,9 +90,9 @@ Single repository. All paths are repo-root-relative, under `.claude/skills/`.
 
 **Purpose**: Whole-feature verification spanning both user stories.
 
-- [ ] T016 Run `wc -c` against all 9 modified `SKILL.md` files; confirm none crosses the 5,000-token hard cap (Constitution Principle XIX) (depends on T014)
-- [ ] T017 Review each of the 9 skills' diffs to confirm no existing Persona/Task/Step-by-step reasoning content was altered beyond the two new hook-check steps (FR-005 — purely additive) (depends on T014)
-- [ ] T018 Run `scripts/validate.sh`; confirm structural lint still passes for all 9 skills with no new warnings introduced (depends on T017)
+- [x] T016 Ran `wc -c` against all 9 modified `SKILL.md` files: constitution 8,715 (~2,178 tok), specify 9,781 (~2,445), clarify 8,455 (~2,113), plan 10,953 (~2,738), tasks 7,857 (~1,964), implement 12,560 (~3,140), analyze 11,598 (~2,899), checklist 8,401 (~2,100), converge 8,428 (~2,107) — all comfortably under the 5,000-token hard cap (Constitution Principle XIX) (depends on T014)
+- [x] T017 Reviewed all 9 diffs via `git diff --stat`: every file shows insertions only, zero deletions — no existing Persona/Task/Step-by-step reasoning content was altered beyond the two new hook-check additions (FR-005 — purely additive, confirmed) (depends on T014)
+- [x] T018 Ran `scripts/validate.sh`: PASSED, zero new warnings for any of the 9 modified skills (the pre-existing localized-docs-sync WARN is unrelated, triggered by feature 046's earlier README.md change) (depends on T017)
 
 **Checkpoint**: All success criteria (SC-001 through SC-004) are verified against the shipped skills.
 

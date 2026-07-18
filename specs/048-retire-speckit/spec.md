@@ -20,6 +20,25 @@ Resolution). This feature executes the internal migration
 `specs/044`/`specs/047` assessed and prepared but deliberately did not
 perform.
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: Acceptance Scenario 3 (US1) implies a documented replacement
+  mechanism for keeping `CLAUDE.md`'s plan pointer current once the
+  automating hook is retired, but no Functional Requirement stated this
+  explicitly — should one be added? → A: Yes — add FR-011 requiring
+  `specjedi-plan` (or an equivalent skill) to natively document/perform
+  this update, closing the gap for real rather than leaving it
+  implicit in an acceptance scenario alone.
+- Q: Acceptance Scenario 1 (US3) left an "either update in place, or
+  reframe as historical" choice open for the README's comic-form
+  section, but research.md's Decision 3 already firmly resolved it
+  (update in place) — should spec.md be tightened to match? → A: Yes —
+  requiring the in-place update directly in the acceptance scenario
+  removes the risk of spec.md and plan.md silently disagreeing about
+  an already-made decision.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Stop relying on a `speckit-*` skill for the agent-context hook (Priority: P1)
@@ -120,10 +139,11 @@ once true); confirm every remaining hit either no longer describes a
 
 1. **Given** `speckit-*` is removed, **When** a reader reaches
    README's "How Spec Jedi builds itself, in comic form" section,
-   **Then** it either describes the project's actual current
-   development mechanism (`specjedi-*`) or is explicitly and honestly
-   labeled as describing a past bootstrap phase — never presented as
-   the current, live process when it no longer is.
+   **Then** its narrated commands are updated in place to their
+   `specjedi-*` equivalents (Clarifications, Session 2026-07-18) — the
+   same walkthrough, illustrations, epigraph, and internal-bootstrap
+   disclaimer stay, only the tool named changes; it is never presented
+   as still describing `speckit-*` commands that no longer exist.
 2. **Given** `speckit-*` is removed, **When** a reader reaches
    Constitution Principle XV, **Then** its text no longer states that
    "this project currently uses spec-kit's own command skills to build
@@ -157,9 +177,10 @@ once true); confirm every remaining hit either no longer describes a
   was still this project's live internal-development mechanism —
   removing that mechanism is new information neither prior decision
   had. This feature does not silently leave it stale describing a
-  process that no longer runs; a reader deserves an accurate picture
-  either way (Edge Case resolved via Acceptance Scenario 1 above:
-  reframe or replace, don't leave inaccurate).
+  process that no longer runs — its commands are updated in place
+  (Acceptance Scenario 1, Clarifications Session 2026-07-18), keeping
+  specs/036/037's illustrated panels and voice intact while fixing what
+  would otherwise become inaccurate.
 - **What if a future contributor wants `speckit-agent-context-update`'s
   underlying capability back later?** The mechanism it wrapped
   (`.specify/extensions/agent-context/`) is a spec-kit extension
@@ -199,11 +220,11 @@ once true); confirm every remaining hit either no longer describes a
   ever recurs. This is a Governance-tracked amendment with its own
   Sync Impact Report, per the constitution's own amendment procedure.
 - **FR-006**: README's "How Spec Jedi builds itself, in comic form"
-  section MUST be corrected once `speckit-*` is removed — either
-  updated to describe the current `specjedi-*`-based process, or
-  explicitly and honestly reframed as a historical account of a
-  bootstrap phase that has since ended. It MUST NOT be left describing
-  a live process that no longer runs.
+  section's narrated commands MUST be updated in place to their
+  `specjedi-*` equivalents once `speckit-*` is removed (Clarifications,
+  Session 2026-07-18) — the walkthrough, illustrations, epigraph, and
+  internal-bootstrap disclaimer are otherwise unchanged. It MUST NOT be
+  left describing `speckit-*` commands that no longer exist.
 - **FR-007**: `CONTRIBUTING.md`'s "Voice and naming" section's
   description of `speckit-*` MUST be corrected to no longer claim this
   repository presently uses it to build itself.
@@ -217,6 +238,12 @@ once true); confirm every remaining hit either no longer describes a
 - **FR-010**: `specs/044-speckit-parity-audit/PARITY-LEDGER.md` MUST be
   updated to record that the migration it assessed readiness for has
   now actually been executed, citing this feature.
+- **FR-011**: `specjedi-plan` (or an equivalent skill) MUST natively
+  document and perform the update to `CLAUDE.md`'s plan-reference
+  pointer as part of its own normal flow, once the `after_plan` hook
+  that previously automated this is retired (FR-001) — this MUST NOT
+  be left as an implicit expectation with no stated owner or
+  documented step (Clarifications, Session 2026-07-18).
 
 ### Key Entities
 
@@ -243,9 +270,8 @@ documentation; no data model is introduced.)*
   `git diff` showing changes scoped only to the files FR-001 through
   FR-008/FR-010 name.
 - **SC-006**: A reader of the corrected README's build-process section
-  can accurately state, without additional research, whether the
-  section describes this project's current process or a completed past
-  phase — never left ambiguous.
+  sees only `specjedi-*` commands named — verifiable by confirming zero
+  remaining `/speckit-*` mentions in that section.
 
 ## Assumptions
 

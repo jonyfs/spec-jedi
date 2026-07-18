@@ -550,6 +550,32 @@ for template in constitution-template.md spec-template.md plan-template.md tasks
   echo "  ✅ $template"
 done
 
+# specs/042-skill-freshness-validation: records which release produced
+# this install (Constitution Principle XXII) -- a prerequisite for the
+# session-start freshness check to have anything to compare against.
+# $repo_root here is install.sh's own source location, which is either:
+#   (a) an extracted release tarball (package-release.sh staged a
+#       RELEASE_VERSION stamp file at its root -- whether extracted by
+#       bootstrap-install.sh or manually by a user), or
+#   (b) a real git checkout (has .git), or
+#   (c) neither (not a scenario either installer script currently
+#       produces, but a safe fallback matters more than a fabricated
+#       version).
+write_release_marker() {
+  local target="$1" value
+  if [ -f "$repo_root/RELEASE_VERSION" ]; then
+    value="$(tr -d '[:space:]' < "$repo_root/RELEASE_VERSION")"
+  elif [ -d "$repo_root/.git" ]; then
+    value="local-checkout"
+  else
+    value="local-checkout"
+  fi
+  mkdir -p "$target/.specify"
+  printf '{"installed_release": "%s"}\n' "$value" > "$target/.specify/release-marker.json"
+  echo "  ✅ .specify/release-marker.json ($value)"
+}
+write_release_marker "$target_dir"
+
 # Bridge-file generation (specs/023-full-harness-coverage): only runs for
 # harnesses with no native skills-directory scan. Reads name/description
 # straight back out of the just-installed .claude/skills/specjedi-*/SKILL.md

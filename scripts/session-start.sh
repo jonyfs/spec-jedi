@@ -129,7 +129,39 @@ if [ -f "$lexicon" ]; then
   fi
 fi
 
+# --- Part 4: skill freshness check (Constitution Principle XXII) -----------
+# Advisory-only: any incomplete state (no marker, malformed marker, the
+# "local-checkout" sentinel, unreachable/rate-limited API) degrades
+# silently to an empty $freshness_line -- never an error, never a guess.
+# Single attempt, short explicit timeout -- deliberately NOT
+# bootstrap-install.sh's own 3-attempt retry loop (specs/042 research.md
+# Decision 3): that loop has no per-attempt cap and would make every
+# session start's worst case unbounded.
+freshness_line=""
+marker="$repo_root/.specify/release-marker.json"
+if [ -f "$marker" ]; then
+  installed="$(grep -o '"installed_release":[[:space:]]*"[^"]*"' "$marker" 2>/dev/null \
+    | sed -E 's/.*"([^"]*)"$/\1/')" || true
+  if [ -n "$installed" ] && [ "$installed" != "local-checkout" ]; then
+    auth_header=()
+    if [ -n "${GITHUB_TOKEN:-}" ]; then
+      auth_header=(-H "Authorization: Bearer $GITHUB_TOKEN")
+    fi
+    response="$(curl -sSL --max-time 2 ${auth_header[@]+"${auth_header[@]}"} \
+      "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" 2>/dev/null || true)"
+    latest="$(printf '%s' "$response" | grep -m1 '"tag_name"' 2>/dev/null \
+      | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')" || true
+    if [ -n "$latest" ] && [ "$latest" != "$installed" ]; then
+      freshness_line="Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
+    fi
+  fi
+fi
+
 # --- Assemble and emit ------------------------------------------------------
-printf '%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line"
+if [ -n "$freshness_line" ]; then
+  printf '%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$freshness_line"
+else
+  printf '%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line"
+fi
 
 exit 0

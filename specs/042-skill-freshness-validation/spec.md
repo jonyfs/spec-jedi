@@ -8,6 +8,14 @@
 
 **Input**: User description: "Principle XXII skill freshness validation — codify a mechanism that validates specjedi-* skills stay fresh/aligned with the current constitution and codebase over time, as introduced by Constitution v1.27.0 Principle XXII (PR #124, merged 2026-07-18)"
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: FR-006 requires the freshness check to be a single bounded network attempt that never stalls. bootstrap-install.sh's own curl call has no explicit timeout flag (no cap), so "reuse bootstrap-install's exact timeout" would mean "no cap." Should the freshness check add its own short, explicit timeout instead of literally reusing that unbounded call? → A: Yes — add a short, explicit timeout (e.g. a curl bound of a couple seconds) scoped to session-start's tighter interactive budget, distinct from bootstrap-install.sh's own unbounded call.
+- Q: Acceptance scenarios cover "marker behind latest" and "marker matches latest," but not an installed tag and latest release tag that simply differ without a clear ordering (e.g. a pre-release, or a marker that's technically newer). How should "behind" be determined? → A: Exact string mismatch — any marker tag that isn't byte-identical to the latest release tag is reported as behind; no semver/ordering-aware parsing.
+- Q: FR-005's silent-degrade list doesn't explicitly mention the marker holding the "local checkout, not an installed release" sentinel from FR-002. Should that state also degrade fully silently, or show something distinct? → A: Fully silent, same as "no marker" — folded into FR-005's existing silent-degrade bucket, no new observable state.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Record which release an install came from (Priority: P1)
@@ -125,14 +133,21 @@ marker file and a reachable (or mocked) GitHub API.
   `api.github.com/repos/<owner>/<repo>/releases/latest` call and
   `GITHUB_TOKEN` handling already implemented in
   `scripts/bootstrap-install.sh`/`.ps1` — no independent reimplementation
-  of that lookup.
+  of that lookup. The comparison MUST be an exact string mismatch (marker
+  tag not byte-identical to the latest release tag means "behind") — no
+  semver or other ordering-aware parsing.
 - **FR-005**: The check MUST be advisory-only: any failure to complete
   cleanly (no network, no marker, rate-limited/unreachable API, malformed
-  marker) MUST degrade silently to no freshness line — never block session
-  start, never error loudly, never guess an unconfirmed staleness verdict.
+  marker, or a marker holding the "local checkout, not an installed
+  release" sentinel from FR-002) MUST degrade silently to no freshness
+  line — never block session start, never error loudly, never guess an
+  unconfirmed staleness verdict.
 - **FR-006**: The check MUST NOT stall or retry indefinitely — a single
-  bounded attempt per session, consistent with Principle XX's
-  grounded-output discipline (an unconfirmed claim is worse than none).
+  attempt per session bounded by its own short, explicit network timeout
+  (distinct from, and shorter than, `bootstrap-install.sh`/`.ps1`'s own
+  lookup call, which has no explicit timeout of its own), consistent with
+  Principle XX's grounded-output discipline (an unconfirmed claim is worse
+  than none).
 - **FR-007**: When the installed marker is behind the latest release, the
   orientation output MUST name `scripts/bootstrap-install.sh`/`.ps1` as the
   update path — it MUST NOT invent a second update flow and MUST NOT
@@ -178,12 +193,12 @@ marker file and a reachable (or mocked) GitHub API.
   result at session-start time, matching the semantics
   `bootstrap-install.sh`/`.ps1` already relies on — no separate
   release-channel concept (e.g., pre-releases, nightly builds) is in scope.
-- A single bounded network attempt (FR-006) is assumed to mean one HTTP
-  request with the same timeout behavior `bootstrap-install.sh`/`.ps1`
-  already uses today, not a new, independently-tuned timeout value
-  [NEEDS CLARIFICATION: should the freshness check's timeout be identical
-  to bootstrap-install's existing curl timeout, or does session-start's
-  tighter latency budget call for a shorter one?].
+- A single bounded network attempt (FR-006) means one HTTP request with a
+  short, explicit timeout of its own — `bootstrap-install.sh`/`.ps1`'s
+  existing lookup call has no explicit timeout, so this feature introduces
+  a new, independently-tuned (and shorter) timeout value scoped to
+  session-start's tighter interactive latency budget, rather than
+  literally reusing bootstrap-install's uncapped call.
 - This feature does not cover *skill content* drift against the
   constitution (e.g., "has `specjedi-plan` been updated to reflect
   Principle XXII itself") — Principle XXII's own text scopes this strictly

@@ -393,6 +393,36 @@ foreach ($template in @("constitution-template.md", "spec-template.md", "plan-te
     Write-Host "  ✅ $template"
 }
 
+# specs/042-skill-freshness-validation: records which release produced
+# this install (Constitution Principle XXII) -- a prerequisite for the
+# session-start freshness check to have anything to compare against.
+# $repoRoot here is install.ps1's own source location, which is either:
+#   (a) an extracted release tarball (package-release.ps1 staged a
+#       RELEASE_VERSION stamp file at its root -- whether extracted by
+#       bootstrap-install.ps1 or manually by a user), or
+#   (b) a real git checkout (has .git), or
+#   (c) neither (not a scenario either installer script currently
+#       produces, but a safe fallback matters more than a fabricated
+#       version).
+function Write-ReleaseMarker {
+    param([string]$Target)
+    $releaseVersionFile = Join-Path $repoRoot "RELEASE_VERSION"
+    $gitDir = Join-Path $repoRoot ".git"
+    if (Test-Path $releaseVersionFile) {
+        $value = (Get-Content $releaseVersionFile -Raw).Trim()
+    } elseif (Test-Path $gitDir) {
+        $value = "local-checkout"
+    } else {
+        $value = "local-checkout"
+    }
+    $specifyDst = Join-Path $Target ".specify"
+    New-Item -ItemType Directory -Force -Path $specifyDst | Out-Null
+    $markerPath = Join-Path $specifyDst "release-marker.json"
+    [System.IO.File]::WriteAllText($markerPath, "{`"installed_release`": `"$value`"}`n")
+    Write-Host "  ✅ .specify/release-marker.json ($value)"
+}
+Write-ReleaseMarker -Target $TargetDir
+
 # Bridge-file generation (specs/023-full-harness-coverage): only runs for
 # harnesses with no native skills-directory scan. Reads name/description
 # straight back out of the just-installed .claude/skills/specjedi-*/SKILL.md

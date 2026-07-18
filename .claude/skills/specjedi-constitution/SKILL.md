@@ -30,11 +30,35 @@ own identical check, Constitution Principle XV migration-readiness
 work, specs/047): skip silently if the file is missing or unparseable;
 filter out hooks with `enabled: false`; skip (don't evaluate) any hook
 with a non-empty `condition`, leaving that to whatever executes
-conditions; for each remaining hook, surface an optional hook
-(`optional: true`) as a suggested command, or execute a mandatory hook
-(`optional: false`, `EXECUTE_COMMAND:`) and wait for its result before
-continuing. No hooks registered, or no `extensions.yml` at all? Stay
-silent — nothing about the rest of this skill changes.
+conditions. When turning a hook's `command` field into a slash
+command, replace dots (`.`) with hyphens (`-`) — e.g.,
+`speckit.git.commit` → `/speckit-git-commit`. For each remaining hook:
+
+- **Optional** (`optional: true`): surface it as a suggested command:
+  ```text
+  ## Extension Hooks
+
+  **Optional Pre-Hook**: {extension}
+  Command: `/{command}`
+  Description: {description}
+
+  Prompt: {prompt}
+  To execute: `/{command}`
+  ```
+- **Mandatory** (`optional: false`): execute it and wait for its
+  result before continuing:
+  ```text
+  ## Extension Hooks
+
+  **Automatic Pre-Hook**: {extension}
+  Executing: `/{command}`
+  EXECUTE_COMMAND: {command}
+
+  Wait for the result of the hook command before proceeding.
+  ```
+
+No hooks registered, or no `extensions.yml` at all? Stay silent —
+nothing about the rest of this skill changes.
 
 ## Steps
 
@@ -57,10 +81,12 @@ silent — nothing about the rest of this skill changes.
 5. **Validate**: no `[PLACEHOLDER]` tokens remain, version line matches the
    Sync Impact Report, dates are ISO format.
 5.5. **Check for after-hook dispatch** before suggesting the next step:
-   same rule set as the Pre-flight hook check above, this time against
-   `hooks.after_constitution` — surface optional hooks, execute
-   mandatory ones and wait for their result, stay silent when nothing
-   is registered.
+   same rule set as the Pre-flight hook check above (missing/malformed-
+   file handling, `enabled`/`condition` filtering, dots→hyphens command
+   construction), this time against `hooks.after_constitution` — same
+   `## Extension Hooks` format, but with post-execution labels
+   (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
+   nothing is registered.
 6. **Suggest the next step** as a short bulleted list (e.g., "run
    `specjedi-specify` to spec your first feature against this").
 

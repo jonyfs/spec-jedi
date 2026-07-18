@@ -158,3 +158,29 @@ Task: "Add before_converge/after_converge hook-check steps to .claude/skills/spe
 - [Story] label maps task to specific user story for traceability.
 - Unlike specs/046, most tasks here genuinely are parallelizable ([P]) — each skill is its own file.
 - Commit after each user story phase, matching this project's own trunk-based workflow (Constitution Principle X) — the PR opens once all phases are complete.
+
+## Post-merge correction (2026-07-18, `/speckit-analyze` findings)
+
+A read-only `/speckit-analyze` run against this merged feature found 3
+real findings, all now fixed on a follow-up branch/PR:
+
+- **F1 (HIGH, fixed)**: FR-003 required matching `speckit-*`'s dispatch
+  behavior "exactly," but the 9 skills' hook-check text paraphrased the
+  behavior instead of reproducing the actual `## Extension Hooks`
+  output format (`**Optional Pre-Hook**`/`**Automatic Pre-Hook**`/
+  `**Optional Hook**`/`**Automatic Hook**` labels, `Command:`/
+  `Description:`/`Prompt:` fields) and never stated the dots→hyphens
+  command-construction rule (`speckit.git.commit` → `/speckit-git-commit`)
+  at all. All 9 skills' Pre-flight hook check and after-hook step now
+  include the exact format block and the construction rule.
+- **F2 (MEDIUM, addressed)**: SC-003 ("zero behavior change when no
+  hook is registered") was empirically dry-run tested for only 2 of 9
+  skills (T005/T006). Since a live dry-run isn't possible for stages
+  with no registered hook today, coverage was extended structurally
+  instead: all 9 skills confirmed (via direct grep) to carry the
+  identical "stay silent when nothing registered" clause, verbatim.
+- **F3 (LOW, fixed)**: plan.md's Constitution Check marked Principle XV
+  "Not Applicable" (reading only the naming-convention half), while all
+  9 skills cite "Principle XV migration-readiness work" as their actual
+  justification (the bootstrap/product-distinction half). plan.md's XV
+  row now names both halves explicitly.

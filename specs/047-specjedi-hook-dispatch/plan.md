@@ -73,7 +73,7 @@ feature's own `specs/047-*/` documentation.
 | XII (Star Wars-Flavored End-User Voice) | Each skill's own existing Persona/narration is untouched (FR-005) — the new hook-check step is short, procedural, and matches the plain, mechanical tone `speckit-*`'s own hook-check text already uses (it's a dispatch check, not end-user-facing narration). | ✅ Pass |
 | XIX (Skill Authoring & Prompt Engineering Standard) | Every touched skill's real token count is checked before/after editing (baseline captured below; largest is `specjedi-implement` at ~2,854 tokens today, comfortably under the 5,000 hard cap with room for a ~150-250 token addition). | ✅ Pass — enforced during implementation |
 | XX (AI Discipline: Grounded, Honest Output) | The mechanism's exact behavior is copied from `speckit-*`'s own real, currently-shipped text — nothing here is guessed or invented. | ✅ Pass |
-| XV (`specjedi-` Skill Naming Convention) | Not Applicable — no new skill is created; all 9 existing names are unchanged. | N/A |
+| XV (`specjedi-` Skill Naming Convention) | Two distinct halves: the naming-convention half is Not Applicable (no new skill is created; all 9 existing names are unchanged). The bootstrap/product-distinction half — `speckit-*` as internal tooling, `specjedi-*` as the actual competitive product — is actively invoked: this feature exists specifically to close the one gap keeping `specjedi-*` from being a complete, migration-ready substitute for `speckit-*`, per specs/044's parity ledger. Each of the 9 touched skills cites this principle for that reason, not the naming rule. | ✅ Pass (bootstrap/product half) / N/A (naming half) |
 
 No violations requiring Complexity Tracking.
 

@@ -47,7 +47,7 @@ self-invocation timing) bounds User Story 3's own scope.
 
 | Principle | Check | Status |
 |---|---|---|
-| II | US1 extends `specjedi-skill-review` rather than duplicating it; US2/3's orchestration reuses existing stages' own `--auto` behavior unchanged, documented here rather than in a separate research.md (no new mechanism, only new sequencing of existing ones). | ✅ Pass |
+| II | US1 extends `specjedi-skill-review` rather than duplicating it; US2/3's orchestration reuses existing stages' own `--auto` behavior unchanged. **Amended 2026-07-19**: the original internal-reuse reasoning above did not satisfy Principle II's external-competitive-benchmark requirement — flagged by `specjedi-constitution-audit`; `research.md` was added retroactively, benchmarking against spec-kit and 10 other tools (closest prior art: BMAD-METHOD's orchestrated handoff, GSD's auto-mode state machine) and confirming the shipped design. | ✅ Pass (retroactively grounded) |
 | IV/XX | FR-002 is the plan's central constraint — the chain never resolves a genuine ambiguity; every stage's own existing human-decision points are preserved exactly. | ✅ Pass |
 | IX | No CI job; validated via `scripts/validate.sh` + manual dry-run against both a clean and an ambiguous case. | ✅ Pass |
 | XII | `specjedi-chain` gets its own genuine Persona, distinct from every sibling pipeline skill. | ✅ Pass — enforced during implementation |

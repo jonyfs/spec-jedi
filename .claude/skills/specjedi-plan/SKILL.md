@@ -99,13 +99,25 @@ nothing about the rest of this skill changes.
    (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
    nothing is registered.
 5.7. **Update `CLAUDE.md`'s plan-reference pointer**: once `plan.md` is
-   written, update the text between the `<!-- SPECKIT START -->` and
-   `<!-- SPECKIT END -->` markers in `CLAUDE.md` to point at this
-   feature's own `plan.md` path. This step exists natively here — not
-   as an external hook — since specs/048 retired `speckit-*` and its
-   `after_plan` hook was the only thing that ever automated this;
-   without a documented step, the pointer would silently drift stale
-   with no owner (Constitution Principle XV migration-readiness work).
+   written, update the text between the `<!-- SPEC-JEDI:PLAN:START -->`
+   and `<!-- SPEC-JEDI:PLAN:END -->` markers in `CLAUDE.md` to point at
+   this feature's own `plan.md` path — matching `install.sh`'s own
+   `update_memory_file()` naming convention for its separate skills-list
+   section (`<!-- SPEC-JEDI:SKILLS:START/END -->`), not the retired
+   `<!-- SPECKIT START/END -->` name this section used before a
+   `specjedi-constitution-audit` run (2026-07-19) flagged it as the one
+   place still carrying `speckit-*` branding into every downstream
+   project's own `CLAUDE.md`. **Backward compatibility**: if the file
+   still has the old `<!-- SPECKIT START/END -->` pair instead (any
+   project whose `CLAUDE.md` was last touched before this rename), treat
+   that as the section to replace and write the new marker name in its
+   place — a project self-heals to the new marker name on its very next
+   `specjedi-plan` run, never left permanently stuck on the old one. This
+   step exists natively here — not as an external hook — since specs/048
+   retired `speckit-*` and its `after_plan` hook was the only thing that
+   ever automated this; without a documented step, the pointer would
+   silently drift stale with no owner (Constitution Principle XV
+   migration-readiness work).
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV; see `references/next-step-interaction.md`):
    `specjedi-tasks` if the plan is clean, or what's

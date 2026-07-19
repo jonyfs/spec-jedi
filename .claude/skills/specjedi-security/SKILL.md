@@ -36,8 +36,9 @@ explicitly disclaim comprehensive coverage every time.
 5. **State plainly, every time, that this is not a security review** —
    name `specjedi-checklist` (security focus) as the path to
    comprehensive coverage.
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   revisit `specjedi-specify`/`specjedi-plan` to address a surfaced gap,
+6. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): revisit
+   `specjedi-specify`/`specjedi-plan` to address a surfaced gap,
    or `specjedi-checklist` for comprehensive treatment.
 
 If a surfaced concern needs deeper domain expertise this skill's

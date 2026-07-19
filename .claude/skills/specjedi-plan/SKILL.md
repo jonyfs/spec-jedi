@@ -107,7 +107,8 @@ nothing about the rest of this skill changes.
    without a documented step, the pointer would silently drift stale
    with no owner (Constitution Principle XV migration-readiness work).
 6. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): `specjedi-tasks` if the plan is clean, or what's
+   (Principle XIV; see `references/next-step-interaction.md`):
+   `specjedi-tasks` if the plan is clean, or what's
    blocking (and how to resolve it) if the Constitution Check didn't pass.
 
 If the plan needs expertise the installed skill set doesn't have (e.g.,

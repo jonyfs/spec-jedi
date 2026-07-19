@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/057-mission-complete-voice/spec.md (plan.md not yet written)
+at specs/054-sessionstart-interactive-next-steps/spec.md (plan.md not yet written)
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

@@ -40,8 +40,9 @@ writing.
 6. **Present all three drafts together and wait for explicit
    confirmation** before writing anything — never a silent write, even in
    `--auto` mode.
-7. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   opening a PR with the doc changes, or running `specjedi-release` if a
+7. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): opening a PR with the doc
+   changes, or running `specjedi-release` if a
    release feels due — named as an option here, never proactively
    self-invoked (a release check has no urgency comparable to a security
    gap, and this project's own multi-feature-per-session pace would make

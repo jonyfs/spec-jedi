@@ -47,7 +47,8 @@ confirmation naming that specific tool.
    proceeding. A decline or an ambiguous reply gets the manual install
    command stated as a next step, never an inferred "sounds like yes."
 6. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — typically the pipeline stage the caller was already
+   (Principle XIV; see `references/next-step-interaction.md`) —
+   typically the pipeline stage the caller was already
    heading toward (when self-invoked from `specjedi-onboard`), or, when
    run standalone, whichever `specjedi-*` skill fits the current project
    state.

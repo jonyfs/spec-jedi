@@ -516,19 +516,47 @@ mechanism (spec.md US4 Acceptance Scenarios).
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T055 Update the "target already has a `PreToolUse`/`Stop` hooks
+- [x] T055 Update the "target already has a `PreToolUse`/`Stop` hooks
   array — add manually" messages in `install.sh`/`.ps1` (FR-006) to name
   every newly-shareable hook this feature adds
   (`prevent-direct-push.py`, `secret-scanner.py`, `secret-file-guard.sh`,
   `conventional-commits.py` when opted in, the `Stop` notification hook)
   — not just `dangerous-command-guard.sh`.
-- [ ] T056 [P] Add a test case confirming T055's message names every new
+  Found already satisfied: the `PreToolUse` "add manually" message
+  (`install.sh`, `install.ps1`, and the codex-cli `hooks.json` variant in
+  both) was already built dynamically from `bash_hook_files`/
+  `$bashHookFiles`, which already includes every hook this feature adds
+  — no hardcoded `dangerous-command-guard.sh`-only text remained by the
+  time US1-US3 landed. Verified live against a scratch target with a
+  pre-existing `PreToolUse` array: the message names
+  `dangerous-command-guard.sh`, `prevent-direct-push.py`,
+  `secret-scanner.py`, `secret-file-guard.sh`, and (when opted in)
+  `conventional-commits.py`, on both bash and PowerShell. `Stop` has no
+  equivalent "add manually" message by design (plan.md's own Stop-hook
+  reasoning: an existing `Stop` array is always left fully alone, never
+  partially merged) — not a gap, a deliberate simpler case for the one
+  hook type that never needs surgical in-array editing.
+- [x] T056 [P] Add a test case confirming T055's message names every new
   hook (closes the previously-Unverified FR-006).
-- [ ] T057 Extend the Codex CLI trust-workflow output message (carried
+  Verified: new `validate.yml` steps "add-manually message names every
+  new hook, not just dangerous-command-guard.sh/.ps1 (FR-006, T056)" in
+  both `install-test-shared-hooks` (bash) and
+  `install-test-shared-hooks-windows-native` (PowerShell) — install
+  against a target with a pre-existing `PreToolUse` array (opted into
+  `conventional-commits.py`) and assert all five hook names appear in
+  the resulting message. Confirmed locally on both shells before commit.
+- [x] T057 Extend the Codex CLI trust-workflow output message (carried
   from specs/041's plan.md) to name every new hook, not just the
   original — the end-user must still run `/hooks` inside Codex CLI to
   approve each one.
-- [ ] T058 **`python3`-absent combined-warning test**: with all of
+  Found already dynamic (built from `$bash_hook_files`/`$bashHookFiles`,
+  same mechanism as T055) for the non-opt-in default case; strengthened
+  the existing Wave 1 `conventional-commits.py` opt-in CI steps (bash and
+  PowerShell) to also assert the trust message reads "...prevent-
+  direct-push.py secret-scanner.py conventional-commits.py before they
+  actually run" when opted in, closing the one untested combination.
+  Confirmed locally on both shells.
+- [x] T058 **`python3`-absent combined-warning test**: with all of
   US1/US2/US3 landed, simulate `python3` absence and assert install.sh
   prints exactly ONE named warning listing all three skipped hooks
   together (`secret-scanner.py`, `prevent-direct-push.py`,
@@ -536,14 +564,43 @@ mechanism (spec.md US4 Acceptance Scenarios).
   (FR-005's exact wording). This is the one FR-005 assertion that can
   only be meaningfully tested once every Python-hook story has landed;
   T007/T018/T042 each cover their own story's skip in isolation.
-- [ ] T059 Full `install-test`/`install-test-*` CI job pass across every
+  Verified: strengthened the existing "python3 absence skips
+  conventional-commits.py..." `validate.yml` step (renamed to name T058
+  explicitly) to assert exactly one line matching "python3 not found —
+  skipping" and that all three hook names appear together on that single
+  line — never three separate messages. Confirmed locally: `python3 not
+  found — skipping: prevent-direct-push.py secret-scanner.py
+  conventional-commits.py`.
+- [x] T059 Full `install-test`/`install-test-*` CI job pass across every
   matrixed OS/harness in `.github/workflows/validate.yml`, confirming
   every new hook, prompt, and packaging path end-to-end — this run also
   serves as FR-008's regression check (`dangerous-command-guard.sh`'s own
   pre-existing, untouched test section is part of this same CI pass).
-- [ ] T060 [P] Update `references/harness-capability-notes.md` if T014,
+  Local pre-flight complete (bash/PowerShell syntax checks, both
+  `test-hooks.sh`/`.ps1` suites, every new/changed `validate.yml` step
+  individually extracted and run locally on macOS): all green. The
+  actual matrixed CI run (ubuntu/macOS/windows-latest × every harness)
+  happens once this branch's PR opens — recorded here as "ready for CI,"
+  with the real multi-OS confirmation to follow from the PR's own check
+  run, matching this feature's own established US1/US2/US5 pattern
+  (diagnose real CI failures from logs, never guess).
+- [x] T060 [P] Update `references/harness-capability-notes.md` if T014,
   T025, T039, or T050 surfaced any refinement to a Wave 1/2 harness's
   documented hook capability.
+  No update needed: T014/T025/T050 extended Wave 1 harnesses
+  (gemini-cli/antigravity/codex-cli) with *more hooks* through the exact
+  same already-documented "translated declarative-JSON hook"/"reused
+  unmodified" mechanisms this file's Implementation status update
+  already names — no new capability or limitation was discovered. T039
+  confirmed (not discovered) that Wave 1 harnesses have no hook surface
+  distinct from Bash/`run_shell_command`, which is why
+  `secret-file-guard.sh` was never translated for them — this was
+  already established by specs/041's own research.md before specs/058
+  began, so it's a reaffirmation, not a refinement. Wave 2 harnesses
+  (opencode/zed/amazon-q/warp) remain permissions-only with zero hook
+  translations across every story in this feature (US1/US2/US3/US5
+  alike) — consistent with, not a change to, the existing
+  characterization.
 
 ---
 

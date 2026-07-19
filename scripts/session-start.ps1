@@ -74,6 +74,49 @@ if ($total -eq 0) {
     $statusLine = "$total feature(s): $nComplete complete, $nInProgress in progress, $nPlanned planned, $nSpecified specified, $nNotStarted not started."
 }
 
+# --- Part 2.5: next-step suggestion (specs/054, extends Part 2's own -----
+# derivation -- never a second, separately-maintained tracking mechanism,
+# per Constitution Principle XXI's own "no parallel status system" rule).
+# A hook script cannot invoke an LLM-interpreted specjedi-status skill
+# directly, so this reimplements that skill's own "most relevant" priority
+# order in PowerShell, matching session-start.sh's own identical logic.
+# Priority: in-progress (most recent tasks.md) > planned-not-tasked (most
+# recent plan.md) > specified-not-planned (most recent spec.md) > none.
+$nextStepLine = ""
+if ($total -gt 0) {
+    function Get-MostRecentFeature($fileName) {
+        $best = $null
+        $bestTime = [DateTime]::MinValue
+        foreach ($dir in $featureDirs) {
+            $f = Join-Path $dir.FullName $fileName
+            if (Test-Path $f) {
+                $mtime = (Get-Item $f).LastWriteTimeUtc
+                if ($mtime -gt $bestTime) {
+                    $bestTime = $mtime
+                    $best = $dir.Name
+                }
+            }
+        }
+        return $best
+    }
+
+    if ($nInProgress -gt 0 -or $nNotStarted -gt 0) {
+        $feat = Get-MostRecentFeature "tasks.md"
+        if ($feat) { $nextStepLine = "Next step: $feat has a task breakdown ready -- run specjedi-implement to continue it." }
+    }
+    if (-not $nextStepLine -and $nPlanned -gt 0) {
+        $feat = Get-MostRecentFeature "plan.md"
+        if ($feat) { $nextStepLine = "Next step: $feat is planned but not yet broken into tasks -- run specjedi-tasks." }
+    }
+    if (-not $nextStepLine -and $nSpecified -gt 0) {
+        $feat = Get-MostRecentFeature "spec.md"
+        if ($feat) { $nextStepLine = "Next step: $feat is specified -- run specjedi-clarify or specjedi-plan." }
+    }
+}
+if (-not $nextStepLine) {
+    $nextStepLine = "Next step: run specjedi-specify to start a new feature."
+}
+
 # --- Part 3: rotating Master Yoda line -------------------------------------
 # Context-aware, same as session-start.sh: a line written for the "no specs
 # yet" state must never be selected when the status summary above already
@@ -159,12 +202,21 @@ if (Test-Path $marker) {
 }
 
 # --- Assemble and emit ------------------------------------------------------
+# 10,000-character additionalContext cap (Principle XXI's own documented
+# fact, FR-006): if the full payload would exceed it, drop the freshness
+# line first (already the lowest-priority, optional element) -- never the
+# new next-step suggestion or the core banner/status/Yoda trio.
+$fullPayload = @($banner, "", $statusLine, "", $yodaLine, "", $nextStepLine, "", $freshnessLine) -join "`n"
+$includeFreshness = $freshnessLine -and ($fullPayload.Length -le 10000)
+
 Write-Output $banner
 Write-Output ""
 Write-Output $statusLine
 Write-Output ""
 Write-Output $yodaLine
-if ($freshnessLine) {
+Write-Output ""
+Write-Output $nextStepLine
+if ($includeFreshness) {
     Write-Output ""
     Write-Output $freshnessLine
 }

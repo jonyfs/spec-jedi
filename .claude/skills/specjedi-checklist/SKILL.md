@@ -87,7 +87,8 @@ nothing about the rest of this skill changes.
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
 8. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — never a single line of prose: revisit
+   (Principle XIV; see `references/next-step-interaction.md`) — never a
+   single line of prose: revisit
    `specjedi-clarify` or `specjedi-plan` for any item the checklist
    surfaces as unresolved, otherwise proceed toward
    `specjedi-implement`/`specjedi-analyze`.

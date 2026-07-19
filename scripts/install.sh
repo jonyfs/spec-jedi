@@ -527,9 +527,32 @@ skills_src="$repo_root/.claude/skills"
 skills_dst="$target_dir/$skills_dst_rel"
 mkdir -p "$skills_dst"
 
+# specs/055-safe-skill-update-hook: before any overwrite below replaces
+# an already-installed skill/template, back up the existing copy first
+# if it genuinely differs from what's about to replace it -- a locally
+# hand-edited file (or one from an agent session) must never be
+# silently destroyed by a routine update. Backs up nothing on a first
+# install (FR-003): $dst simply doesn't exist yet, so the early return
+# fires and $backup_root is never even created.
+backup_root=""
+backup_if_differs() {
+  # $1 = source about to replace $2 = existing target path.
+  local src="$1" dst="$2"
+  [ -e "$dst" ] || return 0
+  if ! diff -rq "$src" "$dst" >/dev/null 2>&1; then
+    if [ -z "$backup_root" ]; then
+      backup_root="$target_dir/.specify/backups/$(date -u +%Y%m%dT%H%M%SZ)"
+      mkdir -p "$backup_root"
+    fi
+    cp -R "$dst" "$backup_root/$(basename "$dst")"
+    echo "  🗄️  backed up locally-modified $(basename "$dst") -> ${backup_root#"$target_dir/"}"
+  fi
+}
+
 installed=0
 for skill_path in "$skills_src"/specjedi-*/; do
   skill_name="$(basename "$skill_path")"
+  backup_if_differs "$skill_path" "$skills_dst/$skill_name"
   rm -rf "${skills_dst:?}/$skill_name"
   cp -R "$skill_path" "$skills_dst/$skill_name"
   echo "  ✅ $skill_name"
@@ -546,6 +569,7 @@ echo "📚 Installing runtime template dependencies..."
 templates_dst="$target_dir/.specify/templates"
 mkdir -p "$templates_dst"
 for template in constitution-template.md spec-template.md plan-template.md tasks-template.md; do
+  backup_if_differs "$repo_root/.specify/templates/$template" "$templates_dst/$template"
   cp "$repo_root/.specify/templates/$template" "$templates_dst/$template"
   echo "  ✅ $template"
 done

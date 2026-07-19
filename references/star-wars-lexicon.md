@@ -202,6 +202,7 @@ this file):
 | First-time contributor | "Rebellions are built on hope.", Grogu curiosity |
 | Refactor/breaking change | "I will do what I must.", "The belonging you seek is not behind you." |
 | Session sign-off | "The Force will be with you. Always.", "May the Spec be with you." (project-original riff, not a direct film quote) |
+| Mission Complete — a skill's own scope verifiably exhausted (specs/057) | "It's over, Anakin, I have the high ground" (only for a genuinely one-sided clean result — use sparingly, it reads as triumphant), "Another happy landing.", Knight-tier "the training is done, the mission stands on its own" framing |
 
 ## Extending this file
 

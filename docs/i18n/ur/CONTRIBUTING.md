@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=ur -->
+<!-- i18n-sync: source=CONTRIBUTING.md@8dc71a4 lang=ur -->
 > 🌐 یہ دستاویز AI کی مدد سے ترجمہ کی گئی ہے۔ **انگریزی مستند ماخذ ہے**
 > ([Principle I](../../../.specify/memory/constitution.md))؛ کسی بھی
 > فرق کی صورت میں انگریزی کو ترجیح حاصل ہوگی۔ دیگر زبانیں دیکھیں:
@@ -66,7 +66,7 @@ Spec Jedi [Semantic Versioning](https://semver.org/) کی پیروی کرتا ہ
 جو public skill-package contract تک محدود ہے: کسی skill کے برتاؤ کو
 توڑنا MAJOR ہے، ایک نئی skill یا additive صلاحیت MINOR ہے، fixes اور
 documentation PATCH ہیں۔ مکمل policy
-[Principle XI](.specify/memory/constitution.md) میں ہے۔
+[Principle XI](../../../.specify/memory/constitution.md) میں ہے۔
 
 یہاں کوئی خاموشی سے release نہیں کاٹتا — project صرف تجویز کرتا ہے کہ
 کب ایک release justified ہے، اور اصل فیصلہ ایک انسان پر چھوڑ دیتا ہے:
@@ -149,11 +149,15 @@ description میں بتائیں کہ آپ نے کیا exercise کیا۔
 
 ## آواز اور نامکرن
 
-- Product skills کا نام `specjedi-*` رکھا جاتا ہے، کبھی `speckit-*`
-  نہیں — بعد والا vendored internal bootstrap tooling ہے جسے یہ
-  repository خود کو بنانے کے لیے استعمال کرتا ہے، یہ وہ چیز نہیں جسے
-  end users install کرتے ہیں (Principle XV)۔ اگر یہ فرق واضح نہیں ہے
-  تو README کا "Spec Jedi کیسے خود کو بناتا ہے" section دیکھیں۔
+- Product skills کا نام `specjedi-*` رکھا جاتا ہے — یہ naming convention
+  یہ repository اپنی پہلی ہی skill سے اپنائے ہوئے ہے (Principle XV)۔
+  ایک تاریخی نوٹ: یہ پروجیکٹ پہلے خود کو بنانے کے لیے vendored
+  `speckit-*` bootstrap tooling استعمال کرتا تھا، اس سے پہلے کہ اس کی
+  اپنی `specjedi-*` pipeline مکمل ہو جائے؛ وہ bootstrap مرحلہ feature
+  048 (2026-07-18) پر ختم ہوا — اب اس repository کی اپنی development
+  مکمل طور پر `specjedi-*` پر چلتی ہے، وہی tool جسے یہ ship کرتا ہے۔
+  مکمل walkthrough کے لیے README کا "Spec Jedi کیسے خود کو بناتا ہے"
+  section دیکھیں۔
 - End-user-facing narration (generated `spec.md`/`plan.md`/`tasks.md`
   fields کا لفظی مواد نہیں) Spec Jedi کی Star Wars-flavored آواز
   استعمال کرتی ہے (Principle XII) — reference lexicon کے لیے

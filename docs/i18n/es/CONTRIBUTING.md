@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=es -->
+<!-- i18n-sync: source=CONTRIBUTING.md@8dc71a4 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # Contribuir a Spec Jedi
@@ -53,7 +53,7 @@ Spec Jedi sigue el [Versionado Semántico](https://semver.org/), acotado
 al contrato público del paquete de skills: romper el comportamiento de
 una skill es MAJOR, una nueva skill o capacidad aditiva es MINOR,
 correcciones y documentación son PATCH. La política completa vive en el
-[Principle XI](.specify/memory/constitution.md).
+[Principle XI](../../../.specify/memory/constitution.md).
 
 Nadie corta una release en silencio por aquí — el proyecto simplemente
 sugiere cuándo se justifica una y deja la decisión real a una persona:
@@ -131,11 +131,14 @@ documentado (Principle IX) — describe qué ejercitaste en la descripción del 
 
 ## Voz y nomenclatura
 
-- Las skills de producto se nombran `specjedi-*`, nunca `speckit-*` — esta última es
-  herramienta interna de bootstrap distribuida (vendored) que este repositorio usa para
-  construirse a sí mismo, no algo que los usuarios finales instalan (Principle XV). Ver
-  la sección "Cómo Spec Jedi se construye a sí mismo" del README si esta distinción no
-  está clara.
+- Las skills de producto se nombran `specjedi-*` — la convención de nomenclatura que
+  este repositorio sigue desde su propia primera skill (Principle XV). Nota histórica:
+  este proyecto solía usar herramientas de bootstrap `speckit-*` distribuidas (vendored)
+  para construirse a sí mismo antes de que su propio pipeline `specjedi-*` estuviera
+  completo; esa fase de bootstrap terminó con la funcionalidad 048 (2026-07-18) — el
+  desarrollo propio de este repositorio corre ahora enteramente sobre `specjedi-*`, la
+  misma herramienta que entrega como producto. Ver la sección "Cómo Spec Jedi se
+  construye a sí mismo" del README para el recorrido completo.
 - La narración de cara al usuario final (no el contenido literal de los campos
   generados de `spec.md`/`plan.md`/`tasks.md`) usa la voz con sabor a Star Wars propia
   de Spec Jedi (Principle XII) — ver `references/star-wars-lexicon.md` para el léxico de

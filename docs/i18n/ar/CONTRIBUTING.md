@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=ar -->
+<!-- i18n-sync: source=CONTRIBUTING.md@8dc71a4 lang=ar -->
 > 🌐 هذا المستند ترجمة بمساعدة الذكاء الاصطناعي. **الإنجليزية هي المصدر المعتمد** ([Principle I](../../../.specify/memory/constitution.md))؛ في حال وجود أي تعارض، تكون الإنجليزية هي المرجع. لغات أخرى: [English](../../../CONTRIBUTING.md) · [中文](../zh/CONTRIBUTING.md) · [हिन्दी](../hi/CONTRIBUTING.md) · [Español](../es/CONTRIBUTING.md) · [Français](../fr/CONTRIBUTING.md) · [العربية](../ar/CONTRIBUTING.md) · [বাংলা](../bn/CONTRIBUTING.md) · [Português](../pt/CONTRIBUTING.md) · [Русский](../ru/CONTRIBUTING.md) · [اردو](../ur/CONTRIBUTING.md) · [Bahasa Indonesia](../id/CONTRIBUTING.md)
 
 # المساهمة في Spec Jedi
@@ -51,7 +51,7 @@
 يتّبع Spec Jedi [الإصدار الدلالي (Semantic Versioning)](https://semver.org/)،
 محدوداً بعقد حزمة المهارات العام: تغيير سلوك مهارة بشكل جذري هو MAJOR،
 مهارة جديدة أو إمكانية إضافية هي MINOR، الإصلاحات والتوثيق هي PATCH.
-السياسة الكاملة في [Principle XI](.specify/memory/constitution.md).
+السياسة الكاملة في [Principle XI](../../../.specify/memory/constitution.md).
 
 لا أحد هنا يصدر نسخة بصمت — يقترح المشروع فقط متى يكون الإصدار مبرَّراً
 ويترك القرار الفعلي لإنسان:
@@ -126,10 +126,12 @@ pwsh scripts/validate.ps1     # Windows
 
 ## الصوت والتسمية
 
-- تُسمّى مهارات المنتج `specjedi-*`، وأبداً `speckit-*` — هذه الأخيرة هي أدوات تمهيد
-  داخلية موزَّعة (vendored) يستخدمها هذا المستودع لبناء نفسه، وليست شيئاً يثبِّته
-  المستخدمون النهائيون (Principle XV). راجع قسم "كيف يبني Spec Jedi نفسه" في README إذا
-  لم يكن هذا التمييز واضحاً.
+- تُسمّى مهارات المنتج `specjedi-*` — وهو اصطلاح التسمية الذي يتبعه هذا المستودع منذ
+  أول مهارة له (Principle XV). ملاحظة تاريخية: اعتاد هذا المشروع استخدام أدوات تمهيد
+  موزَّعة (vendored) من `speckit-*` لبناء نفسه قبل اكتمال مسار `specjedi-*` الخاص به؛
+  انتهت مرحلة التمهيد تلك مع الميزة رقم 048 (2026-07-18) — يعمل تطوير هذا المستودع
+  بالكامل الآن على `specjedi-*`، الأداة نفسها التي يقدّمها كمنتج. راجع قسم "كيف يبني
+  Spec Jedi نفسه" في README للسير الكامل.
 - يستخدم السرد الموجَّه للمستخدم النهائي (وليس المحتوى الحرفي لحقول `spec.md`/
   `plan.md`/`tasks.md` المُولَّدة) صوت Spec Jedi الخاص بنكهة Star Wars (Principle XII) —
   راجع `references/star-wars-lexicon.md` للمعجم المرجعي. يبقى *محتوى* الأثر المُولَّد

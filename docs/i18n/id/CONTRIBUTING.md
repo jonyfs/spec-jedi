@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=id -->
+<!-- i18n-sync: source=CONTRIBUTING.md@8dc71a4 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -72,7 +72,7 @@ Spec Jedi mengikuti [Semantic Versioning](https://semver.org/),
 dibatasi pada kontrak paket skill publik: perubahan perilaku skill
 yang breaking adalah MAJOR, skill baru atau kapabilitas aditif adalah
 MINOR, perbaikan dan dokumentasi adalah PATCH. Kebijakan lengkap ada di
-[Principle XI](.specify/memory/constitution.md).
+[Principle XI](../../../.specify/memory/constitution.md).
 
 Tidak seorang pun di sini memotong rilis secara diam-diam — proyek ini
 hanya menyarankan kapan rilis dibenarkan dan menyerahkan keputusan
@@ -156,12 +156,16 @@ logika percabangannya berperilaku seperti yang didokumentasikan
 
 ## Suara dan penamaan
 
-- Skill produk dinamai `specjedi-*`, tidak pernah `speckit-*` — yang
-  terakhir adalah tooling bootstrap internal yang didistribusikan
-  (vendored) yang digunakan repositori ini untuk membangun dirinya
-  sendiri, bukan sesuatu yang diinstal oleh pengguna akhir
-  (Principle XV). Lihat bagian "Bagaimana Spec Jedi membangun dirinya
-  sendiri" di README jika perbedaan ini tidak jelas.
+- Skill produk dinamai `specjedi-*` — konvensi penamaan yang telah
+  diikuti repositori ini sejak skill pertamanya sendiri
+  (Principle XV). Catatan historis: proyek ini dulu menggunakan
+  tooling bootstrap `speckit-*` yang di-vendor untuk membangun dirinya
+  sendiri sebelum pipeline `specjedi-*` miliknya sendiri selesai; fase
+  bootstrap itu berakhir dengan feature 048 (2026-07-18) —
+  pengembangan repositori ini sendiri sekarang berjalan sepenuhnya di
+  atas `specjedi-*`, alat yang sama yang dikirimkannya. Lihat bagian
+  "Bagaimana Spec Jedi membangun dirinya sendiri" di README untuk
+  panduan lengkapnya.
 - Narasi yang menghadap pengguna akhir (bukan konten literal dari
   field `spec.md`/`plan.md`/`tasks.md` yang dihasilkan) menggunakan
   suara bernuansa Star Wars khas Spec Jedi (Principle XII) — lihat

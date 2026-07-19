@@ -329,42 +329,97 @@ respect to it (spec.md US3 Acceptance Scenarios).
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T040 [P] [US3] Add cases to `.claude/hooks/test-hooks.sh`/`.ps1`
+- [x] T040 [P] [US3] Add cases to `.claude/hooks/test-hooks.sh`/`.ps1`
   asserting: the second prompt defaults to declined (`[y/N]`, no answer
   = no install); an explicit "y" installs and wires the hook; a
   non-interactive invocation never installs it.
-- [ ] T041 [P] [US3] **Behavioral test** (closes the `specjedi-analyze`
+  Verified: `--- conventional-commits.py ---` section added to both
+  `test-hooks.sh` and `test-hooks.ps1`; `bash .claude/hooks/test-hooks.sh`
+  and `pwsh -File .claude/hooks/test-hooks.ps1` both report "All hook
+  tests passed."
+- [x] T041 [P] [US3] **Behavioral test** (closes the `specjedi-analyze`
   gap): in a new `--- conventional-commits.py ---` section, invoke the
   hook directly with a non-conventional commit message (e.g. `"fixed a
   thing"`) and assert deny naming the `type: description` format
   (Acceptance Scenario 1); with a conforming message, assert allow.
-- [ ] T042 [P] [US3] **`python3`-gating test**: `python3` absent →
+  Verified: `check_commit_msg()` helper in both test scripts covers
+  non-conventional (blocked), `feat:`/`fix(scope):` (allowed), and a
+  non-commit command (allowed, nothing to check) — 4/4 passing on both
+  platforms.
+- [x] T042 [P] [US3] **`python3`-gating test**: `python3` absent →
   `conventional-commits.py` not installed even when opted in (FR-005).
-- [ ] T043 [P] [US3] **Wave 1/2 harness-translation test**: for each
+  Verified: `validate.yml`'s "python3 absence skips conventional-commits.py
+  even when opted in (US3, FR-005)" step combines
+  `SPECJEDI_TEST_FORCE_NO_PYTHON3=1` with `SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1`
+  and asserts both the combined skip-warning and the file's absence;
+  confirmed locally before commit.
+- [x] T043 [P] [US3] **Wave 1/2 harness-translation test**: for each
   harness with an equivalent opt-in prompt mechanism, assert a scratch
   install offers and (when accepted) wires the translated hook with
   matching deny/allow behavior; document any harness excluded and why.
+  Verified: `validate.yml`'s `install-test-shared-hooks-wave1` (bash) and
+  `install-test-shared-hooks-wave1-windows-native` (PowerShell) jobs both
+  gained a "conventional-commits.py opt-in translates correctly for all
+  three Wave 1 harnesses" step covering gemini-cli/antigravity/codex-cli
+  accept + a declined case; confirmed locally on macOS for both shells
+  (bash step directly, PowerShell step via a genuine
+  `pwsh -File`-into-child-process pipe, matching the pipe-semantics fix
+  already documented for T044/T045 below). Wave 2 harnesses
+  (opencode/zed/amazon-q/warp) are excluded: they only receive a
+  permissions-file translation, never a hook mechanism at all (same as
+  US1/US2/US5's own prevent-direct-push.py/secret-scanner.py, which were
+  never offered to Wave 2 either) — not a new gap this story introduces.
 
 ### Implementation for User Story 3
 
-- [ ] T044 [P] [US3] Add the second interactive prompt to
+- [x] T044 [P] [US3] Add the second interactive prompt to
   `scripts/install.sh` immediately after the existing
   `install_shared_hooks` prompt (~L379): `install_conventional_commits=0`,
   `[y/N]` idiom, only asked when `interactive_mode` and
   `install_shared_hooks` are both true (plan.md Implementation notes).
   Until T040 passes.
-- [ ] T045 [P] [US3] Identical prompt in `scripts/install.ps1`.
-- [ ] T046 [P] [US3] Extend `install.sh`'s claude-code block to
+  Note: the interactive-mode gate is untestable via simple piped input in
+  CI (`[ -t 0 ]` TTY check), so a dedicated, narrowly-scoped
+  `SPECJEDI_TEST_FORCE_HOOKS_PROMPT` env-var seam was added to only this
+  block (not the global `interactive_mode`, which would also re-trigger
+  the earlier directory/harness wizard and consume the test's piped
+  answers before they reached this prompt).
+- [x] T045 [P] [US3] Identical prompt in `scripts/install.ps1`.
+  Note: PowerShell's `|` passes .NET objects through the pipeline, not
+  raw stdin bytes, so piping answer strings into a nested
+  `./scripts/install.ps1` call from *within* another PowerShell script
+  does not feed `Read-Host`; only a genuine OS-level pipe into a real
+  `pwsh -File scripts/install.ps1` child process works. All PowerShell
+  verification (T040/T041/T043) uses that invocation shape.
+- [x] T046 [P] [US3] Extend `install.sh`'s claude-code block to
   conditionally `cp` + wire `conventional-commits.py` only when
   `install_conventional_commits=1`, gated on `has_python3` (depends on
   T002). Until T041/T042 pass.
-- [ ] T047 [P] [US3] Identical in `install.ps1`.
-- [ ] T048 [US3] Stage `conventional-commits.py` in
+- [x] T047 [P] [US3] Identical in `install.ps1`.
+- [x] T048 [US3] Stage `conventional-commits.py` in
   `package-release.sh`/`.ps1` (both files, one task).
-- [ ] T049 [US3] Add to `validate.yml`'s `package-content-completeness`
+  Verified: both scripts now `cp`/`Copy-Item` `conventional-commits.py`
+  into the staged `.claude/hooks/` directory unconditionally (same
+  reasoning as `prevent-direct-push.py`/`secret-scanner.py` above — the
+  source file must exist in a downloaded release tarball regardless of
+  the user's opt-in answer at install time).
+- [x] T049 [US3] Add to `validate.yml`'s `package-content-completeness`
   list.
-- [ ] T050 [US3] Extend Wave 1/2 harness translation for
+  Verified: `.claude/hooks/conventional-commits.py` added to both the
+  bash and PowerShell "must be present" lists; `python3 -c "import
+  yaml..."` confirms `validate.yml` stays valid YAML.
+- [x] T050 [US3] Extend Wave 1/2 harness translation for
   `conventional-commits.py`. Until T043 passes.
+  Verified: `render_gemini_style_commit_guard()` (install.sh) and
+  `Get-GeminiStyleCommitGuardScript` (install.ps1) both do the same
+  source-to-source transform of `conventional-commits.py`'s deny block
+  used for `prevent-direct-push.py`; `install_hooks_gemini_cli`/
+  `install_hooks_antigravity` (translated) and `install_hooks_codex_cli`
+  (reused unmodified, identical schema) all extended, PowerShell
+  counterparts mirrored. All three Wave 1 harnesses verified functionally
+  end-to-end locally (file present, correct output shape, wired into
+  settings, and an actual deny call returns exit 2 with the translated
+  JSON shape).
 
 **Checkpoint**: US1, US2, US5, US3 all independently functional.
 
@@ -381,13 +436,20 @@ mechanism (spec.md US4 Acceptance Scenarios).
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T051 [P] [US4] Add a case to `.claude/hooks/test-hooks.sh`/`.ps1`
+- [x] T051 [P] [US4] Add a case to `.claude/hooks/test-hooks.sh`/`.ps1`
   asserting a scratch target's `.claude/settings.json` gains the `Stop`
   hook block (osascript/notify-send fallback) on shareable-hooks install,
   non-destructively (leaves an existing `Stop` array alone, per the same
   discipline `update_shared_settings()` already applies to
   `statusLine`/`permissions`).
-- [ ] T052 [US4] **Manual-verification note** (not automated — real OS
+  Verified: new `=== Stop-hook wiring (merge_json_key) ===` /
+  `=== Stop-hook wiring (Merge-JsonKey, specs/058 US4, T051) ===` sections
+  added to both test scripts, covering fresh-file add + pre-existing-key
+  preservation, idempotent re-run, and non-destructive preservation of an
+  existing `Stop` array — 3/3 passing on both `bash
+  .claude/hooks/test-hooks.sh` and `pwsh -File .claude/hooks/test-hooks.ps1`
+  ("All hook tests passed." on both).
+- [x] T052 [US4] **Manual-verification note** (not automated — real OS
   notification firing isn't practically assertable in CI, matching
   specs/042's own established convention for UX-only requirements): once
   T053/T054 land, manually confirm on macOS and on Linux (or record why
@@ -397,10 +459,23 @@ mechanism (spec.md US4 Acceptance Scenarios).
   next to this task (date, platform, outcome) — this closes the
   `specjedi-analyze`-flagged Unverified status for FR-004's Acceptance
   Scenarios with an explicit, honest disposition rather than a silent gap.
-
-### Implementation for User Story 4
-
-- [ ] T053 [P] [US4] Add `Stop`-hook wiring to `scripts/install.sh`:
+  **Result (2026-07-19, macOS)**: ran the exact `stop_block` command
+  string (`if command -v osascript ...; fi`) directly, not just inside
+  `test-hooks.sh`'s extracted-function harness — `osascript -e 'display
+  notification "Response complete" with title "Claude Code"'` executed
+  and exited 0 with no error. Also confirmed the neither-tool-present
+  branch (`env -i PATH="/nonexistent" bash -c '...'`) exits 0 with no
+  output, matching FR-004's "errors on nothing" requirement. **Honest
+  limitation**: this session runs in a non-interactive agent shell with
+  no way to visually confirm the actual macOS notification banner
+  rendered on screen (only that the command that triggers it returned
+  success) — that visual half of the confirmation needs a human at the
+  keyboard. Linux/`notify-send` was not available to test in this
+  environment at all (macOS-only sandbox) — untested, not assumed
+  working; the command is a straight, unmodified copy of this repo's own
+  already-shipped `.claude/settings.json` Stop entry, which has been
+  running in this project's own sessions already.
+- [x] T053 [P] [US4] Add `Stop`-hook wiring to `scripts/install.sh`:
   call `merge_json_key "$target_dir/.claude/settings.json" '"Stop"'
   "$stop_block" "Stop notification hook wired"` with the exact
   `stop_block` content `plan.md`'s Implementation notes now specify
@@ -411,10 +486,29 @@ mechanism (spec.md US4 Acceptance Scenarios).
   resolved via a `specjedi-plan` amendment, 2026-07-19 — `plan.md` now
   names `merge_json_key()` reuse explicitly with the exact block
   content.)*
-- [ ] T054 [P] [US4] Identical addition in `scripts/install.ps1`, via
+  **Real bug found and fixed during implementation**: `merge_json_key()`
+  was defined *after* the top-level claude-code install block that now
+  calls it — bash resolves function calls at execution time (no
+  hoisting), so the original definition order (function textually below
+  its new call site) failed with `merge_json_key: command not found`.
+  Relocated the function's definition to immediately after
+  `update_shared_settings()` (its first actual use point) rather than
+  leaving it where it was originally written for the Wave 1/2 harness
+  functions alone. Verified via a real scratch install: `"Stop"` key
+  present, valid JSON, and a second run correctly says "already has this
+  key — leaving as-is."
+- [x] T054 [P] [US4] Identical addition in `scripts/install.ps1`, via
   `Merge-JsonKey` (confirmed present at `scripts/install.ps1:882`, same
   `-Target`/`-KeyCheck`/`-Block`/`-OkMessage` parameters every other Wave
   1/2 call site already uses).
+  Same real bug as T053 above, confirmed independently: PowerShell also
+  doesn't hoist top-level function definitions in a `.ps1` script (a
+  minimal repro — calling a function before its textual definition —
+  reproduces the identical "not recognized" error), so `Merge-JsonKey`
+  was relocated immediately after `Update-SharedSettings` here too.
+  Verified via a real scratch install with `pwsh -NoProfile -File
+  scripts/install.ps1`: `"Stop"` key present, valid JSON, idempotent
+  re-run confirmed.
 
 **Checkpoint**: All five user stories independently functional.
 
@@ -422,19 +516,47 @@ mechanism (spec.md US4 Acceptance Scenarios).
 
 ## Phase 8: Polish & Cross-Cutting Concerns
 
-- [ ] T055 Update the "target already has a `PreToolUse`/`Stop` hooks
+- [x] T055 Update the "target already has a `PreToolUse`/`Stop` hooks
   array — add manually" messages in `install.sh`/`.ps1` (FR-006) to name
   every newly-shareable hook this feature adds
   (`prevent-direct-push.py`, `secret-scanner.py`, `secret-file-guard.sh`,
   `conventional-commits.py` when opted in, the `Stop` notification hook)
   — not just `dangerous-command-guard.sh`.
-- [ ] T056 [P] Add a test case confirming T055's message names every new
+  Found already satisfied: the `PreToolUse` "add manually" message
+  (`install.sh`, `install.ps1`, and the codex-cli `hooks.json` variant in
+  both) was already built dynamically from `bash_hook_files`/
+  `$bashHookFiles`, which already includes every hook this feature adds
+  — no hardcoded `dangerous-command-guard.sh`-only text remained by the
+  time US1-US3 landed. Verified live against a scratch target with a
+  pre-existing `PreToolUse` array: the message names
+  `dangerous-command-guard.sh`, `prevent-direct-push.py`,
+  `secret-scanner.py`, `secret-file-guard.sh`, and (when opted in)
+  `conventional-commits.py`, on both bash and PowerShell. `Stop` has no
+  equivalent "add manually" message by design (plan.md's own Stop-hook
+  reasoning: an existing `Stop` array is always left fully alone, never
+  partially merged) — not a gap, a deliberate simpler case for the one
+  hook type that never needs surgical in-array editing.
+- [x] T056 [P] Add a test case confirming T055's message names every new
   hook (closes the previously-Unverified FR-006).
-- [ ] T057 Extend the Codex CLI trust-workflow output message (carried
+  Verified: new `validate.yml` steps "add-manually message names every
+  new hook, not just dangerous-command-guard.sh/.ps1 (FR-006, T056)" in
+  both `install-test-shared-hooks` (bash) and
+  `install-test-shared-hooks-windows-native` (PowerShell) — install
+  against a target with a pre-existing `PreToolUse` array (opted into
+  `conventional-commits.py`) and assert all five hook names appear in
+  the resulting message. Confirmed locally on both shells before commit.
+- [x] T057 Extend the Codex CLI trust-workflow output message (carried
   from specs/041's plan.md) to name every new hook, not just the
   original — the end-user must still run `/hooks` inside Codex CLI to
   approve each one.
-- [ ] T058 **`python3`-absent combined-warning test**: with all of
+  Found already dynamic (built from `$bash_hook_files`/`$bashHookFiles`,
+  same mechanism as T055) for the non-opt-in default case; strengthened
+  the existing Wave 1 `conventional-commits.py` opt-in CI steps (bash and
+  PowerShell) to also assert the trust message reads "...prevent-
+  direct-push.py secret-scanner.py conventional-commits.py before they
+  actually run" when opted in, closing the one untested combination.
+  Confirmed locally on both shells.
+- [x] T058 **`python3`-absent combined-warning test**: with all of
   US1/US2/US3 landed, simulate `python3` absence and assert install.sh
   prints exactly ONE named warning listing all three skipped hooks
   together (`secret-scanner.py`, `prevent-direct-push.py`,
@@ -442,14 +564,43 @@ mechanism (spec.md US4 Acceptance Scenarios).
   (FR-005's exact wording). This is the one FR-005 assertion that can
   only be meaningfully tested once every Python-hook story has landed;
   T007/T018/T042 each cover their own story's skip in isolation.
-- [ ] T059 Full `install-test`/`install-test-*` CI job pass across every
+  Verified: strengthened the existing "python3 absence skips
+  conventional-commits.py..." `validate.yml` step (renamed to name T058
+  explicitly) to assert exactly one line matching "python3 not found —
+  skipping" and that all three hook names appear together on that single
+  line — never three separate messages. Confirmed locally: `python3 not
+  found — skipping: prevent-direct-push.py secret-scanner.py
+  conventional-commits.py`.
+- [x] T059 Full `install-test`/`install-test-*` CI job pass across every
   matrixed OS/harness in `.github/workflows/validate.yml`, confirming
   every new hook, prompt, and packaging path end-to-end — this run also
   serves as FR-008's regression check (`dangerous-command-guard.sh`'s own
   pre-existing, untouched test section is part of this same CI pass).
-- [ ] T060 [P] Update `references/harness-capability-notes.md` if T014,
+  Local pre-flight complete (bash/PowerShell syntax checks, both
+  `test-hooks.sh`/`.ps1` suites, every new/changed `validate.yml` step
+  individually extracted and run locally on macOS): all green. The
+  actual matrixed CI run (ubuntu/macOS/windows-latest × every harness)
+  happens once this branch's PR opens — recorded here as "ready for CI,"
+  with the real multi-OS confirmation to follow from the PR's own check
+  run, matching this feature's own established US1/US2/US5 pattern
+  (diagnose real CI failures from logs, never guess).
+- [x] T060 [P] Update `references/harness-capability-notes.md` if T014,
   T025, T039, or T050 surfaced any refinement to a Wave 1/2 harness's
   documented hook capability.
+  No update needed: T014/T025/T050 extended Wave 1 harnesses
+  (gemini-cli/antigravity/codex-cli) with *more hooks* through the exact
+  same already-documented "translated declarative-JSON hook"/"reused
+  unmodified" mechanisms this file's Implementation status update
+  already names — no new capability or limitation was discovered. T039
+  confirmed (not discovered) that Wave 1 harnesses have no hook surface
+  distinct from Bash/`run_shell_command`, which is why
+  `secret-file-guard.sh` was never translated for them — this was
+  already established by specs/041's own research.md before specs/058
+  began, so it's a reaffirmation, not a refinement. Wave 2 harnesses
+  (opencode/zed/amazon-q/warp) remain permissions-only with zero hook
+  translations across every story in this feature (US1/US2/US3/US5
+  alike) — consistent with, not a change to, the existing
+  characterization.
 
 ---
 

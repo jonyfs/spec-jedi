@@ -98,6 +98,23 @@ Test-Command "cat .npmrc blocked" 'cat .npmrc' "block"
 Test-Command "cat .aws/credentials blocked" 'cat ~/.aws/credentials' "block"
 Test-Command "cat .docker/config.json blocked" 'cat ~/.docker/config.json' "block"
 
+Write-Host "=== conventional-commits.py (specs/058-expand-shareable-hooks, T041) ==="
+
+function Test-CommitMsg($desc, $cmd, $expect) {
+    $input_json = @{ tool_name = "Bash"; tool_input = @{ command = $cmd } } | ConvertTo-Json -Compress
+    $out = $input_json | python3 (Join-Path $hooksDir "conventional-commits.py")
+    if ($expect -eq "allow") {
+        if (-not $out) { Test-Pass $desc } else { Test-Fail "$desc (should allow, got: $out)" }
+    } else {
+        if ($out) { Test-Pass $desc } else { Test-Fail "$desc (should block, was allowed)" }
+    }
+}
+
+Test-CommitMsg "non-conventional message blocked" 'git commit -m "fixed a thing"' "block"
+Test-CommitMsg "conventional feat: message allowed" 'git commit -m "feat: add user authentication"' "allow"
+Test-CommitMsg "conventional fix(scope): message allowed" 'git commit -m "fix(api): handle null responses"' "allow"
+Test-CommitMsg "non-commit command allowed (nothing to check)" 'git status' "allow"
+
 Write-Host "=== secret-file-guard.ps1 (specs/058-expand-shareable-hooks, T027) ==="
 
 function Test-Guard($desc, $tool, $field, $value, $expect) {
@@ -252,6 +269,88 @@ if ($installPs1 -notmatch '(?s)(function Update-SharedSettings \{.*?\n\})') {
         Test-Pass "malformed JSON fails loudly with a clear message, never guesses"
     } else {
         Test-Fail "malformed JSON should have failed loudly with a clear message, got exit=$($result.ExitCode) output=$($result.Output)"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+}
+
+Write-Host "=== Stop-hook wiring (Merge-JsonKey, specs/058 US4, T051) ==="
+
+if ($installPs1 -notmatch '(?s)(function Merge-JsonKey \{.*?\n\})') {
+    Test-Fail "could not extract Merge-JsonKey from install.ps1"
+} else {
+    $mergeJsonKeyFnSrc = $matches[1]
+
+    function Invoke-StopMerge($target) {
+        $tmpScript = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName() + ".ps1")
+        # Built as a plain string array (not a here-string) to avoid any
+        # nested here-string delimiter collision with the stop block's
+        # own embedded single/double quotes.
+        $stopBlockLines = @(
+            '  "Stop": [',
+            '    {',
+            '      "matcher": "",',
+            '      "hooks": [',
+            '        {',
+            '          "type": "command",',
+            '          "command": "if command -v osascript >/dev/null 2>&1; then osascript -e ''display notification \"Response complete\" with title \"Claude Code\"''; elif command -v notify-send >/dev/null 2>&1; then notify-send \"Claude Code\" \"Response complete\"; fi"',
+            '        }',
+            '      ]',
+            '    }',
+            '  ]'
+        )
+        $stopBlockLiteral = ($stopBlockLines -join "`n").Replace("'", "''")
+        $callLines = @(
+            "`$stopBlock = '$stopBlockLiteral'",
+            'Merge-JsonKey -Target $args[0] -KeyCheck ''"Stop"'' -Block $stopBlock -OkMessage "Stop notification hook wired"'
+        )
+        ($mergeJsonKeyFnSrc, ($callLines -join "`n")) -join "`n" | Set-Content $tmpScript
+        & pwsh -NoProfile -File $tmpScript $target 2>&1 | Out-Null
+        Remove-Item $tmpScript
+    }
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{
+  "statusLine": {}
+}' | Set-Content $target
+    Invoke-StopMerge $target
+    $content = Get-Content $target -Raw
+    try {
+        $null = $content | ConvertFrom-Json
+        if ($content -match '"Stop"' -and $content -match '"statusLine"') {
+            Test-Pass "Stop hook block added, pre-existing statusLine preserved"
+        } else {
+            Test-Fail "Stop hook block not added correctly, or existing content lost"
+        }
+    } catch {
+        Test-Fail "Stop hook block merge produced invalid JSON"
+    }
+
+    $firstContent = Get-Content $target -Raw
+    Invoke-StopMerge $target
+    $secondContent = Get-Content $target -Raw
+    if ($firstContent -eq $secondContent) {
+        Test-Pass "Stop hook re-run: byte-identical (idempotent)"
+    } else {
+        Test-Fail "Stop hook re-run: content changed on second run"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "echo my-own-notifier"}]}]
+  }
+}' | Set-Content $target
+    Invoke-StopMerge $target
+    $content = Get-Content $target -Raw
+    if ($content -match "my-own-notifier" -and $content -notmatch "osascript") {
+        Test-Pass "existing Stop array left alone, never overwritten (non-destructive)"
+    } else {
+        Test-Fail "an existing Stop array was overwritten -- should have been left as-is"
     }
     Remove-Item -Recurse -Force $tmpDir
 }

@@ -108,6 +108,8 @@ cp "$repo_root/.claude/hooks/secret-file-guard.sh" "$hooks_dst/secret-file-guard
 cp "$repo_root/.claude/hooks/secret-file-guard.ps1" "$hooks_dst/secret-file-guard.ps1"
 echo "  ✅ .claude/hooks/secret-file-guard.sh"
 echo "  ✅ .claude/hooks/secret-file-guard.ps1"
+cp "$repo_root/.claude/hooks/conventional-commits.py" "$hooks_dst/conventional-commits.py"
+echo "  ✅ .claude/hooks/conventional-commits.py"
 
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"

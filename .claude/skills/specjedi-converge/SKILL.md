@@ -86,7 +86,8 @@ nothing about the rest of this skill changes.
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
 5. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): `specjedi-implement` to work the newly appended tasks,
+   (Principle XIV; see `references/next-step-interaction.md`):
+   `specjedi-implement` to work the newly appended tasks,
    or `specjedi-analyze` first if a contradiction (not just a gap) was
    found.
 

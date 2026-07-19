@@ -37,8 +37,9 @@ the user's behalf.
    would run instead. This is a hard boundary, not a confirm-then-proceed
    gate like most other skills' file writes — there is no override path
    from within this skill.
-5. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   reviewing the suggestion, or continuing with other pipeline work if no
+5. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): reviewing the
+   suggestion, or continuing with other pipeline work if no
    release feels due yet.
 
 ## Autonomous vs. confirm-first

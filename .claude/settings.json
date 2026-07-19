@@ -23,6 +23,18 @@
             "type": "command",
             "command": "bash",
             "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.sh"]
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/secret-scanner.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/conventional-commits.py\""
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prevent-direct-push.py\""
           }
         ]
       },

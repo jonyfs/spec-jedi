@@ -59,8 +59,8 @@ around. Full explanation, zero Spec-Jedi-specific branding:
 flowchart TD
     Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
     Const --> Onboard["🌱 Onboarding & Guidance<br/>4 skills"]
-    Const --> Quality["🛡️ Quality & Review<br/>5 skills"]
-    Const --> Meta["📊 Meta & Tooling<br/>9 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>6 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>11 skills"]
 ```
 
 Everything downstream checks itself against the constitution, never the

@@ -75,6 +75,56 @@ else
   status_line="${total} feature(s): ${n_complete} complete, ${n_in_progress} in progress, ${n_planned} planned, ${n_specified} specified, ${n_not_started} not started."
 fi
 
+# --- Part 2.5: next-step suggestion (specs/054, extends Part 2's own -----
+# derivation -- never a second, separately-maintained tracking mechanism,
+# per Constitution Principle XXI's own "no parallel status system" rule
+# applied to this new element). A hook script cannot invoke an
+# LLM-interpreted specjedi-status skill directly, so this reimplements
+# that skill's own "most relevant" priority order in bash, matching the
+# identical precedent Part 2's status-summary reimplementation already
+# set. Priority: an in-progress feature (most recently touched tasks.md)
+# > a planned-not-tasked feature (most recent plan.md) > a
+# specified-not-planned feature (most recent spec.md) > no candidate.
+next_step_line=""
+if [ "$total" -gt 0 ]; then
+  pick_most_recent() {
+    # $1 = the file basename to look for one directory level down.
+    # Prints "dirname" for the most recently modified match, or nothing.
+    local f="$1" best="" best_mtime=-1
+    for dir in "$specs_dir"/*/; do
+      [ -f "$dir$f" ] || continue
+      case "$(basename "$dir")" in [0-9][0-9][0-9]-*) : ;; *) continue ;; esac
+      # mtime via `find -printf` (GNU) with a portable stat fallback (BSD/macOS).
+      mtime="$(find "$dir$f" -printf '%T@\n' 2>/dev/null | cut -d. -f1)"
+      if [ -z "$mtime" ]; then
+        mtime="$(stat -f '%m' "$dir$f" 2>/dev/null || stat -c '%Y' "$dir$f" 2>/dev/null)"
+      fi
+      mtime="${mtime:-0}"
+      if [ "$mtime" -gt "$best_mtime" ] 2>/dev/null; then
+        best_mtime="$mtime"
+        best="$(basename "$dir")"
+      fi
+    done
+    [ -n "$best" ] && printf '%s' "$best"
+  }
+
+  if [ "$n_in_progress" -gt 0 ] || [ "$n_not_started" -gt 0 ]; then
+    feat="$(pick_most_recent tasks.md)"
+    [ -n "$feat" ] && next_step_line="Next step: $feat has a task breakdown ready -- run specjedi-implement to continue it."
+  fi
+  if [ -z "$next_step_line" ] && [ "$n_planned" -gt 0 ]; then
+    feat="$(pick_most_recent plan.md)"
+    [ -n "$feat" ] && next_step_line="Next step: $feat is planned but not yet broken into tasks -- run specjedi-tasks."
+  fi
+  if [ -z "$next_step_line" ] && [ "$n_specified" -gt 0 ]; then
+    feat="$(pick_most_recent spec.md)"
+    [ -n "$feat" ] && next_step_line="Next step: $feat is specified -- run specjedi-clarify or specjedi-plan."
+  fi
+fi
+if [ -z "$next_step_line" ]; then
+  next_step_line="Next step: run specjedi-specify to start a new feature."
+fi
+
 # --- Part 3: rotating Master Yoda line -------------------------------------
 # Context-aware: a line written for the "no specs yet" state (e.g. "Empty,
 # this project's specs are") must never be selected when the status summary
@@ -173,10 +223,17 @@ if [ -f "$marker" ]; then
 fi
 
 # --- Assemble and emit ------------------------------------------------------
-if [ -n "$freshness_line" ]; then
-  printf '%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$freshness_line"
+# 10,000-character additionalContext cap (Principle XXI's own documented
+# fact, FR-006): if the full payload would exceed it, drop the freshness
+# line first (already the lowest-priority, optional element) -- never the
+# new next-step suggestion or the core banner/status/Yoda trio.
+full="$(printf '%s\n\n%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$next_step_line" "$freshness_line")"
+if [ -n "$freshness_line" ] && [ "${#full}" -gt 10000 ]; then
+  printf '%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$next_step_line"
+elif [ -n "$freshness_line" ]; then
+  printf '%s\n\n%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$next_step_line" "$freshness_line"
 else
-  printf '%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line"
+  printf '%s\n\n%s\n\n%s\n\n%s\n' "$banner" "$status_line" "$yoda_line" "$next_step_line"
 fi
 
 exit 0

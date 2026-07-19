@@ -1,5 +1,31 @@
 <!--
 Sync Impact Report
+- Version change: 1.27.1 → 1.28.0
+- Modified principles: XIV. Guided Next-Step Suggestion — MINOR bump,
+  materially expanded guidance (no renaming, no removal).
+  - Directly requested (specs/051-interactive-next-steps): the existing
+    "offer the next step(s) as a short, selectable bulleted list"
+    requirement gains a conditional layer — when the current harness
+    session exposes a native structured-choice tool, next-step options
+    render through it (with an always-present "something else" escape
+    option); otherwise the existing plain bulleted list remains the
+    guaranteed baseline, byte-for-byte unchanged.
+  - Extends this principle rather than creating a new one: the core
+    "MUST NOT end an interaction by leaving the user to guess" rule is
+    completely unchanged; this amendment only adds detail about *how*
+    the list may render when a richer mechanism is available, bounded
+    by Principle III's own harness-agnostic requirement (never assumed,
+    always a layered enhancement over the plain-list baseline).
+  - Full mechanism detail lives in the new `references/next-step-
+    interaction.md`, cited by this principle rather than restated here
+    or duplicated across all 28 `specjedi-*` skills' own citations of
+    this principle.
+  - Not a MAJOR bump: nothing is redefined incompatibly — a harness
+    with no such mechanism sees zero behavior change.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.27.0 → 1.27.1
 - Modified principles: XV. `specjedi-` Skill Naming Convention — PATCH
   bump, a descriptive-fact correction, not a rule change.
@@ -1544,6 +1570,17 @@ just at the start.
 **Rationale**: Directly requested: the project should be self-intuitive —
 a user should always be able to see, and pick from, the next move.
 
+**Interactive rendering, layered over the guaranteed baseline**: when
+the current harness session exposes a native structured-choice tool for
+offering the user a selectable set of options (click or arrow-navigate
+and confirm), a Next-Step Suggestion MAY render through it instead of
+plain markdown — with a distinct, always-present option for an answer
+other than the ones listed. This is strictly a layered enhancement per
+Principle III: on any harness without such a mechanism, the plain
+bulleted list above remains the complete, unchanged requirement. Full
+mechanism detail lives in `references/next-step-interaction.md`, cited
+here rather than restated per-skill.
+
 ### XV. `specjedi-` Skill Naming Convention
 
 Every skill authored as part of this project's own product surface (as
@@ -2087,4 +2124,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.27.1 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18
+**Version**: 1.28.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18

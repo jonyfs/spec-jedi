@@ -125,7 +125,8 @@ nothing about the rest of this skill changes.
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
 8. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): a follow-up `specjedi-analyze` run once a slice is
+   (Principle XIV; see `references/next-step-interaction.md`): a
+   follow-up `specjedi-analyze` run once a slice is
    *merged* (not just opened), to catch any drift between spec/plan/tasks
    and what actually landed after review/CI — distinct from Step 6.6's
    own pre-PR traceability check — plus `specjedi-checklist` if a

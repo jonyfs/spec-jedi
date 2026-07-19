@@ -87,7 +87,8 @@ nothing about the rest of this skill changes.
    `## Extension Hooks` format, but with post-execution labels
    (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
    nothing is registered.
-6. **Suggest the next step** as a short bulleted list (e.g., "run
+6. **Suggest the next step** as a short bulleted list (Principle XIV;
+   see `references/next-step-interaction.md`) (e.g., "run
    `specjedi-specify` to spec your first feature against this").
 
 If the described rules clearly need domain expertise outside general SDD

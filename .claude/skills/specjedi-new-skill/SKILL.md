@@ -55,8 +55,9 @@ clearly marked `[PLACEHOLDER: ...]`, never invented content.
    explicitly, that Principle II's research must be done for real before
    `spec.md` gets filled in — the scaffold provides the prompts, not the
    answers.
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   fill in `research.md` first, then `specjedi-specify` (or hand-authoring
+6. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): fill in `research.md`
+   first, then `specjedi-specify` (or hand-authoring
    matching the template, either is valid) for `spec.md`.
 
 If the requested skill idea clearly needs domain expertise this project's

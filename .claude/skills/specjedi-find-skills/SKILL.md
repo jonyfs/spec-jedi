@@ -151,7 +151,8 @@ there.
 ## When nothing is found
 
 Say so in one line, then offer the next step(s) as a short bulleted list
-(Principle XIV): continuing with general capabilities, and — if this looks
+(Principle XIV; see `references/next-step-interaction.md`): continuing
+with general capabilities, and — if this looks
 like a recurring need — `npx skills init <name>` to turn it into a real
 skill. A short honest "nothing found" beats a padded one.
 

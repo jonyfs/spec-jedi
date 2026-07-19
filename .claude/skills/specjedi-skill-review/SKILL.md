@@ -87,7 +87,8 @@ never an edit.
    valid, good outcome when every dimension is satisfied — never leave an
    empty or ambiguous report.
 7. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — typically: apply the named fix manually and re-run
+   (Principle XIV; see `references/next-step-interaction.md`) —
+   typically: apply the named fix manually and re-run
    `specjedi-skill-review` to confirm, or (on a clean pass) no action
    needed.
 

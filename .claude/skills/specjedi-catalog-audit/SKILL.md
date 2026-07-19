@@ -81,7 +81,8 @@ than re-implementing it — see Step 3.
 5. **Classify and report.** Every finding from Steps 2-4 gets exactly
    one label — SDD-Coverage Gap, Skill-Quality Finding, or Redundancy —
    never left uncategorized (FR-004), plus a concrete next step
-   (Principle XIV). When a finding could plausibly read as both an
+   (Principle XIV; see `references/next-step-interaction.md`). When a
+   finding could plausibly read as both an
    SDD-Coverage Gap and a Redundancy, the phase-level question wins:
    classify as SDD-Coverage Gap only if, absent the overlapping skill,
    the phase would have zero coverage; otherwise classify the overlap as

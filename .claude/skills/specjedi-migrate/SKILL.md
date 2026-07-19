@@ -45,8 +45,9 @@ consent-needed operation on a project a team already has real history in.
    + line) and "Flagged, unchanged" (reference, file + line, reason). If
    nothing was found to rewrite, report "nothing to migrate" plainly and
    make no file changes.
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   whichever pipeline stage the project's own state suggests next.
+6. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): whichever pipeline stage
+   the project's own state suggests next.
 
 If a project's tooling references point at a `speckit-*` command this
 project doesn't vendor at all (a fork or third-party extension),

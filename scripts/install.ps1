@@ -624,6 +624,14 @@ function Get-TrunkBranch {
 # -ErrorAction SilentlyContinue never invokes the target executable, so
 # it never touches $LASTEXITCODE the way a real git call does above.
 function Test-Python3Available {
+    # Explicit test seam -- identical rationale to has_python3()'s own
+    # comment in scripts/install.sh: every attempt to simulate "python3
+    # absent" by mutating the real environment failed for a real,
+    # platform-specific reason, so CI asserts FR-005 via this env var
+    # instead, never by mutating the runner's actual python3 install.
+    if ($env:SPECJEDI_TEST_FORCE_NO_PYTHON3) {
+        return $false
+    }
     return [bool](Get-Command python3 -ErrorAction SilentlyContinue)
 }
 

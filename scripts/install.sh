@@ -814,6 +814,21 @@ detect_trunk_branch() {
 # (Principle XX). dangerous-command-guard.sh/secret-file-guard.sh are
 # bash, zero-dependency, and never gated on this check.
 has_python3() {
+  # Explicit test seam, not a real installer feature: CI needs to assert
+  # FR-005's skip-with-warning behavior deterministically across Linux/
+  # macOS/Windows, and every attempt to simulate "python3 absent" by
+  # mutating the real environment (shadow-PATH symlinks, PATH filtering,
+  # renaming the real binary aside) failed for a different real,
+  # platform-specific reason on this feature's own CI run: MSYS2 DLL
+  # resolution breaks for symlinked binaries on Windows, filtering
+  # python3's own PATH directory can remove unrelated coreutils that
+  # share it, and renaming the real system python3 aside needs root on
+  # a stock Ubuntu/macOS runner. A dependency-injection env var sidesteps
+  # all three at once, verified only by CI, never read from a real user's
+  # own environment (SPECJEDI_TEST_* is not a documented public flag).
+  if [ -n "${SPECJEDI_TEST_FORCE_NO_PYTHON3:-}" ]; then
+    return 1
+  fi
   command -v python3 >/dev/null 2>&1
 }
 

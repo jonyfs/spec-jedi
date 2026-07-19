@@ -1,7 +1,7 @@
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/049-skill-catalog-sdd-audit/plan.md
+at specs/052-auto-mode-pipeline-chain/spec.md (plan.md not yet written)
 <!-- SPECKIT END -->
 
 ## Session-start orientation (Constitution Principle XXI)

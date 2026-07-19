@@ -33,6 +33,23 @@ tool) but not a universal one, so it can only ever be a layered
 enhancement over Principle XIV's existing plain-list baseline, never a
 replacement for it.
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: Should the interactive-selection convention also extend to
+  `specjedi-clarify`'s own separate, pre-existing Recommended-option/
+  lettered-table question format (FR-006), or stay scoped strictly to
+  Principle XIV Next-Step Suggestion moments? → A: Stay scoped to
+  Principle XIV Next-Step moments only (User Stories 1-2). The user's
+  own request wording names "próximos passos" (next steps) specifically,
+  which maps directly to Principle XIV; `specjedi-clarify`'s own format
+  serves a deliberately different purpose (structured ambiguity
+  resolution with reasoning shown, not a next-pipeline-stage picker) and
+  conflating the two risks diluting that skill's own carefully-designed
+  convention. Extending to `specjedi-clarify` is left as a candidate for
+  a future, separate feature if wanted later — not decided here.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Pick the next step without typing, when the harness supports it (Priority: P1)
@@ -108,38 +125,14 @@ reflects the same rule from User Story 1, worded consistently.
 
 ---
 
-### User Story 3 - Extending the same convention to other in-pipeline choice moments (Priority: P3)
+### User Story 3 - Extending the same convention to other in-pipeline choice moments (Descoped)
 
-Beyond the terminal "what do you want to do next" moment Principle XIV
-governs, at least one `specjedi-*` skill (`specjedi-clarify`) already has
-its own, separately-designed multiple-choice format (a Recommended
-option plus a lettered options table, mid-conversation, not at a
-stopping point) for a related but distinct purpose — asking the user to
-resolve an ambiguity, not offering a next pipeline stage. A maintainer
-may want that moment to become interactively selectable too, for the
-same reason.
-
-**Why this priority**: P3 — genuinely separate scope from User Story 1/2
-(a different moment, a different existing convention, a different
-skill's own design), valuable only once the core Next-Step mechanism is
-proven, and only if the answer to FR-006 below is "yes, extend it
-there too."
-
-**Independent Test**: Given `specjedi-clarify`'s own existing
-Recommended-option question format, confirm whether (per FR-006's
-resolved answer) it also renders through a harness-native
-structured-choice mechanism when available, with the same
-always-present "different answer" escape option.
-
-**Acceptance Scenarios**:
-
-1. **Given** FR-006 resolves to "yes, extend to `specjedi-clarify`'s own
-   question format," **When** that skill asks a multiple-choice
-   clarifying question, **Then** it follows the same
-   interactive-when-available/plain-fallback rule as User Story 1.
-2. **Given** FR-006 resolves to "no, out of scope," **When**
-   `specjedi-clarify` asks a question, **Then** it continues using its
-   own existing Recommended-option/lettered-table format, unchanged.
+**Resolved by the 2026-07-18 Clarification above**: out of scope for
+this feature. `specjedi-clarify`'s own existing Recommended-option/
+lettered-table question format continues unchanged — this feature's
+scope is Principle XIV Next-Step Suggestion moments only (User Stories
+1-2). Retained here only as a record of the question considered and
+its resolution, not as an active story to implement.
 
 ### Edge Cases
 
@@ -186,17 +179,11 @@ always-present "different answer" escape option.
   MUST be phrased so it degrades to FR-002's fallback on any harness
   without an equivalent structured-choice capability (Constitution
   Principle III's own lowest-common-denominator requirement).
-- **FR-006**: Whether this same interactive-selection convention also
-  applies to other in-pipeline multiple-choice moments that aren't a
-  Principle XIV Next-Step Suggestion — specifically `specjedi-clarify`'s
-  own existing Recommended-option/lettered-table question format (User
-  Story 3) — is [NEEDS CLARIFICATION: the user's own request names
-  "próximos passos" (next steps) specifically, which maps directly to
-  Principle XIV; it's unclear whether "sempre as respostas devem ser
-  neste formato" (answers should always be in this format) was meant to
-  extend to `specjedi-clarify`'s separate, already-existing
-  question-asking convention too, or whether that's explicitly out of
-  scope for this feature].
+- **FR-006**: This interactive-selection convention is scoped strictly
+  to Principle XIV Next-Step Suggestion moments (User Stories 1-2) —
+  `specjedi-clarify`'s own separate, pre-existing Recommended-option/
+  lettered-table question format is explicitly out of scope and MUST
+  remain unchanged (resolved by the 2026-07-18 Clarification above).
 - **FR-007**: Whether this ships as a single shared reference document
   all `specjedi-*` skills point to for this convention, or as
   consistent inline instruction text duplicated per-skill (today, each
@@ -243,10 +230,9 @@ list is presented; no data model is introduced.)*
   interaction mechanism, it conditionally uses whatever the current
   session already provides.
 - Scope is Principle XIV's own "next step" moments across the
-  `specjedi-*` catalog (User Stories 1-2); whether the same convention
-  extends to `specjedi-clarify`'s own separate, already-existing
-  question-asking format (User Story 3) is explicitly left open per
-  FR-006, not assumed either way.
+  `specjedi-*` catalog (User Stories 1-2) only; `specjedi-clarify`'s own
+  separate, already-existing question-asking format is explicitly out
+  of scope per the 2026-07-18 Clarification (FR-006).
 - No new project structure, script, or CI job is implied by this
   feature on its face — it changes existing skills' own instruction
   text; whether that requires a new shared reference document (FR-007)

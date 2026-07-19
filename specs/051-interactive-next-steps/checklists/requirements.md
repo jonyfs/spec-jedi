@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,15 +31,12 @@
 
 ## Notes
 
-- One genuine `[NEEDS CLARIFICATION]` marker remains: FR-006, whether
-  the interactive-selection convention should also extend to
-  `specjedi-clarify`'s own separate, pre-existing multiple-choice
-  question format (distinct from the Principle XIV Next-Step moments
-  this spec otherwise scopes to). This is a real scope boundary the
-  user's own request phrasing doesn't unambiguously resolve either way
-  ("próximos passos" maps cleanly to Principle XIV; "sempre as
-  respostas devem ser neste formato" could be read more broadly) —
-  deliberately left open rather than guessed.
+- Resolved 2026-07-18: FR-006 (whether the interactive-selection
+  convention should also extend to `specjedi-clarify`'s own separate,
+  pre-existing multiple-choice question format) is scoped OUT —
+  Principle XIV Next-Step moments only. User Story 3 descoped
+  accordingly; retained in spec.md as a record of the question
+  considered.
 - FR-007 (shared reference doc vs. per-skill duplication) is
   deliberately deferred to planning, not marked
   `[NEEDS CLARIFICATION]` — a technical design decision with clear

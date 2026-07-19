@@ -94,7 +94,8 @@ nothing about the rest of this skill changes.
    `## Extension Hooks` format, but with post-execution labels
    (**Optional Hook**/**Automatic Hook**, no "Pre"). Stay silent when
    nothing is registered.
-7. **Offer the next step(s) as a short bulleted list** (Principle XIV): if
+7. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): if
    any `NEEDS CLARIFICATION` markers remain, `specjedi-clarify` as the
    primary option; otherwise `specjedi-plan` to move to technical planning.
 

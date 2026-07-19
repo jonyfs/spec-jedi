@@ -49,28 +49,46 @@ than re-implementing it — see Step 3.
 3. **Per-skill quality pass (User Story 2).** For every skill from Step
    1, apply `specjedi-skill-review`'s own structural-presence,
    content-depth, voice, chain-of-thought-exemption-cross-reference, and
-   token-budget checks — self-invoke it once per skill, or apply its
-   exact documented method inline; never write a second, parallel
-   version of that methodology (FR-003). Before reporting any
-   chain-of-thought or exemption-shaped finding, cross-reference the
-   skill's own matching `specs/NNN-<skill-name>/plan.md` — an honored,
-   documented exemption (the `specjedi-status`/`specjedi-diagram`
-   precedent) is never a finding (FR-005). Aggregate into one combined
-   per-skill PASS/finding table, not 27 separate reports.
+   token-budget checks (FR-003). Prefer self-invoking it once per skill
+   — that way any future change to its own methodology is picked up
+   automatically; applying its exact documented method inline is an
+   accepted fallback only when self-invocation is impractical (e.g. a
+   token-budget constraint from invoking it 27+ times in one pass), and
+   an inline copy MUST be re-synced whenever `specjedi-skill-review`'s
+   own `SKILL.md` changes — never write a second, permanently-diverging
+   version of that methodology. Before reporting any chain-of-thought or
+   exemption-shaped finding, cross-reference the skill's own matching
+   `specs/NNN-<skill-name>/plan.md` by exact skill-name match in the
+   folder suffix — an honored, documented exemption (the
+   `specjedi-status`/`specjedi-diagram` precedent) is never a finding
+   (FR-005); when no matching folder exists, there is no exemption to
+   honor, so report the finding normally rather than guessing at one.
+   Aggregate into one combined per-skill PASS/finding table, not 27
+   separate reports.
 4. **Redundancy pass (User Story 3).** Look across the full catalog for
-   two or more skills solving the identical need with no documented
-   design rationale for the split (FR-004). Before calling anything
-   redundant, cross-reference the relevant `plan.md`/`research.md` — an
-   already-documented, deliberate multi-skill split (Step 2's own
-   `specjedi-implement`/`specjedi-quick` example) is Covered, never
-   Redundant (FR-008).
+   two or more skills targeting the same SDD phase and the same trigger
+   condition, with neither's own `plan.md`/`SKILL.md` stating a scope,
+   weight-class, or audience difference — that combination is what
+   "identical need" means (FR-004); a shared phase with a stated
+   difference is Covered, not Redundant, per the next rule. Before
+   calling anything redundant, cross-reference the relevant
+   `plan.md`/`research.md` for a specific citation of the design
+   rationale — a bare project mention or an inferred justification does
+   not qualify. An already-documented, deliberate multi-skill split
+   (Step 2's own `specjedi-implement`/`specjedi-quick` example, cited
+   directly in specs/028's own `plan.md`/`research.md`) is Covered,
+   never Redundant (FR-008).
 5. **Classify and report.** Every finding from Steps 2-4 gets exactly
    one label — SDD-Coverage Gap, Skill-Quality Finding, or Redundancy —
    never left uncategorized (FR-004), plus a concrete next step
-   (Principle XIV). Build the report per Format below. An empty findings
-   list (every phase Covered, every skill PASS, no redundancy) is a
-   valid, good outcome — never invent a finding to have something to
-   report.
+   (Principle XIV). When a finding could plausibly read as both an
+   SDD-Coverage Gap and a Redundancy, the phase-level question wins:
+   classify as SDD-Coverage Gap only if, absent the overlapping skill,
+   the phase would have zero coverage; otherwise classify the overlap as
+   Redundancy — never split one underlying gap across two rows. Build
+   the report per Format below. An empty findings list (every phase
+   Covered, every skill PASS, no redundancy) is a valid, good outcome —
+   never invent a finding to have something to report.
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly in the report and self-invoke
@@ -175,7 +193,9 @@ constraint.
   directly — never against `speckit-*`, which no longer exists in this
   project (specs/048).
 - **Always** reuse `specjedi-skill-review`'s own per-skill methodology
-  for Step 3 — never redefine a second, parallel version of it.
+  for Step 3 — prefer self-invocation; if applying it inline instead,
+  re-sync that inline copy whenever `specjedi-skill-review`'s own
+  `SKILL.md` changes, rather than letting it silently drift.
 - **Always** cross-reference a skill's own matching `plan.md`/
   `research.md` before reporting an exemption-shaped or
   redundancy-shaped finding.

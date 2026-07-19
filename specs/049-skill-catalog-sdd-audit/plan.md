@@ -160,3 +160,59 @@ confirm the report's own SDD-coverage table and per-skill table both
 look correct against what's really installed today, and that the
 already-known `specjedi-implement`/`specjedi-quick` split is correctly
 recognized as Covered, not Redundant.
+
+### Clarifications (post-checklist, `checklists/quality-review.md`)
+
+Resolved after the requirements-quality checklist surfaced 8 genuinely
+underspecified items across Voice/Persona, Classification Correctness,
+and Reuse Discipline. Each resolution below closes the named `CHK-NNN`
+item; none required re-opening the Constitution Check.
+
+- **CHK-001/CHK-002 (Persona genuineness/consistency bar)**: "genuine and
+  not a copy" is checkable, not just asserted — the bar is a Persona
+  centered on one concrete real-world role/metaphor distinct from
+  `specjedi-constitution-audit`'s "unhurried clerk" and
+  `specjedi-skill-review`'s "exacting instructor" (the shipped
+  "full-inventory quartermaster" satisfies this), plus at least one
+  in-file narration instance beyond the opening paragraph (the worked
+  Example's chat narration). This is exactly what
+  `specjedi-skill-review`'s own Step 4 (voice check) already verifies —
+  no new mechanism needed, only this explicit statement of the bar.
+- **CHK-003 (FR-008 exemption evidence)**: "documented design rationale"
+  means a citation to a specific `plan.md` or `research.md` section —
+  never a bare project mention or an inferred justification. The
+  `specjedi-implement`/`specjedi-quick` precedent qualifies because
+  specs/028's own `plan.md`/`research.md` states the rationale directly;
+  an uncited "these two seem intentionally different" claim does not
+  qualify and must be reported as Redundancy instead.
+- **CHK-004 (dual-category tie-break)**: when a finding could read as
+  both an SDD-Coverage Gap and a Redundancy, the phase-level question
+  takes priority — classify as SDD-Coverage Gap only if, absent the
+  redundant skill, the phase would have zero coverage; otherwise (the
+  phase is already Covered by at least one clearly-adequate skill)
+  classify the overlap as Redundancy. A finding is never split across
+  two rows for the same underlying gap.
+- **CHK-005 (Redundancy's "identical need" threshold)**: two skills are
+  redundant only when they target the same SDD phase, the same trigger
+  condition, and neither's own `plan.md`/`SKILL.md` states a scope,
+  weight-class, or audience difference. A shared phase with a stated
+  difference (full-ceremony vs. lightweight, the
+  `specjedi-implement`/`specjedi-quick` case) is Covered, not Redundant,
+  per CHK-003 above.
+- **CHK-006/CHK-007 (self-invocation vs. inline reuse, drift risk)**:
+  self-invoking `specjedi-skill-review` per skill is the preferred
+  approach specifically because it cannot drift — any future change to
+  that skill's own methodology is picked up automatically on the next
+  run. Applying its method inline is an accepted fallback only when
+  self-invocation is impractical (e.g., a token-budget constraint from
+  invoking it 27+ times in one pass), and in that case the inline
+  version MUST be re-synced whenever `specjedi-skill-review`'s own
+  `SKILL.md` changes — this skill's own Always/Never section names that
+  re-sync obligation explicitly rather than leaving it implicit.
+- **CHK-008 (`specs/NNN-<skill-name>/plan.md` matching)**: matching is by
+  exact skill name in the folder's suffix (`specs/043-constitution-
+  coverage-audit` for `specjedi-constitution-audit`, tolerating the
+  historical naming gap where a spec folder predates today's
+  `specjedi-` prefix convention). When no matching folder is found by
+  name, there is no documented exemption to honor — report the finding
+  normally rather than guessing at a folder.

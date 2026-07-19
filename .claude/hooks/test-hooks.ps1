@@ -94,6 +94,37 @@ Test-Command "force push -f master blocked" 'git push -f origin master' "block"
 Test-Command "cat real .env blocked" 'cat .env' "block"
 Test-Command "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' "block"
 Test-Command "cat .pem blocked" 'cat server.pem' "block"
+Test-Command "cat .npmrc blocked" 'cat .npmrc' "block"
+Test-Command "cat .aws/credentials blocked" 'cat ~/.aws/credentials' "block"
+Test-Command "cat .docker/config.json blocked" 'cat ~/.docker/config.json' "block"
+
+Write-Host "=== secret-file-guard.ps1 (specs/058-expand-shareable-hooks, T027) ==="
+
+function Test-Guard($desc, $tool, $field, $value, $expect) {
+    $toolInput = @{}
+    $toolInput[$field] = $value
+    $input_json = @{ tool_name = $tool; tool_input = $toolInput } | ConvertTo-Json -Compress
+    $out = Invoke-Hook (Join-Path $hooksDir "secret-file-guard.ps1") $input_json
+    if ($expect -eq "allow") {
+        if (-not $out) { Test-Pass $desc } else { Test-Fail "$desc (should allow, got: $out)" }
+    } else {
+        if ($out) { Test-Pass $desc } else { Test-Fail "$desc (should block, was allowed)" }
+    }
+}
+
+Test-Guard "root .env denied" "Read" "file_path" "/tmp/some-project/.env" "block"
+Test-Guard "nested .env denied (SC-005)" "Read" "file_path" "/tmp/some-project/packages/api/.env" "block"
+Test-Guard ".env.example allowed (SC-006)" "Read" "file_path" "/tmp/some-project/.env.example" "allow"
+Test-Guard ".env.sample allowed" "Read" "file_path" "/tmp/some-project/.env.sample" "allow"
+Test-Guard "unrelated file allowed" "Read" "file_path" "/tmp/some-project/README.md" "allow"
+Test-Guard "id_rsa denied" "Read" "file_path" "/home/user/.ssh/id_rsa" "block"
+Test-Guard "id_ed25519 denied" "Read" "file_path" "/home/user/.ssh/id_ed25519" "block"
+Test-Guard "*.pem denied" "Read" "file_path" "/tmp/some-project/server.pem" "block"
+Test-Guard ".npmrc denied" "Read" "file_path" "/tmp/some-project/.npmrc" "block"
+Test-Guard ".aws/credentials denied" "Read" "file_path" "/home/user/.aws/credentials" "block"
+Test-Guard "Grep on a specific .env file denied" "Grep" "path" "/tmp/some-project/.env" "block"
+Test-Guard "Grep with a directory path never denied" "Grep" "path" "/tmp/some-project" "allow"
+Test-Guard "Glob with a directory path never denied" "Glob" "path" "/tmp/some-project" "allow"
 
 Write-Host "=== statusline.ps1 ==="
 

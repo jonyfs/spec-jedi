@@ -436,13 +436,20 @@ mechanism (spec.md US4 Acceptance Scenarios).
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T051 [P] [US4] Add a case to `.claude/hooks/test-hooks.sh`/`.ps1`
+- [x] T051 [P] [US4] Add a case to `.claude/hooks/test-hooks.sh`/`.ps1`
   asserting a scratch target's `.claude/settings.json` gains the `Stop`
   hook block (osascript/notify-send fallback) on shareable-hooks install,
   non-destructively (leaves an existing `Stop` array alone, per the same
   discipline `update_shared_settings()` already applies to
   `statusLine`/`permissions`).
-- [ ] T052 [US4] **Manual-verification note** (not automated — real OS
+  Verified: new `=== Stop-hook wiring (merge_json_key) ===` /
+  `=== Stop-hook wiring (Merge-JsonKey, specs/058 US4, T051) ===` sections
+  added to both test scripts, covering fresh-file add + pre-existing-key
+  preservation, idempotent re-run, and non-destructive preservation of an
+  existing `Stop` array — 3/3 passing on both `bash
+  .claude/hooks/test-hooks.sh` and `pwsh -File .claude/hooks/test-hooks.ps1`
+  ("All hook tests passed." on both).
+- [x] T052 [US4] **Manual-verification note** (not automated — real OS
   notification firing isn't practically assertable in CI, matching
   specs/042's own established convention for UX-only requirements): once
   T053/T054 land, manually confirm on macOS and on Linux (or record why
@@ -452,10 +459,23 @@ mechanism (spec.md US4 Acceptance Scenarios).
   next to this task (date, platform, outcome) — this closes the
   `specjedi-analyze`-flagged Unverified status for FR-004's Acceptance
   Scenarios with an explicit, honest disposition rather than a silent gap.
-
-### Implementation for User Story 4
-
-- [ ] T053 [P] [US4] Add `Stop`-hook wiring to `scripts/install.sh`:
+  **Result (2026-07-19, macOS)**: ran the exact `stop_block` command
+  string (`if command -v osascript ...; fi`) directly, not just inside
+  `test-hooks.sh`'s extracted-function harness — `osascript -e 'display
+  notification "Response complete" with title "Claude Code"'` executed
+  and exited 0 with no error. Also confirmed the neither-tool-present
+  branch (`env -i PATH="/nonexistent" bash -c '...'`) exits 0 with no
+  output, matching FR-004's "errors on nothing" requirement. **Honest
+  limitation**: this session runs in a non-interactive agent shell with
+  no way to visually confirm the actual macOS notification banner
+  rendered on screen (only that the command that triggers it returned
+  success) — that visual half of the confirmation needs a human at the
+  keyboard. Linux/`notify-send` was not available to test in this
+  environment at all (macOS-only sandbox) — untested, not assumed
+  working; the command is a straight, unmodified copy of this repo's own
+  already-shipped `.claude/settings.json` Stop entry, which has been
+  running in this project's own sessions already.
+- [x] T053 [P] [US4] Add `Stop`-hook wiring to `scripts/install.sh`:
   call `merge_json_key "$target_dir/.claude/settings.json" '"Stop"'
   "$stop_block" "Stop notification hook wired"` with the exact
   `stop_block` content `plan.md`'s Implementation notes now specify
@@ -466,10 +486,29 @@ mechanism (spec.md US4 Acceptance Scenarios).
   resolved via a `specjedi-plan` amendment, 2026-07-19 — `plan.md` now
   names `merge_json_key()` reuse explicitly with the exact block
   content.)*
-- [ ] T054 [P] [US4] Identical addition in `scripts/install.ps1`, via
+  **Real bug found and fixed during implementation**: `merge_json_key()`
+  was defined *after* the top-level claude-code install block that now
+  calls it — bash resolves function calls at execution time (no
+  hoisting), so the original definition order (function textually below
+  its new call site) failed with `merge_json_key: command not found`.
+  Relocated the function's definition to immediately after
+  `update_shared_settings()` (its first actual use point) rather than
+  leaving it where it was originally written for the Wave 1/2 harness
+  functions alone. Verified via a real scratch install: `"Stop"` key
+  present, valid JSON, and a second run correctly says "already has this
+  key — leaving as-is."
+- [x] T054 [P] [US4] Identical addition in `scripts/install.ps1`, via
   `Merge-JsonKey` (confirmed present at `scripts/install.ps1:882`, same
   `-Target`/`-KeyCheck`/`-Block`/`-OkMessage` parameters every other Wave
   1/2 call site already uses).
+  Same real bug as T053 above, confirmed independently: PowerShell also
+  doesn't hoist top-level function definitions in a `.ps1` script (a
+  minimal repro — calling a function before its textual definition —
+  reproduces the identical "not recognized" error), so `Merge-JsonKey`
+  was relocated immediately after `Update-SharedSettings` here too.
+  Verified via a real scratch install with `pwsh -NoProfile -File
+  scripts/install.ps1`: `"Stop"` key present, valid JSON, idempotent
+  re-run confirmed.
 
 **Checkpoint**: All five user stories independently functional.
 

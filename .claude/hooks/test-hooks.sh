@@ -339,6 +339,71 @@ else
 fi
 rm -rf "$tmpdir" /tmp/merge-test-out.txt
 
+# --- Stop-hook wiring (scripts/install.sh, specs/058 US4, T051) ---------
+echo "=== Stop-hook wiring (merge_json_key) ==="
+
+# A temp-script-file approach (not inline bash -c string composition)
+# since the stop_block's own command string embeds single/double quotes
+# that make nested bash -c quoting too fragile to get right.
+merge_key_fn_src="$(sed -n '/^merge_json_key()/,/^}/p' "$repo_root/scripts/install.sh")"
+run_stop_merge_script="$(mktemp)"
+{
+  printf '%s\n' "$merge_key_fn_src"
+  cat << 'CALLEOF'
+stop_block='  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if command -v osascript >/dev/null 2>&1; then osascript -e '"'"'display notification \"Response complete\" with title \"Claude Code\"'"'"'; elif command -v notify-send >/dev/null 2>&1; then notify-send \"Claude Code\" \"Response complete\"; fi"
+        }
+      ]
+    }
+  ]'
+merge_json_key "$1" '"Stop"' "$stop_block" "Stop notification hook wired"
+CALLEOF
+} > "$run_stop_merge_script"
+
+tmpdir="$(mktemp -d)"
+mkdir -p "$tmpdir/.claude"
+target="$tmpdir/.claude/settings.json"
+printf '{\n  "statusLine": {}\n}\n' > "$target"
+bash "$run_stop_merge_script" "$target" >/dev/null
+if python3 -m json.tool "$target" >/dev/null 2>&1 && grep -q '"Stop"' "$target" && grep -q '"statusLine"' "$target"; then
+  pass "Stop hook block added, pre-existing statusLine preserved"
+else
+  fail "Stop hook block not added correctly, or existing content lost"
+fi
+
+first_content="$(cat "$target")"
+bash "$run_stop_merge_script" "$target" >/dev/null
+second_content="$(cat "$target")"
+if [ "$first_content" = "$second_content" ]; then
+  pass "Stop hook re-run: byte-identical (idempotent)"
+else
+  fail "Stop hook re-run: content changed on second run"
+fi
+rm -rf "$tmpdir"
+
+tmpdir="$(mktemp -d)"
+mkdir -p "$tmpdir/.claude"
+target="$tmpdir/.claude/settings.json"
+cat > "$target" << 'STOPEOF'
+{
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "echo my-own-notifier"}]}]
+  }
+}
+STOPEOF
+bash "$run_stop_merge_script" "$target" >/dev/null
+if grep -q "my-own-notifier" "$target" && ! grep -q "osascript" "$target"; then
+  pass "existing Stop array left alone, never overwritten (non-destructive)"
+else
+  fail "an existing Stop array was overwritten -- should have been left as-is"
+fi
+rm -rf "$tmpdir" "$run_stop_merge_script"
+
 echo
 if [ "$fail" -eq 0 ]; then
   echo "All hook tests passed."

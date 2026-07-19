@@ -273,6 +273,88 @@ if ($installPs1 -notmatch '(?s)(function Update-SharedSettings \{.*?\n\})') {
     Remove-Item -Recurse -Force $tmpDir
 }
 
+Write-Host "=== Stop-hook wiring (Merge-JsonKey, specs/058 US4, T051) ==="
+
+if ($installPs1 -notmatch '(?s)(function Merge-JsonKey \{.*?\n\})') {
+    Test-Fail "could not extract Merge-JsonKey from install.ps1"
+} else {
+    $mergeJsonKeyFnSrc = $matches[1]
+
+    function Invoke-StopMerge($target) {
+        $tmpScript = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName() + ".ps1")
+        # Built as a plain string array (not a here-string) to avoid any
+        # nested here-string delimiter collision with the stop block's
+        # own embedded single/double quotes.
+        $stopBlockLines = @(
+            '  "Stop": [',
+            '    {',
+            '      "matcher": "",',
+            '      "hooks": [',
+            '        {',
+            '          "type": "command",',
+            '          "command": "if command -v osascript >/dev/null 2>&1; then osascript -e ''display notification \"Response complete\" with title \"Claude Code\"''; elif command -v notify-send >/dev/null 2>&1; then notify-send \"Claude Code\" \"Response complete\"; fi"',
+            '        }',
+            '      ]',
+            '    }',
+            '  ]'
+        )
+        $stopBlockLiteral = ($stopBlockLines -join "`n").Replace("'", "''")
+        $callLines = @(
+            "`$stopBlock = '$stopBlockLiteral'",
+            'Merge-JsonKey -Target $args[0] -KeyCheck ''"Stop"'' -Block $stopBlock -OkMessage "Stop notification hook wired"'
+        )
+        ($mergeJsonKeyFnSrc, ($callLines -join "`n")) -join "`n" | Set-Content $tmpScript
+        & pwsh -NoProfile -File $tmpScript $target 2>&1 | Out-Null
+        Remove-Item $tmpScript
+    }
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{
+  "statusLine": {}
+}' | Set-Content $target
+    Invoke-StopMerge $target
+    $content = Get-Content $target -Raw
+    try {
+        $null = $content | ConvertFrom-Json
+        if ($content -match '"Stop"' -and $content -match '"statusLine"') {
+            Test-Pass "Stop hook block added, pre-existing statusLine preserved"
+        } else {
+            Test-Fail "Stop hook block not added correctly, or existing content lost"
+        }
+    } catch {
+        Test-Fail "Stop hook block merge produced invalid JSON"
+    }
+
+    $firstContent = Get-Content $target -Raw
+    Invoke-StopMerge $target
+    $secondContent = Get-Content $target -Raw
+    if ($firstContent -eq $secondContent) {
+        Test-Pass "Stop hook re-run: byte-identical (idempotent)"
+    } else {
+        Test-Fail "Stop hook re-run: content changed on second run"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+
+    $tmpDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+    New-Item -ItemType Directory -Force -Path (Join-Path $tmpDir ".claude") | Out-Null
+    $target = Join-Path $tmpDir ".claude/settings.json"
+    '{
+  "hooks": {
+    "Stop": [{"hooks": [{"type": "command", "command": "echo my-own-notifier"}]}]
+  }
+}' | Set-Content $target
+    Invoke-StopMerge $target
+    $content = Get-Content $target -Raw
+    if ($content -match "my-own-notifier" -and $content -notmatch "osascript") {
+        Test-Pass "existing Stop array left alone, never overwritten (non-destructive)"
+    } else {
+        Test-Fail "an existing Stop array was overwritten -- should have been left as-is"
+    }
+    Remove-Item -Recurse -Force $tmpDir
+}
+
 Write-Host ""
 if ($script:failCount -eq 0) {
     Write-Host "All hook tests passed."

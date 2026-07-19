@@ -759,6 +759,45 @@ function Update-SharedSettings {
     Write-Host "  ✅ $(Split-Path -Leaf $Target) updated (statusLine/permissions added)"
 }
 
+# specs/041-release-hooks-settings (User Story 2): native PowerShell
+# counterpart of merge_json_key() (install.sh) -- see that function for
+# the full rationale.
+function Merge-JsonKey {
+    param([string]$Target, [string]$KeyCheck, [string]$Block, [string]$OkMessage)
+    $parentDir = Split-Path -Parent $Target
+    if ($parentDir -and -not (Test-Path $parentDir)) {
+        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    }
+
+    if (-not (Test-Path $Target)) {
+        [System.IO.File]::WriteAllText($Target, "{`n$Block`n}`n")
+        Write-Host "  ✅ $(Split-Path -Leaf $Target) created ($OkMessage)"
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($Target)
+    if ($content.Contains($KeyCheck)) {
+        Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has this key — leaving as-is."
+        return
+    }
+
+    $trimmed = $content.TrimEnd()
+    $openCount = ([regex]::Matches($trimmed, '\{')).Count
+    $closeCount = ([regex]::Matches($trimmed, '\}')).Count
+    if ($openCount -ne $closeCount -or -not $trimmed.EndsWith('}')) {
+        Write-Host "FAIL: $Target has unbalanced braces ($openCount '{' vs $closeCount '}') -- not valid JSON, refusing to guess. Fix it manually and re-run."
+        exit 1
+    }
+    $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
+
+    if ($body.EndsWith('{')) {
+        [System.IO.File]::WriteAllText($Target, "$body`n$Block`n}`n")
+    } else {
+        [System.IO.File]::WriteAllText($Target, "$body,`n$Block`n}`n")
+    }
+    Write-Host "  ✅ $(Split-Path -Leaf $Target) updated ($OkMessage)"
+}
+
 if ($bridgeMode) {
     Write-Host ""
     Write-Host "🌉 Generating $Harness bridge file(s)..."
@@ -1011,45 +1050,27 @@ $readHookEntries
             Write-Host "  ✅ Wired $wiredList into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
         }
     }
-}
 
-# specs/041-release-hooks-settings (User Story 2): native PowerShell
-# counterpart of merge_json_key() (install.sh) -- see that function for
-# the full rationale.
-function Merge-JsonKey {
-    param([string]$Target, [string]$KeyCheck, [string]$Block, [string]$OkMessage)
-    $parentDir = Split-Path -Parent $Target
-    if ($parentDir -and -not (Test-Path $parentDir)) {
-        New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
+    # specs/058-expand-shareable-hooks (User Story 4, FR-004): identical
+    # reasoning as install.sh's own Stop-hook wiring -- a target either
+    # already has a Stop array (leave alone) or doesn't (insert the whole
+    # block), exactly Merge-JsonKey's own designed case. Command string
+    # copied verbatim from this repo's own .claude/settings.json Stop
+    # entry (plan.md Implementation notes).
+    $stopBlock = @'
+  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Response complete\" with title \"Claude Code\"'; elif command -v notify-send >/dev/null 2>&1; then notify-send \"Claude Code\" \"Response complete\"; fi"
+        }
+      ]
     }
-
-    if (-not (Test-Path $Target)) {
-        [System.IO.File]::WriteAllText($Target, "{`n$Block`n}`n")
-        Write-Host "  ✅ $(Split-Path -Leaf $Target) created ($OkMessage)"
-        return
-    }
-
-    $content = [System.IO.File]::ReadAllText($Target)
-    if ($content.Contains($KeyCheck)) {
-        Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has this key — leaving as-is."
-        return
-    }
-
-    $trimmed = $content.TrimEnd()
-    $openCount = ([regex]::Matches($trimmed, '\{')).Count
-    $closeCount = ([regex]::Matches($trimmed, '\}')).Count
-    if ($openCount -ne $closeCount -or -not $trimmed.EndsWith('}')) {
-        Write-Host "FAIL: $Target has unbalanced braces ($openCount '{' vs $closeCount '}') -- not valid JSON, refusing to guess. Fix it manually and re-run."
-        exit 1
-    }
-    $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
-
-    if ($body.EndsWith('{')) {
-        [System.IO.File]::WriteAllText($Target, "$body`n$Block`n}`n")
-    } else {
-        [System.IO.File]::WriteAllText($Target, "$body,`n$Block`n}`n")
-    }
-    Write-Host "  ✅ $(Split-Path -Leaf $Target) updated ($OkMessage)"
+  ]
+'@
+    Merge-JsonKey -Target (Join-Path $TargetDir ".claude/settings.json") -KeyCheck '"Stop"' -Block $stopBlock -OkMessage "Stop notification hook wired"
 }
 
 # specs/041-release-hooks-settings (User Story 2): factors out the exact

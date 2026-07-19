@@ -985,6 +985,53 @@ ${permissions_block}"
   echo "  ✅ $(basename "$target") updated (statusLine/permissions added)"
 }
 
+# specs/041-release-hooks-settings (User Story 2): shared non-destructive
+# single-top-level-key JSON merge -- the exact same brace-balance-check-
+# and-slice algorithm update_shared_settings already uses for statusLine/
+# permissions, generalized once a fourth target settings file (Gemini/
+# Antigravity/OpenCode/Zed) needed the identical merge -- a real, repeated
+# pattern now, not a premature abstraction (plan.md's own "third/fourth
+# harness proves a pattern" reasoning for when to factor).
+merge_json_key() {
+  local target="$1" key_check="$2" block="$3" ok_message="$4"
+  mkdir -p "$(dirname "$target")"
+
+  if [ ! -f "$target" ]; then
+    printf '{\n%s\n}\n' "$block" > "$target"
+    echo "  ✅ $(basename "$target") created ($ok_message)"
+    return
+  fi
+
+  local content
+  content="$(cat "$target"; echo x)"
+  content="${content%x}"
+
+  case "$content" in
+    *"$key_check"*)
+      echo "  ℹ️  $(basename "$target") already has this key — leaving as-is."
+      return
+      ;;
+  esac
+
+  content="$(printf '%s' "$content" | sed -e 's/[[:space:]]*$//')"
+  local open_count close_count
+  open_count="$(grep -o '{' <<<"$content" | wc -l | tr -d ' ')"
+  close_count="$(grep -o '}' <<<"$content" | wc -l | tr -d ' ')"
+  if [ "$open_count" != "$close_count" ] || [[ "$content" != *"}" ]]; then
+    echo "FAIL: $target has unbalanced braces ($open_count '{' vs $close_count '}') — not valid JSON, refusing to guess. Fix it manually and re-run."
+    exit 1
+  fi
+  local body="${content%\}}"
+  body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+
+  if [[ "$body" == *"{" ]]; then
+    printf '%s\n%s\n}\n' "$body" "$block" > "$target"
+  else
+    printf '%s,\n%s\n}\n' "$body" "$block" > "$target"
+  fi
+  echo "  ✅ $(basename "$target") updated ($ok_message)"
+}
+
 if [ -n "$bridge_mode" ]; then
   echo
   echo "🌉 Generating $harness bridge file(s)..."
@@ -1285,54 +1332,27 @@ ${entry}"
       echo "  ✅ Wired$(for h in $bash_hook_files $read_hook_files; do printf ' %s' "$h"; done) into $(basename "$target_settings")'s PreToolUse hooks"
     fi
   fi
+
+  # specs/058-expand-shareable-hooks (User Story 4, FR-004): a target
+  # either already has a Stop array (leave alone) or doesn't (insert the
+  # whole block) -- exactly merge_json_key()'s own designed case, unlike
+  # the PreToolUse wiring above which needs a value-level "is this
+  # specific hook already present" check. Command string copied verbatim
+  # from this repo's own .claude/settings.json Stop entry (plan.md
+  # Implementation notes).
+  stop_block='  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if command -v osascript >/dev/null 2>&1; then osascript -e '"'"'display notification \"Response complete\" with title \"Claude Code\"'"'"'; elif command -v notify-send >/dev/null 2>&1; then notify-send \"Claude Code\" \"Response complete\"; fi"
+        }
+      ]
+    }
+  ]'
+  merge_json_key "$target_dir/.claude/settings.json" '"Stop"' "$stop_block" "Stop notification hook wired"
 fi
-
-# specs/041-release-hooks-settings (User Story 2): shared non-destructive
-# single-top-level-key JSON merge -- the exact same brace-balance-check-
-# and-slice algorithm update_shared_settings already uses for statusLine/
-# permissions, generalized once a fourth target settings file (Gemini/
-# Antigravity/OpenCode/Zed) needed the identical merge -- a real, repeated
-# pattern now, not a premature abstraction (plan.md's own "third/fourth
-# harness proves a pattern" reasoning for when to factor).
-merge_json_key() {
-  local target="$1" key_check="$2" block="$3" ok_message="$4"
-  mkdir -p "$(dirname "$target")"
-
-  if [ ! -f "$target" ]; then
-    printf '{\n%s\n}\n' "$block" > "$target"
-    echo "  ✅ $(basename "$target") created ($ok_message)"
-    return
-  fi
-
-  local content
-  content="$(cat "$target"; echo x)"
-  content="${content%x}"
-
-  case "$content" in
-    *"$key_check"*)
-      echo "  ℹ️  $(basename "$target") already has this key — leaving as-is."
-      return
-      ;;
-  esac
-
-  content="$(printf '%s' "$content" | sed -e 's/[[:space:]]*$//')"
-  local open_count close_count
-  open_count="$(grep -o '{' <<<"$content" | wc -l | tr -d ' ')"
-  close_count="$(grep -o '}' <<<"$content" | wc -l | tr -d ' ')"
-  if [ "$open_count" != "$close_count" ] || [[ "$content" != *"}" ]]; then
-    echo "FAIL: $target has unbalanced braces ($open_count '{' vs $close_count '}') — not valid JSON, refusing to guess. Fix it manually and re-run."
-    exit 1
-  fi
-  local body="${content%\}}"
-  body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
-
-  if [[ "$body" == *"{" ]]; then
-    printf '%s\n%s\n}\n' "$body" "$block" > "$target"
-  else
-    printf '%s,\n%s\n}\n' "$body" "$block" > "$target"
-  fi
-  echo "  ✅ $(basename "$target") updated ($ok_message)"
-}
 
 # specs/041-release-hooks-settings (User Story 2): builds the same
 # branch|branch:branch case-pattern list detect_trunk_branch's caller

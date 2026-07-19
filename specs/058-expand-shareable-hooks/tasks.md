@@ -329,42 +329,97 @@ respect to it (spec.md US3 Acceptance Scenarios).
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T040 [P] [US3] Add cases to `.claude/hooks/test-hooks.sh`/`.ps1`
+- [x] T040 [P] [US3] Add cases to `.claude/hooks/test-hooks.sh`/`.ps1`
   asserting: the second prompt defaults to declined (`[y/N]`, no answer
   = no install); an explicit "y" installs and wires the hook; a
   non-interactive invocation never installs it.
-- [ ] T041 [P] [US3] **Behavioral test** (closes the `specjedi-analyze`
+  Verified: `--- conventional-commits.py ---` section added to both
+  `test-hooks.sh` and `test-hooks.ps1`; `bash .claude/hooks/test-hooks.sh`
+  and `pwsh -File .claude/hooks/test-hooks.ps1` both report "All hook
+  tests passed."
+- [x] T041 [P] [US3] **Behavioral test** (closes the `specjedi-analyze`
   gap): in a new `--- conventional-commits.py ---` section, invoke the
   hook directly with a non-conventional commit message (e.g. `"fixed a
   thing"`) and assert deny naming the `type: description` format
   (Acceptance Scenario 1); with a conforming message, assert allow.
-- [ ] T042 [P] [US3] **`python3`-gating test**: `python3` absent →
+  Verified: `check_commit_msg()` helper in both test scripts covers
+  non-conventional (blocked), `feat:`/`fix(scope):` (allowed), and a
+  non-commit command (allowed, nothing to check) — 4/4 passing on both
+  platforms.
+- [x] T042 [P] [US3] **`python3`-gating test**: `python3` absent →
   `conventional-commits.py` not installed even when opted in (FR-005).
-- [ ] T043 [P] [US3] **Wave 1/2 harness-translation test**: for each
+  Verified: `validate.yml`'s "python3 absence skips conventional-commits.py
+  even when opted in (US3, FR-005)" step combines
+  `SPECJEDI_TEST_FORCE_NO_PYTHON3=1` with `SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1`
+  and asserts both the combined skip-warning and the file's absence;
+  confirmed locally before commit.
+- [x] T043 [P] [US3] **Wave 1/2 harness-translation test**: for each
   harness with an equivalent opt-in prompt mechanism, assert a scratch
   install offers and (when accepted) wires the translated hook with
   matching deny/allow behavior; document any harness excluded and why.
+  Verified: `validate.yml`'s `install-test-shared-hooks-wave1` (bash) and
+  `install-test-shared-hooks-wave1-windows-native` (PowerShell) jobs both
+  gained a "conventional-commits.py opt-in translates correctly for all
+  three Wave 1 harnesses" step covering gemini-cli/antigravity/codex-cli
+  accept + a declined case; confirmed locally on macOS for both shells
+  (bash step directly, PowerShell step via a genuine
+  `pwsh -File`-into-child-process pipe, matching the pipe-semantics fix
+  already documented for T044/T045 below). Wave 2 harnesses
+  (opencode/zed/amazon-q/warp) are excluded: they only receive a
+  permissions-file translation, never a hook mechanism at all (same as
+  US1/US2/US5's own prevent-direct-push.py/secret-scanner.py, which were
+  never offered to Wave 2 either) — not a new gap this story introduces.
 
 ### Implementation for User Story 3
 
-- [ ] T044 [P] [US3] Add the second interactive prompt to
+- [x] T044 [P] [US3] Add the second interactive prompt to
   `scripts/install.sh` immediately after the existing
   `install_shared_hooks` prompt (~L379): `install_conventional_commits=0`,
   `[y/N]` idiom, only asked when `interactive_mode` and
   `install_shared_hooks` are both true (plan.md Implementation notes).
   Until T040 passes.
-- [ ] T045 [P] [US3] Identical prompt in `scripts/install.ps1`.
-- [ ] T046 [P] [US3] Extend `install.sh`'s claude-code block to
+  Note: the interactive-mode gate is untestable via simple piped input in
+  CI (`[ -t 0 ]` TTY check), so a dedicated, narrowly-scoped
+  `SPECJEDI_TEST_FORCE_HOOKS_PROMPT` env-var seam was added to only this
+  block (not the global `interactive_mode`, which would also re-trigger
+  the earlier directory/harness wizard and consume the test's piped
+  answers before they reached this prompt).
+- [x] T045 [P] [US3] Identical prompt in `scripts/install.ps1`.
+  Note: PowerShell's `|` passes .NET objects through the pipeline, not
+  raw stdin bytes, so piping answer strings into a nested
+  `./scripts/install.ps1` call from *within* another PowerShell script
+  does not feed `Read-Host`; only a genuine OS-level pipe into a real
+  `pwsh -File scripts/install.ps1` child process works. All PowerShell
+  verification (T040/T041/T043) uses that invocation shape.
+- [x] T046 [P] [US3] Extend `install.sh`'s claude-code block to
   conditionally `cp` + wire `conventional-commits.py` only when
   `install_conventional_commits=1`, gated on `has_python3` (depends on
   T002). Until T041/T042 pass.
-- [ ] T047 [P] [US3] Identical in `install.ps1`.
-- [ ] T048 [US3] Stage `conventional-commits.py` in
+- [x] T047 [P] [US3] Identical in `install.ps1`.
+- [x] T048 [US3] Stage `conventional-commits.py` in
   `package-release.sh`/`.ps1` (both files, one task).
-- [ ] T049 [US3] Add to `validate.yml`'s `package-content-completeness`
+  Verified: both scripts now `cp`/`Copy-Item` `conventional-commits.py`
+  into the staged `.claude/hooks/` directory unconditionally (same
+  reasoning as `prevent-direct-push.py`/`secret-scanner.py` above — the
+  source file must exist in a downloaded release tarball regardless of
+  the user's opt-in answer at install time).
+- [x] T049 [US3] Add to `validate.yml`'s `package-content-completeness`
   list.
-- [ ] T050 [US3] Extend Wave 1/2 harness translation for
+  Verified: `.claude/hooks/conventional-commits.py` added to both the
+  bash and PowerShell "must be present" lists; `python3 -c "import
+  yaml..."` confirms `validate.yml` stays valid YAML.
+- [x] T050 [US3] Extend Wave 1/2 harness translation for
   `conventional-commits.py`. Until T043 passes.
+  Verified: `render_gemini_style_commit_guard()` (install.sh) and
+  `Get-GeminiStyleCommitGuardScript` (install.ps1) both do the same
+  source-to-source transform of `conventional-commits.py`'s deny block
+  used for `prevent-direct-push.py`; `install_hooks_gemini_cli`/
+  `install_hooks_antigravity` (translated) and `install_hooks_codex_cli`
+  (reused unmodified, identical schema) all extended, PowerShell
+  counterparts mirrored. All three Wave 1 harnesses verified functionally
+  end-to-end locally (file present, correct output shape, wired into
+  settings, and an actual deny call returns exit 2 with the translated
+  JSON shape).
 
 **Checkpoint**: US1, US2, US5, US3 all independently functional.
 

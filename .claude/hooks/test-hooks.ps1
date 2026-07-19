@@ -98,6 +98,23 @@ Test-Command "cat .npmrc blocked" 'cat .npmrc' "block"
 Test-Command "cat .aws/credentials blocked" 'cat ~/.aws/credentials' "block"
 Test-Command "cat .docker/config.json blocked" 'cat ~/.docker/config.json' "block"
 
+Write-Host "=== conventional-commits.py (specs/058-expand-shareable-hooks, T041) ==="
+
+function Test-CommitMsg($desc, $cmd, $expect) {
+    $input_json = @{ tool_name = "Bash"; tool_input = @{ command = $cmd } } | ConvertTo-Json -Compress
+    $out = $input_json | python3 (Join-Path $hooksDir "conventional-commits.py")
+    if ($expect -eq "allow") {
+        if (-not $out) { Test-Pass $desc } else { Test-Fail "$desc (should allow, got: $out)" }
+    } else {
+        if ($out) { Test-Pass $desc } else { Test-Fail "$desc (should block, was allowed)" }
+    }
+}
+
+Test-CommitMsg "non-conventional message blocked" 'git commit -m "fixed a thing"' "block"
+Test-CommitMsg "conventional feat: message allowed" 'git commit -m "feat: add user authentication"' "allow"
+Test-CommitMsg "conventional fix(scope): message allowed" 'git commit -m "fix(api): handle null responses"' "allow"
+Test-CommitMsg "non-commit command allowed (nothing to check)" 'git status' "allow"
+
 Write-Host "=== secret-file-guard.ps1 (specs/058-expand-shareable-hooks, T027) ==="
 
 function Test-Guard($desc, $tool, $field, $value, $expect) {

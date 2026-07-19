@@ -59,6 +59,11 @@ $interactiveMode = $false
 if (-not $PSBoundParameters.ContainsKey('TargetDir') -and -not $Harness -and -not $Auto -and -not [Console]::IsInputRedirected) {
     $interactiveMode = $true
 }
+# specs/058-expand-shareable-hooks: explicit test seam, identical
+# rationale to install.sh's own SPECJEDI_TEST_FORCE_INTERACTIVE.
+if ($env:SPECJEDI_TEST_FORCE_INTERACTIVE) {
+    $interactiveMode = $true
+}
 
 if ($interactiveMode) {
     Write-Host "🧙 No parameters were given — let's set this up together, step by step."
@@ -279,8 +284,17 @@ if (-not $Harness) {
 # invocation (FR-001c); an interactive session gets asked once, as part
 # of the same summary/confirmation moment, not a separate later prompt.
 $installSharedHooks = $true
+# specs/058-expand-shareable-hooks (User Story 3, FR-003): explicit
+# opt-in only, via its own separate prompt, defaulting to declined
+# ([y/N]). Never installed on a non-interactive run.
+$installConventionalCommits = $false
 
-if ($interactiveMode) {
+# specs/058-expand-shareable-hooks: explicit test seam, identical
+# rationale to install.sh's own SPECJEDI_TEST_FORCE_HOOKS_PROMPT --
+# scoped to this block only, never the global $interactiveMode (which
+# would also re-trigger the earlier directory/harness wizard prompts).
+$forceHooksPrompt = [bool]$env:SPECJEDI_TEST_FORCE_HOOKS_PROMPT
+if ($interactiveMode -or $forceHooksPrompt) {
     Write-Host ""
     Write-Host "Summary:"
     Write-Host "  Directory: $TargetDir"
@@ -288,6 +302,12 @@ if ($interactiveMode) {
     $hooksAnswer = Read-Host "Also install shareable hooks/settings (safety hook, git-aware permissions)? [Y/n]"
     if ($hooksAnswer -in @("n", "N", "no", "No")) {
         $installSharedHooks = $false
+    }
+    if ($installSharedHooks) {
+        $ccAnswer = Read-Host "Also install conventional-commits.py (enforces 'type: description' commit messages)? [y/N]"
+        if ($ccAnswer -in @("y", "Y", "yes", "Yes")) {
+            $installConventionalCommits = $true
+        }
     }
     $proceed = Read-Host "Continue with installation? [Y/n]"
     if ($proceed -in @("n", "N", "no", "No")) {
@@ -901,9 +921,20 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
         Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
         Write-Host "  ✅ secret-scanner.py"
         $bashHookFiles += "secret-scanner.py"
+
+        # specs/058-expand-shareable-hooks (User Story 3): conventional-commits.py,
+        # only when explicitly opted in (FR-003).
+        if ($installConventionalCommits) {
+            Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/conventional-commits.py") -Destination (Join-Path $targetHooksDir "conventional-commits.py")
+            Write-Host "  ✅ conventional-commits.py"
+            $bashHookFiles += "conventional-commits.py"
+        }
     } else {
         $skippedPythonHooks += "prevent-direct-push.py"
         $skippedPythonHooks += "secret-scanner.py"
+        if ($installConventionalCommits) {
+            $skippedPythonHooks += "conventional-commits.py"
+        }
     }
     if ($skippedPythonHooks.Count -gt 0) {
         Write-Host "  ⚠️  python3 not found — skipping: $($skippedPythonHooks -join ' ')"
@@ -1196,6 +1227,24 @@ sys.exit(0)
 '@
 }
 
+# specs/058-expand-shareable-hooks (User Story 3, Wave 1): PowerShell
+# counterpart of render_gemini_style_commit_guard() -- source-to-source
+# transform of the real conventional-commits.py file (same reasoning
+# as Get-GeminiStylePushGuardScript above).
+function Get-GeminiStyleCommitGuardScript {
+    $src = Get-Content (Join-Path $repoRoot ".claude/hooks/conventional-commits.py") -Raw
+    $oldDeny = "    output = {`n        `"hookSpecificOutput`": {`n            `"hookEventName`": `"PreToolUse`",`n            `"permissionDecision`": `"deny`",`n            `"permissionDecisionReason`": reason`n        }`n    }`n    print(json.dumps(output))`n    sys.exit(0)"
+    if (-not $src.Contains($oldDeny)) {
+        throw "FAIL: conventional-commits.py's deny-output block not found -- update Get-GeminiStyleCommitGuardScript"
+    }
+    $newDeny = "    print(json.dumps({`"decision`": `"deny`", `"reason`": reason}))`n    sys.exit(2)"
+    $src = $src.Replace($oldDeny, $newDeny)
+
+    $header = "#!/usr/bin/env python3`n# Translated from .claude/hooks/conventional-commits.py (specs/`n# 058-expand-shareable-hooks, User Story 3) for a BeforeTool-shaped`n# hook contract: stdin carries tool_input.command (unchanged), stdout`n# is {`"decision`":`"deny`",`"reason`":`"...`"} with exit code 2 to block.`n"
+    $body = ($src -split '"""', 3)[2].TrimStart("`n")
+    return $header + $body
+}
+
 # specs/058-expand-shareable-hooks: PowerShell counterpart of
 # build_python_protected_set() (scripts/install.sh) -- identical
 # semantics.
@@ -1215,6 +1264,7 @@ function Install-HooksGeminiCli {
 
     $pushEntry = ""
     $scannerEntry = ""
+    $commitEntry = ""
     if (Test-Python3Available) {
         $pythonProtected = Get-PythonProtectedSet -TrunkBranch $trunkBranch
         $pushScript = Get-GeminiStylePushGuardScript -PythonProtected $pythonProtected
@@ -1238,6 +1288,18 @@ function Install-HooksGeminiCli {
             "command": "python3 .gemini/hooks/secret-scanner-wrapper.py"
           }
 '@
+        if ($installConventionalCommits) {
+            $commitScript = Get-GeminiStyleCommitGuardScript
+            [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "conventional-commits.py"), $commitScript)
+            Write-Host "  ✅ conventional-commits.py (Gemini CLI translation)"
+            $commitEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/conventional-commits.py"
+          }
+'@
+        }
     } else {
         Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Gemini CLI translation)"
     }
@@ -1251,7 +1313,7 @@ function Install-HooksGeminiCli {
           {
             "type": "command",
             "command": "powershell -NoProfile -File .gemini/hooks/dangerous-command-guard.ps1"
-          }$pushEntry$scannerEntry
+          }$pushEntry$scannerEntry$commitEntry
         ]
       }
     ]
@@ -1278,6 +1340,7 @@ function Install-HooksAntigravity {
 
     $pushEntry = ""
     $scannerEntry = ""
+    $commitEntry = ""
     if (Test-Python3Available) {
         $pythonProtected = Get-PythonProtectedSet -TrunkBranch $trunkBranch
         $pushScript = Get-GeminiStylePushGuardScript -PythonProtected $pythonProtected
@@ -1301,6 +1364,18 @@ function Install-HooksAntigravity {
             "command": "python3 .agents/hooks/secret-scanner-wrapper.py"
           }
 '@
+        if ($installConventionalCommits) {
+            $commitScript = Get-GeminiStyleCommitGuardScript
+            [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "conventional-commits.py"), $commitScript)
+            Write-Host "  ✅ conventional-commits.py (Antigravity translation)"
+            $commitEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/conventional-commits.py"
+          }
+'@
+        }
     } else {
         Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Antigravity translation)"
     }
@@ -1314,7 +1389,7 @@ function Install-HooksAntigravity {
           {
             "type": "command",
             "command": "powershell -NoProfile -File .agents/hooks/dangerous-command-guard.ps1"
-          }$pushEntry$scannerEntry
+          }$pushEntry$scannerEntry$commitEntry
         ]
       }
     ]
@@ -1356,6 +1431,12 @@ function Install-HooksCodexCli {
         Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
         Write-Host "  ✅ secret-scanner.py (Codex CLI translation)"
         $bashHookFiles += "secret-scanner.py"
+
+        if ($installConventionalCommits) {
+            Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/conventional-commits.py") -Destination (Join-Path $targetHooksDir "conventional-commits.py")
+            Write-Host "  ✅ conventional-commits.py (Codex CLI translation)"
+            $bashHookFiles += "conventional-commits.py"
+        }
     } else {
         Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Codex CLI translation)"
     }

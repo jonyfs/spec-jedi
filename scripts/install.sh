@@ -370,8 +370,22 @@ fi
 # invocation (FR-001c); an interactive session gets asked once, as part
 # of the same summary/confirmation moment, not a separate later prompt.
 install_shared_hooks=1
+# specs/058-expand-shareable-hooks (User Story 3, FR-003): unlike the
+# pure safety nets above (default-on), conventional-commits.py enforces
+# a stylistic convention -- explicit opt-in only, via its own separate
+# prompt, defaulting to declined ([y/N], opposite of the main prompt's
+# [Y/n]). Never installed on a non-interactive run (no FR-001c-style
+# default-on carve-out for this one hook).
+install_conventional_commits=0
 
-if [ "$interactive_mode" -eq 1 ]; then
+# specs/058-expand-shareable-hooks: explicit test seam, same rationale as
+# has_python3()'s own SPECJEDI_TEST_FORCE_NO_PYTHON3 -- CI needs to
+# exercise this specific prompt block deterministically while keeping
+# $target_dir/$harness exactly as explicitly passed (unlike forcing the
+# global $interactive_mode, which would also re-trigger the earlier
+# directory/harness wizard prompts above and break every other
+# scratch-install test's reproducibility). Never a documented public flag.
+if [ "$interactive_mode" -eq 1 ] || [ -n "${SPECJEDI_TEST_FORCE_HOOKS_PROMPT:-}" ]; then
   echo
   echo "Summary:"
   echo "  Directory: $target_dir"
@@ -380,6 +394,12 @@ if [ "$interactive_mode" -eq 1 ]; then
   case "$hooks_answer" in
     n|N|no|No) install_shared_hooks=0 ;;
   esac
+  if [ "$install_shared_hooks" -eq 1 ]; then
+    read -r -p "Also install conventional-commits.py (enforces 'type: description' commit messages)? [y/N]: " cc_answer
+    case "$cc_answer" in
+      y|Y|yes|Yes) install_conventional_commits=1 ;;
+    esac
+  fi
   read -r -p "Continue with installation? [Y/n]: " proceed
   case "$proceed" in
     n|N|no|No)
@@ -1145,8 +1165,21 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
     chmod +x "$target_hooks_dir/secret-scanner.py"
     echo "  ✅ secret-scanner.py"
     bash_hook_files="$bash_hook_files secret-scanner.py"
+
+    # specs/058-expand-shareable-hooks (User Story 3): conventional-commits.py,
+    # only when explicitly opted in (FR-003) -- unlike the two safety
+    # nets above, never default-on.
+    if [ "$install_conventional_commits" -eq 1 ]; then
+      cp "$repo_root/.claude/hooks/conventional-commits.py" "$target_hooks_dir/conventional-commits.py"
+      chmod +x "$target_hooks_dir/conventional-commits.py"
+      echo "  ✅ conventional-commits.py"
+      bash_hook_files="$bash_hook_files conventional-commits.py"
+    fi
   else
     skipped_python_hooks="prevent-direct-push.py secret-scanner.py"
+    if [ "$install_conventional_commits" -eq 1 ]; then
+      skipped_python_hooks="$skipped_python_hooks conventional-commits.py"
+    fi
   fi
   if [ -n "$skipped_python_hooks" ]; then
     echo "  ⚠️  python3 not found — skipping:$(for h in $skipped_python_hooks; do printf ' %s' "$h"; done)"
@@ -1523,8 +1556,47 @@ sys.exit(0)
 EOF
 }
 
+# specs/058-expand-shareable-hooks (User Story 3, Wave 1): translates
+# conventional-commits.py the same source-to-source way
+# render_gemini_style_push_guard() translates prevent-direct-push.py --
+# a single deny() call, no PROTECTED-style substitution needed (this
+# hook has no trunk-branch dependency at all).
+render_gemini_style_commit_guard() {
+  python3 - "$repo_root/.claude/hooks/conventional-commits.py" <<'PYEOF'
+import sys
+
+src_path = sys.argv[1]
+src = open(src_path, encoding="utf-8").read()
+
+old_deny = '''    output = {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason
+        }
+    }
+    print(json.dumps(output))
+    sys.exit(0)'''
+if old_deny not in src:
+    sys.exit("FAIL: conventional-commits.py's deny-output block not found -- update render_gemini_style_commit_guard()")
+new_deny = '''    print(json.dumps({"decision": "deny", "reason": reason}))
+    sys.exit(2)'''
+src = src.replace(old_deny, new_deny)
+
+header = (
+    "#!/usr/bin/env python3\n"
+    "# Translated from .claude/hooks/conventional-commits.py (specs/\n"
+    "# 058-expand-shareable-hooks, User Story 3) for a BeforeTool-shaped\n"
+    "# hook contract: stdin carries tool_input.command (unchanged), stdout\n"
+    "# is {\"decision\":\"deny\",\"reason\":\"...\"} with exit code 2 to block.\n"
+)
+body = src.split('"""', 2)[-1].lstrip("\n")
+sys.stdout.buffer.write((header + body).encode("utf-8"))
+PYEOF
+}
+
 install_hooks_gemini_cli() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry commit_entry
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1537,6 +1609,7 @@ install_hooks_gemini_cli() {
 
   push_entry=""
   scanner_entry=""
+  commit_entry=""
   if has_python3; then
     python_protected="$(build_python_protected_set "$trunk_branch")"
     push_script="$target_hooks_dir/prevent-direct-push.py"
@@ -1558,6 +1631,17 @@ install_hooks_gemini_cli() {
             "type": "command",
             "command": "python3 .gemini/hooks/secret-scanner-wrapper.py"
           }'
+
+    if [ "$install_conventional_commits" -eq 1 ]; then
+      render_gemini_style_commit_guard > "$target_hooks_dir/conventional-commits.py"
+      chmod +x "$target_hooks_dir/conventional-commits.py"
+      echo "  ✅ conventional-commits.py (Gemini CLI translation)"
+      commit_entry=',
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/conventional-commits.py"
+          }'
+    fi
   else
     echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Gemini CLI translation)"
   fi
@@ -1570,7 +1654,7 @@ install_hooks_gemini_cli() {
           {
             "type": "command",
             "command": "bash .gemini/hooks/dangerous-command-guard.sh"
-          }'"$push_entry""$scanner_entry"'
+          }'"$push_entry""$scanner_entry""$commit_entry"'
         ]
       }
     ]
@@ -1587,7 +1671,7 @@ install_hooks_gemini_cli() {
 # hooks.json (matching this installer's own existing .agents/skills
 # convention for the same harness).
 install_hooks_antigravity() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry commit_entry
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1600,6 +1684,7 @@ install_hooks_antigravity() {
 
   push_entry=""
   scanner_entry=""
+  commit_entry=""
   if has_python3; then
     python_protected="$(build_python_protected_set "$trunk_branch")"
     push_script="$target_hooks_dir/prevent-direct-push.py"
@@ -1621,6 +1706,17 @@ install_hooks_antigravity() {
             "type": "command",
             "command": "python3 .agents/hooks/secret-scanner-wrapper.py"
           }'
+
+    if [ "$install_conventional_commits" -eq 1 ]; then
+      render_gemini_style_commit_guard > "$target_hooks_dir/conventional-commits.py"
+      chmod +x "$target_hooks_dir/conventional-commits.py"
+      echo "  ✅ conventional-commits.py (Antigravity translation)"
+      commit_entry=',
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/conventional-commits.py"
+          }'
+    fi
   else
     echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Antigravity translation)"
   fi
@@ -1633,7 +1729,7 @@ install_hooks_antigravity() {
           {
             "type": "command",
             "command": "bash .agents/hooks/dangerous-command-guard.sh"
-          }'"$push_entry""$scanner_entry"'
+          }'"$push_entry""$scanner_entry""$commit_entry"'
         ]
       }
     ]
@@ -1679,6 +1775,13 @@ install_hooks_codex_cli() {
     chmod +x "$target_hooks_dir/secret-scanner.py"
     echo "  ✅ secret-scanner.py (Codex CLI translation)"
     bash_hook_files="$bash_hook_files secret-scanner.py"
+
+    if [ "$install_conventional_commits" -eq 1 ]; then
+      cp "$repo_root/.claude/hooks/conventional-commits.py" "$target_hooks_dir/conventional-commits.py"
+      chmod +x "$target_hooks_dir/conventional-commits.py"
+      echo "  ✅ conventional-commits.py (Codex CLI translation)"
+      bash_hook_files="$bash_hook_files conventional-commits.py"
+    fi
   else
     echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Codex CLI translation)"
   fi

@@ -182,6 +182,25 @@ check_scan "clean file allowed" "const greeting = \"hello world\";" allow
 
 rm -rf "$scan_repo"
 
+# --- conventional-commits.py (specs/058-expand-shareable-hooks, T041) ---
+echo "=== conventional-commits.py ==="
+
+check_commit_msg() {
+  local desc="$1" cmd="$2" expect="$3"
+  local out
+  out=$(python3 -c "import json,sys; print(json.dumps({'tool_name':'Bash','tool_input':{'command':sys.argv[1]}}))" "$cmd" | python3 "$hooks_dir/conventional-commits.py")
+  if [ "$expect" = "allow" ]; then
+    [ -z "$out" ] && pass "$desc" || fail "$desc (should allow, got: $out)"
+  else
+    [ -n "$out" ] && pass "$desc" || fail "$desc (should block, was allowed)"
+  fi
+}
+
+check_commit_msg "non-conventional message blocked" 'git commit -m "fixed a thing"' block
+check_commit_msg "conventional feat: message allowed" 'git commit -m "feat: add user authentication"' allow
+check_commit_msg "conventional fix(scope): message allowed" 'git commit -m "fix(api): handle null responses"' allow
+check_commit_msg "non-commit command allowed (nothing to check)" 'git status' allow
+
 # --- secret-file-guard.sh (specs/058-expand-shareable-hooks, T026) ------
 echo "=== secret-file-guard.sh ==="
 

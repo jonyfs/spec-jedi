@@ -661,10 +661,24 @@ function Update-SharedSettings {
       "Bash(git log:*)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./config/credentials.json)"
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/config/credentials.json)",
+      "Read(**/id_rsa)",
+      "Read(**/id_dsa)",
+      "Read(**/id_ecdsa)",
+      "Read(**/id_ed25519)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.pfx)",
+      "Read(**/*.p12)",
+      "Read(**/.npmrc)",
+      "Read(**/.netrc)",
+      "Read(**/.pgpass)",
+      "Read(**/.git-credentials)",
+      "Read(**/.aws/credentials)",
+      "Read(**/.docker/config.json)"
     ]
   }
 '@
@@ -853,6 +867,14 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
     [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
     Write-Host "  ✅ dangerous-command-guard.ps1 (protecting: $trunkBranch)"
 
+    # specs/058-expand-shareable-hooks (User Story 5): secret-file-guard.ps1,
+    # zero-dependency (never gated on Test-Python3Available). Tracked
+    # separately from $bashHookFiles since it belongs in a different
+    # PreToolUse matcher (Read|Grep|Glob, not Bash).
+    Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-file-guard.ps1") -Destination (Join-Path $targetHooksDir "secret-file-guard.ps1")
+    Write-Host "  ✅ secret-file-guard.ps1"
+    $readHookFiles = @("secret-file-guard.ps1")
+
     # specs/058-expand-shareable-hooks (User Story 1): prevent-direct-push.py
     # (a single cross-platform Python file -- no separate .ps1 counterpart
     # needed, unlike dangerous-command-guard.ps1's own bash/PowerShell
@@ -884,10 +906,11 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
 
     $settingsContent = [System.IO.File]::ReadAllText($targetSettings)
     $missingBashHooks = @($bashHookFiles | Where-Object { -not $settingsContent.Contains($_) })
+    $missingReadHooks = @($readHookFiles | Where-Object { -not $settingsContent.Contains($_) })
 
-    if ($missingBashHooks.Count -gt 0) {
+    if ($missingBashHooks.Count -gt 0 -or $missingReadHooks.Count -gt 0) {
         if ($settingsContent -match '"PreToolUse"') {
-            $missingPaths = ($missingBashHooks | ForEach-Object { Join-Path $targetHooksDir $_ }) -join ' '
+            $missingPaths = (($missingBashHooks + $missingReadHooks) | ForEach-Object { Join-Path $targetHooksDir $_ }) -join ' '
             Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically: $missingPaths"
         } else {
             $trimmed = $settingsContent.TrimEnd()
@@ -912,6 +935,16 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
                 }
             }) -join ",`n"
 
+            $readHookEntries = ($readHookFiles | ForEach-Object {
+                @"
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", "`${CLAUDE_PROJECT_DIR}/.claude/hooks/$_"]
+          }
+"@
+            }) -join ",`n"
+
             $hooksBlock = @"
   "hooks": {
     "PreToolUse": [
@@ -919,6 +952,12 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
         "matcher": "Bash",
         "hooks": [
 $bashHookEntries
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+$readHookEntries
         ]
       }
     ]
@@ -929,7 +968,7 @@ $bashHookEntries
             } else {
                 [System.IO.File]::WriteAllText($targetSettings, "$body,`n$hooksBlock`n}`n")
             }
-            $wiredList = $bashHookFiles -join ' '
+            $wiredList = ($bashHookFiles + $readHookFiles) -join ' '
             Write-Host "  ✅ Wired $wiredList into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
         }
     }
@@ -1067,11 +1106,21 @@ if ($hasGit -and $hasPush -and $hasForceFlag -and $hasMainOrMaster) {
 
 if ($readCmd) {
     foreach ($w in $words) {
+        $normalizedW = $w -replace '\\', '/'
+        if ($normalizedW -match '(^|/)\.aws/credentials$') {
+            Deny "Blocked: reading what looks like a real secret/credential file (.aws/credentials)."
+        }
+        if ($normalizedW -match '(^|/)\.docker/config\.json$') {
+            Deny "Blocked: reading what looks like a real secret/credential file (.docker/config.json)."
+        }
         $base = Split-Path $w -Leaf -ErrorAction SilentlyContinue
         if (-not $base) { $base = $w }
         if ($base -in @('.env.example', '.env.sample', '.env.template')) { continue }
-        if ($base -in @('.env', 'id_rsa', 'id_ed25519') -or $base -like '*.pem') {
+        if ($base -eq '.env' -or $base -like '.env.*' -or $base -in @('id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519') -or $base -like '*.pem' -or $base -like '*.key' -or $base -like '*.pfx' -or $base -like '*.p12') {
             Deny "Blocked: reading what looks like a real secret/credential file."
+        }
+        if ($base -in @('.npmrc', '.netrc', '.pgpass', '.git-credentials')) {
+            Deny "Blocked: reading what looks like a real credential file."
         }
     }
 }

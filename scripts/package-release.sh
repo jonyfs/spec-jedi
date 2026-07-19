@@ -104,6 +104,10 @@ cp "$repo_root/.claude/hooks/prevent-direct-push.py" "$hooks_dst/prevent-direct-
 echo "  ✅ .claude/hooks/prevent-direct-push.py"
 cp "$repo_root/.claude/hooks/secret-scanner.py" "$hooks_dst/secret-scanner.py"
 echo "  ✅ .claude/hooks/secret-scanner.py"
+cp "$repo_root/.claude/hooks/secret-file-guard.sh" "$hooks_dst/secret-file-guard.sh"
+cp "$repo_root/.claude/hooks/secret-file-guard.ps1" "$hooks_dst/secret-file-guard.ps1"
+echo "  ✅ .claude/hooks/secret-file-guard.sh"
+echo "  ✅ .claude/hooks/secret-file-guard.ps1"
 
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"

@@ -88,6 +88,11 @@ check_cmd "force push -f master blocked" 'git push -f origin master' block
 check_cmd "cat real .env blocked" 'cat .env' block
 check_cmd "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' block
 check_cmd "cat .pem blocked" 'cat server.pem' block
+# specs/058-expand-shareable-hooks: pattern set widened to match
+# secret-file-guard.sh's own FR-009 list (Wave 1 harness parity, T039).
+check_cmd "cat .npmrc blocked" 'cat .npmrc' block
+check_cmd "cat .aws/credentials blocked" 'cat ~/.aws/credentials' block
+check_cmd "cat .docker/config.json blocked" 'cat ~/.docker/config.json' block
 
 # --- prevent-direct-push.py (specs/058-expand-shareable-hooks, T006) ----
 echo "=== prevent-direct-push.py ==="
@@ -176,6 +181,37 @@ esac
 check_scan "clean file allowed" "const greeting = \"hello world\";" allow
 
 rm -rf "$scan_repo"
+
+# --- secret-file-guard.sh (specs/058-expand-shareable-hooks, T026) ------
+echo "=== secret-file-guard.sh ==="
+
+check_guard() {
+  local desc="$1" tool="$2" field="$3" value="$4" expect="$5"
+  local out
+  out=$(python3 -c "
+import json, sys
+print(json.dumps({'tool_name': sys.argv[1], 'tool_input': {sys.argv[2]: sys.argv[3]}}))
+" "$tool" "$field" "$value" | "$hooks_dir/secret-file-guard.sh")
+  if [ "$expect" = "allow" ]; then
+    [ -z "$out" ] && pass "$desc" || fail "$desc (should allow, got: $out)"
+  else
+    [ -n "$out" ] && pass "$desc" || fail "$desc (should block, was allowed)"
+  fi
+}
+
+check_guard "root .env denied" "Read" "file_path" "/tmp/some-project/.env" block
+check_guard "nested .env denied (SC-005)" "Read" "file_path" "/tmp/some-project/packages/api/.env" block
+check_guard ".env.example allowed (SC-006)" "Read" "file_path" "/tmp/some-project/.env.example" allow
+check_guard ".env.sample allowed" "Read" "file_path" "/tmp/some-project/.env.sample" allow
+check_guard "unrelated file allowed" "Read" "file_path" "/tmp/some-project/README.md" allow
+check_guard "id_rsa denied" "Read" "file_path" "/home/user/.ssh/id_rsa" block
+check_guard "id_ed25519 denied" "Read" "file_path" "/home/user/.ssh/id_ed25519" block
+check_guard "*.pem denied" "Read" "file_path" "/tmp/some-project/server.pem" block
+check_guard ".npmrc denied" "Read" "file_path" "/tmp/some-project/.npmrc" block
+check_guard ".aws/credentials denied" "Read" "file_path" "/home/user/.aws/credentials" block
+check_guard "Grep on a specific .env file denied" "Grep" "path" "/tmp/some-project/.env" block
+check_guard "Grep with a directory path never denied" "Grep" "path" "/tmp/some-project" allow
+check_guard "Glob with a directory path never denied" "Glob" "path" "/tmp/some-project" allow
 
 # --- statusline.sh (specs/040-aitmpl-settings-improvements) -------------
 echo "=== statusline.sh ==="

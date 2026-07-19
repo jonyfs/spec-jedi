@@ -237,65 +237,80 @@ proceed unblocked (spec.md US5 Acceptance Scenarios, SC-005/SC-006).
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T026 [P] [US5] Write failing cases in a new
+- [x] T026 [P] [US5] Write failing cases in a new
   `--- secret-file-guard.sh ---` section of `.claude/hooks/test-hooks.sh`:
   root `.env` denied; nested `packages/api/.env` denied (SC-005);
   `.env.example`/`.env.sample`/`.env.template` allowed (SC-006); an
   unrelated file allowed; a `Grep`/`Glob` call whose `path` is a
   directory (not a specific secret file) never denied (research.md
-  Decision 3).
-- [ ] T027 [P] [US5] Identical cases in `.claude/hooks/test-hooks.ps1`.
-- [ ] T028 [P] [US5] **Wave 1/2 harness-translation test**: for each
-  harness plan.md's Scale/Scope scopes FR-011 to (confirmed distinct
-  Read/file-access hook surface, per specs/041 `research.md`), assert a
-  scratch install produces the translated guard with matching deny/allow
-  behavior; for a harness explicitly excluded from FR-011 (shell-command-
-  surface-only), assert instead that its `dangerous-command-guard.sh`
-  translation's own `read_cmd` check already denies the same pattern set
-  — closing the same per-harness test gap `specjedi-analyze` found for
-  US1/US2.
+  Decision 3). Confirmed red (hook didn't exist yet) before T029.
+  13/13 passed once T029 landed.
+- [x] T027 [P] [US5] Identical cases in `.claude/hooks/test-hooks.ps1`.
+  13/13 passed against T030.
+- [x] T028 [P] [US5] **Wave 1/2 harness-translation test**: research
+  confirmed none of Gemini CLI/Antigravity/Codex CLI have a hook surface
+  distinct from Bash/shell-command (specs/041 `research.md`) — so all
+  three are the "excluded, shell-command-surface-only" case, not the
+  "translate separately" case. Verified their shared reliance is
+  actually true (not just documented) by widening
+  `dangerous-command-guard.sh`'s own `read_cmd` check — repo-local
+  `.sh`/`.ps1` copies AND both Gemini-translation heredoc/template
+  copies in `install.sh`/`.ps1` — to the full FR-009 pattern set (it
+  was previously narrower: missing `id_dsa`/`id_ecdsa`, `*.key`/
+  `*.pfx`/`*.p12`, `.npmrc`/`.netrc`/`.pgpass`/`.git-credentials`,
+  `.aws/credentials`, `.docker/config.json`). Verified via real scratch
+  installs and direct hook invocation (bash and native `pwsh`) that the
+  translated guard now genuinely blocks the widened set.
 
 ### Implementation for User Story 5
 
-- [ ] T029 [P] [US5] Create `.claude/hooks/secret-file-guard.sh` (new,
-  bash, zero-dependency): parse stdin JSON, extract
-  `tool_input.file_path` (`Read`) or `tool_input.path` (`Grep`/`Glob`),
-  deny via `hookSpecificOutput.permissionDecision` (same contract
-  `dangerous-command-guard.sh` uses) only when that field names a
-  specific file whose basename matches the FR-009 pattern set
-  (`.env`/`.env.*` minus template variants, `id_rsa`/`id_dsa`/
-  `id_ecdsa`/`id_ed25519`, `*.pem`/`*.key`/`*.pfx`/`*.p12`, `.npmrc`,
-  `.netrc`, `.pgpass`, `.git-credentials`, `.aws/credentials`,
-  `.docker/config.json`); never deny when the field is a directory or
-  absent. Until T026 passes.
-- [ ] T030 [P] [US5] Create `.claude/hooks/secret-file-guard.ps1`,
-  identical logic. Until T027 passes.
-- [ ] T031 [US5] Wire `secret-file-guard.sh` into this repo's own
-  `.claude/settings.json` `PreToolUse` `Read|Grep|Glob` matcher
-  (dogfooding, same convention every other repo-local hook already
-  follows).
-- [ ] T032 [US5] Broaden this repo's own `.claude/settings.json`
-  `permissions.deny` patterns from `Read(./...)` to `Read(**/...)`,
-  expanded to the same pattern set as T029 (FR-010, defense-in-depth).
-- [ ] T033 [P] [US5] Broaden `update_shared_settings()`'s
-  `permissions_block` in `scripts/install.sh` identically (depends on
-  T032 for the confirmed pattern set).
-- [ ] T034 [P] [US5] Identical broadening in `scripts/install.ps1`.
-- [ ] T035 [P] [US5] Extend `scripts/install.sh`'s claude-code block to
-  copy `secret-file-guard.sh` (no `has_python3` gate — bash,
-  zero-dependency) and wire it into the target's `PreToolUse`
-  `Read|Grep|Glob` matcher.
-- [ ] T036 [P] [US5] Identical addition in `scripts/install.ps1`.
-- [ ] T037 [US5] Stage `secret-file-guard.sh`/`.ps1` in
-  `package-release.sh`/`.ps1` (both files, one task).
-- [ ] T038 [US5] Add both to `validate.yml`'s `package-content-completeness`
-  list.
-- [ ] T039 [US5] Extend Wave 1/2 per-harness translation for
-  `secret-file-guard.sh` per the scoping rule in T028/plan.md Scale/Scope
-  — for each of Gemini CLI/Antigravity/Codex CLI/OpenCode/Zed/Warp/Amazon
-  Q, either translate it or document inline why that harness's own
-  `dangerous-command-guard.sh` translation already covers the equivalent
-  ground — never a silent omission either way. Until T028 passes.
+- [x] T029 [P] [US5] Created `.claude/hooks/secret-file-guard.sh`
+  matching FR-009 exactly, plus a compound-path check (`.aws/credentials`,
+  `.docker/config.json`) matched by path suffix rather than basename
+  (a bare-basename match on "credentials"/"config.json" would be
+  dangerously overbroad — found while implementing, not in the original
+  plan). 13/13 T026 cases passed first run.
+- [x] T030 [P] [US5] Created `.claude/hooks/secret-file-guard.ps1`,
+  identical logic (regex-based path normalization for the compound
+  patterns). 13/13 T027 cases passed first run.
+- [x] T031 [US5] Wired `secret-file-guard.sh` into this repo's own
+  `.claude/settings.json` as a new, separate `PreToolUse`
+  `Read|Grep|Glob` array entry (kept independent from the existing
+  `Read|Glob` → `graphify hook-guard read` entry, avoiding any side
+  effect on that unrelated mechanism).
+- [x] T032 [US5] Broadened this repo's own `.claude/settings.json`
+  `permissions.deny` from `Read(./...)` to `Read(**/...)`, expanded to
+  the full FR-009/FR-010 pattern set.
+- [x] T033 [P] [US5] Broadened `update_shared_settings()`'s
+  `permissions_block` in `scripts/install.sh` identically.
+- [x] T034 [P] [US5] Identical broadening in `scripts/install.ps1`.
+- [x] T035 [P] [US5] Extended `scripts/install.sh`'s claude-code block:
+  copies `secret-file-guard.sh` unconditionally (no `has_python3` gate)
+  and wires it into a new `PreToolUse` `Read|Grep|Glob` matcher array,
+  via the same multi-hook-list/manual-add-message machinery US1/US2
+  already established (generalized to a second matcher). Verified: real
+  scratch install, functional deny/allow test of the *installed* copy
+  (not just the repo source), idempotent re-run, `python3`-absent
+  install (confirms it's never skipped, unlike the Python hooks).
+- [x] T036 [P] [US5] Identical addition in `scripts/install.ps1`.
+  Verified via a real scratch install (native `pwsh`): file present,
+  second `PreToolUse` matcher present, installed copy functionally
+  blocks/allows correctly.
+- [x] T037 [US5] Staged `secret-file-guard.sh`/`.ps1` in
+  `package-release.sh`/`.ps1`. Verified: built a real tarball, all 6
+  expected hook files present (`dangerous-command-guard.sh`/`.ps1`,
+  `prevent-direct-push.py`, `secret-scanner.py`,
+  `secret-file-guard.sh`/`.ps1`).
+- [x] T038 [US5] Added both to both `package-content-completeness`
+  assertion blocks.
+- [x] T039 [US5] Per T028's finding, no Wave 1/2 harness gets a
+  separate `secret-file-guard.sh` translation — Wave 2
+  (OpenCode/Zed/Warp/Amazon Q) was already out of scope for hooks per
+  specs/041 precedent, and Wave 1 (Gemini CLI/Antigravity/Codex CLI) has
+  no distinct Read-tool hook surface, so the existing (now-widened)
+  `dangerous-command-guard.sh` translation is the actual, verified
+  equivalent-coverage mechanism — not a silent omission, a documented
+  and tested one (new CI step in `install-test-shared-hooks-wave1`).
 
 **Checkpoint**: US1, US2, and US5 (all P1) independently functional —
 the MVP slice per spec.md's own priority ordering.

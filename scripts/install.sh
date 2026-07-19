@@ -870,10 +870,24 @@ update_shared_settings() {
       "Bash(git log:*)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
-      "Read(./secrets/**)",
-      "Read(./config/credentials.json)"
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets/**)",
+      "Read(**/config/credentials.json)",
+      "Read(**/id_rsa)",
+      "Read(**/id_dsa)",
+      "Read(**/id_ecdsa)",
+      "Read(**/id_ed25519)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/*.pfx)",
+      "Read(**/*.p12)",
+      "Read(**/.npmrc)",
+      "Read(**/.netrc)",
+      "Read(**/.pgpass)",
+      "Read(**/.git-credentials)",
+      "Read(**/.aws/credentials)",
+      "Read(**/.docker/config.json)"
     ]
   }'
 
@@ -1082,6 +1096,16 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
   chmod +x "$target_hooks_dir/dangerous-command-guard.sh"
   echo "  ✅ dangerous-command-guard.sh (protecting: $trunk_branch)"
 
+  # specs/058-expand-shareable-hooks (User Story 5): secret-file-guard.sh,
+  # bash, zero-dependency (never gated on has_python3, matching
+  # dangerous-command-guard.sh's own precedent). Tracked separately from
+  # bash_hook_files since it belongs in a different PreToolUse matcher
+  # (Read|Grep|Glob, not Bash).
+  cp "$repo_root/.claude/hooks/secret-file-guard.sh" "$target_hooks_dir/secret-file-guard.sh"
+  chmod +x "$target_hooks_dir/secret-file-guard.sh"
+  echo "  ✅ secret-file-guard.sh"
+  read_hook_files="secret-file-guard.sh"
+
   # specs/058-expand-shareable-hooks (User Story 1): prevent-direct-push.py,
   # gated on python3 (FR-005) -- never installed where it would silently
   # no-op or error on every invocation. bash_hook_files/skipped_python_hooks
@@ -1135,9 +1159,15 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
   done
   missing_bash_hooks="${missing_bash_hooks# }"
 
-  if [ -n "$missing_bash_hooks" ]; then
+  missing_read_hooks=""
+  for h in $read_hook_files; do
+    case "$settings_content" in *"$h"*) : ;; *) missing_read_hooks="$missing_read_hooks $h" ;; esac
+  done
+  missing_read_hooks="${missing_read_hooks# }"
+
+  if [ -n "$missing_bash_hooks" ] || [ -n "$missing_read_hooks" ]; then
     if printf '%s' "$settings_content" | grep -q '"PreToolUse"'; then
-      echo "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically:$(for h in $missing_bash_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
+      echo "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically:$(for h in $missing_bash_hooks $missing_read_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
     else
       settings_content="$(printf '%s' "$settings_content" | sed -e 's/[[:space:]]*$//')"
       body="${settings_content%\}}"
@@ -1168,12 +1198,33 @@ ${entry}"
         fi
       done
 
+      read_hook_entries=""
+      for h in $read_hook_files; do
+        entry='          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/'"$h"'"]
+          }'
+        if [ -n "$read_hook_entries" ]; then
+          read_hook_entries="${read_hook_entries},
+${entry}"
+        else
+          read_hook_entries="$entry"
+        fi
+      done
+
       hooks_block='  "hooks": {
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
 '"$bash_hook_entries"'
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+'"$read_hook_entries"'
         ]
       }
     ]
@@ -1183,7 +1234,7 @@ ${entry}"
       else
         printf '%s,\n%s\n}\n' "$body" "$hooks_block" > "$target_settings"
       fi
-      echo "  ✅ Wired$(for h in $bash_hook_files; do printf ' %s' "$h"; done) into $(basename "$target_settings")'s PreToolUse hooks"
+      echo "  ✅ Wired$(for h in $bash_hook_files $read_hook_files; do printf ' %s' "$h"; done) into $(basename "$target_settings")'s PreToolUse hooks"
     fi
   fi
 fi
@@ -1329,14 +1380,25 @@ fi
 
 if [ "\$read_cmd" -eq 1 ]; then
   for w in "\${words[@]}"; do
+    case "\$w" in
+      */.aws/credentials|.aws/credentials)
+        deny "Blocked: reading what looks like a real secret/credential file (.aws/credentials)."
+        ;;
+      */.docker/config.json|.docker/config.json)
+        deny "Blocked: reading what looks like a real secret/credential file (.docker/config.json)."
+        ;;
+    esac
     base="\$(basename "\$w" 2>/dev/null || printf '%s' "\$w")"
     case "\$base" in
       .env.example|.env.sample|.env.template) continue ;;
-      .env|id_rsa|id_ed25519)
+      .env|.env.*|id_rsa|id_dsa|id_ecdsa|id_ed25519)
         deny "Blocked: reading what looks like a real secret/credential file."
         ;;
-      *.pem)
+      *.pem|*.key|*.pfx|*.p12)
         deny "Blocked: reading what looks like a real secret/credential file."
+        ;;
+      .npmrc|.netrc|.pgpass|.git-credentials)
+        deny "Blocked: reading what looks like a real credential file."
         ;;
     esac
   done

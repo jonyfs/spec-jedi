@@ -13,7 +13,7 @@ project's own self-description to.
 
 | SDD activity (from `what-is-sdd.md`) | Skill(s) | What actually happens |
 |---|---|---|
-| Establish the rules document | `specjedi-constitution` | Produces a versioned `.specify/memory/constitution.md`; every amendment gets a recorded Sync Impact Report and a semantic version bump — this repo's own constitution is at v1.24.0 with a real amendment history back to v1.15.x, not a static file written once. |
+| Establish the rules document | `specjedi-constitution` | Produces a versioned `.specify/memory/constitution.md`; every amendment gets a recorded Sync Impact Report and a semantic version bump — this repo's own constitution is at v1.29.0 with a real amendment history back to v1.15.x, not a static file written once. |
 | Specify a feature | `specjedi-specify` | Turns a feature idea (a rough one-sentence description is enough) into a prioritized, independently-testable `spec.md`, marking genuine ambiguity with an explicit marker instead of silently guessing. |
 | Clarify ambiguity | `specjedi-clarify` | Scans a spec for real ambiguity and asks up to 5 prioritized questions, each with a Recommended answer, before anything gets planned against an unresolved guess. |
 | Plan the technical approach | `specjedi-plan` | Scans the actual target codebase for existing conventions *before* writing the plan, so implementation never has to stop mid-build to search for a pattern that already exists elsewhere in the project. |

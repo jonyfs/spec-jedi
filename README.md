@@ -12,7 +12,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#how-spec-jedi-implements-sdd)
-[![Skills](https://img.shields.io/badge/specjedi_skills-27_shipped-success)](#how-spec-jedi-implements-sdd)
+[![Skills](https://img.shields.io/badge/specjedi_skills-30_shipped-success)](#how-spec-jedi-implements-sdd)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#installation)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](docs/i18n/)
@@ -59,8 +59,8 @@ around. Full explanation, zero Spec-Jedi-specific branding:
 flowchart TD
     Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
     Const --> Onboard["🌱 Onboarding & Guidance<br/>4 skills"]
-    Const --> Quality["🛡️ Quality & Review<br/>5 skills"]
-    Const --> Meta["📊 Meta & Tooling<br/>9 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>6 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>11 skills"]
 ```
 
 Everything downstream checks itself against the constitution, never the
@@ -87,7 +87,7 @@ resolves flagged ambiguity, `specjedi-plan` and `specjedi-tasks` produce
 the technical plan and task breakdown, and `specjedi-implement` (or
 `specjedi-quick` for small, well-understood changes) executes it
 test-first, through a feature branch and pull request only.
-Twenty-seven skills ship today in total, across four disciplines — the
+Thirty skills ship today in total, across four disciplines — the
 full catalog, both diagrams, and the 23-step walkthrough live in
 [`references/quickstart-guide.md`](references/quickstart-guide.md); the
 complete activity-to-skill mapping, including three genuine
@@ -113,11 +113,12 @@ similarity:
   project's own real history) and a persistent "current plan" pointer
   (superseded by `specjedi-status`'s zero-parallel-tracking design and
   Constitution Principle XXI's own session-start status re-surfacing).
-- **18 of the 27** shipped `specjedi-*` skills have no `speckit-*`
-  counterpart at all — `specjedi-diagram`, `specjedi-docs`,
+- **21 of the 30** shipped `specjedi-*` skills have no `speckit-*`
+  counterpart at all — `specjedi-catalog-audit`, `specjedi-chain`,
+  `specjedi-constitution-audit`, `specjedi-diagram`, `specjedi-docs`,
   `specjedi-explain`, `specjedi-find-skills`, `specjedi-govcheck`,
-  `specjedi-constitution-audit`, `specjedi-master`, `specjedi-migrate`,
-  `specjedi-new-skill`, `specjedi-onboard`, `specjedi-quick`,
+  `specjedi-master`, `specjedi-migrate`, `specjedi-new-skill`,
+  `specjedi-onboard`, `specjedi-parallel`, `specjedi-quick`,
   `specjedi-release`, `specjedi-retro`, `specjedi-security`,
   `specjedi-skill-review`, `specjedi-status`, `specjedi-tokencheck`, and
   `specjedi-worktree` — real added capability, not a restated pipeline.
@@ -361,17 +362,17 @@ table is built from.
 
 Real advantages, real current limitations — not a marketing page.
 Twenty of twenty target harnesses have a real, CI-tested install path,
-diagrams get render-verified before they're shown, three real releases
-have shipped (`v0.1.0`, `v0.1.1`, `v0.2.0`), and the constitution is a
-living, versioned document at v1.27.0 with a documented amendment
-history. The candid other half: most bridge-file harness install paths
-rest on desk research rather than a hands-on session inside the actual
-third-party product (see below), and this project's own localized
-documentation lags its English source more often than not —
-`scripts/validate.sh` currently flags all 10 translated `README.md`
-copies as out of sync with the latest English changes, a real,
-recurring gap this project hasn't yet closed structurally. Full,
-unfiltered picture:
+diagrams get render-verified before they're shown, four real releases
+have shipped (`v0.1.0`, `v0.1.1`, `v0.2.0`, `v0.3.0`), and the
+constitution is a living, versioned document at v1.29.0 with a
+documented amendment history. The candid other half: most bridge-file
+harness install paths rest on desk research rather than a hands-on
+session inside the actual third-party product (see below), and this
+project's own localized documentation lags its English source more
+often than not — `scripts/validate.sh` currently flags all 10
+translated `README.md` and `CONTRIBUTING.md` copies as out of sync with
+the latest English changes, a real, recurring gap this project hasn't
+yet closed structurally. Full, unfiltered picture:
 [`references/honest-assessment.md`](references/honest-assessment.md).
 
 Twenty harnesses named individually, all CI-proven — but 18 of the 19

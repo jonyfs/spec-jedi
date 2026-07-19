@@ -28,6 +28,13 @@ never an edit.
    frontmatter (`name`/`description`/`compatibility`), Persona, Task,
    Step-by-step, Format, worked Example, Autonomous vs. confirm-first,
    `--auto` mode, Always/Never, Verifiable success criteria.
+2.5. **Check reference integrity** (specs/050). For every
+   ```references/*.md``` citation in the reviewed skill's own text
+   (excluding any occurrence inside a fenced code block — a worked
+   Example's own sample output is never a real citation), confirm the
+   file actually exists on disk. A citation to a file that doesn't
+   exist is a finding, named with the specific missing path — never
+   silently passed.
 3. **Check content, not just headings, for each present section.** A
    heading existing is not the same as the section satisfying its
    principle's intent — reason through each one explicitly: does the
@@ -119,6 +126,7 @@ follow-up rather than silently crossing that boundary.
 | Chain-of-thought framing (Principle XX) | PASS/MISSING/WEAK/EXEMPT | ... |
 | Genuine voice (Principle XII) | PASS/MISSING/WEAK | ... |
 | Skill validation testing framework (Principle IX) | PASS/MISSING/WEAK | ... |
+| Reference integrity (specs/050) | PASS/MISSING | ... |
 | Token budget (Principle XIX, specs/045) | PASS/OVER HARD CAP | ~N tokens (chars÷4 approximation) vs. 500 target / 5,000 hard cap |
 
 Overall: CLEAN PASS / N finding(s).

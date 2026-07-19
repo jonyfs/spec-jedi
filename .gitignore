@@ -22,3 +22,4 @@ skills-lock.json
 # specjedi-worktree's git-fallback path (no native harness worktree tool
 # available) creates worktrees here — project-local, never committed.
 .worktrees/
+__pycache__/

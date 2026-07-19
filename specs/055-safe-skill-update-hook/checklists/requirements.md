@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,10 +31,17 @@
 
 ## Notes
 
-- One genuine `[NEEDS CLARIFICATION]` marker remains: FR-008, whether
-  `.specify/templates/*.md` (same overwrite pattern/risk class as skill
-  files, but not literally named in the request) is also in scope for
-  the loss-safety guarantee.
+- Resolved 2026-07-18: FR-008 includes `.specify/templates/*.md` in the
+  same loss-safety guarantee as skill files — same risk class, same fix
+  mechanism, no extra design cost.
+- This feature requires a Constitution Principle XXII amendment
+  (planning-stage): today's XXII text says the freshness check is
+  "advisory only... MUST NOT invent a second update flow." This
+  feature's User Story 2 changes "advisory only" to "can also trigger
+  the existing bootstrap-install.sh mechanism on explicit yes" — it does
+  NOT invent a second update flow (still the same script), but it does
+  change the "advisory only" framing, so the constitution text itself
+  needs reconciling, not just the implementation.
 - This spec deliberately does NOT re-spec the SessionStart version-check
   mechanism itself — that already exists and shipped as feature 042; a
   direct read of `scripts/session-start.sh` confirmed exactly what it

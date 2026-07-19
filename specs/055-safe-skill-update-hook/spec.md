@@ -50,6 +50,21 @@ updated through an existing, safe, marker-delimited section
 (`update_memory_file`, `install.sh`) that leaves everything outside the
 markers untouched.
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: Is `.specify/templates/*.md` (same unconditional-overwrite pattern
+  as skill files, not literally named in the request) also in scope for
+  FR-001's preservation guarantee? → A: Yes, include it. Both file
+  classes share the exact same risk (an unconditional `cp` with no
+  preservation check) and the same fix mechanism (FR-002's own
+  backup-before-overwrite, once chosen, generalizes to any
+  unconditionally-copied file with no extra design cost) — leaving a
+  known-identical gap unaddressed for templates while fixing it for
+  skills would be an arbitrary, hard-to-justify line, not a real scope
+  boundary.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - A locally-modified skill file is never silently destroyed by an update (Priority: P1)
@@ -159,10 +174,8 @@ interactive-when-available/plain-text-fallback rule exactly.
   error messages, non-zero exit) apply unchanged — this feature doesn't
   need to invent new update-failure handling, only trigger the existing
   mechanism.
-- **What about `.specify/templates/*.md`** (also currently copied
-  unconditionally by `install.sh`, the same overwrite pattern as skill
-  files, just a different, less-commonly-hand-edited target)? See
-  FR-008 — a genuine, undecided scope boundary.
+- **What about `.specify/templates/*.md`**? Resolved by the 2026-07-18
+  Clarification — in scope for the same preservation guarantee (FR-008).
 
 ## Requirements *(mandatory)*
 
@@ -199,17 +212,10 @@ interactive-when-available/plain-text-fallback rule exactly.
   dependency, not reinvented here); until then, a plain text prompt is
   the baseline, and this feature MUST NOT be blocked on feature 051's
   own completion.
-- **FR-008**: Whether `.specify/templates/*.md` (currently also
-  unconditionally overwritten by `install.sh`, the same risk class as
-  skill files but a different, less-commonly-hand-edited target) is
-  also in scope for FR-001's preservation guarantee, or whether this
-  feature's scope is strictly the `specjedi-*` skill directories the
-  request literally named, is [NEEDS CLARIFICATION: the user's own
-  wording says "as skills specjedi devem ser atualizadas" (the specjedi
-  skills should be updated) specifically; templates share the identical
-  overwrite pattern and risk class but weren't named directly — a real
-  scope call, not a safe guess either way, since including them
-  meaningfully broadens FR-001's own implementation surface].
+- **FR-008**: `.specify/templates/*.md` (same unconditional-overwrite
+  pattern as skill files) is in scope for FR-001's preservation
+  guarantee (resolved by the 2026-07-18 Clarification above) — the same
+  backup mechanism applies to both file classes.
 - **FR-009**: Confirmed already out of this feature's risk surface, and
   MUST NOT regress: `.specify/memory/constitution.md` (never touched by
   the install flow today) and `CLAUDE.md`'s own non-managed content

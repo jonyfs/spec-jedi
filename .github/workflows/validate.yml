@@ -1317,11 +1317,21 @@ jobs:
         run: |
           dir_nopy=$(mktemp -d)
           shadow=$(mktemp -d)
-          for b in bash git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat sh; do
+          real_bash="$(command -v bash)"
+          # bash itself is deliberately never shadowed: on Windows/Git
+          # Bash, bash.exe depends on companion DLLs (msys-2.0.dll etc.)
+          # that only resolve from its own real installation directory --
+          # a bare symlink elsewhere breaks that and fails with "error
+          # while loading shared libraries", found via a real CI failure
+          # on this feature's own PR (specs/058), not assumed. Invoking
+          # via $real_bash's captured absolute path (never relying on a
+          # bare `bash` resolving through the restricted $PATH below)
+          # sidesteps the same class of failure for the outer invocation.
+          for b in git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat sh; do
             real="$(command -v "$b" 2>/dev/null || true)"
             [ -n "$real" ] && ln -sf "$real" "$shadow/$b"
           done
-          PATH="$shadow" bash scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
+          PATH="$shadow" "$real_bash" scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
           rm -rf "$shadow"
           cat /tmp/nopython-out.txt
           if [ -f "$dir_nopy/.claude/hooks/prevent-direct-push.py" ] || [ -f "$dir_nopy/.claude/hooks/secret-scanner.py" ]; then

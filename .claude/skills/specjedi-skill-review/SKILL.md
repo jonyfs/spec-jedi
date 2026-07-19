@@ -28,6 +28,13 @@ never an edit.
    frontmatter (`name`/`description`/`compatibility`), Persona, Task,
    Step-by-step, Format, worked Example, Autonomous vs. confirm-first,
    `--auto` mode, Always/Never, Verifiable success criteria.
+2.5. **Check reference integrity** (specs/050). For every
+   ```references/*.md``` citation in the reviewed skill's own text
+   (excluding any occurrence inside a fenced code block — a worked
+   Example's own sample output is never a real citation), confirm the
+   file actually exists on disk. A citation to a file that doesn't
+   exist is a finding, named with the specific missing path — never
+   silently passed.
 3. **Check content, not just headings, for each present section.** A
    heading existing is not the same as the section satisfying its
    principle's intent — reason through each one explicitly: does the
@@ -73,6 +80,16 @@ never an edit.
    target but under the hard cap is informational, never a finding
    (advisory-only, per specs/045's own Clarification: this check never
    blocks anything, including a PASS/FAIL verdict here).
+5.7. **Check `--auto` mode against Always/Never for contradiction**
+   (specs/052). Compare the target's own `## \`--auto\` mode` section
+   text against its own Always/Never section: does the `--auto`
+   description claim to skip, override, or auto-resolve anything
+   Always/Never calls non-negotiable? If the two agree — the common
+   case — mark PASS, citing the specific matching language as evidence
+   (e.g. an `--auto` clause stating a boundary is never crossed, matched
+   against the identical boundary in Always/Never). A genuine
+   contradiction is a finding, named specifically — never silently
+   passed because a `--auto mode` section merely exists.
 6. **Build the findings report** (see Format). An explicit clean pass is a
    valid, good outcome when every dimension is satisfied — never leave an
    empty or ambiguous report.
@@ -116,7 +133,9 @@ follow-up rather than silently crossing that boundary.
 | Chain-of-thought framing (Principle XX) | PASS/MISSING/WEAK/EXEMPT | ... |
 | Genuine voice (Principle XII) | PASS/MISSING/WEAK | ... |
 | Skill validation testing framework (Principle IX) | PASS/MISSING/WEAK | ... |
+| Reference integrity (specs/050) | PASS/MISSING | ... |
 | Token budget (Principle XIX, specs/045) | PASS/OVER HARD CAP | ~N tokens (chars÷4 approximation) vs. 500 target / 5,000 hard cap |
+| `--auto` mode vs. Always/Never (specs/052) | PASS/CONTRADICTION | ... |
 
 Overall: CLEAN PASS / N finding(s).
 ```

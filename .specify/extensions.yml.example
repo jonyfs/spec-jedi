@@ -1,0 +1,44 @@
+# Spec Jedi hook-dispatch example (specs/050-reference-integrity-hooks)
+#
+# This is an INACTIVE TEMPLATE. Every specjedi-* pipeline skill that
+# checks for hooks (specify, clarify, plan, tasks, implement, analyze,
+# checklist, constitution, converge) only looks for a real
+# `.specify/extensions.yml` at the repository root — this .example file
+# is never read by any skill. To activate any entry below:
+#
+#   1. Copy this file to `.specify/extensions.yml` (drop the .example
+#      suffix).
+#   2. Uncomment (remove the leading `#`) only the hooks you actually
+#      want active.
+#   3. Nothing runs until you do both of those steps yourself.
+#
+# Every `command` below names a real, already-shipped specjedi-* skill
+# in this project (dots become hyphens to form the real slash command,
+# e.g. `specjedi.checklist` -> `/specjedi-checklist`, per every hook-
+# aware skill's own documented Pre-flight/after-hook dispatch rule) —
+# none of these are invented.
+
+# hooks:
+#   after_tasks:
+#     - command: "specjedi.checklist"
+#       optional: true
+#       description: "Suggest a quality-focused checklist right after task breakdown, before implementation starts."
+#       prompt: "Tasks are ready. Want a checklist pass on this breakdown before implementing?"
+#
+#   before_implement:
+#     - command: "specjedi.analyze"
+#       optional: true
+#       description: "Run the existing read-only spec/plan/tasks consistency check immediately before implementation begins."
+#       prompt: "About to implement — run a quick consistency check across spec/plan/tasks first?"
+#
+#   after_implement:
+#     - command: "specjedi.retro"
+#       optional: true
+#       description: "Once a feature's tasks.md reaches 100%, suggest the existing retrospective skill comparing what was actually built against plan.md."
+#       prompt: "This slice looks complete — run a retrospective against the plan now?"
+#
+#   after_constitution:
+#     - command: "specjedi.constitution-audit"
+#       optional: true
+#       description: "After any constitution amendment, suggest the existing whole-project governance audit to catch drift the amendment itself might have introduced."
+#       prompt: "Constitution just changed — run a whole-project governance audit to confirm nothing drifted?"

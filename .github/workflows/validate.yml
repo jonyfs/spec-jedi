@@ -805,6 +805,7 @@ jobs:
             "scripts/session-start.ps1" \
             ".claude/hooks/dangerous-command-guard.sh" \
             ".claude/hooks/dangerous-command-guard.ps1" \
+            ".claude/hooks/prevent-direct-push.py" \
             "RELEASE_VERSION"; do
             if ! printf '%s\n' "$listing" | grep -qF "spec-jedi-v0.0.0-ci-check/$path"; then
               echo "FAIL: expected $path to be present in the release package, but it wasn't"
@@ -872,6 +873,7 @@ jobs:
             "scripts/session-start.ps1",
             ".claude/hooks/dangerous-command-guard.sh",
             ".claude/hooks/dangerous-command-guard.ps1",
+            ".claude/hooks/prevent-direct-push.py",
             "RELEASE_VERSION"
           )
           foreach ($path in $mustExist) {
@@ -1246,9 +1248,11 @@ jobs:
           dir1=$(mktemp -d)
           ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
           test -f "$dir1/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          test -f "$dir1/.claude/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1)"; exit 1; }
           grep -q '"statusLine"' "$dir1/.claude/settings.json" || { echo "FAIL: statusLine missing"; exit 1; }
           grep -q '"permissions"' "$dir1/.claude/settings.json" || { echo "FAIL: permissions missing"; exit 1; }
           python3 -m json.tool "$dir1/.claude/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
+          grep -qF 'python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prevent-direct-push.py\"' "$dir1/.claude/settings.json" || { echo "FAIL: prevent-direct-push.py not wired into PreToolUse/Bash"; exit 1; }
           if [ -f "$dir1/.claude/hooks/skill-quality-guard.sh" ] || [ -f "$dir1/.claude/hooks/cross-platform-parity-guard.sh" ]; then
             echo "FAIL: repo-internal-only hook leaked into target"
             exit 1
@@ -1273,6 +1277,7 @@ jobs:
           (cd "$dir3" && git init -q && git config user.email "t@example.com" && git config user.name "T" && git checkout -q -b develop && git commit -q --allow-empty -m init && git remote add origin "$remote" && git push -q -u origin develop)
           ./scripts/install.sh "$dir3" --harness claude-code >/dev/null
           grep -q "develop|develop:develop) has_main_or_master=1" "$dir3/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: trunk branch not detected/baked in"; exit 1; }
+          grep -qF 'PROTECTED = {"develop"}' "$dir3/.claude/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py PROTECTED set not trunk-substituted (specs/058 US1)"; exit 1; }
           echo "OK: develop detected and baked into the installed hook"
       - name: No-origin-remote target falls back to main/master
         shell: bash
@@ -1281,6 +1286,25 @@ jobs:
           ./scripts/install.sh "$dir4" --harness claude-code >/dev/null
           grep -qE "has_main_or_master=1" "$dir4/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: no fallback trunk check found"; exit 1; }
           echo "OK: fallback trunk check present for a target with no origin remote"
+      - name: python3 absence skips Python-based hooks, never the bash ones (FR-005)
+        shell: bash
+        run: |
+          dir_nopy=$(mktemp -d)
+          shadow=$(mktemp -d)
+          for b in bash git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat printf sh; do
+            real="$(command -v "$b" 2>/dev/null || true)"
+            [ -n "$real" ] && ln -sf "$real" "$shadow/$b"
+          done
+          PATH="$shadow" bash scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
+          rm -rf "$shadow"
+          cat /tmp/nopython-out.txt
+          if [ -f "$dir_nopy/.claude/hooks/prevent-direct-push.py" ]; then
+            echo "FAIL: prevent-direct-push.py installed despite python3 absence"
+            exit 1
+          fi
+          grep -q "python3 not found.*prevent-direct-push.py" /tmp/nopython-out.txt || { echo "FAIL: no named skip-warning for prevent-direct-push.py"; exit 1; }
+          test -f "$dir_nopy/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: bash hook wrongly skipped too"; exit 1; }
+          echo "OK: python3-gated hooks skip cleanly with a named warning; bash hooks unaffected"
       - name: Pre-existing settings.json content survives the merge
         shell: bash
         run: |
@@ -1311,9 +1335,11 @@ jobs:
           $dir1 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
           ./scripts/install.ps1 -TargetDir $dir1 -Harness claude-code | Out-Null
           if (-not (Test-Path (Join-Path $dir1 ".claude/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir1 ".claude/hooks/prevent-direct-push.py"))) { Write-Host "FAIL: prevent-direct-push.py missing (specs/058 US1)"; exit 1 }
           $settings = Get-Content (Join-Path $dir1 ".claude/settings.json") -Raw
           if ($settings -notmatch '"statusLine"') { Write-Host "FAIL: statusLine missing"; exit 1 }
           if ($settings -notmatch '"permissions"') { Write-Host "FAIL: permissions missing"; exit 1 }
+          if (-not $settings.Contains('python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prevent-direct-push.py\"')) { Write-Host "FAIL: prevent-direct-push.py not wired into PreToolUse/Bash"; exit 1 }
           $null = $settings | ConvertFrom-Json
           if ((Test-Path (Join-Path $dir1 ".claude/hooks/skill-quality-guard.ps1")) -or (Test-Path (Join-Path $dir1 ".claude/hooks/cross-platform-parity-guard.ps1"))) {
             Write-Host "FAIL: repo-internal-only hook leaked into target"
@@ -1612,21 +1638,30 @@ jobs:
           dir1=$(mktemp -d)
           ./scripts/install.sh "$dir1" --harness gemini-cli >/dev/null
           test -f "$dir1/.gemini/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          test -f "$dir1/.gemini/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1; }
           grep -q '"BeforeTool"' "$dir1/.gemini/settings.json" || { echo "FAIL: BeforeTool hook missing"; exit 1; }
           if grep -q 'hookSpecificOutput' "$dir1/.gemini/hooks/dangerous-command-guard.sh"; then
             echo "FAIL: script still uses Claude Code's own output shape, not translated"
             exit 1
           fi
           grep -q '"decision"' "$dir1/.gemini/hooks/dangerous-command-guard.sh" || { echo "FAIL: translated decision/reason output shape missing"; exit 1; }
+          if grep -q 'hookSpecificOutput' "$dir1/.gemini/hooks/prevent-direct-push.py"; then
+            echo "FAIL: prevent-direct-push.py still uses Claude Code's own output shape, not translated"
+            exit 1
+          fi
+          grep -q '"decision": "deny"' "$dir1/.gemini/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py translated decision shape missing"; exit 1; }
           python3 -m json.tool "$dir1/.gemini/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
-          echo "OK: gemini-cli hook translated, not copied"
+          grep -q "prevent-direct-push.py" "$dir1/.gemini/settings.json" || { echo "FAIL: prevent-direct-push.py not wired into BeforeTool"; exit 1; }
+          echo "OK: gemini-cli hooks translated, not copied"
       - name: antigravity install produces a translated hook in its own confirmed settings location
         shell: bash
         run: |
           dir2=$(mktemp -d)
           ./scripts/install.sh "$dir2" --harness antigravity >/dev/null
           test -f "$dir2/.agents/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          test -f "$dir2/.agents/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1; }
           grep -q '"BeforeTool"' "$dir2/.agents/hooks.json" || { echo "FAIL: BeforeTool hook missing"; exit 1; }
+          grep -q "prevent-direct-push.py" "$dir2/.agents/hooks.json" || { echo "FAIL: prevent-direct-push.py not wired into BeforeTool"; exit 1; }
           python3 -m json.tool "$dir2/.agents/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
           echo "OK: antigravity hooks.json present and valid"
       - name: codex-cli install produces hooks.json and tells the user to run /hooks to trust it
@@ -1635,9 +1670,12 @@ jobs:
           dir3=$(mktemp -d)
           out=$(./scripts/install.sh "$dir3" --harness codex-cli)
           test -f "$dir3/.codex/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
+          test -f "$dir3/.codex/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1; }
           grep -q '"PreToolUse"' "$dir3/.codex/hooks.json" || { echo "FAIL: PreToolUse hook missing"; exit 1; }
+          grep -q "prevent-direct-push.py" "$dir3/.codex/hooks.json" || { echo "FAIL: prevent-direct-push.py not wired into PreToolUse"; exit 1; }
           python3 -m json.tool "$dir3/.codex/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
           echo "$out" | grep -q '/hooks' || { echo "FAIL: trust-workflow message missing"; exit 1; }
+          echo "$out" | grep -q "prevent-direct-push.py before they actually run" || { echo "FAIL: trust-workflow message doesn't name prevent-direct-push.py"; exit 1; }
           echo "OK: codex-cli hooks.json present, trust-workflow message shown"
       - name: Idempotent re-run produces byte-identical output for all three Wave 1 harnesses
         shell: bash

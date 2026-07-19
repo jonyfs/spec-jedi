@@ -806,6 +806,35 @@ detect_trunk_branch() {
   fi
 }
 
+# specs/058-expand-shareable-hooks (FR-005): gates every Python-based
+# shareable hook (secret-scanner.py, prevent-direct-push.py,
+# conventional-commits.py) on python3's actual presence on the target
+# machine -- near-universal on macOS/Linux, never guaranteed on a bare
+# Windows environment. Never installs something silently non-functional
+# (Principle XX). dangerous-command-guard.sh/secret-file-guard.sh are
+# bash, zero-dependency, and never gated on this check.
+has_python3() {
+  command -v python3 >/dev/null 2>&1
+}
+
+# specs/058-expand-shareable-hooks: builds prevent-direct-push.py's own
+# Python-set-literal substitution value from a space-separated trunk
+# branch list (the same $trunk_branch detect_trunk_branch() already
+# returns) -- e.g. {"main"} or {"main", "master"}. Distinct from the
+# bash case-pattern trunk_pattern used for dangerous-command-guard.sh,
+# since Python set syntax isn't expressible in that same form.
+build_python_protected_set() {
+  local trunk_branch="$1" python_protected=""
+  for b in $trunk_branch; do
+    if [ -n "$python_protected" ]; then
+      python_protected="${python_protected}, \"${b}\""
+    else
+      python_protected="\"${b}\""
+    fi
+  done
+  printf '{%s}' "$python_protected"
+}
+
 # specs/041-release-hooks-settings: merges the shareable statusLine/
 # permissions keys into the TARGET's own .claude/settings.json without
 # touching anything else already there (FR-003/FR-004). NOTE this
@@ -1040,6 +1069,11 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
       trunk_pattern="${b}|${b}:${b}"
     fi
   done
+  # specs/058-expand-shareable-hooks: prevent-direct-push.py's own
+  # PROTECTED set is Python-set-literal syntax (`{"main", "develop"}`),
+  # not the bash case-pattern trunk_pattern above -- a distinct
+  # substitution value is needed, e.g. {"main"} or {"main", "master"}.
+  python_protected="$(build_python_protected_set "$trunk_branch")"
 
   target_hooks_dir="$target_dir/.claude/hooks"
   mkdir -p "$target_hooks_dir"
@@ -1048,33 +1082,89 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
   chmod +x "$target_hooks_dir/dangerous-command-guard.sh"
   echo "  ✅ dangerous-command-guard.sh (protecting: $trunk_branch)"
 
+  # specs/058-expand-shareable-hooks (User Story 1): prevent-direct-push.py,
+  # gated on python3 (FR-005) -- never installed where it would silently
+  # no-op or error on every invocation. bash_hook_files/skipped_python_hooks
+  # accumulate across every Python hook this block installs, so the single
+  # combined warning below (FR-005's own "one named warning" requirement)
+  # and the PreToolUse wiring further down both stay in sync with what
+  # was actually copied.
+  bash_hook_files="dangerous-command-guard.sh"
+  skipped_python_hooks=""
+  if has_python3; then
+    sed "s/PROTECTED = {\"main\", \"develop\"}/PROTECTED = ${python_protected}/" \
+      "$repo_root/.claude/hooks/prevent-direct-push.py" > "$target_hooks_dir/prevent-direct-push.py"
+    chmod +x "$target_hooks_dir/prevent-direct-push.py"
+    echo "  ✅ prevent-direct-push.py (protecting: $trunk_branch)"
+    bash_hook_files="$bash_hook_files prevent-direct-push.py"
+  else
+    skipped_python_hooks="prevent-direct-push.py"
+  fi
+  if [ -n "$skipped_python_hooks" ]; then
+    echo "  ⚠️  python3 not found — skipping:$(for h in $skipped_python_hooks; do printf ' %s' "$h"; done)"
+  fi
+
   update_shared_settings "$target_dir/.claude/settings.json"
 
-  # Wire the newly-copied hook into the target's own settings.json, the
-  # same way this repo's own settings.json wires it (PreToolUse/Bash) --
-  # update_shared_settings only adds statusLine/permissions, since the
-  # hooks wiring itself needs the target's own resolved hooks_dst_rel
-  # path, not a static block.
+  # Wire every newly-copied Bash-matcher hook into the target's own
+  # settings.json, the same way this repo's own settings.json wires them
+  # (PreToolUse/Bash) -- update_shared_settings only adds statusLine/
+  # permissions, since the hooks wiring itself needs the target's own
+  # resolved hooks path, not a static block. Conservative by design
+  # (matching update_shared_settings()'s own "never touch what it can't
+  # safely parse" philosophy): a target that already has a PreToolUse
+  # array never gets surgically edited -- it gets a manual-add message
+  # naming every missing hook (FR-006) instead of a risky in-array
+  # insertion attempt.
   target_settings="$target_dir/.claude/settings.json"
-  if ! grep -q "dangerous-command-guard.sh" "$target_settings" 2>/dev/null; then
-    settings_content="$(cat "$target_settings"; echo x)"
-    settings_content="${settings_content%x}"
+  settings_content="$(cat "$target_settings" 2>/dev/null; echo x)"
+  settings_content="${settings_content%x}"
+
+  missing_bash_hooks=""
+  for h in $bash_hook_files; do
+    case "$settings_content" in *"$h"*) : ;; *) missing_bash_hooks="$missing_bash_hooks $h" ;; esac
+  done
+  missing_bash_hooks="${missing_bash_hooks# }"
+
+  if [ -n "$missing_bash_hooks" ]; then
     if printf '%s' "$settings_content" | grep -q '"PreToolUse"'; then
-      echo "  ℹ️  Target already has a PreToolUse hooks array — add dangerous-command-guard.sh to it manually (${target_hooks_dir}/dangerous-command-guard.sh), not overwritten automatically."
+      echo "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically:$(for h in $missing_bash_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
     else
       settings_content="$(printf '%s' "$settings_content" | sed -e 's/[[:space:]]*$//')"
       body="${settings_content%\}}"
       body="$(printf '%s' "$body" | sed -e 's/[[:space:]]*$//')"
+
+      bash_hook_entries=""
+      for h in $bash_hook_files; do
+        case "$h" in
+          *.sh)
+            entry='          {
+            "type": "command",
+            "command": "bash",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/'"$h"'"]
+          }'
+            ;;
+          *.py)
+            entry='          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/'"$h"'\""
+          }'
+            ;;
+        esac
+        if [ -n "$bash_hook_entries" ]; then
+          bash_hook_entries="${bash_hook_entries},
+${entry}"
+        else
+          bash_hook_entries="$entry"
+        fi
+      done
+
       hooks_block='  "hooks": {
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash",
-            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.sh"]
-          }
+'"$bash_hook_entries"'
         ]
       }
     ]
@@ -1084,7 +1174,7 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
       else
         printf '%s,\n%s\n}\n' "$body" "$hooks_block" > "$target_settings"
       fi
-      echo "  ✅ Wired dangerous-command-guard.sh into $(basename "$target_settings")'s PreToolUse hooks"
+      echo "  ✅ Wired$(for h in $bash_hook_files; do printf ' %s' "$h"; done) into $(basename "$target_settings")'s PreToolUse hooks"
     fi
   fi
 fi
@@ -1247,8 +1337,61 @@ exit 0
 EOF
 }
 
+# specs/058-expand-shareable-hooks (User Story 1, Wave 1): translates
+# prevent-direct-push.py for the same BeforeTool-shaped contract
+# render_gemini_style_guard() targets. Unlike that function's full
+# heredoc reproduction of dangerous-command-guard.sh's bash logic, this
+# does a targeted source-to-source transform of the real
+# prevent-direct-push.py file via python3 (already confirmed present --
+# this function is only ever called from inside a has_python3 gate):
+# the stdin JSON parsing (tool_input.command) is identical between
+# contracts, only the deny-output construction differs. Asserts the
+# expected block is found rather than silently no-op-ing if
+# prevent-direct-push.py's own shape ever changes (Principle XX).
+render_gemini_style_push_guard() {
+  local python_protected="$1"
+  python3 - "$repo_root/.claude/hooks/prevent-direct-push.py" "$python_protected" <<'PYEOF'
+import sys
+
+src_path, protected = sys.argv[1], sys.argv[2]
+src = open(src_path).read()
+
+old_protected = 'PROTECTED = {"main", "develop"}'
+if old_protected not in src:
+    sys.exit("FAIL: prevent-direct-push.py's PROTECTED line not found -- update render_gemini_style_push_guard()")
+src = src.replace(old_protected, f"PROTECTED = {protected}")
+
+old_deny = '''    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }))
+    sys.exit(0)'''
+if old_deny not in src:
+    sys.exit("FAIL: prevent-direct-push.py's deny-output block not found -- update render_gemini_style_push_guard()")
+new_deny = '''    print(json.dumps({"decision": "deny", "reason": reason}))
+    sys.exit(2)'''
+src = src.replace(old_deny, new_deny)
+
+header = (
+    "#!/usr/bin/env python3\n"
+    "# Translated from .claude/hooks/prevent-direct-push.py (specs/\n"
+    "# 058-expand-shareable-hooks, User Story 1) for a BeforeTool-shaped\n"
+    "# hook contract: stdin carries tool_input.command (unchanged), stdout\n"
+    "# is {\"decision\":\"deny\",\"reason\":\"...\"} with exit code 2 to block.\n"
+)
+# Drop the original file's own module docstring header (lines 1-19) --
+# it documents the Claude-Code-target adaptation specifically, which no
+# longer applies verbatim to this translated copy.
+body = src.split('"""', 2)[-1].lstrip("\n")
+sys.stdout.write(header + body)
+PYEOF
+}
+
 install_hooks_gemini_cli() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1259,6 +1402,22 @@ install_hooks_gemini_cli() {
   chmod +x "$guard_script"
   echo "  ✅ dangerous-command-guard.sh (Gemini CLI translation, protecting: $trunk_branch)"
 
+  push_entry=""
+  if has_python3; then
+    python_protected="$(build_python_protected_set "$trunk_branch")"
+    push_script="$target_hooks_dir/prevent-direct-push.py"
+    render_gemini_style_push_guard "$python_protected" > "$push_script"
+    chmod +x "$push_script"
+    echo "  ✅ prevent-direct-push.py (Gemini CLI translation, protecting: $trunk_branch)"
+    push_entry=',
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/prevent-direct-push.py"
+          }'
+  else
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Gemini CLI translation)"
+  fi
+
   hooks_block='  "hooks": {
     "BeforeTool": [
       {
@@ -1267,7 +1426,7 @@ install_hooks_gemini_cli() {
           {
             "type": "command",
             "command": "bash .gemini/hooks/dangerous-command-guard.sh"
-          }
+          }'"$push_entry"'
         ]
       }
     ]
@@ -1284,7 +1443,7 @@ install_hooks_gemini_cli() {
 # hooks.json (matching this installer's own existing .agents/skills
 # convention for the same harness).
 install_hooks_antigravity() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1295,6 +1454,22 @@ install_hooks_antigravity() {
   chmod +x "$guard_script"
   echo "  ✅ dangerous-command-guard.sh (Antigravity translation, protecting: $trunk_branch)"
 
+  push_entry=""
+  if has_python3; then
+    python_protected="$(build_python_protected_set "$trunk_branch")"
+    push_script="$target_hooks_dir/prevent-direct-push.py"
+    render_gemini_style_push_guard "$python_protected" > "$push_script"
+    chmod +x "$push_script"
+    echo "  ✅ prevent-direct-push.py (Antigravity translation, protecting: $trunk_branch)"
+    push_entry=',
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/prevent-direct-push.py"
+          }'
+  else
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Antigravity translation)"
+  fi
+
   hooks_block='  "hooks": {
     "BeforeTool": [
       {
@@ -1303,7 +1478,7 @@ install_hooks_antigravity() {
           {
             "type": "command",
             "command": "bash .agents/hooks/dangerous-command-guard.sh"
-          }
+          }'"$push_entry"'
         ]
       }
     ]
@@ -1320,7 +1495,7 @@ install_hooks_antigravity() {
 # Codex CLI trust-workflow note, Principle XX): the installer cannot
 # pre-approve a hook inside Codex CLI's own trust store.
 install_hooks_codex_cli() {
-  local trunk_branch trunk_pattern target_hooks_dir hooks_json
+  local trunk_branch trunk_pattern target_hooks_dir hooks_json python_protected bash_hook_files entry bash_hook_entries h missing_hooks
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1331,35 +1506,65 @@ install_hooks_codex_cli() {
   chmod +x "$target_hooks_dir/dangerous-command-guard.sh"
   echo "  ✅ dangerous-command-guard.sh (Codex CLI translation, protecting: $trunk_branch)"
 
+  # specs/058-expand-shareable-hooks (User Story 1, Wave 1): Codex CLI's
+  # hooks.json schema is structurally identical to Claude Code's own, so
+  # prevent-direct-push.py is reused unmodified (same trunk-substitution
+  # technique as the claude-code block), unlike Gemini CLI/Antigravity
+  # which need render_gemini_style_push_guard's output-shape translation.
+  bash_hook_files="dangerous-command-guard.sh"
+  if has_python3; then
+    python_protected="$(build_python_protected_set "$trunk_branch")"
+    sed "s/PROTECTED = {\"main\", \"develop\"}/PROTECTED = ${python_protected}/" \
+      "$repo_root/.claude/hooks/prevent-direct-push.py" > "$target_hooks_dir/prevent-direct-push.py"
+    chmod +x "$target_hooks_dir/prevent-direct-push.py"
+    echo "  ✅ prevent-direct-push.py (Codex CLI translation, protecting: $trunk_branch)"
+    bash_hook_files="$bash_hook_files prevent-direct-push.py"
+  else
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Codex CLI translation)"
+  fi
+
   hooks_json="$target_dir/.codex/hooks.json"
   if [ ! -f "$hooks_json" ]; then
     mkdir -p "$(dirname "$hooks_json")"
-    cat > "$hooks_json" <<'EOF'
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
+    bash_hook_entries=""
+    for h in $bash_hook_files; do
+      case "$h" in
+        *.sh) entry='          {
             "type": "command",
-            "command": "bash .codex/hooks/dangerous-command-guard.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-EOF
-    echo "  ✅ .codex/hooks.json created (PreToolUse -> dangerous-command-guard.sh)"
-  elif ! grep -q "dangerous-command-guard" "$hooks_json"; then
-    echo "  ℹ️  .codex/hooks.json already exists — add dangerous-command-guard.sh to its PreToolUse array manually (${target_hooks_dir}/dangerous-command-guard.sh), not overwritten automatically."
+            "command": "bash .codex/hooks/'"$h"'"
+          }' ;;
+        *.py) entry='          {
+            "type": "command",
+            "command": "python3 .codex/hooks/'"$h"'"
+          }' ;;
+      esac
+      if [ -n "$bash_hook_entries" ]; then
+        bash_hook_entries="${bash_hook_entries},
+${entry}"
+      else
+        bash_hook_entries="$entry"
+      fi
+    done
+    printf '{\n  "hooks": {\n    "PreToolUse": [\n      {\n        "matcher": "Bash",\n        "hooks": [\n%s\n        ]\n      }\n    ]\n  }\n}\n' "$bash_hook_entries" > "$hooks_json"
+    echo "  ✅ .codex/hooks.json created (PreToolUse ->$(for h in $bash_hook_files; do printf ' %s' "$h"; done))"
   else
-    echo "  ℹ️  .codex/hooks.json already references dangerous-command-guard — leaving as-is."
+    missing_hooks=""
+    for h in $bash_hook_files; do
+      case "$h" in
+        dangerous-command-guard.sh) grep -q "dangerous-command-guard" "$hooks_json" || missing_hooks="$missing_hooks $h" ;;
+        *) grep -q "$h" "$hooks_json" || missing_hooks="$missing_hooks $h" ;;
+      esac
+    done
+    missing_hooks="${missing_hooks# }"
+    if [ -n "$missing_hooks" ]; then
+      echo "  ℹ️  .codex/hooks.json already exists — add the following manually to its PreToolUse array, not overwritten automatically:$(for h in $missing_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
+    else
+      echo "  ℹ️  .codex/hooks.json already references every shareable hook — leaving as-is."
+    fi
   fi
 
   echo "  ⚠️  Codex CLI requires explicit trust: run /hooks inside Codex CLI and"
-  echo "     approve dangerous-command-guard.sh before it actually runs — the"
+  echo "     approve$(for h in $bash_hook_files; do printf ' %s' "$h"; done) before they actually run — the"
   echo "     installer cannot pre-approve a hook inside Codex CLI's own trust"
   echo "     store (developers.openai.com/codex/hooks)."
 }

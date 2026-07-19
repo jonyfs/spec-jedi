@@ -89,6 +89,36 @@ check_cmd "cat real .env blocked" 'cat .env' block
 check_cmd "cat id_rsa blocked" 'cat ~/.ssh/id_rsa' block
 check_cmd "cat .pem blocked" 'cat server.pem' block
 
+# --- prevent-direct-push.py (specs/058-expand-shareable-hooks, T006) ----
+echo "=== prevent-direct-push.py ==="
+
+check_push() {
+  local desc="$1" cmd="$2" expect="$3"
+  local out
+  out=$(python3 -c "import json,sys; print(json.dumps({'tool_name':'Bash','tool_input':{'command':sys.argv[1]}}))" "$cmd" | python3 "$hooks_dir/prevent-direct-push.py")
+  if [ "$expect" = "allow" ]; then
+    [ -z "$out" ] && pass "$desc" || fail "$desc (should allow, got: $out)"
+  else
+    [ -n "$out" ] && pass "$desc" || fail "$desc (should block, was allowed)"
+  fi
+}
+
+# This repo's own copy protects main/develop directly (spec.md US1
+# Acceptance Scenario 1). An explicit two-part refspec is used throughout
+# so target-branch resolution never falls back to `git branch
+# --show-current` -- deterministic regardless of which branch this test
+# actually runs on.
+check_push "push to main blocked" 'git push origin main' block
+check_push "push to develop blocked" 'git push origin develop' block
+check_push "push to feature branch allowed" 'git push origin feature-x' allow
+check_push "push to feature branch while a refspec renames it to main is blocked" 'git push origin feature-x:main' block
+# Force-push to a protected branch is deliberately NOT blocked by this
+# hook -- dangerous-command-guard.sh's own has_force_flag/has_main_or_master
+# check already covers that case separately (see its own test matrix
+# above); this hook exists for the *non-force* accidental-direct-push
+# case only (see prevent-direct-push.py's own `not is_force_push` guard).
+check_push "force push to main allowed here (dangerous-command-guard.sh's own job)" 'git push --force origin main' allow
+
 # --- statusline.sh (specs/040-aitmpl-settings-improvements) -------------
 echo "=== statusline.sh ==="
 

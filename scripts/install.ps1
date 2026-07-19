@@ -618,6 +618,15 @@ function Get-TrunkBranch {
     if ($branch) { return $branch } else { return "main master" }
 }
 
+# specs/058-expand-shareable-hooks (FR-005): gates every Python-based
+# shareable hook on python3's actual presence -- identical semantics to
+# scripts/install.sh's has_python3(). Get-Command with
+# -ErrorAction SilentlyContinue never invokes the target executable, so
+# it never touches $LASTEXITCODE the way a real git call does above.
+function Test-Python3Available {
+    return [bool](Get-Command python3 -ErrorAction SilentlyContinue)
+}
+
 # specs/041-release-hooks-settings: native PowerShell counterpart of
 # update_shared_settings() (install.sh) -- see that function for the
 # full rationale, including why this deliberately avoids
@@ -831,6 +840,10 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
     $trunkCases = ($trunkBranch -split ' ' | ForEach-Object {
         "        '$_' { `$hasMainOrMaster = `$true }`n        '$($_):$($_)' { `$hasMainOrMaster = `$true }"
     }) -join "`n"
+    # specs/058-expand-shareable-hooks: prevent-direct-push.py's own
+    # PROTECTED set is Python-set-literal syntax, a distinct substitution
+    # value from $trunkCases above -- e.g. {"main"} or {"main", "master"}.
+    $pythonProtected = '{' + (($trunkBranch -split ' ' | ForEach-Object { "`"$_`"" }) -join ', ') + '}'
 
     $targetHooksDir = Join-Path $TargetDir ".claude/hooks"
     New-Item -ItemType Directory -Force -Path $targetHooksDir | Out-Null
@@ -840,38 +853,77 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
     [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
     Write-Host "  ✅ dangerous-command-guard.ps1 (protecting: $trunkBranch)"
 
+    # specs/058-expand-shareable-hooks (User Story 1): prevent-direct-push.py
+    # (a single cross-platform Python file -- no separate .ps1 counterpart
+    # needed, unlike dangerous-command-guard.ps1's own bash/PowerShell
+    # twin), gated on python3 (FR-005).
+    $bashHookFiles = @("dangerous-command-guard.ps1")
+    $skippedPythonHooks = @()
+    if (Test-Python3Available) {
+        $pushSource = Get-Content (Join-Path $repoRoot ".claude/hooks/prevent-direct-push.py") -Raw
+        $pushContent = $pushSource.Replace('PROTECTED = {"main", "develop"}', "PROTECTED = $pythonProtected")
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "prevent-direct-push.py"), $pushContent)
+        Write-Host "  ✅ prevent-direct-push.py (protecting: $trunkBranch)"
+        $bashHookFiles += "prevent-direct-push.py"
+    } else {
+        $skippedPythonHooks += "prevent-direct-push.py"
+    }
+    if ($skippedPythonHooks.Count -gt 0) {
+        Write-Host "  ⚠️  python3 not found — skipping: $($skippedPythonHooks -join ' ')"
+    }
+
     $targetSettings = Join-Path $TargetDir ".claude/settings.json"
     Update-SharedSettings -Target $targetSettings
 
     $settingsContent = [System.IO.File]::ReadAllText($targetSettings)
-    if (-not $settingsContent.Contains("dangerous-command-guard.ps1")) {
+    $missingBashHooks = @($bashHookFiles | Where-Object { -not $settingsContent.Contains($_) })
+
+    if ($missingBashHooks.Count -gt 0) {
         if ($settingsContent -match '"PreToolUse"') {
-            Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add dangerous-command-guard.ps1 to it manually ($targetHooksDir/dangerous-command-guard.ps1), not overwritten automatically."
+            $missingPaths = ($missingBashHooks | ForEach-Object { Join-Path $targetHooksDir $_ }) -join ' '
+            Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically: $missingPaths"
         } else {
             $trimmed = $settingsContent.TrimEnd()
             $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()
-            $hooksBlock = @'
+
+            $bashHookEntries = ($bashHookFiles | ForEach-Object {
+                if ($_ -like "*.ps1") {
+                    @"
+          {
+            "type": "command",
+            "command": "powershell",
+            "args": ["-NoProfile", "-File", "`${CLAUDE_PROJECT_DIR}/.claude/hooks/$_"]
+          }
+"@
+                } else {
+                    @"
+          {
+            "type": "command",
+            "command": "python3 \"`${CLAUDE_PROJECT_DIR}/.claude/hooks/$_\""
+          }
+"@
+                }
+            }) -join ",`n"
+
+            $hooksBlock = @"
   "hooks": {
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
-          {
-            "type": "command",
-            "command": "powershell",
-            "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/dangerous-command-guard.ps1"]
-          }
+$bashHookEntries
         ]
       }
     ]
   }
-'@
+"@
             if ($body.EndsWith('{')) {
                 [System.IO.File]::WriteAllText($targetSettings, "$body`n$hooksBlock`n}`n")
             } else {
                 [System.IO.File]::WriteAllText($targetSettings, "$body,`n$hooksBlock`n}`n")
             }
-            Write-Host "  ✅ Wired dangerous-command-guard.ps1 into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
+            $wiredList = $bashHookFiles -join ' '
+            Write-Host "  ✅ Wired $wiredList into $(Split-Path -Leaf $targetSettings)'s PreToolUse hooks"
         }
     }
 }

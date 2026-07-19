@@ -98,6 +98,11 @@ try {
     Write-Host "  ✅ .claude/hooks/dangerous-command-guard.sh"
     Write-Host "  ✅ .claude/hooks/dangerous-command-guard.ps1"
 
+    # specs/058-expand-shareable-hooks (research.md Decision 4): same
+    # staging-gap bug class specs/042 already found once above.
+    Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/prevent-direct-push.py") -Destination (Join-Path $hooksDst "prevent-direct-push.py")
+    Write-Host "  ✅ .claude/hooks/prevent-direct-push.py"
+
     Copy-Item -Path (Join-Path $repoRoot "LICENSE") -Destination (Join-Path $stageRoot "LICENSE")
     Write-Host "  ✅ LICENSE"
 

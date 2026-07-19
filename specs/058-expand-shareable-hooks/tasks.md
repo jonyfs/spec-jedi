@@ -43,10 +43,10 @@ before conditionally installing their Python-based hook (FR-005). US4
 (settings-only) and US5 (bash, zero-dependency) do NOT depend on this
 phase — see Dependencies section.
 
-- [ ] T002 [P] Add `has_python3()` helper to `scripts/install.sh` (near
+- [x] T002 [P] Add `has_python3()` helper to `scripts/install.sh` (near
   the existing `detect_trunk_branch()`): `command -v python3 >/dev/null 2>&1`,
   returning 0/1.
-- [ ] T003 [P] Add `Test-Python3Available` helper to `scripts/install.ps1`,
+- [x] T003 [P] Add `Test-Python3Available` helper to `scripts/install.ps1`,
   identical semantics (`Get-Command python3 -ErrorAction SilentlyContinue`).
 
 **Checkpoint**: US1/US2/US3 can now gate their Python-hook install step on
@@ -67,14 +67,22 @@ origin <trunk>` is denied, `git push origin <feature-branch>` succeeds
 
 > Write these FIRST, confirm they FAIL before the implementation tasks below.
 
-- [ ] T004 [P] [US1] Add an install-scenario case to
-  `.claude/hooks/test-hooks.sh` asserting `prevent-direct-push.py` is
-  copied into a scratch target's `.claude/hooks/`, its protected-branch
-  set reflects a non-`main`/`master` target trunk (mirroring
-  `dangerous-command-guard.sh`'s existing trunk-pattern test), and it's
-  wired into the target's `PreToolUse`/`Bash` hooks array.
-- [ ] T005 [P] [US1] Identical case in `.claude/hooks/test-hooks.ps1`.
-- [ ] T006 [P] [US1] **Behavioral test** (closes the `specjedi-analyze`
+- [x] T004 [P] [US1] ~~Add an install-scenario case to
+  `.claude/hooks/test-hooks.sh`~~ **Corrected location during
+  implementation**: real install-scenario/trunk-substitution tests for
+  the claude-code shareable-hooks bundle live in
+  `.github/workflows/validate.yml`'s `install-test-shared-hooks` job
+  (`test-hooks.sh` is for direct hook-invocation behavioral tests only —
+  confirmed by reading both files; `dangerous-command-guard.sh`'s own
+  trunk-substitution assertion lives there too, not in `test-hooks.sh`).
+  Added `prevent-direct-push.py` presence + `PreToolUse`/`Bash` wiring
+  assertions to that job's existing steps, plus the `develop`-trunk
+  scenario's own `PROTECTED = {"develop"}` assertion. Verified via a
+  real scratch install (bash).
+- [x] T005 [P] [US1] Identical assertions added to
+  `install-test-shared-hooks-windows-native`. Verified via a real
+  scratch install (native `pwsh`).
+- [x] T006 [P] [US1] **Behavioral test** (closes the `specjedi-analyze`
   gap): in a new `--- prevent-direct-push.py ---` section of
   `.claude/hooks/test-hooks.sh`, invoke the hook script directly with
   mock stdin — a `git push origin <trunk>` command on the target's trunk
@@ -82,12 +90,16 @@ origin <trunk>` is denied, `git push origin <feature-branch>` succeeds
   `git push origin <feature-branch>` command, including while checked
   out on the trunk branch, MUST produce allow (Acceptance Scenario 2).
   Mirrors `dangerous-command-guard.sh`'s own dedicated behavioral-test
-  section, not just its install-scenario coverage.
-- [ ] T007 [P] [US1] **`python3`-gating test**: simulate `python3`
+  section, not just its install-scenario coverage. 5/5 cases pass
+  against the existing (unmodified) hook.
+- [x] T007 [P] [US1] **`python3`-gating test**: simulate `python3`
   absence (e.g. a `PATH` override in the test harness) and assert a
   scratch-target install does NOT copy `prevent-direct-push.py` at all
-  (FR-005).
-- [ ] T008 [P] [US1] **Wave 1/2 harness-translation test**: assert a
+  (FR-005). Added to `install-test-shared-hooks` (bash) via a
+  shadow-`PATH` technique (real coreutils symlinked, `python3`
+  deliberately excluded); verified real skip + named warning +
+  `dangerous-command-guard.sh` unaffected.
+- [x] T008 [P] [US1] **Wave 1/2 harness-translation test**: assert a
   `gemini-cli`/`antigravity`/`codex-cli` scratch install produces a
   translated `prevent-direct-push.py`-equivalent guard whose deny/allow
   behavior matches T006 (mirrors `specs/041-release-hooks-settings/tasks.md`'s
@@ -95,27 +107,44 @@ origin <trunk>` is denied, `git push origin <feature-branch>` succeeds
 
 ### Implementation for User Story 1
 
-- [ ] T009 [P] [US1] Extend `scripts/install.sh`'s
-  `harness = "claude-code"` shareable-hooks block (~L1026) to `cp` +
-  trunk-pattern-substitute `prevent-direct-push.py` into
-  `$target_hooks_dir` (same `sed` substitution `dangerous-command-guard.sh`
-  already uses), gated on `has_python3` (depends on T002); wire it into
-  the target's `PreToolUse`/`Bash` hooks array alongside
-  `dangerous-command-guard.sh`. Until T004/T006/T007 pass.
-- [ ] T010 [P] [US1] Identical addition in `scripts/install.ps1` (depends
-  on T003). Until T005 passes.
-- [ ] T011 [P] [US1] Stage `prevent-direct-push.py` in
+- [x] T009 [P] [US1] Extend `scripts/install.sh`'s
+  `harness = "claude-code"` shareable-hooks block to `cp` +
+  trunk-pattern-substitute `prevent-direct-push.py` (a new
+  `build_python_protected_set()` helper builds the Python-set-literal
+  substitution — `PROTECTED = {"main", "develop"}` isn't the same syntax
+  as `dangerous-command-guard.sh`'s bash case-pattern, a real correction
+  found during implementation, not assumed from `plan.md`); gated on
+  `has_python3`; wired into `PreToolUse`/`Bash` alongside
+  `dangerous-command-guard.sh` via a generalized multi-hook `hooks_block`
+  builder (also handles the "target already has a `PreToolUse` array"
+  case per-hook, FR-006). Verified: fresh install, `develop`-trunk
+  install, idempotent re-run, and pre-existing-array scenarios all pass
+  via real scratch installs.
+- [x] T010 [P] [US1] Identical addition in `scripts/install.ps1`
+  (`Test-Python3Available`, matching multi-hook `$bashHookEntries`
+  builder). Verified via a real scratch install (native `pwsh`).
+- [x] T011 [P] [US1] Stage `prevent-direct-push.py` in
   `scripts/package-release.sh`'s `.claude/hooks/` copy block
-  (research.md Decision 4).
-- [ ] T012 [P] [US1] Identical staging in `scripts/package-release.ps1`.
-- [ ] T013 [US1] Add `.claude/hooks/prevent-direct-push.py` to
-  `.github/workflows/validate.yml`'s `package-content-completeness`
-  job's "must be present" list.
-- [ ] T014 [US1] Extend the Wave 1/2 per-harness translation functions
-  (`install_hooks_gemini_cli`, `install_hooks_antigravity`,
-  `install_hooks_codex_cli`) to also translate `prevent-direct-push.py`,
-  reusing `render_gemini_style_guard()`'s existing pattern (FR-007/FR-011).
-  Until T008 passes.
+  (research.md Decision 4). Verified: built a real tarball, confirmed
+  the file is actually present inside it.
+- [x] T012 [P] [US1] Identical staging in `scripts/package-release.ps1`
+  (syntax-verified via `pwsh` AST parse).
+- [x] T013 [US1] Added `.claude/hooks/prevent-direct-push.py` to both
+  `package-content-completeness` assertion blocks (bash and PowerShell
+  variants) in `.github/workflows/validate.yml`.
+- [x] T014 [US1] Extended `install_hooks_gemini_cli`/
+  `install_hooks_antigravity`/`install_hooks_codex_cli`: a new
+  `render_gemini_style_push_guard()` does a targeted, assertion-guarded
+  source-to-source transform of the real `prevent-direct-push.py` file
+  (stdin parsing unchanged, only the deny-output shape + trunk
+  substitution differ) for Gemini CLI/Antigravity; Codex CLI reuses the
+  file unmodified (structurally identical `hooks.json` contract, same as
+  `dangerous-command-guard.sh`'s own Codex CLI treatment). Wave 2
+  (OpenCode/Zed/Warp/Amazon Q) intentionally out of scope, matching
+  specs/041's own established precedent (permissions-only, no hook
+  translation attempted for those four). Verified via real scratch
+  installs for all three Wave 1 harnesses, including a functional
+  deny/allow test of the translated Gemini CLI output.
 
 **Checkpoint**: US1 fully functional and independently testable — both
 its installation AND its actual deny/allow behavior.

@@ -94,6 +94,15 @@ cp "$repo_root/.claude/hooks/dangerous-command-guard.ps1" "$hooks_dst/dangerous-
 echo "  ✅ .claude/hooks/dangerous-command-guard.sh"
 echo "  ✅ .claude/hooks/dangerous-command-guard.ps1"
 
+# specs/058-expand-shareable-hooks (research.md Decision 4): the same bug
+# class specs/042 already found once for dangerous-command-guard.sh above
+# -- install.sh/.ps1 read these hook files from $repo_root/.claude/hooks/*
+# unconditionally, so a release tarball this script never staged them into
+# would leave install.sh exiting non-zero for every user installing from
+# an actual downloadable release, not a git checkout.
+cp "$repo_root/.claude/hooks/prevent-direct-push.py" "$hooks_dst/prevent-direct-push.py"
+echo "  ✅ .claude/hooks/prevent-direct-push.py"
+
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"
 

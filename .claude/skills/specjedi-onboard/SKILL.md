@@ -71,7 +71,8 @@ relevant — never before.
    checkpoint for its proactive aitmpl.com suggestions; it presents
    candidates and asks before installing anything on its own, this skill
    just triggers the check. Then **report, and offer the next step(s) as
-   a short bulleted list** (Principle XIV): `specjedi-clarify`, the
+   a short bulleted list** (Principle XIV; see `references/next-step-
+   interaction.md`): `specjedi-clarify`, the
    natural next pipeline stage after a first spec exists, plus
    `specjedi-explain` if any concept from the walkthrough still feels
    unclear.

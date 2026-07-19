@@ -52,8 +52,9 @@ cached state.
    different filesystem root, per no-parallel-derivation-logic (Constitution
    Principle XXI's precedent). Attribute each row clearly to its own
    worktree path so a reader knows which checkout a feature lives in.
-8. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   whichever in-progress feature seems most relevant, or `specjedi-tasks`/
+8. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): whichever in-progress
+   feature seems most relevant, or `specjedi-tasks`/
    `specjedi-implement` for a feature that's planned but not yet broken
    down or built.
 

@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,12 +31,10 @@
 
 ## Notes
 
-- One genuine `[NEEDS CLARIFICATION]` marker remains: FR-005, whether
-  "governance, constitution, tests, quality" requires new, earlier
-  self-invocations of `specjedi-govcheck`/`specjedi-constitution-audit`
-  than this project's own established timing, or is satisfied by
-  surfacing already-existing gates (e.g. `plan.md`'s own Constitution
-  Check). This is a real, scope-defining fork, not guessed either way.
+- Resolved 2026-07-18: FR-005 is satisfied by surfacing each artifact's
+  own already-existing quality gate — no new, earlier self-invocations
+  of `specjedi-govcheck`/`specjedi-constitution-audit` than this
+  project's own established timing.
 - FR-006 (new orchestrating skill vs. extending `specjedi-specify`) is
   deliberately deferred to planning, matching this project's own
   precedent (specs/043, specs/049, specs/050), not marked

@@ -36,6 +36,26 @@ XX (grounded, honest output) are directly load-bearing here: no skill's
 decide, and this feature cannot change that without contradicting both
 principles.
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: Does "de acordo com governança, constituição, testes e qualidade"
+  require NEW self-invocations of `specjedi-govcheck`/`specjedi-
+  constitution-audit`/`specjedi-checklist` earlier in the pipeline than
+  today's established timing, or is it satisfied by surfacing each
+  artifact's own already-existing, already-mandatory quality gate as the
+  chain moves? → A: The latter — visibility-only, no new self-invocation
+  timing. This project's own Development Workflow sequencing (govcheck
+  self-invoked only right before `specjedi-implement` opens a PR) is an
+  established, deliberate pattern, not an oversight; changing when it
+  fires is a much larger behavior change than this request's own
+  "verify + chain" framing calls for. Every artifact this chain touches
+  already has a mandatory quality gate of its own (`plan.md`'s
+  Constitution Check, `spec.md`'s requirements checklist) — surfacing
+  those existing, already-blocking gates satisfies the spirit of the
+  request without altering established pipeline timing.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - An evidence-backed answer to "does --auto mode actually hold together," not just "does the section exist" (Priority: P1)
@@ -203,19 +223,13 @@ themselves to find it.
 - **FR-004**: The chain MUST detect which pipeline artifacts already
   exist for a feature (e.g. a `spec.md` with no `plan.md` yet) and resume
   from the appropriate stage rather than re-doing already-complete work.
-- **FR-005**: Whether "de acordo com governança, constituição, testes e
-  qualidade" requires this feature to add NEW self-invocations of
+- **FR-005**: This feature MUST NOT add new self-invocations of
   `specjedi-govcheck`/`specjedi-constitution-audit`/`specjedi-checklist`
-  earlier in the pipeline than today's established timing (today, only
-  `specjedi-implement` self-invokes `specjedi-govcheck`, right before
-  opening a PR) — or whether it's satisfied by surfacing each artifact's
-  own already-existing, already-mandatory quality gate (e.g. `plan.md`'s
-  own Constitution Check section) as the chain moves, with no new
-  self-invocation timing — is [NEEDS CLARIFICATION: this materially
-  changes scope; the former is a real, larger behavior change to this
-  project's established Development Workflow sequencing, the latter is
-  a visibility-only addition on top of checks that already exist and
-  already gate today].
+  earlier in the pipeline than today's established timing (resolved by
+  the 2026-07-18 Clarification above) — it satisfies "de acordo com
+  governança, constituição, testes e qualidade" by surfacing each
+  artifact's own already-existing, already-mandatory quality gate (e.g.
+  `plan.md`'s own Constitution Check section) as the chain moves.
 - **FR-006**: Whether this chain ships as a new orchestrating skill or as
   an enhancement to `specjedi-specify`'s own `--auto` mode (the
   pipeline's natural entry point) is a technical design decision resolved

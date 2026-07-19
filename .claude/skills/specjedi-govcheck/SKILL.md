@@ -49,7 +49,8 @@ CRITICAL, and report — never edit anything.
    Applicable on a small, targeted diff is the expected, healthy outcome
    — resist the urge to force every row into Compliant/Non-Compliant.
 6. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — typically: fix any Non-Compliant/CRITICAL finding
+   (Principle XIV; see `references/next-step-interaction.md`) —
+   typically: fix any Non-Compliant/CRITICAL finding
    before opening (or merging) the PR, or proceed if the report is clean.
 
 If a finding needs domain expertise nothing installed covers to even

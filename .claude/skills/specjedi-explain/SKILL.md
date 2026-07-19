@@ -36,7 +36,8 @@ need, and always leave them knowing what to do next.
      evidently already know, precise references to the specific principle
      or mechanism if relevant.
 3. **Always end with the next step(s) as a short bulleted list**
-   (Principle XIV) — even when there's only one, format it as a list item,
+   (Principle XIV; see `references/next-step-interaction.md`) — even
+   when there's only one, format it as a list item,
    not inline prose. Name the specific `specjedi-*` skill to run, never a
    vague "you could explore further."
 4. **Out of scope?** If the question isn't about SDD, Spec Jedi, or its

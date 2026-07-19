@@ -37,8 +37,9 @@ a traceable source or mark it undeterminable, and log a dated entry.
 5. **Append a dated entry to `.specify/memory/retro-log.md`** (create it
    if missing, mirroring `.specify/memory/skill-gaps.md`'s exact
    convention) — every run logs something, including a clean match.
-6. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   whatever pipeline stage or new work the retrospective's findings
+6. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): whatever pipeline stage
+   or new work the retrospective's findings
    suggest, or simply moving on if the match was clean.
 
 If a deviation's domain needs expertise nothing installed covers to

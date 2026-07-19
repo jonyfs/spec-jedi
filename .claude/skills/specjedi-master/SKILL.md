@@ -107,7 +107,8 @@ without the user's explicit, informed yes.
    command, a settings/hook JSON merge, a loop's own config format) —
    never a generic copy-paste that skips the source's real instructions.
 8. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — what got installed, what was declined, and what's
+   (Principle XIV; see `references/next-step-interaction.md`) — what
+   got installed, what was declined, and what's
    worth watching for next time this project's shape changes again.
 
 ## Autonomous vs. confirm-first

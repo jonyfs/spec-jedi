@@ -93,7 +93,8 @@ removal.
      suffices.
 
 8. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV): typically `specjedi-specify`/`specjedi-quick` to start
+   (Principle XIV; see `references/next-step-interaction.md`):
+   typically `specjedi-specify`/`specjedi-quick` to start
    the new feature inside the freshly created worktree, or
    `specjedi-status` (now worktree-aware) to see it alongside every other
    in-progress feature.

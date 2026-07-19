@@ -87,7 +87,11 @@ nothing about the rest of this skill changes.
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
 6. **Report** a coverage summary (category → Resolved/Deferred/Clear), then
-   **offer the next step(s) as a short bulleted list** (Principle XIV):
+   **offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md` — this applies to this
+   closing next-step moment only, never to this skill's own
+   Recommended-option/lettered-table question format above, which stays
+   unchanged per specs/051's own Clarification):
    `specjedi-plan` if clean, or the still-Deferred categories and why if
    the question budget ran out first.
 

@@ -30,9 +30,14 @@ story is independently completable and demonstrable.
 
 ## Phase 1: Setup
 
-- [ ] T001 Create and check out feature branch `058-expand-shareable-hooks`
+- [x] T001 Create and check out feature branch `058-expand-shareable-hooks`
   from `main` — per `specjedi-implement`'s PR-only workflow, no direct
   commits to trunk.
+  Verified: satisfied at the start of the MVP slice; the feature actually
+  shipped across two branches (`058-expand-shareable-hooks` for US1/US2/
+  US5, then `058-expand-shareable-hooks-us3-us4` for US3/US4/Polish),
+  both merged to `main` via PR #158 and PR #159 respectively — never a
+  direct commit to trunk.
 
 ---
 

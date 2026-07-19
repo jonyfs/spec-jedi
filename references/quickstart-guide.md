@@ -10,12 +10,12 @@ does.
 
 ## Skills, by discipline
 
-Twenty-seven skills deep at this point — trained not for combat, but for
+Thirty skills deep at this point — trained not for combat, but for
 Spec-Driven Development, across four disciplines:
 
 ```mermaid
 mindmap
-  root(("Spec Jedi — 27 skills"))
+  root(("Spec Jedi — 30 skills"))
     Core Pipeline - 9
       constitution
       specify
@@ -31,13 +31,14 @@ mindmap
       explain
       find-skills
       master
-    Quality and Review - 5
+    Quality and Review - 6
       security
       skill-review
       govcheck
       retro
       constitution-audit
-    Meta and Tooling - 9
+      catalog-audit
+    Meta and Tooling - 11
       quick
       diagram
       status
@@ -47,6 +48,8 @@ mindmap
       release
       tokencheck
       worktree
+      chain
+      parallel
 ```
 
 **Ships today, install and use now:**
@@ -78,12 +81,15 @@ mindmap
 | `specjedi-tokencheck` 🎒 | Proactively checks whether `rtk` and `graphify` are installed, explains what's missing and its expected token savings, and offers an install walkthrough — self-invoked by `specjedi-onboard`'s first-run flow, also runs standalone; never installs anything without explicit confirmation |
 | `specjedi-govcheck` ⚖️ | Strictly read-only per-PR/per-branch governance checklist against all 22 constitution principles — three-state report (N/A / Compliant / Non-Compliant), any conflict CRITICAL — self-invoked by `specjedi-implement` before opening a PR (never blocks it), also runs standalone against the current branch or a named PR |
 | `specjedi-constitution-audit` ⚖️ | Strictly read-only whole-project constitution coverage audit — never a diff, unlike `specjedi-govcheck`'s per-PR scope — assesses all 22 Core Principles plus the two cross-cutting sections against the entire current project tree, cross-checking every claim in `references/principle-traceability.md` for drift in both directions |
+| `specjedi-catalog-audit` ⚖️ | Strictly read-only whole-catalog audit cross-checking every shipped `specjedi-*` skill against the 7-phase SDD sequence at once — classifies every finding as an SDD-Coverage Gap, a Skill-Quality Finding, or a Redundancy, reports findings, never edits; declines a single-skill target (use `specjedi-skill-review` instead) |
 | `specjedi-master` 🧙 | Proactive, project-aware advisor that reads what a project actually is — language, harness, domain, what's already installed — and suggests skills, agents, commands, and settings from aitmpl.com that would genuinely help; self-invoked by `specjedi-onboard` once a first constitution+spec exist, always asks explicit permission before installing anything |
 | `specjedi-worktree` 🌳 | Mechanizes git-worktree-based parallel development — creates a real worktree for a named feature on demand, preferring a native harness relocation tool (e.g. Claude Code's `EnterWorktree`/`ExitWorktree`) and falling back to a project-local, `.gitignore`-verified `.worktrees/` directory otherwise. Self-invoked by `specjedi-specify`/`specjedi-quick` to proactively offer a worktree before real uncommitted work on another branch would collide; paired with a `specjedi-status` extension that unifies status reporting across every worktree in one report |
+| `specjedi-chain` 🔗 | Orchestrates `specjedi-specify` → `specjedi-clarify` → `specjedi-plan` → `specjedi-tasks` in `--auto` mode back-to-back for one feature, reusing each stage's own existing `--auto` behavior unchanged — halts exactly where any stage's own documented `--auto` already halts (a genuine NEEDS CLARIFICATION, a failed eligibility check), never silently resolving an ambiguity a stage reserves for a human |
+| `specjedi-parallel` 🧩 | Determines which candidate `specjedi-*` features are actually safe to run at the same time by cross-referencing each candidate's own declared `plan.md` "Source Code" file list for genuine overlap, then dispatches one `specjedi-worktree` per safe feature and, when the harness supports it, one distinct agent per worktree — never claims parallel execution happened without a real concurrent-agent-dispatch mechanism |
 
 ## Quickstart
 
-Twenty-seven product skills, all live, the full `specjedi-*` pipeline
+Thirty product skills, all live, the full `specjedi-*` pipeline
 done, not partial. Never used an SDD tool before? Start at step 0 — it's
 short.
 

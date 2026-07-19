@@ -9,6 +9,93 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **`specjedi-catalog-audit`** (feature 049, #142) — a new, strictly
+  read-only whole-catalog skill applying `specjedi-skill-review`'s own
+  per-skill methodology to every shipped `specjedi-*` skill at once,
+  cross-checked against `references/what-is-sdd.md`'s 7-phase SDD
+  sequence for coverage gaps. Every finding classifies into exactly one
+  of three categories — SDD-Coverage Gap, Skill-Quality Finding, or
+  Redundancy — never a vague mix. Confirms the catalog still implements
+  SDD end-to-end now that `speckit-*` (feature 048) is gone and there's
+  no vendored reference left to compare against.
+- **Skill reference integrity & example hooks** (feature 050, #145) — a
+  full sweep of every `.claude/skills/specjedi-*/SKILL.md` against every
+  `references/*.md` file it cites found 2 missing:
+  `references/constitution-mechanics.md` (cited by
+  `specjedi-constitution`) and `references/aitmpl-browsing-playbook.md`
+  (cited by `specjedi-master`). Both written and filled in. Separately,
+  `.specify/extensions.yml` gains real example hook entries so the
+  hook-dispatch mechanism 9 core pipeline skills already check for
+  (specs/047) has a concrete, working example instead of only
+  documentation describing what one would look like.
+- **Interactive next-step selection** (feature 051, #144) — every
+  `specjedi-*` skill's Constitution Principle XIV closing "next step(s)"
+  list now renders as a real selectable prompt (`AskUserQuestion` on
+  Claude Code, with a documented fallback for harnesses without a native
+  equivalent) instead of plain markdown text the user has to retype an
+  answer to by hand — always with a final "type your own" escape hatch,
+  matching the request's own explicit requirement.
+- **`--auto` mode verification & `specjedi-chain`** (feature 052, #146)
+  — a full sweep confirmed all 28-then-shipped skills already had a
+  correctly-scoped `## \`--auto\` mode` section (no coverage gap), so
+  this feature's real contribution is the new `specjedi-chain` skill:
+  orchestrates `specjedi-specify` → `specjedi-clarify` → `specjedi-plan`
+  → `specjedi-tasks` in `--auto` mode back-to-back for one feature,
+  halting exactly where any stage's own already-documented `--auto`
+  halts — never inventing new self-invocation timing or silently
+  resolving an ambiguity a stage reserves for a human.
+- **SessionStart next-step suggestion** (feature 054, #149) — the
+  `SessionStart` orientation payload (Principle XXI) now includes a
+  concrete next-step suggestion derived from the same on-disk artifacts
+  `specjedi-status` already reads, rendered through feature 051's own
+  new interactive-selection mechanism — no second tracking system, no
+  new selection UI invented.
+- **Loss-safe skill update & interactive update prompt** (feature 055,
+  #150) — `scripts/install.sh`/`.ps1` now back up any locally-modified
+  `specjedi-*` skill or `.specify/templates/*.md` file to
+  `.specify/backups/<UTC-timestamp>/` before overwriting it during an
+  update, so a routine update can never silently destroy a hand-edited
+  file. The `SessionStart` freshness line (feature 042) now directs the
+  agent to ask the user directly whether to update, rather than only
+  describing the update path. Constitution Principle XXII amended
+  (1.28.0 → 1.29.0) to reconcile "advisory only" with this new
+  interactive trigger.
+- **`specjedi-parallel`** (feature 056, #147) — determines which
+  candidate `specjedi-*` features are genuinely safe to run at the same
+  time by cross-referencing each candidate's own already-declared
+  `plan.md` "Source Code" file list for real overlap (excluding
+  known-shared metadata files every feature routinely touches), then
+  dispatches one `specjedi-worktree` per safe feature and, when the
+  harness supports it, one distinct agent per worktree. Never claims
+  parallel execution happened on a harness without a real
+  concurrent-agent-dispatch mechanism.
+- **A distinct "Mission Complete" closing voice** (feature 057, #148) —
+  a concrete, checkable trigger condition for when a closing moment
+  counts as genuinely "reached the end" (verifiably exhausted scope, not
+  a routine successful step), plus a Star Wars-toned closing-line
+  convention pairing with Principle XII's existing plain-language
+  requirement. Applied to the 3 skills with a genuine exhausted-scope
+  case in their own logic: `specjedi-skill-review`, `specjedi-catalog-
+  audit`, `specjedi-constitution-audit`.
+- **Git safety hooks: secret-scanner, conventional-commits,
+  prevent-direct-push** (#151, via `specjedi-master`) — three
+  `PreToolUse` hooks adapted from aitmpl.com's `hooks/security` and
+  `hooks/git` catalogs: blocks a `git commit` containing a real-looking
+  hardcoded credential (30+ provider patterns) or a message that
+  doesn't follow this project's own `type: description` convention, and
+  blocks a `git push` that actually targets `main`/`develop`. Two
+  vendor bugs found and fixed before install: the commit-message
+  regex falsely matched on this project's own heredoc commit style, and
+  the push guard blocked any push made while sitting on `main`/`develop`
+  regardless of the push's real target.
+- **Desktop notification on response completion** (#152, via
+  `specjedi-master`) — a native OS notification (`osascript` on macOS,
+  `notify-send` on Linux) fires once per completed response via the
+  `Stop` hook event, so a long-running turn no longer requires manually
+  checking back.
+
 ## [v0.3.0] - 2026-07-18
 
 ### Removed

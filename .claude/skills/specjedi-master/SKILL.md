@@ -106,6 +106,18 @@ without the user's explicit, informed yes.
    component's own documented install mechanism (a skill's own install
    command, a settings/hook JSON merge, a loop's own config format) —
    never a generic copy-paste that skips the source's real instructions.
+   Land the result the same PR-only way every other change to this
+   project lands (Principle X) — never a direct commit to trunk, even
+   for a single-file settings/hook addition.
+7.5. **Self-invoke `specjedi-govcheck` against the resulting branch's
+   diff before opening that PR** (Development Workflow section) —
+   matching `specjedi-implement`'s own Step 6.5 exactly, since a PR this
+   skill opens is otherwise the one path in this project's pipeline that
+   skips the mandated per-PR compliance review. Surface any CRITICAL
+   finding prominently in the PR-opening narration, but never let a
+   finding block the PR from opening — the CI battery remains the actual
+   merge-blocking mechanism (Principle X), same posture as
+   `specjedi-implement`.
 8. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV; see `references/next-step-interaction.md`) — what
    got installed, what was declined, and what's
@@ -220,6 +232,9 @@ install that already happened.
   help" or "this is popular."
 - **Always** ask before installing, every time, with rigor scaled to
   weight — never skip the ask because a candidate seems obviously good.
+- **Always** self-invoke `specjedi-govcheck` before opening the PR that
+  lands an approved install — never let this skill's own PRs be the one
+  path in the pipeline that skips the mandated compliance review.
 - **Never** suggest a candidate mismatched to the project's actual
   domain just because it's popular on aitmpl.com.
 - **Never** treat a settings/hooks/loops candidate as low-risk — these

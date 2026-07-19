@@ -44,7 +44,7 @@ universal, Principle III) bounds User Story 2's own scope.
 
 | Principle | Check | Status |
 |---|---|---|
-| II | Reuses `specjedi-worktree`/`specjedi-status` unchanged rather than duplicating either; the "new skill vs. extend worktree" decision is reasoned through directly in this plan (Summary above), matching this project's own established precedent. | ✅ Pass |
+| II | Reuses `specjedi-worktree`/`specjedi-status` unchanged rather than duplicating either; the "new skill vs. extend worktree" decision is reasoned through directly in this plan (Summary above). **Amended 2026-07-19**: the original internal-design reasoning above did not satisfy Principle II's external-competitive-benchmark requirement — flagged by `specjedi-constitution-audit`; `research.md` was added retroactively, benchmarking against spec-kit and 10 other tools (closest prior art: Spec Kitty's multi-agent worktree dispatch, GSD's wave-based parallel scheduling) and confirming the shipped design. | ✅ Pass (retroactively grounded) |
 | III | Distinct-agent dispatch (User Story 2) is explicitly conditional on the current harness exposing a concurrent-agent mechanism — never assumed universal. | ✅ Pass |
 | IX | No CI job; validated via `scripts/validate.sh` + manual dry-run against a constructed overlap case and a real non-overlap case. | ✅ Pass |
 | XII | New skill gets its own genuine Persona, distinct from `specjedi-worktree`'s "careful workspace steward." | ✅ Pass — enforced during implementation |

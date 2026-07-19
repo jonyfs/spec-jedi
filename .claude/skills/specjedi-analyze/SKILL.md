@@ -103,7 +103,8 @@ nothing about the rest of this skill changes.
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
 6. **Report, then offer the next step(s) as a short bulleted list**
-   (Principle XIV) — never a single line of prose: whichever skill owns
+   (Principle XIV; see `references/next-step-interaction.md`) — never a
+   single line of prose: whichever skill owns
    the artifact with the highest-severity finding (e.g., `specjedi-plan`
    for a plan-level gap, `specjedi-tasks` for a missing task) as the
    primary option, plus `specjedi-implement`/`specjedi-checklist` if the

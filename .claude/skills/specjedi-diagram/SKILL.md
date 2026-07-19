@@ -109,8 +109,9 @@ it, render-verify the result, and present it alongside the source prose.
    replacement for the prose itself (Principle XVI).
 6. **Offer to write it into a target file only on explicit confirmation**
    (never silently) — inline presentation in the response is the default.
-7. **Offer the next step(s) as a short bulleted list** (Principle XIV):
-   revisit the source spec/plan if the diagram surfaced a gap, or continue
+7. **Offer the next step(s) as a short bulleted list** (Principle XIV;
+   see `references/next-step-interaction.md`): revisit the source
+   spec/plan if the diagram surfaced a gap, or continue
    with whatever pipeline stage comes next.
 
 If the request needs a diagram grammar even the catalog's Specialized

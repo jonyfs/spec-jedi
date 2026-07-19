@@ -82,7 +82,8 @@ all.
    traceability.md`'s row for Principle IX to cite `scripts/validate.sh`
    directly") — never leave the maintainer without direction
    (Principle XIV).
-9. **Report, then offer the next step(s) as a short bulleted list.**
+9. **Report, then offer the next step(s) as a short bulleted list**
+   (see `references/next-step-interaction.md`).
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly and self-invoke `specjedi-find-skills`

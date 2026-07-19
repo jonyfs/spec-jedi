@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@1609524 lang=id -->
+<!-- i18n-sync: source=README.md@2a01f98 lang=id -->
 > 🌐 Dokumen ini adalah terjemahan berbantuan AI. **Bahasa Inggris adalah
 > sumber kanonis** ([Principle I](../../../.specify/memory/constitution.md));
 > jika ada perbedaan, bahasa Inggris yang berlaku. Lihat bahasa lain:
@@ -15,7 +15,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#bagaimana-spec-jedi-mengimplementasikan-sdd)
-[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#bagaimana-spec-jedi-mengimplementasikan-sdd)
+[![Skills](https://img.shields.io/badge/specjedi_skills-30_shipped-success)](#bagaimana-spec-jedi-mengimplementasikan-sdd)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#instalasi)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -33,7 +33,7 @@ gulungan ini selanjutnya:**
 Sebagian besar proyek yang melampaui rencananya sendiri berbagi akar
 masalah yang sama: kode dulu, penjelasan kemudian — dan "kemudian" itu
 tidak pernah benar-benar datang. Yang berikut adalah praktik yang
-membalik urutan itu, dan proyek nyata yang dibangun untuk
+membalik urutan itu, dan proyek spesifik yang dibangun untuk
 mempraktikkannya.
 
 *(Branding tidak resmi, terinspirasi penggemar — Spec Jedi tidak
@@ -42,34 +42,36 @@ Lucasfilm/Disney. Semoga Spec menyertaimu. 🌌)*
 
 ## Apa itu Spec-Driven Development?
 
-Cara umum membangun perangkat lunak dengan agen coding AI adalah begini:
-menjelaskan apa yang Anda inginkan di chat, agen menulis kode, Anda
-membaca kode itu untuk mengetahui apakah ia melakukan apa yang Anda
-maksud, Anda memperbaikinya, mengulanginya. Pemahaman agen tentang "apa
-yang Anda maksud" hanya hidup dalam percakapan — tidak pernah dituliskan
-sebagai artefak yang tahan lama dan dapat ditinjau. Dua mode kegagalan
-mengikuti dari itu: ambiguitas diselesaikan dengan menebak alih-alih
-diungkap untuk sebuah keputusan, dan tidak ada yang bertahan melampaui
-percakapan — Anda menutup chat, Anda kehilangan penalarannya.
+Cara umum kebanyakan orang membangun perangkat lunak dengan agen coding
+AI adalah begini: menjelaskan apa yang Anda inginkan di chat, agen
+menulis kode, Anda membaca kode itu untuk mengetahui apakah ia
+melakukan apa yang Anda maksud, Anda memperbaikinya, mengulanginya.
+Pemahaman agen tentang "apa yang Anda maksud" hanya hidup dalam
+percakapan — tidak pernah dituliskan sebagai artefak yang tahan lama
+dan dapat ditinjau. Dua mode kegagalan mengikuti dari itu: ambiguitas
+diselesaikan dengan menebak alih-alih diungkap untuk sebuah keputusan,
+dan tidak ada yang bertahan melampaui percakapan — Anda menutup chat,
+Anda kehilangan penalarannya.
 
 Spec-Driven Development (SDD) membalik urutan itu. Sebelum satu baris
-kode pun ada, apa yang sedang dibangun dan mengapa dituliskan, sebagai
-dokumen yang terstruktur dan dapat ditinjau — sebuah **constitution** 📜
-(aturan tak-terganggu-gugat), sebuah **specification** 🎯 (apa, dan
-untuk siapa), sebuah **plan** 🛠️ (bagaimana, secara teknis), dan sebuah
-**task list** ✅ (langkah-langkah yang terurut). Kode dihasilkan
-*berdasarkan* artefak-artefak tersebut, bukan sebaliknya — disiplin yang
-sama yang dituntut Kodeks Jedi dari siapa pun yang tergoda untuk
-melewatkan bagian-bagian membosankan dari pelatihan. Penjelasan lengkap,
-tanpa merek Spec Jedi sedikit pun:
+kode pun ada, tuliskan apa yang sedang dibangun dan mengapa, sebagai
+empat dokumen yang terstruktur dan dapat ditinjau: sebuah
+**constitution** 📜 yang ditulis oleh `specjedi-constitution` (aturan
+tak-terganggu-gugat proyek), sebuah **specification** 🎯 yang ditulis
+oleh `specjedi-specify` (apa, dan untuk siapa), sebuah **plan** 🛠️
+yang ditulis oleh `specjedi-plan` (bagaimana, secara teknis), dan
+sebuah **task list** ✅ yang ditulis oleh `specjedi-tasks`
+(langkah-langkah yang terurut). Kode dihasilkan *berdasarkan* keempat
+artefak tersebut, bukan sebaliknya. Penjelasan lengkap, tanpa merek
+Spec Jedi sedikit pun:
 [`references/what-is-sdd.md`](../../../references/what-is-sdd.md).
 
 ```mermaid
 flowchart TD
     Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
-    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
-    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
-    Const --> Meta["📊 Meta & Tooling<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>4 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>6 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>11 skills"]
 ```
 
 Semua yang mengikuti memverifikasi dirinya terhadap constitution, tidak
@@ -78,14 +80,17 @@ eksekusi berikutnya.
 
 ## Bagaimana Spec Jedi mengimplementasikan SDD
 
-Spec Jedi adalah **pesaing** sejati [spec-kit](https://github.com/github/spec-kit),
-bukan wrapper bertema darinya
-([Principle XV](../../../.specify/memory/constitution.md)) — dua puluh
-agen coding didukung, benar-benar nyata, bukan hanya di teori (lihat
-[Instalasi](#instalasi) di bawah). Pipeline SDD `specjedi-*` lengkap —
-dari constitution hingga convergence — telah dikirim sepenuhnya sejak
-lama: semua 9 tahap, masing-masing dibangun di atas riset kompetitif
-nyata sebelum satu baris pun ditulis
+Spec Jedi adalah **pesaing** dari
+[spec-kit](https://github.com/github/spec-kit)
+([Principle XV](../../../.specify/memory/constitution.md)), dibangun
+sebagai sekumpulan skill `specjedi-*` yang dipasang sebuah proyek
+berdampingan dengan — atau sebagai pengganti — perintah `speckit-*`
+milik spec-kit sendiri, dengan seluruh dua puluh agen coding target
+didukung (lihat [Instalasi](#instalasi) di bawah). Pipeline SDD
+`specjedi-*` yang lengkap — dari constitution hingga convergence —
+telah dikirim sepenuhnya sejak beberapa waktu lalu: seluruh 9 tahap,
+masing-masing dibangun di atas riset kompetitif nyata sebelum satu
+baris pun ditulis
 ([research.md](../../../specs/001-specjedi-pipeline/research.md),
 Principle II).
 
@@ -97,20 +102,53 @@ ditandai, `specjedi-plan` dan `specjedi-tasks` menghasilkan rencana
 teknis dan penguraian tugas, dan `specjedi-implement` (atau
 `specjedi-quick` untuk perubahan kecil yang sudah dipahami dengan baik)
 mengeksekusinya test-first, hanya melalui feature branch dan pull
-request. Dua puluh lima skill tersedia hari ini secara total, dalam
-empat disiplin — katalog lengkap, kedua diagram, dan panduan langkah
-demi langkah 23 langkah hidup di
+request. Tiga puluh skill tersedia hari ini secara total, dalam empat
+disiplin — katalog lengkap, kedua diagram, dan panduan langkah demi
+langkah 23 langkah hidup di
 [`references/quickstart-guide.md`](../../../references/quickstart-guide.md);
 pemetaan lengkap aktivitas-ke-skill, termasuk tiga kontribusi asli di
 luar praktik SDD generik, hidup di
 [`references/specjedi-and-sdd.md`](../../../references/specjedi-and-sdd.md).
 
+### `specjedi-*` versus `speckit-*`, dalam angka
+
+Sebuah perbandingan berbasis bukti, perintah demi perintah —
+[`specs/044-speckit-parity-audit/PARITY-LEDGER.md`](../../../specs/044-speckit-parity-audit/PARITY-LEDGER.md)
+— memeriksa setiap satu dari 11 perintah pipeline `speckit-*` terhadap
+padanan `specjedi-*`-nya berdasarkan perilaku nyata yang dideskripsikan,
+bukan kemiripan nama:
+
+- **8 dari 11** berada pada paritas penuh — tugas yang sama, input/output
+  yang sama.
+- **1 dari 11** (`specjedi-implement` vs. `speckit-implement`) adalah
+  divergensi yang menguntungkan: `specjedi-implement` mewajibkan commit
+  hanya melalui feature branch dan pull request, tidak pernah langsung
+  ke trunk branch; instruksi `speckit-implement` sendiri sama sekali
+  tidak memuat disiplin git branch atau commit apa pun.
+- **2 dari 11** tidak memiliki padanan `specjedi-*` — keduanya sudah
+  terselesaikan, bukan kesenjangan yang masih terbuka: konversi tugas
+  ke GitHub issue (tidak pernah digunakan dalam sejarah nyata proyek
+  ini sendiri) dan penunjuk "current plan" yang persisten (digantikan
+  oleh desain zero-parallel-tracking milik `specjedi-status` dan
+  penampilan ulang status session-start milik Constitution
+  Principle XXI sendiri).
+- **21 dari 30** skill `specjedi-*` yang telah dikirim tidak memiliki
+  padanan `speckit-*` sama sekali — `specjedi-catalog-audit`,
+  `specjedi-chain`, `specjedi-constitution-audit`, `specjedi-diagram`,
+  `specjedi-docs`, `specjedi-explain`, `specjedi-find-skills`,
+  `specjedi-govcheck`, `specjedi-master`, `specjedi-migrate`,
+  `specjedi-new-skill`, `specjedi-onboard`, `specjedi-parallel`,
+  `specjedi-quick`, `specjedi-release`, `specjedi-retro`,
+  `specjedi-security`, `specjedi-skill-review`, `specjedi-status`,
+  `specjedi-tokencheck`, dan `specjedi-worktree` — kapabilitas tambahan
+  yang nyata, bukan pipeline yang dinyatakan ulang.
+
 Penasaran apa selanjutnya?
 [`references/skill-roadmap.md`](../../../references/skill-roadmap.md)
 melacak apa yang diusulkan di luar pipeline inti — sebuah backlog ide
-*tambahan*, bukan kesenjangan pipeline itu sendiri. Masing-masing masih
-memerlukan riset nyatanya sendiri sebelum dibangun; tidak ada yang
-dikirim di sini berdasarkan intuisi belaka.
+*tambahan*, bukan kesenjangan dalam pipeline itu sendiri. Masing-masing
+masih memerlukan riset nyatanya sendiri sebelum dibangun; tidak ada
+yang dikirim di sini berdasarkan intuisi belaka.
 
 ## Untuk siapa ini
 
@@ -126,18 +164,18 @@ dituju di sini.
 
 ## Bagaimana Spec Jedi membangun *dirinya sendiri*, dalam bentuk komik
 
-> ⚠️ **Bagian ini tentang proses bootstrap internal kami, bukan tentang
-> produk Spec Jedi.** Perintah `/speckit-*` di bawah ini adalah alat
-> milik [spec-kit](https://github.com/github/spec-kit) sendiri — Spec
-> Jedi saat ini menggunakan spec-kit untuk membangun dirinya sendiri
-> (pola "bootstrap kompiler dengan kompiler lama" yang sama), sama
-> seperti pesaing mana pun mungkin menggunakan alat pemain lama saat
-> membangun penggantinya. **Jika Anda mengevaluasi Spec Jedi sebagai
-> produk, langsung lompat ke [Instalasi](#instalasi) di bawah** —
-> permukaan produk sebenarnya adalah skill `specjedi-*`, bukan ini.
-> Lihat [Principle XV](../../../.specify/memory/constitution.md) untuk
-> kebijakan lengkap tentang mengapa keduanya dijaga tetap terpisah
-> dengan jelas.
+> ⚠️ **Bagian ini menunjukkan pipeline pengembangan nyata proyek ini
+> sendiri sedang bekerja** — perintah `specjedi-*` di bawah ini adalah
+> permukaan produk yang sama persis dengan yang dijelaskan di atas,
+> digunakan pada Spec Jedi itu sendiri. Sampai feature 048
+> (2026-07-18), proyek ini melakukan bootstrap terhadap dirinya sendiri
+> dengan perintah `speckit-*` milik spec-kit yang di-vendor (pola
+> "bootstrap sebuah compiler dengan compiler yang lebih lama" yang sama
+> yang mungkin digunakan pesaing mana pun saat membangun penggantinya)
+> sebelum pipeline `specjedi-*` miliknya sendiri cukup lengkap untuk
+> mengambil alih. Fase bootstrap itu sudah berakhir — lihat
+> [Principle XV](../../../.specify/memory/constitution.md) untuk
+> kebijakan lengkap yang diselesaikan oleh migrasi ini.
 >
 > Juga, catatan tentang format: panel-panel di bawah ini memadukan
 > dialog teks-dan-emoji dengan ilustrasi asli — tidak pernah citra Star
@@ -160,7 +198,7 @@ untuk dikerjakan.
 
 Saat itulah sang mentor muncul — tanpa lightsaber, hanya sebuah
 gulungan, karena pertarungan pertama di sini tidak pernah menjadi yang
-terakhir. `/speckit-constitution` menuliskan aturan sekali saja, agar
+terakhir. `/specjedi-constitution` menuliskan aturan sekali saja, agar
 tidak seorang pun perlu mempelajarinya kembali dengan cara yang sulit
 tiga fitur kemudian.
 
@@ -169,24 +207,24 @@ tiga fitur kemudian.
 
 Ide itu naik ke dinding selanjutnya, dikelilingi oleh setiap pertanyaan
 yang belum dijawabnya — apa yang sebenarnya sedang dibangun, dan untuk
-siapa. `/speckit-specify` mengubahnya menjadi `spec.md` yang nyata;
-`/speckit-clarify` pergi memburu ambiguitas sebelum ia menjadi bug yang
-tidak ingin diakui siapa pun nanti.
+siapa. `/specjedi-specify` mengubahnya menjadi `spec.md` yang nyata;
+`/specjedi-clarify` pergi memburu ambiguitas sebelum ia menjadi bug
+yang tidak ingin diakui siapa pun nanti.
 
 ![papan gabus yang tertutup catatan tempel holografik dan tanda tanya bercahaya](../../comic/panel-3.jpg)
 > 🌀 *"Apa yang sebenarnya sedang Anda bangun — dan untuk siapa?"*
 
-Kemudian blueprint pun muncul. `/speckit-plan` menjadi `plan.md`,
-`/speckit-tasks` memecahnya menjadi `tasks.md` yang terurut dan
-sadar-dependensi — tidak ada yang terlewat, tidak ada yang salah urutan,
-jenis rencana yang bisa diikuti seorang Padawan tanpa perlu bertanya
-dua kali.
+Kemudian blueprint pun muncul. `/specjedi-plan` menjadi `plan.md`,
+`/specjedi-tasks` memecahnya menjadi `tasks.md` yang terurut dan
+sadar-dependensi — tidak ada yang terlewat, tidak ada yang salah
+urutan, jenis rencana yang bisa diikuti seorang Padawan tanpa perlu
+bertanya dua kali.
 
 ![skema teknis terbentang di atas meja kerja yang berantakan](../../comic/panel-4.jpg)
 > 🛠️ *"Sekarang bagaimananya."*
 
 Alat-alat mulai berdengung. Test gagal berwarna merah, satu demi satu —
-dan kemudian, perlahan, mereka berhenti gagal. `/speckit-implement`
+dan kemudian, perlahan, mereka berhenti gagal. `/specjedi-implement`
 mengeksekusi `tasks.md` test-first di mana pun itu berlaku
 ([Principle VI](../../../.specify/memory/constitution.md)), karena
 sebuah build yang melewatkan langkah ini hanyalah tebakan dengan
@@ -218,14 +256,14 @@ Dan kemudian ia pergi — menuju hyperspace, terkirim.
 > 🚀 *"Terkirim."*
 > 🌌 *"Semoga Spec menyertaimu."*
 
-Tidak ada dari ini yang hipotetis — ini adalah proses literal dan
-berulang di balik pull request terbaru proyek ini sendiri —
-[#82](https://github.com/jonyfs/spec-jedi/pull/82),
-[#84](https://github.com/jonyfs/spec-jedi/pull/84),
-[#87](https://github.com/jonyfs/spec-jedi/pull/87), untuk menyebut
-beberapa — dari awal hingga akhir, secara nyata, setiap saat.
+Tidak ada dari semua ini yang merupakan dongeng pengantar tidur — ini
+adalah proses literal dan berulang di balik pull request terbaru
+proyek ini sendiri — [#82](https://github.com/jonyfs/spec-jedi/pull/82),
+[#84](https://github.com/jonyfs/spec-jedi/pull/84), [#87](https://github.com/jonyfs/spec-jedi/pull/87),
+untuk menyebut beberapa — dari awal hingga akhir, secara nyata, setiap
+saat.
 
-### Cerita bootstrap internal yang sama, sebagai diagram
+### Cerita yang sama, sebagai diagram
 
 ```mermaid
 sequenceDiagram
@@ -233,8 +271,8 @@ sequenceDiagram
     participant Repo as 📜 Repo (main)
     participant PR as 🔀 Pull Request
     participant CI as 🤖 ci-gate
-    Dev->>Repo: /speckit-constitution, /speckit-specify, /speckit-plan, /speckit-tasks
-    Dev->>Dev: /speckit-implement (test-first)
+    Dev->>Repo: /specjedi-constitution, /specjedi-specify, /specjedi-plan, /specjedi-tasks
+    Dev->>Dev: /specjedi-implement (test-first)
     Dev->>PR: open PR on a feature branch
     PR->>CI: trigger validation battery (Linux/macOS/Windows)
     CI-->>PR: 🔴 red? fix and push again
@@ -294,6 +332,16 @@ sinyal deteksi yang andal, jadi untuk itu Anda sendiri yang meneruskan
 `.\scripts\bootstrap-install.ps1 -Help`) kapan pun Anda ingin daftar
 opsi lengkap, termasuk `--auto`.
 
+Untuk `claude-code`, `codex-cli`, dan `trae`, installer juga membuat
+atau memperbarui file project-memory milik harness tersebut
+(`CLAUDE.md`, `AGENTS.md`, atau `.trae/rules/project_rules.md`) dengan
+sebuah bagian singkat yang dibatasi penanda (marker) yang menyebutkan
+skill-skill yang terinstal — sehingga konteks harness itu sendiri sudah
+mengetahui keberadaannya, bukan hanya direktori skill itu sendiri. Jika
+file tersebut sudah ada dengan konten Anda sendiri, tidak ada apa pun
+milik Anda yang tersentuh; bagian tersebut ditambahkan (append) dan
+hanya bagian itu yang diperbarui pada instalasi ulang berikutnya.
+
 ### Harness yang didukung
 
 Constitution ([Principle III](../../../.specify/memory/constitution.md))
@@ -335,7 +383,7 @@ tidak ada yang ditebak di sini.
 | OpenCode | ✅ Didukung — dipenuhi oleh instalasi `claude-code` atau `codex-cli` (OpenCode secara native memindai baik `.claude/skills/` maupun `.agents/skills/`), tidak perlu flag terpisah |
 | Warp (Agent Mode) | ✅ Didukung — dipenuhi oleh instalasi `claude-code` atau `codex-cli` (sistem Skills Warp secara native memindai baik `.claude/skills/` maupun `.agents/skills/`), tidak perlu flag terpisah |
 | Replit Agent | ✅ Didukung — `./scripts/install.sh --harness replit` (bridge file di `replit.md`) |
-| Devin (Cognition) | ✅ Didukung — `./scripts/install.sh --harness devin` (bridge file di `.devin.md`, distruktur sebagai Devin Playbook) |
+| Devin (Cognition) | ✅ Didukung — `./scripts/install.sh --harness devin` (bridge file di `.devin.md`, terstruktur sebagai Devin Playbook) |
 | Tabnine | ✅ Didukung — `./scripts/install.sh --harness tabnine` (bridge file di bawah `.tabnine/guidelines/`) |
 | Sourcegraph Cody | ✅ Didukung — `./scripts/install.sh --harness cody` (custom commands `.vscode/cody.json`, dipanggil secara eksplisit sebagai `/specjedi-<name>`; tidak seperti semua harness lain di atas, Cody tidak memiliki file aturan always-on yang terkonfirmasi, jadi ini adalah invokasi manual, bukan konteks otomatis — lihat dokumen riset) |
 | Trae | ✅ Didukung — `./scripts/install.sh --harness trae` (menginstal ke `.trae/skills/`) |
@@ -356,13 +404,19 @@ dasar seluruh tabel ini.
 Keunggulan nyata, keterbatasan nyata saat ini — bukan halaman
 pemasaran. Dua puluh dari dua puluh harness target memiliki jalur
 instalasi nyata yang teruji CI, diagram diverifikasi lewat rendering
-sebelum ditampilkan, dan constitution adalah dokumen hidup dan diberi
-versi pada v1.24.0 dengan riwayat amandemen yang terdokumentasi.
-Separuh lainnya, dikatakan dengan terus terang: belum ada rilis yang
-dipotong (`git tag -l` tidak mengembalikan apa pun saat tulisan ini
-dibuat), dan sebagian besar jalur instalasi harness-bridge bertumpu
-pada riset literatur, bukan sesi praktis di dalam produk pihak ketiga
-yang sebenarnya. Gambaran lengkap, tanpa filter:
+sebelum ditampilkan, empat rilis nyata telah dikirim (`v0.1.0`,
+`v0.1.1`, `v0.2.0`, `v0.3.0`), dan constitution adalah dokumen hidup
+dan diberi versi pada v1.29.0 dengan riwayat amandemen yang
+terdokumentasi. Separuh lainnya, dikatakan dengan terus terang:
+sebagian besar jalur instalasi harness-bridge bertumpu pada riset
+literatur, bukan sesi praktis di dalam produk pihak ketiga yang
+sebenarnya (lihat di bawah), dan dokumentasi terlokalisasi proyek ini
+sendiri lebih sering tertinggal dari sumber bahasa Inggrisnya
+dibandingkan tidak — `scripts/validate.sh` saat ini menandai seluruh
+10 salinan `README.md` dan `CONTRIBUTING.md` yang diterjemahkan
+sebagai tidak sinkron dengan perubahan bahasa Inggris terbaru, sebuah
+kesenjangan nyata dan berulang yang belum ditutup secara struktural
+oleh proyek ini. Gambaran lengkap, tanpa filter:
 [`references/honest-assessment.md`](../../../references/honest-assessment.md).
 
 Dua puluh harness disebutkan satu per satu, semuanya terbukti CI —
@@ -381,10 +435,10 @@ memiliki buktinya.
 
 ## Berkontribusi
 
-Lihat [`CONTRIBUTING.md`](./CONTRIBUTING.md) untuk proses lengkap —
+[`CONTRIBUTING.md`](./CONTRIBUTING.md) memiliki proses lengkap —
 persyaratan riset kompetitif untuk skill baru, checklist Skill
 Authoring Standard, dan langkah validasi yang harus dijalankan sebelum
-membuka PR.
+Anda membuka PR.
 
 Setiap perubahan dikirim melalui pull request, divalidasi oleh baterai
 CI proyek ini sendiri dan hanya di-auto-merge setelah setiap
@@ -420,4 +474,4 @@ tepat jika Anda menginginkannya kata demi kata.
 
 ---
 
-🌌 *Semoga Spec menyertaimu.*
+🌌 *Inilah caranya.*

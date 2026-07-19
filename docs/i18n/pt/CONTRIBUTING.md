@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=CONTRIBUTING.md@1609524 lang=pt -->
+<!-- i18n-sync: source=CONTRIBUTING.md@8dc71a4 lang=pt -->
 > 🌐 Este documento é uma tradução assistida por IA. **O inglês é a fonte
 > canônica** ([Principle I](../../../.specify/memory/constitution.md)); em
 > caso de divergência, prevalece o inglês. Ver outros idiomas:
@@ -69,7 +69,7 @@ Spec Jedi segue o [Versionamento Semântico](https://semver.org/),
 limitado ao contrato público do pacote de skills: quebrar o
 comportamento de uma skill é MAJOR, uma nova skill ou capacidade
 aditiva é MINOR, correções e documentação são PATCH. A política
-completa vive no [Principle XI](.specify/memory/constitution.md).
+completa vive no [Principle XI](../../../.specify/memory/constitution.md).
 
 Ninguém corta uma release em silêncio por aqui — o projeto apenas
 sugere quando uma se justifica e deixa a decisão real para uma pessoa:
@@ -152,11 +152,16 @@ descreva o que você exercitou na descrição do PR.
 
 ## Voz e nomenclatura
 
-- Skills de produto são nomeadas `specjedi-*`, nunca `speckit-*` — a
-  última é ferramentaria interna de bootstrap distribuída (vendored)
-  que este repositório usa para se construir, não algo que usuários
-  finais instalam (Principle XV). Veja a seção "Como o Spec Jedi
-  constrói a si mesmo" do README se essa distinção não estiver clara.
+- Skills de produto são nomeadas `specjedi-*` — a convenção de
+  nomenclatura que este repositório segue desde sua própria primeira
+  skill (Principle XV). Nota histórica: este projeto costumava usar
+  (dogfood) a ferramentaria de bootstrap vendorizada `speckit-*` para
+  se construir antes que seu próprio pipeline `specjedi-*` estivesse
+  completo; essa fase de bootstrap terminou com a feature 048
+  (2026-07-18) — o próprio desenvolvimento deste repositório roda
+  inteiramente em `specjedi-*` agora, a mesma ferramenta que ele
+  entrega. Veja a seção "Como o Spec Jedi constrói a si mesmo" do
+  README para o passo a passo completo.
 - A narração voltada ao usuário final (não o conteúdo literal dos
   campos gerados de `spec.md`/`plan.md`/`tasks.md`) usa a voz com
   sabor de Star Wars própria do Spec Jedi (Principle XII) — veja

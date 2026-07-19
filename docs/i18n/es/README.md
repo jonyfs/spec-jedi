@@ -1,4 +1,4 @@
-<!-- i18n-sync: source=README.md@1609524 lang=es -->
+<!-- i18n-sync: source=README.md@2a01f98 lang=es -->
 > 🌐 Este documento es una traducción asistida por IA. **El inglés es la fuente
 > canónica** ([Principle I](../../../.specify/memory/constitution.md)); en caso de
 > discrepancia, prevalece el inglés. Ver otros idiomas: [English](../../../README.md) ·
@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../../LICENSE)
 [![Constitution](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjonyfs%2Fspec-jedi%2Fmain%2F.specify%2Fmemory%2Fconstitution.md&search=%5C%2A%5C%2AVersion%5C%2A%5C%2A%3A%5Cs%2A%28%5B%5Cd.%5D%2B%29&replace=%241&label=constitution&color=7c3aed)](../../../.specify/memory/constitution.md)
 [![Pipeline](https://img.shields.io/badge/specjedi_pipeline-9%2F9_shipped-success)](#cómo-spec-jedi-implementa-sdd)
-[![Skills](https://img.shields.io/badge/specjedi_skills-25_shipped-success)](#cómo-spec-jedi-implementa-sdd)
+[![Skills](https://img.shields.io/badge/specjedi_skills-30_shipped-success)](#cómo-spec-jedi-implementa-sdd)
 [![Roadmap](https://img.shields.io/badge/roadmap_backlog-12%2F12_shipped-success)](../../../references/skill-roadmap.md)
 [![Installer](https://img.shields.io/badge/installer-one--command-blueviolet)](#instalación)
 [![Languages](https://img.shields.io/badge/docs-11_languages-informational)](../../../docs/i18n/)
@@ -34,34 +34,34 @@ ni patrocinado por Lucasfilm/Disney. Que la Especificación te acompañe. 🌌)*
 
 ## ¿Qué es el Desarrollo Guiado por Especificaciones?
 
-La forma habitual de construir software con un agente de codificación con
-IA es esta: describir lo que quieres en el chat, el agente escribe
-código, lees el código para averiguar si hizo lo que querías decir, lo
-corriges, repites. El entendimiento del agente sobre "lo que querías
-decir" vive solo en la conversación — nunca queda escrito como un
-artefacto duradero y revisable. De ahí se siguen dos fallos: la
-ambigüedad se resuelve adivinando en lugar de exponerse para una
-decisión, y nada sobrevive a la conversación — cierras el chat, pierdes
-el razonamiento.
+La forma habitual en la que la mayoría de las personas construye software
+con un agente de codificación con IA es esta: describir lo que quieres en
+el chat, el agente escribe código, lees el código para averiguar si hizo
+lo que querías decir, lo corriges, repites. El entendimiento del agente
+sobre "lo que querías decir" vive solo en la conversación — nunca queda
+escrito como un artefacto duradero y revisable. De ahí se siguen dos
+fallos: la ambigüedad se resuelve adivinando en lugar de exponerse para
+una decisión, y nada sobrevive a la conversación — cierras el chat,
+pierdes el razonamiento.
 
 El Desarrollo Guiado por Especificaciones (Spec-Driven Development, SDD)
-invierte ese orden. Antes de que exista una sola línea de código, se
-escribe qué se está construyendo y por qué, como un documento
-estructurado y revisable — una **constitución** 📜 (las reglas
-innegociables), una **especificación** 🎯 (qué, y para quién), un
-**plan** 🛠️ (cómo, técnicamente), y una **lista de tareas** ✅ (los
-pasos ordenados). El código se genera *a partir de* esos artefactos, no
-al revés — la misma disciplina que el Código Jedi le pide a cualquiera
-tentado a saltarse las partes aburridas del entrenamiento. Explicación
+invierte ese orden. Antes de que exista código alguno, se escribe qué se
+está construyendo y por qué, en forma de cuatro documentos estructurados
+y revisables: una **constitución** 📜 escrita por `specjedi-constitution`
+(las reglas innegociables del proyecto), una **especificación** 🎯
+escrita por `specjedi-specify` (qué, y para quién), un **plan** 🛠️
+escrito por `specjedi-plan` (cómo, técnicamente), y una **lista de
+tareas** ✅ escrita por `specjedi-tasks` (los pasos ordenados). El código
+se genera *a partir de* esos cuatro artefactos, no al revés. Explicación
 completa, sin ninguna marca propia de Spec Jedi:
 [`references/what-is-sdd.md`](../../../references/what-is-sdd.md).
 
 ```mermaid
 flowchart TD
     Const["📜 constitution.md<br/>the project's non-negotiable rules"] --> Core["🛠️ Core Pipeline<br/>9 skills"]
-    Const --> Onboard["🌱 Onboarding & Guidance<br/>3 skills"]
-    Const --> Quality["🛡️ Quality & Review<br/>4 skills"]
-    Const --> Meta["📊 Meta & Tooling<br/>9 skills"]
+    Const --> Onboard["🌱 Onboarding & Guidance<br/>4 skills"]
+    Const --> Quality["🛡️ Quality & Review<br/>6 skills"]
+    Const --> Meta["📊 Meta & Tooling<br/>11 skills"]
 ```
 
 Todo lo que viene después se verifica contra la constitución, nunca al
@@ -69,38 +69,74 @@ revés. Cambia una regla, y cada skill lo siente en su próxima ejecución.
 
 ## Cómo Spec Jedi implementa SDD
 
-Spec Jedi es un **competidor** genuino de
-[spec-kit](https://github.com/github/spec-kit), no una envoltura temática
-de este ([Principle XV](../../../.specify/memory/constitution.md)) —
-veinte agentes de codificación soportados, de verdad, no solo en teoría
-(ver [Instalación](#instalación) abajo). El pipeline completo de SDD
-`specjedi-*` — desde la constitución hasta la convergencia — está entregado
-por completo desde hace tiempo: las 9 etapas, cada una construida sobre
-investigación competitiva real antes de escribir una sola línea
-([research.md](../../../specs/001-specjedi-pipeline/research.md),
+Spec Jedi es un **competidor** de
+[spec-kit](https://github.com/github/spec-kit)
+([Principle XV](../../../.specify/memory/constitution.md)), construido
+como un conjunto de skills `specjedi-*` que un proyecto instala junto a
+— o en lugar de — los propios comandos `speckit-*` de spec-kit, con los
+veinte agentes de codificación objetivo soportados (ver
+[Instalación](#instalación) abajo). El pipeline completo de SDD
+`specjedi-*` — desde la constitución hasta la convergencia — está
+entregado por completo desde hace tiempo: las 9 etapas, cada una
+construida sobre investigación competitiva real antes de escribir una
+sola línea ([research.md](../../../specs/001-specjedi-pipeline/research.md),
 Principle II).
 
-Cada actividad de SDD de arriba se corresponde con una skill `specjedi-*`
-real y entregada, no una aspiración: `specjedi-constitution` establece las
-reglas, `specjedi-specify` convierte una idea en un `spec.md`,
-`specjedi-clarify` resuelve la ambigüedad marcada, `specjedi-plan` y
-`specjedi-tasks` producen el plan técnico y el desglose de tareas, y
-`specjedi-implement` (o `specjedi-quick` para cambios pequeños y bien
-entendidos) lo ejecuta con pruebas primero, a través de una rama de
-funcionalidad y un pull request únicamente. Veinticinco skills están
-disponibles hoy en total, en cuatro disciplinas — el catálogo completo,
-ambos diagramas, y el recorrido de 23 pasos viven en
+Cada actividad de SDD de arriba se corresponde con una skill
+`specjedi-*` real y actualmente entregada, no una aspiración:
+`specjedi-constitution` establece las reglas, `specjedi-specify`
+convierte una idea en un `spec.md`, `specjedi-clarify` resuelve la
+ambigüedad marcada, `specjedi-plan` y `specjedi-tasks` producen el plan
+técnico y el desglose de tareas, y `specjedi-implement` (o
+`specjedi-quick` para cambios pequeños y bien entendidos) lo ejecuta con
+pruebas primero, a través de una rama de funcionalidad y un pull request
+únicamente. Treinta skills están disponibles hoy en total, en cuatro
+disciplinas — el catálogo completo, ambos diagramas, y el recorrido de
+23 pasos viven en
 [`references/quickstart-guide.md`](../../../references/quickstart-guide.md);
 el mapeo completo de actividad a skill, incluyendo tres contribuciones
 genuinas más allá de la práctica genérica de SDD, vive en
 [`references/specjedi-and-sdd.md`](../../../references/specjedi-and-sdd.md).
 
+### `specjedi-*` frente a `speckit-*`, en números
+
+Una comparación basada en evidencia, comando por comando —
+[`specs/044-speckit-parity-audit/PARITY-LEDGER.md`](../../../specs/044-speckit-parity-audit/PARITY-LEDGER.md)
+— verificó cada uno de los 11 comandos del pipeline de `speckit-*`
+contra su equivalente `specjedi-*` según el comportamiento real
+descrito, no por similitud de nombre:
+
+- **8 de 11** están en paridad total — mismo trabajo, mismas
+  entradas/salidas.
+- **1 de 11** (`specjedi-implement` frente a `speckit-implement`) es una
+  divergencia favorable: `specjedi-implement` exige hacer commit
+  únicamente a través de una rama de funcionalidad y un pull request,
+  nunca directamente a la rama troncal; las propias instrucciones de
+  `speckit-implement` no contienen ninguna disciplina de ramas o
+  commits de git en absoluto.
+- **2 de 11** no tienen equivalente `specjedi-*` — ambos ya resueltos,
+  no vacíos abiertos: la conversión de tareas a issues de GitHub (nunca
+  usada en la historia real propia de este proyecto) y un puntero
+  persistente de "plan actual" (superado por el diseño sin seguimiento
+  paralelo de `specjedi-status` y por el propio resurgimiento del
+  estado al inicio de sesión del Principle XXI de la constitución).
+- **21 de las 30** skills `specjedi-*` entregadas no tienen ningún
+  equivalente `speckit-*` en absoluto — `specjedi-catalog-audit`,
+  `specjedi-chain`, `specjedi-constitution-audit`, `specjedi-diagram`,
+  `specjedi-docs`, `specjedi-explain`, `specjedi-find-skills`,
+  `specjedi-govcheck`, `specjedi-master`, `specjedi-migrate`,
+  `specjedi-new-skill`, `specjedi-onboard`, `specjedi-parallel`,
+  `specjedi-quick`, `specjedi-release`, `specjedi-retro`,
+  `specjedi-security`, `specjedi-skill-review`, `specjedi-status`,
+  `specjedi-tokencheck`, y `specjedi-worktree` — capacidad añadida
+  real, no un pipeline reformulado.
+
 ¿Curiosidad por lo que sigue?
 [`references/skill-roadmap.md`](../../../references/skill-roadmap.md)
 rastrea lo propuesto más allá del pipeline central — una lista de ideas
-*adicionales*, no vacíos del pipeline en sí. Cada una todavía necesita su
-propia investigación real antes de construirse; nada aquí se entrega por
-intuición.
+*adicionales*, no vacíos del pipeline en sí. Cada una todavía necesita
+su propia investigación real antes de construirse; nada aquí se entrega
+por intuición.
 
 ## Para quién es esto
 
@@ -115,29 +151,30 @@ que desaparecen al cerrar la ventana es el lector al que se dirige esto.
 
 ## Cómo Spec Jedi se construye *a sí mismo*, en forma de cómic
 
-> ⚠️ **Esta sección trata sobre nuestro proceso interno de bootstrap, no
-> sobre el producto Spec Jedi.** Los comandos `/speckit-*` de abajo son
-> herramientas propias de [spec-kit](https://github.com/github/spec-kit) —
-> Spec Jedi actualmente usa spec-kit para construirse a sí mismo (el mismo
-> patrón de "arrancar un compilador con un compilador más viejo"), de la
-> misma forma en que cualquier competidor podría usar las herramientas de
-> un actor establecido mientras construye su reemplazo. **Si estás
-> evaluando Spec Jedi como producto, ve directamente a
-> [Instalación](#instalación) abajo** — la superficie de producto real son
-> las skills `specjedi-*`, no estas. Ver
+> ⚠️ **Esta sección muestra el propio pipeline de desarrollo real de este
+> proyecto en acción** — los comandos `specjedi-*` de abajo son
+> exactamente la misma superficie de producto descrita arriba, usada
+> sobre el propio Spec Jedi. Hasta la funcionalidad 048 (2026-07-18),
+> este proyecto se construía a sí mismo con los propios comandos
+> `speckit-*` distribuidos (vendored) de spec-kit (el mismo patrón de
+> "arrancar un compilador con un compilador más viejo" que cualquier
+> competidor podría usar mientras construye su reemplazo) antes de que
+> su propio pipeline `specjedi-*` estuviera lo bastante completo para
+> tomar el relevo. Esa fase de bootstrap ya terminó — ver
 > [Principle XV](../../../.specify/memory/constitution.md) para la
-> política completa sobre por qué se mantienen claramente separadas.
+> política completa que esta migración culminó.
 >
 > También, una nota sobre el formato: los paneles de abajo combinan
-> diálogo en texto y emojis con ilustraciones originales — nunca imágenes
-> reales de Star Wars (personajes, naves, el logo), que son propiedad
-> intelectual de Lucasfilm/Disney. El propio
+> diálogo en texto y emojis con ilustraciones originales — nunca
+> imágenes reales de Star Wars (personajes, naves, el logo), que son
+> propiedad intelectual de Lucasfilm/Disney. El propio
 > [Principle XII](../../../.specify/memory/constitution.md) de este
-> proyecto se compromete a una identidad visual original y referencias de
-> Star Wars solo en texto, nunca arte con derechos de autor reproducido ni
-> arte que evoque las señas visuales reconocibles propias de la saga. Así
-> que: los momentos de la historia son reales, el arte es original, y las
-> palabras siguen llevando el significado por sí solas. 🖋️
+> proyecto se compromete a una identidad visual original y referencias
+> de Star Wars solo en texto, nunca arte con derechos de autor
+> reproducido ni arte que evoque las señas visuales reconocibles
+> propias de la saga. Así que: los momentos de la historia son reales,
+> el arte es original, y las palabras siguen llevando el significado
+> por sí solas. 🖋️
 
 ---
 
@@ -148,7 +185,7 @@ que no deja de parpadear hasta que le das algo que hacer.
 > 🧑‍💻 *"Tengo una idea para una funcionalidad. ...¿Y ahora qué?"*
 
 Ahí es cuando aparece el mentor — sin sable de luz, solo un pergamino,
-porque la primera batalla aquí nunca es la última. `/speckit-constitution`
+porque la primera batalla aquí nunca es la última. `/specjedi-constitution`
 escribe las reglas una sola vez, para que nadie tenga que reaprenderlas
 por las malas tres funcionalidades después.
 
@@ -157,15 +194,15 @@ por las malas tres funcionalidades después.
 
 La idea sube a la pared después, rodeada de cada pregunta que aún no ha
 respondido — qué se está construyendo realmente, y para quién.
-`/speckit-specify` la convierte en un `spec.md` real; `/speckit-clarify`
+`/specjedi-specify` la convierte en un `spec.md` real; `/specjedi-clarify`
 sale a cazar la ambigüedad antes de que se convierta en un bug que nadie
 quiere reclamar después.
 
 ![un corcho cubierto de notas holográficas y signos de interrogación brillantes](../../comic/panel-3.jpg)
 > 🌀 *"¿Qué estás construyendo realmente — y para quién?"*
 
-Después sale el plano. `/speckit-plan` se convierte en `plan.md`,
-`/speckit-tasks` lo desglosa en un `tasks.md` ordenado y consciente de
+Después sale el plano. `/specjedi-plan` se convierte en `plan.md`,
+`/specjedi-tasks` lo desglosa en un `tasks.md` ordenado y consciente de
 dependencias — nada omitido, nada fuera de secuencia, el tipo de plan que
 un Padawan podría seguir sin preguntar dos veces.
 
@@ -173,8 +210,8 @@ un Padawan podría seguir sin preguntar dos veces.
 > 🛠️ *"Ahora el cómo."*
 
 Las herramientas empiezan a zumbar. Las pruebas fallan en rojo, una tras
-otra — y luego, poco a poco, dejan de fallar. `/speckit-implement`
-ejecuta `tasks.md` con pruebas primero donde aplica
+otra — y luego, poco a poco, dejan de fallar. `/specjedi-implement`
+trabaja `tasks.md` con pruebas primero dondequiera que aplique
 ([Principle VI](../../../.specify/memory/constitution.md)), porque una
 construcción que se salta este paso no es más que una suposición con
 pasos extra.
@@ -205,14 +242,14 @@ Y luego se va — rumbo al hiperespacio, entregado.
 > 🚀 *"Entregado."*
 > 🌌 *"Que la Especificación te acompañe."*
 
-Nada de esto es un cuento — es el proceso literal y repetido detrás de
-los pull requests recientes de este mismo proyecto —
+Nada de esto es un cuento de buenas noches. Es el proceso literal y
+repetido detrás de los pull requests recientes de este mismo proyecto —
 [#82](https://github.com/jonyfs/spec-jedi/pull/82),
 [#84](https://github.com/jonyfs/spec-jedi/pull/84),
 [#87](https://github.com/jonyfs/spec-jedi/pull/87), por nombrar algunos —
 de principio a fin, de verdad, cada vez.
 
-### La misma historia de bootstrap interno, como diagrama
+### La misma historia, como diagrama
 
 ```mermaid
 sequenceDiagram
@@ -220,8 +257,8 @@ sequenceDiagram
     participant Repo as 📜 Repo (main)
     participant PR as 🔀 Pull Request
     participant CI as 🤖 ci-gate
-    Dev->>Repo: /speckit-constitution, /speckit-specify, /speckit-plan, /speckit-tasks
-    Dev->>Dev: /speckit-implement (test-first)
+    Dev->>Repo: /specjedi-constitution, /specjedi-specify, /specjedi-plan, /specjedi-tasks
+    Dev->>Dev: /specjedi-implement (test-first)
     Dev->>PR: open PR on a feature branch
     PR->>CI: trigger validation battery (Linux/macOS/Windows)
     CI-->>PR: 🔴 red? fix and push again
@@ -278,6 +315,15 @@ tienen todavía una señal de detección confiable, así que para esos pasas
 `./scripts/bootstrap-install.sh --help` (o
 `.\scripts\bootstrap-install.ps1 -Help`) cuando quieras la lista completa
 de opciones, incluyendo `--auto`.
+
+Para `claude-code`, `codex-cli`, y `trae`, el instalador también crea o
+actualiza el propio archivo de memoria de proyecto de ese entorno
+(`CLAUDE.md`, `AGENTS.md`, o `.trae/rules/project_rules.md`) con una
+sección corta, delimitada por marcadores, que nombra las skills
+instaladas — para que el propio contexto del entorno ya sepa que están
+ahí, no solo el directorio de skills en sí. Si ese archivo ya existe con
+contenido propio tuyo, nada de lo tuyo se toca; la sección se añade al
+final y solo esa sección se actualiza en reinstalaciones posteriores.
 
 ### Entornos soportados
 
@@ -338,17 +384,22 @@ las que está construida toda esta tabla.
 
 ## Evaluación honesta
 
-Ventajas reales, limitaciones reales — no una página de marketing. Veinte
-de veinte entornos objetivo tienen una ruta de instalación real y
-verificada por CI, los diagramas se verifican por renderizado antes de
-mostrarse, y la constitución es un documento vivo y versionado en la
-v1.24.0 con un historial de enmiendas documentado. La otra mitad, dicha
-con franqueza: todavía no se ha cortado ninguna release
-(`git tag -l` no devuelve nada al momento de escribir esto), y la mayoría
-de las rutas de instalación de entornos puente se fundamentan en
-investigación documental, no en una sesión práctica dentro del producto
-real de terceros. Panorama completo, sin filtros:
-[`references/honest-assessment.md`](../../../references/honest-assessment.md).
+Ventajas reales, limitaciones reales actuales — no una página de
+marketing. Veinte de veinte entornos objetivo tienen una ruta de
+instalación real y verificada por CI, los diagramas se verifican por
+renderizado antes de mostrarse, se han entregado cuatro releases reales
+(`v0.1.0`, `v0.1.1`, `v0.2.0`, `v0.3.0`), y la constitución es un
+documento vivo y versionado en la v1.29.0 con un historial de enmiendas
+documentado. La otra mitad, dicha con franqueza: la mayoría de las rutas
+de instalación de entornos puente se fundamentan en investigación
+documental en lugar de en una sesión práctica dentro del producto real
+de terceros (ver abajo), y la propia documentación localizada de este
+proyecto va por detrás de su fuente en inglés más a menudo de lo que
+no — `scripts/validate.sh` actualmente marca las 10 copias traducidas de
+`README.md` y `CONTRIBUTING.md` como desincronizadas respecto a los
+últimos cambios en inglés, un vacío real y recurrente que este proyecto
+todavía no ha cerrado de forma estructural. Panorama completo, sin
+filtros: [`references/honest-assessment.md`](../../../references/honest-assessment.md).
 
 Veinte entornos nombrados individualmente, todos verificados por CI —
 pero 18 de los 19 entornos que no son Claude Code fueron confirmados por
@@ -402,4 +453,4 @@ palabra por palabra.
 
 ---
 
-🌌 *Que la Especificación te acompañe.*
+🌌 *Ese es el camino.*

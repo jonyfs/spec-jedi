@@ -13,7 +13,7 @@
 
 ## Requirement Completeness
 
-- [ ] No [NEEDS CLARIFICATION] markers remain
+- [x] No [NEEDS CLARIFICATION] markers remain
 - [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Success criteria are technology-agnostic (no implementation details)
@@ -31,15 +31,10 @@
 
 ## Notes
 
-- One genuine `[NEEDS CLARIFICATION]` marker remains: FR-008, the exact
-  rule for distinguishing a real reference citation from a
-  documentation-example occurrence of the same string. This was
-  deliberately left open rather than guessed — the pre-drafting sweep
-  found zero actual false-positive cases in the current 27-skill
-  catalog, so there's no real precedent yet to ground a guess in; the
-  concrete rule is better decided during planning once User Story 3's
-  re-runnable-or-not decision (FR-006) is also settled, since the two
-  are related.
+- Resolved 2026-07-18: FR-008's rule is "exclude fenced-code-block
+  occurrences, count everything else" — the simplest rule that covers
+  the named risk without causing false negatives against real citations
+  living outside a numbered Step.
 - FR-006 (whether the reference check becomes durable/re-runnable) is
   deliberately deferred to planning, not marked
   `[NEEDS CLARIFICATION]` — this is a technical design decision with

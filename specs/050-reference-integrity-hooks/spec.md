@@ -24,6 +24,21 @@ registered anywhere in this project today — every check silently no-ops
 by design, but no maintainer has ever seen a concrete example of what a
 useful hook entry looks like.
 
+## Clarifications
+
+### Session 2026-07-18
+
+- Q: What's the concrete rule for FR-008 — how should the re-runnable
+  check distinguish a real, load-bearing `references/*.md` citation from
+  a documentation-example occurrence of the same string pattern? → A:
+  Exclude citations inside a fenced code block (` ``` `); count
+  everything else. This is the simplest, most robust rule — it covers
+  exactly the risk the Edge Cases section named (a citation inside a
+  code fence meant as an example), and avoids a narrower structural rule
+  (e.g. "only inside a numbered Step") that would risk false negatives
+  against real citations living in prose outside a numbered step (e.g.
+  `specjedi-catalog-audit`'s own "How this differs from..." paragraph).
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - No skill points to a reference file that doesn't exist (Priority: P1)
@@ -187,16 +202,10 @@ another manual `grep`-and-check sweep.
   missing" (matching every other audit skill's own established
   reporting discipline in this project).
 - **FR-008**: This feature's own reference-integrity sweep MUST NOT flag
-  a `references/*.md`-shaped string that appears purely as a
-  documentation example (e.g. inside this very spec's own Input section
-  above, or inside a worked Example block in some skill) as if it were a
-  real, load-bearing citation — [NEEDS CLARIFICATION: no such
-  false-positive case was actually found in the pre-drafting sweep of
-  the current 27-skill catalog, but the Edge Cases section above flags
-  it as a real risk for User Story 3's re-runnable version; should the
-  distinguishing rule be "only citations inside a numbered Step or
-  frontmatter `compatibility` field count," or some other concrete
-  test, decided during planning?]
+  a `references/*.md`-shaped string that appears inside a fenced code
+  block (` ``` `) as if it were a real, load-bearing citation — every
+  other occurrence counts as a real citation (resolved by the
+  2026-07-18 Clarification above).
 
 ### Key Entities
 

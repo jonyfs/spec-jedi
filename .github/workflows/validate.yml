@@ -1481,8 +1481,11 @@ jobs:
           if ! printf '%s' "$out" | grep -qF "v0.0.0-definitely-stale installed"; then
             echo "FAIL: expected the stale tag named in the output, got:"; printf '%s\n' "$out"; exit 1
           fi
-          if ! printf '%s' "$out" | grep -qF "scripts/bootstrap-install.sh/.ps1 to update"; then
+          if ! printf '%s' "$out" | grep -qF "scripts/bootstrap-install.sh/.ps1"; then
             echo "FAIL: expected the update path named in the output, got:"; printf '%s\n' "$out"; exit 1
+          fi
+          if ! printf '%s' "$out" | grep -qF "ask whether to update"; then
+            echo "FAIL: expected the specs/055 interactive-ask trigger in the output, got:"; printf '%s\n' "$out"; exit 1
           fi
           echo "OK: stale marker produces a correctly-worded update line"
       - name: Current marker stays silent, blocked network degrades silently and fast
@@ -1568,7 +1571,8 @@ jobs:
           '{"installed_release": "v0.0.0-definitely-stale"}' | Set-Content (Join-Path $proj ".specify/release-marker.json")
           $out = & (Join-Path $proj "scripts/session-start.ps1") | Out-String
           if ($out -notmatch [regex]::Escape("v0.0.0-definitely-stale installed")) { Write-Host "FAIL: expected the stale tag named in the output, got: $out"; exit 1 }
-          if ($out -notmatch [regex]::Escape("scripts/bootstrap-install.sh/.ps1 to update")) { Write-Host "FAIL: expected the update path named in the output, got: $out"; exit 1 }
+          if ($out -notmatch [regex]::Escape("scripts/bootstrap-install.sh/.ps1")) { Write-Host "FAIL: expected the update path named in the output, got: $out"; exit 1 }
+          if ($out -notmatch [regex]::Escape("ask whether to update")) { Write-Host "FAIL: expected the specs/055 interactive-ask trigger in the output, got: $out"; exit 1 }
           Write-Host "OK: stale marker produces a correctly-worded update line"
       - name: Blocked network degrades silently and fast
         shell: pwsh

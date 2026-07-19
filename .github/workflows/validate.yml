@@ -1316,23 +1316,45 @@ jobs:
         shell: bash
         run: |
           dir_nopy=$(mktemp -d)
-          shadow=$(mktemp -d)
-          real_bash="$(command -v bash)"
-          # bash itself is deliberately never shadowed: on Windows/Git
-          # Bash, bash.exe depends on companion DLLs (msys-2.0.dll etc.)
-          # that only resolve from its own real installation directory --
-          # a bare symlink elsewhere breaks that and fails with "error
-          # while loading shared libraries", found via a real CI failure
-          # on this feature's own PR (specs/058), not assumed. Invoking
-          # via $real_bash's captured absolute path (never relying on a
-          # bare `bash` resolving through the restricted $PATH below)
-          # sidesteps the same class of failure for the outer invocation.
-          for b in git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat sh; do
-            real="$(command -v "$b" 2>/dev/null || true)"
-            [ -n "$real" ] && ln -sf "$real" "$shadow/$b"
+          # Simulates python3 absence by temporarily renaming every real
+          # resolved python3/python3.exe/python.exe aside, then restoring
+          # it -- never by rebuilding a shadow PATH (two earlier attempts
+          # both failed for real, distinct reasons: on Windows/Git Bash,
+          # MSYS2 binaries depend on companion DLLs that only resolve
+          # from their own real install directory, so a symlinked copy
+          # fails with "error while loading shared libraries"; and
+          # filtering python3's own directory out of $PATH entirely can
+          # also remove unrelated coreutils that happen to share that
+          # directory, e.g. macOS's /usr/bin holding both a system
+          # python3 stub and dirname/basename). A scoped rename/restore
+          # never creates a new file needing its own DLL resolution and
+          # never removes anything unrelated -- safe here because CI
+          # runners are single-job-scoped, ephemeral VMs.
+          moved_files=()
+          restore_python() {
+            for p in "${moved_files[@]:-}"; do
+              [ -n "$p" ] && [ -f "$p.hidden-for-ci-test" ] && mv "$p.hidden-for-ci-test" "$p"
+            done
+          }
+          # Registered before the very first mv below, so any failure
+          # partway through moving still restores whatever was already
+          # moved -- never left half-done.
+          trap restore_python EXIT
+          old_ifs="$IFS"
+          IFS=':'
+          read -ra path_dirs <<< "$PATH"
+          IFS="$old_ifs"
+          for d in "${path_dirs[@]}"; do
+            for name in python3 python3.exe python.exe; do
+              if [ -f "$d/$name" ]; then
+                mv "$d/$name" "$d/$name.hidden-for-ci-test"
+                moved_files+=("$d/$name")
+              fi
+            done
           done
-          PATH="$shadow" "$real_bash" scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
-          rm -rf "$shadow"
+          bash scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
+          restore_python
+          trap - EXIT
           cat /tmp/nopython-out.txt
           if [ -f "$dir_nopy/.claude/hooks/prevent-direct-push.py" ] || [ -f "$dir_nopy/.claude/hooks/secret-scanner.py" ]; then
             echo "FAIL: a Python-based hook installed despite python3 absence"

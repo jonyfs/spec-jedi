@@ -97,7 +97,10 @@ never an edit.
    (Principle XIV; see `references/next-step-interaction.md`) —
    typically: apply the named fix manually and re-run
    `specjedi-skill-review` to confirm, or (on a clean pass) no action
-   needed.
+   needed — pair the plain "CLEAN PASS" statement with a genuine Mission
+   Complete closing line (`references/mission-complete-voice.md`),
+   scoped honestly to this one skill's own review, never implying the
+   rest of the catalog is clean too.
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly in the report and self-invoke

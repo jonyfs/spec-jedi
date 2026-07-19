@@ -83,7 +83,12 @@ all.
    directly") — never leave the maintainer without direction
    (Principle XIV).
 9. **Report, then offer the next step(s) as a short bulleted list**
-   (see `references/next-step-interaction.md`).
+   (see `references/next-step-interaction.md`). On a genuinely clean
+   whole-project result (every principle Compliant or correctly Not
+   Applicable, zero drift), pair the plain status statement with a
+   genuine Mission Complete closing line
+   (`references/mission-complete-voice.md`), scoped honestly to this
+   one audit run, never implying future drift can't occur.
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly and self-invoke `specjedi-find-skills`

@@ -89,7 +89,11 @@ than re-implementing it — see Step 3.
    Redundancy — never split one underlying gap across two rows. Build
    the report per Format below. An empty findings list (every phase
    Covered, every skill PASS, no redundancy) is a valid, good outcome —
-   never invent a finding to have something to report.
+   never invent a finding to have something to report. On that clean
+   result, pair the plain "0 findings" statement with a genuine Mission
+   Complete closing line (`references/mission-complete-voice.md`),
+   scoped honestly to this one audit run, never implying the catalog
+   can never regress.
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly in the report and self-invoke

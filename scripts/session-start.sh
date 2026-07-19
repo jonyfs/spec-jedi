@@ -215,7 +215,7 @@ if [ -f "$marker" ]; then
       latest="$(grep -m1 '"tag_name"' <<< "$response" 2>/dev/null \
         | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/')"
       if [ -n "$latest" ] && [ "$latest" != "$installed" ]; then
-        printf '%s' "Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
+        printf '%s' "Update available: $installed installed, $latest published -- ask whether to update now (specs/055); on yes, run scripts/bootstrap-install.sh/.ps1 (now backs up any locally-modified skill/template file first, specs/055 User Story 1); on no, do nothing further this session."
       fi
     fi
     true

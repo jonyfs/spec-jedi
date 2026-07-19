@@ -1,5 +1,31 @@
 <!--
 Sync Impact Report
+- Version change: 1.28.0 → 1.29.0
+- Modified principles: XXII. Skill Freshness Validation & Update
+  Awareness — MINOR bump, materially expanded guidance (no renaming, no
+  removal).
+  - Directly requested (specs/055-safe-skill-update-hook): the freshness
+    check's "advisory only" framing is reconciled with a new interactive
+    trigger — the agent rendering the orientation now asks the user
+    directly whether to update, and runs `bootstrap-install.sh`/`.ps1`
+    on an explicit "yes," rather than only ever describing the update
+    path.
+  - "Advisory" is clarified to mean the check never blocks session
+    start, never forces an update, and never treats silence as
+    consent — not that it may never ask. This principle still MUST NOT
+    invent a second update flow: the same `bootstrap-install.sh`/`.ps1`
+    is the only trigger, unchanged.
+  - A new guarantee is added: triggering the update MUST NOT silently
+    destroy a locally-modified skill or template file —
+    `scripts/install.sh`/`.ps1` now backs up any differing file before
+    overwriting it, making the interactive trigger safe to build on.
+  - Not a MAJOR bump: the core "advisory, never block/force/guess" rule
+    is unchanged; this only adds the interactive-trigger capability and
+    the loss-safety guarantee underneath it.
+-->
+
+<!--
+Sync Impact Report
 - Version change: 1.27.1 → 1.28.0
 - Modified principles: XIV. Guided Next-Step Suggestion — MINOR bump,
   materially expanded guidance (no renaming, no removal).
@@ -1954,15 +1980,25 @@ install that predates this principle), a rate-limited or unreachable
 GitHub API. Per Principle XX's "grounded, honest output" discipline, an
 unconfirmed staleness claim is worse than none at all, and a session
 MUST NOT stall, retry indefinitely, or error over a check that exists
-purely to inform.
+purely to inform. "Advisory" describes the check itself: it MUST NOT
+block session start, force an update, or proceed on silence as if it
+were a "yes" — it does not mean the check may never ask (see the next
+paragraph, specs/055).
 
-**The update path MUST be the one that already exists**: when the
-installed marker is genuinely behind the latest release, the orientation
-output MUST name `scripts/bootstrap-install.sh`/`.ps1` — specs/024's
-already-shipped download-latest-release-and-install mechanism — as the
-one way to update. This principle MUST NOT invent a second update flow,
-and MUST NOT instruct a user to re-clone the whole repository when a
-one-line script already does the job.
+**The update path MUST be the one that already exists, and MAY now be
+triggered interactively (specs/055)**: when the installed marker is
+genuinely behind the latest release, the orientation output MUST name
+`scripts/bootstrap-install.sh`/`.ps1` — specs/024's already-shipped
+download-latest-release-and-install mechanism — as the one way to
+update, and the agent rendering that output MUST ask the user directly
+whether to update now, running that same script on an explicit "yes"
+rather than only ever describing it. This principle MUST NOT invent a
+second update flow, and MUST NOT instruct a user to re-clone the whole
+repository when a one-line script already does the job. Triggering that
+script MUST NOT silently destroy a locally-modified `specjedi-*` skill
+or `.specify/templates/*.md` file — `scripts/install.sh`/`.ps1` (which
+`bootstrap-install.sh`/`.ps1` delegates to) backs up any differing file
+before overwriting it, so this interactive trigger is safe to build on.
 
 **Rationale**: Directly requested: a user who installed `specjedi-*`'s
 skills once has no ambient signal that a newer, improved release exists
@@ -2124,4 +2160,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.28.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18
+**Version**: 1.29.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18

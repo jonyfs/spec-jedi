@@ -192,7 +192,7 @@ if (Test-Path $marker) {
             $release = Invoke-RestMethod -Uri "https://api.github.com/repos/jonyfs/spec-jedi/releases/latest" -Headers $headers -TimeoutSec 2 -ErrorAction Stop
             $latest = $release.tag_name
             if ($latest -and $latest -ne $installed) {
-                $freshnessLine = "Update available: $installed installed, $latest published -- run scripts/bootstrap-install.sh/.ps1 to update."
+                $freshnessLine = "Update available: $installed installed, $latest published -- ask whether to update now (specs/055); on yes, run scripts/bootstrap-install.sh/.ps1 (now backs up any locally-modified skill/template file first, specs/055 User Story 1); on no, do nothing further this session."
             }
         }
     } catch {

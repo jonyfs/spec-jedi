@@ -231,12 +231,24 @@ def scan_file(file_path):
                         if 'example' in line_stripped.lower() or 'placeholder' in line_stripped.lower():
                             continue
 
+                    raw_match = match.group(0)
+                    # Redacted, never the raw matched value: the denial
+                    # message this builds is printed to stderr and becomes
+                    # part of the blocked tool call's own visible result --
+                    # echoing the live secret back would leak it into the
+                    # agent's context/session logs at the exact moment this
+                    # hook exists to prevent that (specs/058 User Story 5).
+                    if len(raw_match) <= 8:
+                        redacted = '*' * len(raw_match)
+                    else:
+                        redacted = raw_match[:4] + ('*' * (len(raw_match) - 8)) + raw_match[-4:]
+
                     findings.append({
                         'file': file_path,
                         'line': line_num,
                         'description': description,
                         'severity': severity,
-                        'match': match.group(0)[:50] + '...' if len(match.group(0)) > 50 else match.group(0),
+                        'match': redacted,
                         'full_line': line.strip()[:100]
                     })
     except Exception as e:

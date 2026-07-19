@@ -367,10 +367,41 @@ $skillsSrc = Join-Path $repoRoot ".claude/skills"
 $skillsDst = Join-Path $TargetDir $skillsDstRel
 New-Item -ItemType Directory -Force -Path $skillsDst | Out-Null
 
+# specs/055-safe-skill-update-hook: before any overwrite below replaces
+# an already-installed skill/template, back up the existing copy first
+# if it genuinely differs from what's about to replace it -- matching
+# install.sh's own identical logic. Backs up nothing on a first install
+# (FR-003): $Dst simply doesn't exist yet, so the early return fires.
+$script:backupRoot = $null
+function Backup-IfDiffers {
+    param([string]$Src, [string]$Dst)
+    if (-not (Test-Path $Dst)) { return }
+    $srcIsDir = (Get-Item $Src).PSIsContainer
+    if ($srcIsDir) {
+        $srcHashes = Get-ChildItem -Recurse $Src -File | Get-FileHash | Select-Object -ExpandProperty Hash | Sort-Object
+        $dstHashes = Get-ChildItem -Recurse $Dst -File -ErrorAction SilentlyContinue | Get-FileHash | Select-Object -ExpandProperty Hash | Sort-Object
+    } else {
+        $srcHashes = (Get-FileHash $Src).Hash
+        $dstHashes = (Get-FileHash $Dst -ErrorAction SilentlyContinue).Hash
+    }
+    $differs = (Compare-Object $srcHashes $dstHashes -ErrorAction SilentlyContinue) -ne $null
+    if ($differs) {
+        if (-not $script:backupRoot) {
+            $stamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddTHHmmssZ")
+            $script:backupRoot = Join-Path $TargetDir ".specify/backups/$stamp"
+            New-Item -ItemType Directory -Force -Path $script:backupRoot | Out-Null
+        }
+        $name = Split-Path $Dst -Leaf
+        Copy-Item -Recurse -Path $Dst -Destination (Join-Path $script:backupRoot $name)
+        Write-Host "  🗄️  backed up locally-modified $name -> $($script:backupRoot.Substring($TargetDir.Length + 1))"
+    }
+}
+
 $installed = 0
 Get-ChildItem -Path $skillsSrc -Directory -Filter "specjedi-*" | ForEach-Object {
     $skillName = $_.Name
     $dstPath = Join-Path $skillsDst $skillName
+    Backup-IfDiffers -Src $_.FullName -Dst $dstPath
     if (Test-Path $dstPath) {
         Remove-Item -Recurse -Force $dstPath
     }
@@ -389,7 +420,10 @@ Write-Host "📚 Installing runtime template dependencies..."
 $templatesDst = Join-Path $TargetDir ".specify/templates"
 New-Item -ItemType Directory -Force -Path $templatesDst | Out-Null
 foreach ($template in @("constitution-template.md", "spec-template.md", "plan-template.md", "tasks-template.md")) {
-    Copy-Item -Path (Join-Path $repoRoot ".specify/templates/$template") -Destination (Join-Path $templatesDst $template)
+    $templateSrc = Join-Path $repoRoot ".specify/templates/$template"
+    $templateDst = Join-Path $templatesDst $template
+    Backup-IfDiffers -Src $templateSrc -Dst $templateDst
+    Copy-Item -Path $templateSrc -Destination $templateDst
     Write-Host "  ✅ $template"
 }
 

@@ -30,6 +30,13 @@ precedence rule was added after a real instance of this exact conflict
 occurred (specs/022-session-start-verification/), where the continuation
 instruction was followed without a documented rule saying it should be.
 
+**When the rendered payload includes an "Update available" line**
+(specs/055): ask the user directly whether to update now, rather than
+just mentioning the line and moving on. On a "yes," run
+`scripts/bootstrap-install.sh`/`.ps1` via Bash. On "no" (or no answer),
+say nothing further about it this session — the same freshness check
+runs again next session, unchanged.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

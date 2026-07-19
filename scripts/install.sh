@@ -1425,7 +1425,7 @@ render_gemini_style_push_guard() {
 import sys
 
 src_path, protected = sys.argv[1], sys.argv[2]
-src = open(src_path).read()
+src = open(src_path, encoding="utf-8").read()
 
 old_protected = 'PROTECTED = {"main", "develop"}'
 if old_protected not in src:
@@ -1457,7 +1457,13 @@ header = (
 # it documents the Claude-Code-target adaptation specifically, which no
 # longer applies verbatim to this translated copy.
 body = src.split('"""', 2)[-1].lstrip("\n")
-sys.stdout.write(header + body)
+# Explicit UTF-8 byte write, not sys.stdout.write(): on a Windows CI
+# runner (default locale cp1252, not UTF-8), a plain text write to
+# stdout can raise UnicodeEncodeError on this file's own non-ASCII
+# characters (an em dash, a checkmark) the same way an unencoded read
+# raised UnicodeDecodeError above -- caught by a real CI failure during
+# this feature's own PR (specs/058), not assumed.
+sys.stdout.buffer.write((header + body).encode("utf-8"))
 PYEOF
 }
 

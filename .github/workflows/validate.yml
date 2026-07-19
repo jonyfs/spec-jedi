@@ -1317,7 +1317,7 @@ jobs:
         run: |
           dir_nopy=$(mktemp -d)
           shadow=$(mktemp -d)
-          for b in bash git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat printf sh; do
+          for b in bash git sed grep mktemp cat chmod mkdir cp rm ln readlink uname date awk basename dirname tr wc sort head tail find stat sh; do
             real="$(command -v "$b" 2>/dev/null || true)"
             [ -n "$real" ] && ln -sf "$real" "$shadow/$b"
           done

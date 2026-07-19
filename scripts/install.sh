@@ -1097,8 +1097,17 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
     chmod +x "$target_hooks_dir/prevent-direct-push.py"
     echo "  ✅ prevent-direct-push.py (protecting: $trunk_branch)"
     bash_hook_files="$bash_hook_files prevent-direct-push.py"
+
+    # specs/058-expand-shareable-hooks (User Story 2): secret-scanner.py,
+    # shipped unmodified (FR-002) -- already self-contained, no
+    # repo-specific paths, already carries its own self-exclusion fix and
+    # the redaction fix (FR-012) directly in the source file.
+    cp "$repo_root/.claude/hooks/secret-scanner.py" "$target_hooks_dir/secret-scanner.py"
+    chmod +x "$target_hooks_dir/secret-scanner.py"
+    echo "  ✅ secret-scanner.py"
+    bash_hook_files="$bash_hook_files secret-scanner.py"
   else
-    skipped_python_hooks="prevent-direct-push.py"
+    skipped_python_hooks="prevent-direct-push.py secret-scanner.py"
   fi
   if [ -n "$skipped_python_hooks" ]; then
     echo "  ⚠️  python3 not found — skipping:$(for h in $skipped_python_hooks; do printf ' %s' "$h"; done)"
@@ -1390,8 +1399,49 @@ sys.stdout.write(header + body)
 PYEOF
 }
 
+# specs/058-expand-shareable-hooks (User Story 2, Wave 1): unlike
+# prevent-direct-push.py's single deny() call, secret-scanner.py's block
+# output is spread across several print() calls building human-readable
+# text (severity counts, per-finding details, remediation tips) to
+# stderr, with exit 2 signaling block -- a valid, simpler alternative
+# Claude Code PreToolUse hook convention (exit-code + stderr) than the
+# JSON-on-stdout shape dangerous-command-guard.sh/prevent-direct-push.py
+# use, but Gemini CLI's own BeforeTool contract specifically expects the
+# {"decision":"deny","reason":"..."} JSON shape (confirmed by
+# render_gemini_style_guard's own translation choice, not an assumption).
+# Rather than a fragile transform of secret-scanner.py's multi-print
+# logic, this wraps the real, unmodified script as a subprocess and
+# re-shapes only its exit code/stderr into the expected contract -- the
+# actual detection logic never diverges from the Claude-Code-target
+# original.
+render_gemini_style_scanner_wrapper() {
+  cat <<'EOF'
+#!/usr/bin/env python3
+# Wraps .claude/hooks/secret-scanner.py (specs/058-expand-shareable-hooks,
+# User Story 2) unmodified for a BeforeTool-shaped hook contract: stdin
+# carries tool_input.command (unchanged), stdout is
+# {"decision":"deny","reason":"..."} with exit code 2 to block.
+import json
+import os
+import subprocess
+import sys
+
+scanner_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secret-scanner.py")
+result = subprocess.run(
+    [sys.executable, scanner_path],
+    input=sys.stdin.read(),
+    capture_output=True,
+    text=True,
+)
+if result.returncode == 2:
+    print(json.dumps({"decision": "deny", "reason": result.stderr.strip()}))
+    sys.exit(2)
+sys.exit(0)
+EOF
+}
+
 install_hooks_gemini_cli() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1403,6 +1453,7 @@ install_hooks_gemini_cli() {
   echo "  ✅ dangerous-command-guard.sh (Gemini CLI translation, protecting: $trunk_branch)"
 
   push_entry=""
+  scanner_entry=""
   if has_python3; then
     python_protected="$(build_python_protected_set "$trunk_branch")"
     push_script="$target_hooks_dir/prevent-direct-push.py"
@@ -1414,8 +1465,18 @@ install_hooks_gemini_cli() {
             "type": "command",
             "command": "python3 .gemini/hooks/prevent-direct-push.py"
           }'
+
+    cp "$repo_root/.claude/hooks/secret-scanner.py" "$target_hooks_dir/secret-scanner.py"
+    render_gemini_style_scanner_wrapper > "$target_hooks_dir/secret-scanner-wrapper.py"
+    chmod +x "$target_hooks_dir/secret-scanner.py" "$target_hooks_dir/secret-scanner-wrapper.py"
+    echo "  ✅ secret-scanner.py (Gemini CLI translation, wrapped for BeforeTool contract)"
+    scanner_entry=',
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/secret-scanner-wrapper.py"
+          }'
   else
-    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Gemini CLI translation)"
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Gemini CLI translation)"
   fi
 
   hooks_block='  "hooks": {
@@ -1426,7 +1487,7 @@ install_hooks_gemini_cli() {
           {
             "type": "command",
             "command": "bash .gemini/hooks/dangerous-command-guard.sh"
-          }'"$push_entry"'
+          }'"$push_entry""$scanner_entry"'
         ]
       }
     ]
@@ -1443,7 +1504,7 @@ install_hooks_gemini_cli() {
 # hooks.json (matching this installer's own existing .agents/skills
 # convention for the same harness).
 install_hooks_antigravity() {
-  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected
+  local trunk_branch trunk_pattern target_hooks_dir guard_script hooks_block push_script push_entry python_protected scanner_entry
   trunk_branch="$(detect_trunk_branch "$target_dir")"
   trunk_pattern="$(build_trunk_pattern "$trunk_branch")"
 
@@ -1455,6 +1516,7 @@ install_hooks_antigravity() {
   echo "  ✅ dangerous-command-guard.sh (Antigravity translation, protecting: $trunk_branch)"
 
   push_entry=""
+  scanner_entry=""
   if has_python3; then
     python_protected="$(build_python_protected_set "$trunk_branch")"
     push_script="$target_hooks_dir/prevent-direct-push.py"
@@ -1466,8 +1528,18 @@ install_hooks_antigravity() {
             "type": "command",
             "command": "python3 .agents/hooks/prevent-direct-push.py"
           }'
+
+    cp "$repo_root/.claude/hooks/secret-scanner.py" "$target_hooks_dir/secret-scanner.py"
+    render_gemini_style_scanner_wrapper > "$target_hooks_dir/secret-scanner-wrapper.py"
+    chmod +x "$target_hooks_dir/secret-scanner.py" "$target_hooks_dir/secret-scanner-wrapper.py"
+    echo "  ✅ secret-scanner.py (Antigravity translation, wrapped for BeforeTool contract)"
+    scanner_entry=',
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/secret-scanner-wrapper.py"
+          }'
   else
-    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Antigravity translation)"
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Antigravity translation)"
   fi
 
   hooks_block='  "hooks": {
@@ -1478,7 +1550,7 @@ install_hooks_antigravity() {
           {
             "type": "command",
             "command": "bash .agents/hooks/dangerous-command-guard.sh"
-          }'"$push_entry"'
+          }'"$push_entry""$scanner_entry"'
         ]
       }
     ]
@@ -1519,8 +1591,13 @@ install_hooks_codex_cli() {
     chmod +x "$target_hooks_dir/prevent-direct-push.py"
     echo "  ✅ prevent-direct-push.py (Codex CLI translation, protecting: $trunk_branch)"
     bash_hook_files="$bash_hook_files prevent-direct-push.py"
+
+    cp "$repo_root/.claude/hooks/secret-scanner.py" "$target_hooks_dir/secret-scanner.py"
+    chmod +x "$target_hooks_dir/secret-scanner.py"
+    echo "  ✅ secret-scanner.py (Codex CLI translation)"
+    bash_hook_files="$bash_hook_files secret-scanner.py"
   else
-    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py (Codex CLI translation)"
+    echo "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Codex CLI translation)"
   fi
 
   hooks_json="$target_dir/.codex/hooks.json"

@@ -119,6 +119,64 @@ check_push "push to feature branch while a refspec renames it to main is blocked
 # case only (see prevent-direct-push.py's own `not is_force_push` guard).
 check_push "force push to main allowed here (dangerous-command-guard.sh's own job)" 'git push --force origin main' allow
 
+# --- secret-scanner.py (specs/058-expand-shareable-hooks, T015/T017) ----
+echo "=== secret-scanner.py ==="
+
+# A real git repo, not a mock stdin -- secret-scanner.py's own logic
+# calls `git diff --cached` directly, so PreToolUse's stdin only carries
+# the attempted command string; the staged content comes from the real
+# working tree it's invoked in.
+scan_repo="$(mktemp -d)"
+(
+  cd "$scan_repo"
+  git init -q
+  git config user.email "t@example.com"
+  git config user.name "T"
+)
+
+# secret-scanner.py prints its denial report to stderr and signals block
+# via exit 2 (not stdout, unlike dangerous-command-guard.sh's JSON-on-
+# stdout convention) -- 2>&1 is required to actually capture it; `|| true`
+# keeps set -e from aborting this script on that exit 2. Separated from
+# check_scan() below (which only reports pass/fail) so the raw output can
+# also be inspected separately for the redaction assertion.
+scan_output() {
+  local filecontent="$1"
+  printf '%s' "$filecontent" > "$scan_repo/secret.txt"
+  (cd "$scan_repo" && git add secret.txt)
+  (cd "$scan_repo" && python3 -c "import json,sys; print(json.dumps({'tool_name':'Bash','tool_input':{'command':'git commit -m test'}}))" | python3 "$hooks_dir/secret-scanner.py") 2>&1 || true
+}
+
+check_scan() {
+  local desc="$1" filecontent="$2" expect="$3" out
+  out="$(scan_output "$filecontent")"
+  if [ "$expect" = "allow" ]; then
+    [ -z "$out" ] && pass "$desc" || fail "$desc (should allow, got: $out)"
+  else
+    [ -n "$out" ] && pass "$desc" || fail "$desc (should block, was allowed)"
+  fi
+}
+
+# Stripe live key shape, 24+ alphanumeric after the prefix.
+stripe_key="sk_live_$(printf 'a%.0s' $(seq 1 28))"
+scan_out="$(scan_output "const key = \"$stripe_key\";")"
+if [ -n "$scan_out" ]; then pass "real-looking Stripe key blocked"; else fail "real-looking Stripe key blocked (should block, was allowed)"; fi
+case "$scan_out" in
+  *"$stripe_key"*)
+    fail "denial output leaked the raw matched secret value (FR-012 regression)"
+    ;;
+  *"Match: ${stripe_key:0:4}"*"${stripe_key: -4}"*)
+    pass "denial output shows a redacted match, never the raw value (FR-012)"
+    ;;
+  *)
+    fail "denial output missing the expected redacted-match line: $scan_out"
+    ;;
+esac
+
+check_scan "clean file allowed" "const greeting = \"hello world\";" allow
+
+rm -rf "$scan_repo"
+
 # --- statusline.sh (specs/040-aitmpl-settings-improvements) -------------
 echo "=== statusline.sh ==="
 

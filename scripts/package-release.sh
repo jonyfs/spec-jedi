@@ -102,6 +102,8 @@ echo "  ✅ .claude/hooks/dangerous-command-guard.ps1"
 # an actual downloadable release, not a git checkout.
 cp "$repo_root/.claude/hooks/prevent-direct-push.py" "$hooks_dst/prevent-direct-push.py"
 echo "  ✅ .claude/hooks/prevent-direct-push.py"
+cp "$repo_root/.claude/hooks/secret-scanner.py" "$hooks_dst/secret-scanner.py"
+echo "  ✅ .claude/hooks/secret-scanner.py"
 
 cp "$repo_root/LICENSE" "$stage_root/LICENSE"
 echo "  ✅ LICENSE"

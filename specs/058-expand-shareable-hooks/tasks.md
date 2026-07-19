@@ -162,46 +162,63 @@ Acceptance Scenarios).
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T015 [P] [US2] Add a regression case to
+- [x] T015 [P] [US2] Add a regression case to
   `.claude/hooks/test-hooks.sh`/`.ps1` confirming `secret-scanner.py`'s
   denial output shows a redacted match (`sk-a****...3f2b` shape, first 4
   + last 4 characters) rather than the raw matched value (FR-012).
-- [ ] T016 [P] [US2] Add an install-scenario case asserting
-  `secret-scanner.py` is copied+wired for a scratch target, including its
-  existing self-exclusion behavior (PR #151) surviving the copy.
-- [ ] T017 [P] [US2] **Behavioral test** (closes the `specjedi-analyze`
+- [x] T016 [P] [US2] **Corrected location during implementation** (same
+  finding as T004): added `secret-scanner.py` presence + `PreToolUse`/
+  `Bash` wiring assertions to `install-test-shared-hooks`
+  (bash + windows-native) in `validate.yml`, not `test-hooks.sh`.
+- [x] T017 [P] [US2] **Behavioral test** (closes the `specjedi-analyze`
   gap): in a new `--- secret-scanner.py ---` section of
-  `.claude/hooks/test-hooks.sh`, invoke the hook directly against a
-  staged file containing a real-looking secret pattern (e.g. a Stripe
-  live-key shape) and assert the commit is blocked (Acceptance Scenario
-  1); against a clean staged file, assert it proceeds unblocked
-  (Acceptance Scenario 2).
-- [ ] T018 [P] [US2] **`python3`-gating test**: `python3` absent →
-  `secret-scanner.py` not copied for a scratch install (FR-005).
-- [ ] T019 [P] [US2] **Wave 1/2 harness-translation test**: assert
-  `gemini-cli`/`antigravity`/`codex-cli` scratch installs produce a
-  translated `secret-scanner.py`-equivalent with matching block/allow
-  behavior (mirrors specs/041's own per-harness test precedent).
+  `.claude/hooks/test-hooks.sh`, a real temp git repo stages a file with
+  a Stripe-live-key-shaped secret and invokes the hook directly —
+  confirmed blocked (Acceptance Scenario 1) with a redacted match, and a
+  clean file confirmed allowed (Acceptance Scenario 2). Found and fixed
+  a real capture bug while writing this (the hook prints to stderr and
+  signals block via exit 2, not stdout — `2>&1` was required).
+- [x] T018 [P] [US2] **`python3`-gating test**: extended the same
+  shadow-`PATH` CI step from US1 (T007) — both `prevent-direct-push.py`
+  and `secret-scanner.py` skip together with one combined named warning
+  (FR-005's "one named warning" requirement, verified directly).
+- [x] T019 [P] [US2] **Wave 1/2 harness-translation test**: verified via
+  real scratch installs for `gemini-cli`/`antigravity`/`codex-cli`,
+  including a functional test of the wrapped Gemini CLI output (real
+  secret → `{"decision":"deny",...}` + exit 2; clean file → allow).
 
 ### Implementation for User Story 2
 
-- [ ] T020 [US2] Verify T015/T017 pass against
+- [x] T020 [US2] Verified: T015/T017 pass against
   `.claude/hooks/secret-scanner.py` — the redaction fix (FR-012) was
   already applied during this feature's `specjedi-plan` pass
-  (`specjedi-security` self-invocation, 2026-07-19); this task is
-  pre-completed pending T015/T017's confirmation, not a new
-  implementation.
-- [ ] T021 [P] [US2] Extend `scripts/install.sh`'s claude-code block to
-  `cp` `secret-scanner.py` unmodified, gated on `has_python3` (depends on
-  T002); wire into `PreToolUse`/`Bash`. Until T016/T018 pass.
-- [ ] T022 [P] [US2] Identical addition in `scripts/install.ps1` (depends
-  on T003).
-- [ ] T023 [US2] Stage `secret-scanner.py` in `package-release.sh`/`.ps1`
-  (both files — small, same-shaped addition, tracked as one task).
-- [ ] T024 [US2] Add to `validate.yml`'s `package-content-completeness`
-  list.
-- [ ] T025 [US2] Extend Wave 1/2 harness translation functions for
-  `secret-scanner.py` (FR-007/FR-011). Until T019 passes.
+  (`specjedi-security` self-invocation, 2026-07-19); this task was
+  pre-completed, confirmed by T015/T017's 5/5 passing assertions.
+- [x] T021 [P] [US2] Extended `scripts/install.sh`'s claude-code block to
+  `cp` `secret-scanner.py` unmodified, gated on `has_python3` (nested
+  inside the same gate as prevent-direct-push.py, so both skip together
+  with FR-005's single combined warning); wired into `PreToolUse`/`Bash`
+  via the same multi-hook block builder.
+- [x] T022 [P] [US2] Identical addition in `scripts/install.ps1`.
+- [x] T023 [US2] Staged `secret-scanner.py` in `package-release.sh`/`.ps1`.
+  Verified: built a real tarball, confirmed both Python hooks present.
+- [x] T024 [US2] Added `.claude/hooks/secret-scanner.py` to both
+  `package-content-completeness` assertion blocks.
+- [x] T025 [US2] Extended Wave 1/2 harness translation: a new
+  `render_gemini_style_scanner_wrapper()` wraps the real, unmodified
+  `secret-scanner.py` as a subprocess (its block output is spread across
+  several `print()` calls, unlike `prevent-direct-push.py`'s single
+  `deny()` call, so wrapping — not transforming — its exit
+  code/stderr into the `{"decision":"deny",...}` shape is the more
+  robust translation) for Gemini CLI/Antigravity; Codex CLI reuses it
+  unmodified. Also extended `install.ps1`'s own Wave 1 functions
+  (`Get-GeminiStylePushGuardScript`, `Get-GeminiStyleScannerWrapperScript`,
+  `Get-PythonProtectedSet`) — these hadn't existed at all before this
+  story, a real Principle XIII parity gap found and closed during
+  implementation, not assumed present from `plan.md`. Verified via real
+  scratch installs (bash and native `pwsh`) for all three Wave 1
+  harnesses, including a functional deny/allow test of the wrapped
+  Gemini CLI output.
 
 **Checkpoint**: US1 and US2 both independently functional, including
 their actual deny/allow behavior.

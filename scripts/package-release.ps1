@@ -102,6 +102,8 @@ try {
     # staging-gap bug class specs/042 already found once above.
     Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/prevent-direct-push.py") -Destination (Join-Path $hooksDst "prevent-direct-push.py")
     Write-Host "  ✅ .claude/hooks/prevent-direct-push.py"
+    Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $hooksDst "secret-scanner.py")
+    Write-Host "  ✅ .claude/hooks/secret-scanner.py"
 
     Copy-Item -Path (Join-Path $repoRoot "LICENSE") -Destination (Join-Path $stageRoot "LICENSE")
     Write-Host "  ✅ LICENSE"

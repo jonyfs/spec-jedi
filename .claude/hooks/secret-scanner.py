@@ -237,7 +237,7 @@ def scan_file(file_path):
                     # part of the blocked tool call's own visible result --
                     # echoing the live secret back would leak it into the
                     # agent's context/session logs at the exact moment this
-                    # hook exists to prevent that (specs/058 User Story 5).
+                    # hook exists to prevent that (specs/058 FR-012).
                     if len(raw_match) <= 8:
                         redacted = '*' * len(raw_match)
                     else:

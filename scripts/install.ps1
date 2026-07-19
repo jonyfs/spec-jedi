@@ -865,8 +865,15 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
         [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "prevent-direct-push.py"), $pushContent)
         Write-Host "  ✅ prevent-direct-push.py (protecting: $trunkBranch)"
         $bashHookFiles += "prevent-direct-push.py"
+
+        # specs/058-expand-shareable-hooks (User Story 2): secret-scanner.py,
+        # shipped unmodified (FR-002).
+        Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
+        Write-Host "  ✅ secret-scanner.py"
+        $bashHookFiles += "secret-scanner.py"
     } else {
         $skippedPythonHooks += "prevent-direct-push.py"
+        $skippedPythonHooks += "secret-scanner.py"
     }
     if ($skippedPythonHooks.Count -gt 0) {
         Write-Host "  ⚠️  python3 not found — skipping: $($skippedPythonHooks -join ' ')"
@@ -1074,6 +1081,72 @@ exit 0
     $template.Replace('__TRUNK_CASES__', $TrunkCases)
 }
 
+# specs/058-expand-shareable-hooks (User Story 1, Wave 1): unlike
+# Get-GeminiStyleGuardScript's full PowerShell reimplementation of
+# dangerous-command-guard's bash logic, prevent-direct-push.py stays
+# Python -- only its stdin-parse-identical, deny-output-shape-different
+# nature needs translating (same reasoning as install.sh's
+# render_gemini_style_push_guard()). PowerShell here only builds the
+# Python source text; it never executes it.
+function Get-GeminiStylePushGuardScript {
+    param([string]$PythonProtected)
+    $src = Get-Content (Join-Path $repoRoot ".claude/hooks/prevent-direct-push.py") -Raw
+    $oldProtected = 'PROTECTED = {"main", "develop"}'
+    if (-not $src.Contains($oldProtected)) {
+        throw "FAIL: prevent-direct-push.py's PROTECTED line not found -- update Get-GeminiStylePushGuardScript"
+    }
+    $src = $src.Replace($oldProtected, "PROTECTED = $PythonProtected")
+
+    $oldDeny = "    print(json.dumps({`n        `"hookSpecificOutput`": {`n            `"hookEventName`": `"PreToolUse`",`n            `"permissionDecision`": `"deny`",`n            `"permissionDecisionReason`": reason,`n        }`n    }))`n    sys.exit(0)"
+    if (-not $src.Contains($oldDeny)) {
+        throw "FAIL: prevent-direct-push.py's deny-output block not found -- update Get-GeminiStylePushGuardScript"
+    }
+    $newDeny = "    print(json.dumps({`"decision`": `"deny`", `"reason`": reason}))`n    sys.exit(2)"
+    $src = $src.Replace($oldDeny, $newDeny)
+
+    $header = "#!/usr/bin/env python3`n# Translated from .claude/hooks/prevent-direct-push.py (specs/`n# 058-expand-shareable-hooks, User Story 1) for a BeforeTool-shaped`n# hook contract: stdin carries tool_input.command (unchanged), stdout`n# is {`"decision`":`"deny`",`"reason`":`"...`"} with exit code 2 to block.`n"
+    $body = ($src -split '"""', 3)[2].TrimStart("`n")
+    return $header + $body
+}
+
+# specs/058-expand-shareable-hooks (User Story 2, Wave 1): PowerShell
+# counterpart of render_gemini_style_scanner_wrapper() -- same
+# subprocess-wrapping approach (never a fragile transform of
+# secret-scanner.py's own multi-print output logic).
+function Get-GeminiStyleScannerWrapperScript {
+    return @'
+#!/usr/bin/env python3
+# Wraps .claude/hooks/secret-scanner.py (specs/058-expand-shareable-hooks,
+# User Story 2) unmodified for a BeforeTool-shaped hook contract: stdin
+# carries tool_input.command (unchanged), stdout is
+# {"decision":"deny","reason":"..."} with exit code 2 to block.
+import json
+import os
+import subprocess
+import sys
+
+scanner_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secret-scanner.py")
+result = subprocess.run(
+    [sys.executable, scanner_path],
+    input=sys.stdin.read(),
+    capture_output=True,
+    text=True,
+)
+if result.returncode == 2:
+    print(json.dumps({"decision": "deny", "reason": result.stderr.strip()}))
+    sys.exit(2)
+sys.exit(0)
+'@
+}
+
+# specs/058-expand-shareable-hooks: PowerShell counterpart of
+# build_python_protected_set() (scripts/install.sh) -- identical
+# semantics.
+function Get-PythonProtectedSet {
+    param([string]$TrunkBranch)
+    return '{' + (($TrunkBranch -split ' ' | ForEach-Object { "`"$_`"" }) -join ', ') + '}'
+}
+
 function Install-HooksGeminiCli {
     $trunkBranch = Get-TrunkBranch -Dir $TargetDir
     $trunkCases = Get-TrunkCases -TrunkBranch $trunkBranch
@@ -1083,7 +1156,36 @@ function Install-HooksGeminiCli {
     [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $guardScript)
     Write-Host "  ✅ dangerous-command-guard.ps1 (Gemini CLI translation, protecting: $trunkBranch)"
 
-    $hooksBlock = @'
+    $pushEntry = ""
+    $scannerEntry = ""
+    if (Test-Python3Available) {
+        $pythonProtected = Get-PythonProtectedSet -TrunkBranch $trunkBranch
+        $pushScript = Get-GeminiStylePushGuardScript -PythonProtected $pythonProtected
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "prevent-direct-push.py"), $pushScript)
+        Write-Host "  ✅ prevent-direct-push.py (Gemini CLI translation, protecting: $trunkBranch)"
+        $pushEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/prevent-direct-push.py"
+          }
+'@
+        Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
+        $wrapperScript = Get-GeminiStyleScannerWrapperScript
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "secret-scanner-wrapper.py"), $wrapperScript)
+        Write-Host "  ✅ secret-scanner.py (Gemini CLI translation, wrapped for BeforeTool contract)"
+        $scannerEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .gemini/hooks/secret-scanner-wrapper.py"
+          }
+'@
+    } else {
+        Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Gemini CLI translation)"
+    }
+
+    $hooksBlock = @"
   "hooks": {
     "BeforeTool": [
       {
@@ -1092,12 +1194,12 @@ function Install-HooksGeminiCli {
           {
             "type": "command",
             "command": "powershell -NoProfile -File .gemini/hooks/dangerous-command-guard.ps1"
-          }
+          }$pushEntry$scannerEntry
         ]
       }
     ]
   }
-'@
+"@
     Merge-JsonKey -Target (Join-Path $TargetDir ".gemini/settings.json") -KeyCheck '"hooks"' -Block $hooksBlock -OkMessage "BeforeTool hook wired"
 }
 
@@ -1117,7 +1219,36 @@ function Install-HooksAntigravity {
     [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $guardScript)
     Write-Host "  ✅ dangerous-command-guard.ps1 (Antigravity translation, protecting: $trunkBranch)"
 
-    $hooksBlock = @'
+    $pushEntry = ""
+    $scannerEntry = ""
+    if (Test-Python3Available) {
+        $pythonProtected = Get-PythonProtectedSet -TrunkBranch $trunkBranch
+        $pushScript = Get-GeminiStylePushGuardScript -PythonProtected $pythonProtected
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "prevent-direct-push.py"), $pushScript)
+        Write-Host "  ✅ prevent-direct-push.py (Antigravity translation, protecting: $trunkBranch)"
+        $pushEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/prevent-direct-push.py"
+          }
+'@
+        Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
+        $wrapperScript = Get-GeminiStyleScannerWrapperScript
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "secret-scanner-wrapper.py"), $wrapperScript)
+        Write-Host "  ✅ secret-scanner.py (Antigravity translation, wrapped for BeforeTool contract)"
+        $scannerEntry = @'
+,
+          {
+            "type": "command",
+            "command": "python3 .agents/hooks/secret-scanner-wrapper.py"
+          }
+'@
+    } else {
+        Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Antigravity translation)"
+    }
+
+    $hooksBlock = @"
   "hooks": {
     "BeforeTool": [
       {
@@ -1126,12 +1257,12 @@ function Install-HooksAntigravity {
           {
             "type": "command",
             "command": "powershell -NoProfile -File .agents/hooks/dangerous-command-guard.ps1"
-          }
+          }$pushEntry$scannerEntry
         ]
       }
     ]
   }
-'@
+"@
     Merge-JsonKey -Target (Join-Path $TargetDir ".agents/hooks.json") -KeyCheck '"hooks"' -Block $hooksBlock -OkMessage "hooks wired (schema inferred shared with Gemini CLI)"
 }
 
@@ -1151,39 +1282,84 @@ function Install-HooksCodexCli {
     [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "dangerous-command-guard.ps1"), $hookContent)
     Write-Host "  ✅ dangerous-command-guard.ps1 (Codex CLI translation, protecting: $trunkBranch)"
 
+    # specs/058-expand-shareable-hooks (User Story 1/2, Wave 1): Codex
+    # CLI's hooks.json schema is structurally identical to Claude Code's
+    # own, so prevent-direct-push.py/secret-scanner.py are reused
+    # unmodified (same trunk-substitution technique as the claude-code
+    # block), unlike Gemini CLI/Antigravity which need translated shapes.
+    $bashHookFiles = @("dangerous-command-guard.ps1")
+    if (Test-Python3Available) {
+        $pythonProtected = Get-PythonProtectedSet -TrunkBranch $trunkBranch
+        $pushSource = Get-Content (Join-Path $repoRoot ".claude/hooks/prevent-direct-push.py") -Raw
+        $pushContent = $pushSource.Replace('PROTECTED = {"main", "develop"}', "PROTECTED = $pythonProtected")
+        [System.IO.File]::WriteAllText((Join-Path $targetHooksDir "prevent-direct-push.py"), $pushContent)
+        Write-Host "  ✅ prevent-direct-push.py (Codex CLI translation, protecting: $trunkBranch)"
+        $bashHookFiles += "prevent-direct-push.py"
+
+        Copy-Item -Path (Join-Path $repoRoot ".claude/hooks/secret-scanner.py") -Destination (Join-Path $targetHooksDir "secret-scanner.py")
+        Write-Host "  ✅ secret-scanner.py (Codex CLI translation)"
+        $bashHookFiles += "secret-scanner.py"
+    } else {
+        Write-Host "  ⚠️  python3 not found — skipping: prevent-direct-push.py secret-scanner.py (Codex CLI translation)"
+    }
+
     $hooksJson = Join-Path $TargetDir ".codex/hooks.json"
     if (-not (Test-Path $hooksJson)) {
         $parentDir = Split-Path -Parent $hooksJson
         if ($parentDir -and -not (Test-Path $parentDir)) {
             New-Item -ItemType Directory -Force -Path $parentDir | Out-Null
         }
-        $hooksJsonContent = @'
+        $bashHookEntries = ($bashHookFiles | ForEach-Object {
+            if ($_ -like "*.ps1") {
+                @"
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File .codex/hooks/$_"
+          }
+"@
+            } else {
+                @"
+          {
+            "type": "command",
+            "command": "python3 .codex/hooks/$_"
+          }
+"@
+            }
+        }) -join ",`n"
+        $hooksJsonContent = @"
 {
   "hooks": {
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -File .codex/hooks/dangerous-command-guard.ps1"
-          }
+$bashHookEntries
         ]
       }
     ]
   }
 }
-'@
+"@
         [System.IO.File]::WriteAllText($hooksJson, $hooksJsonContent)
-        Write-Host "  ✅ .codex/hooks.json created (PreToolUse -> dangerous-command-guard.ps1)"
-    } elseif (-not ([System.IO.File]::ReadAllText($hooksJson).Contains("dangerous-command-guard"))) {
-        Write-Host "  ℹ️  .codex/hooks.json already exists — add dangerous-command-guard.ps1 to its PreToolUse array manually ($targetHooksDir/dangerous-command-guard.ps1), not overwritten automatically."
+        $wiredList = $bashHookFiles -join ' '
+        Write-Host "  ✅ .codex/hooks.json created (PreToolUse -> $wiredList)"
     } else {
-        Write-Host "  ℹ️  .codex/hooks.json already references dangerous-command-guard — leaving as-is."
+        $hooksJsonContent = [System.IO.File]::ReadAllText($hooksJson)
+        $missingHooks = @($bashHookFiles | Where-Object {
+            if ($_ -eq "dangerous-command-guard.ps1") { -not $hooksJsonContent.Contains("dangerous-command-guard") }
+            else { -not $hooksJsonContent.Contains($_) }
+        })
+        if ($missingHooks.Count -gt 0) {
+            $missingPaths = ($missingHooks | ForEach-Object { Join-Path $targetHooksDir $_ }) -join ' '
+            Write-Host "  ℹ️  .codex/hooks.json already exists — add the following manually to its PreToolUse array, not overwritten automatically: $missingPaths"
+        } else {
+            Write-Host "  ℹ️  .codex/hooks.json already references every shareable hook — leaving as-is."
+        }
     }
 
+    $approveList = $bashHookFiles -join ' '
     Write-Host "  ⚠️  Codex CLI requires explicit trust: run /hooks inside Codex CLI and"
-    Write-Host "     approve dangerous-command-guard.ps1 before it actually runs — the"
+    Write-Host "     approve $approveList before they actually run — the"
     Write-Host "     installer cannot pre-approve a hook inside Codex CLI's own trust"
     Write-Host "     store (developers.openai.com/codex/hooks)."
 }

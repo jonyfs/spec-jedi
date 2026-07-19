@@ -806,6 +806,7 @@ jobs:
             ".claude/hooks/dangerous-command-guard.sh" \
             ".claude/hooks/dangerous-command-guard.ps1" \
             ".claude/hooks/prevent-direct-push.py" \
+            ".claude/hooks/secret-scanner.py" \
             "RELEASE_VERSION"; do
             if ! printf '%s\n' "$listing" | grep -qF "spec-jedi-v0.0.0-ci-check/$path"; then
               echo "FAIL: expected $path to be present in the release package, but it wasn't"
@@ -874,6 +875,7 @@ jobs:
             ".claude/hooks/dangerous-command-guard.sh",
             ".claude/hooks/dangerous-command-guard.ps1",
             ".claude/hooks/prevent-direct-push.py",
+            ".claude/hooks/secret-scanner.py",
             "RELEASE_VERSION"
           )
           foreach ($path in $mustExist) {
@@ -1249,10 +1251,12 @@ jobs:
           ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
           test -f "$dir1/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: dangerous-command-guard.sh missing"; exit 1; }
           test -f "$dir1/.claude/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1)"; exit 1; }
+          test -f "$dir1/.claude/hooks/secret-scanner.py" || { echo "FAIL: secret-scanner.py missing (specs/058 US2)"; exit 1; }
           grep -q '"statusLine"' "$dir1/.claude/settings.json" || { echo "FAIL: statusLine missing"; exit 1; }
           grep -q '"permissions"' "$dir1/.claude/settings.json" || { echo "FAIL: permissions missing"; exit 1; }
           python3 -m json.tool "$dir1/.claude/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
           grep -qF 'python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prevent-direct-push.py\"' "$dir1/.claude/settings.json" || { echo "FAIL: prevent-direct-push.py not wired into PreToolUse/Bash"; exit 1; }
+          grep -qF 'python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/secret-scanner.py\"' "$dir1/.claude/settings.json" || { echo "FAIL: secret-scanner.py not wired into PreToolUse/Bash"; exit 1; }
           if [ -f "$dir1/.claude/hooks/skill-quality-guard.sh" ] || [ -f "$dir1/.claude/hooks/cross-platform-parity-guard.sh" ]; then
             echo "FAIL: repo-internal-only hook leaked into target"
             exit 1
@@ -1298,11 +1302,11 @@ jobs:
           PATH="$shadow" bash scripts/install.sh "$dir_nopy" --harness claude-code >/tmp/nopython-out.txt 2>&1 || true
           rm -rf "$shadow"
           cat /tmp/nopython-out.txt
-          if [ -f "$dir_nopy/.claude/hooks/prevent-direct-push.py" ]; then
-            echo "FAIL: prevent-direct-push.py installed despite python3 absence"
+          if [ -f "$dir_nopy/.claude/hooks/prevent-direct-push.py" ] || [ -f "$dir_nopy/.claude/hooks/secret-scanner.py" ]; then
+            echo "FAIL: a Python-based hook installed despite python3 absence"
             exit 1
           fi
-          grep -q "python3 not found.*prevent-direct-push.py" /tmp/nopython-out.txt || { echo "FAIL: no named skip-warning for prevent-direct-push.py"; exit 1; }
+          grep -q "python3 not found.*prevent-direct-push.py.*secret-scanner.py" /tmp/nopython-out.txt || { echo "FAIL: no single combined named skip-warning for both hooks (FR-005)"; exit 1; }
           test -f "$dir_nopy/.claude/hooks/dangerous-command-guard.sh" || { echo "FAIL: bash hook wrongly skipped too"; exit 1; }
           echo "OK: python3-gated hooks skip cleanly with a named warning; bash hooks unaffected"
       - name: Pre-existing settings.json content survives the merge
@@ -1336,10 +1340,12 @@ jobs:
           ./scripts/install.ps1 -TargetDir $dir1 -Harness claude-code | Out-Null
           if (-not (Test-Path (Join-Path $dir1 ".claude/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
           if (-not (Test-Path (Join-Path $dir1 ".claude/hooks/prevent-direct-push.py"))) { Write-Host "FAIL: prevent-direct-push.py missing (specs/058 US1)"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir1 ".claude/hooks/secret-scanner.py"))) { Write-Host "FAIL: secret-scanner.py missing (specs/058 US2)"; exit 1 }
           $settings = Get-Content (Join-Path $dir1 ".claude/settings.json") -Raw
           if ($settings -notmatch '"statusLine"') { Write-Host "FAIL: statusLine missing"; exit 1 }
           if ($settings -notmatch '"permissions"') { Write-Host "FAIL: permissions missing"; exit 1 }
           if (-not $settings.Contains('python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/prevent-direct-push.py\"')) { Write-Host "FAIL: prevent-direct-push.py not wired into PreToolUse/Bash"; exit 1 }
+          if (-not $settings.Contains('python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/secret-scanner.py\"')) { Write-Host "FAIL: secret-scanner.py not wired into PreToolUse/Bash"; exit 1 }
           $null = $settings | ConvertFrom-Json
           if ((Test-Path (Join-Path $dir1 ".claude/hooks/skill-quality-guard.ps1")) -or (Test-Path (Join-Path $dir1 ".claude/hooks/cross-platform-parity-guard.ps1"))) {
             Write-Host "FAIL: repo-internal-only hook leaked into target"
@@ -1652,6 +1658,9 @@ jobs:
           grep -q '"decision": "deny"' "$dir1/.gemini/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py translated decision shape missing"; exit 1; }
           python3 -m json.tool "$dir1/.gemini/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON"; exit 1; }
           grep -q "prevent-direct-push.py" "$dir1/.gemini/settings.json" || { echo "FAIL: prevent-direct-push.py not wired into BeforeTool"; exit 1; }
+          test -f "$dir1/.gemini/hooks/secret-scanner.py" || { echo "FAIL: secret-scanner.py missing (specs/058 US2 Wave 1)"; exit 1; }
+          test -f "$dir1/.gemini/hooks/secret-scanner-wrapper.py" || { echo "FAIL: secret-scanner-wrapper.py missing (specs/058 US2 Wave 1)"; exit 1; }
+          grep -q "secret-scanner-wrapper.py" "$dir1/.gemini/settings.json" || { echo "FAIL: secret-scanner-wrapper.py not wired into BeforeTool"; exit 1; }
           echo "OK: gemini-cli hooks translated, not copied"
       - name: antigravity install produces a translated hook in its own confirmed settings location
         shell: bash
@@ -1662,6 +1671,8 @@ jobs:
           test -f "$dir2/.agents/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1; }
           grep -q '"BeforeTool"' "$dir2/.agents/hooks.json" || { echo "FAIL: BeforeTool hook missing"; exit 1; }
           grep -q "prevent-direct-push.py" "$dir2/.agents/hooks.json" || { echo "FAIL: prevent-direct-push.py not wired into BeforeTool"; exit 1; }
+          test -f "$dir2/.agents/hooks/secret-scanner-wrapper.py" || { echo "FAIL: secret-scanner-wrapper.py missing (specs/058 US2 Wave 1)"; exit 1; }
+          grep -q "secret-scanner-wrapper.py" "$dir2/.agents/hooks.json" || { echo "FAIL: secret-scanner-wrapper.py not wired into BeforeTool"; exit 1; }
           python3 -m json.tool "$dir2/.agents/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
           echo "OK: antigravity hooks.json present and valid"
       - name: codex-cli install produces hooks.json and tells the user to run /hooks to trust it
@@ -1673,9 +1684,11 @@ jobs:
           test -f "$dir3/.codex/hooks/prevent-direct-push.py" || { echo "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1; }
           grep -q '"PreToolUse"' "$dir3/.codex/hooks.json" || { echo "FAIL: PreToolUse hook missing"; exit 1; }
           grep -q "prevent-direct-push.py" "$dir3/.codex/hooks.json" || { echo "FAIL: prevent-direct-push.py not wired into PreToolUse"; exit 1; }
+          test -f "$dir3/.codex/hooks/secret-scanner.py" || { echo "FAIL: secret-scanner.py missing (specs/058 US2 Wave 1)"; exit 1; }
+          grep -q "secret-scanner.py" "$dir3/.codex/hooks.json" || { echo "FAIL: secret-scanner.py not wired into PreToolUse"; exit 1; }
           python3 -m json.tool "$dir3/.codex/hooks.json" >/dev/null || { echo "FAIL: hooks.json not valid JSON"; exit 1; }
           echo "$out" | grep -q '/hooks' || { echo "FAIL: trust-workflow message missing"; exit 1; }
-          echo "$out" | grep -q "prevent-direct-push.py before they actually run" || { echo "FAIL: trust-workflow message doesn't name prevent-direct-push.py"; exit 1; }
+          echo "$out" | grep -q "prevent-direct-push.py secret-scanner.py before they actually run" || { echo "FAIL: trust-workflow message doesn't name both hooks"; exit 1; }
           echo "OK: codex-cli hooks.json present, trust-workflow message shown"
       - name: Idempotent re-run produces byte-identical output for all three Wave 1 harnesses
         shell: bash
@@ -1707,21 +1720,28 @@ jobs:
           $dir1 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
           ./scripts/install.ps1 -TargetDir $dir1 -Harness gemini-cli | Out-Null
           if (-not (Test-Path (Join-Path $dir1 ".gemini/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir1 ".gemini/hooks/prevent-direct-push.py"))) { Write-Host "FAIL: prevent-direct-push.py missing (specs/058 US1 Wave 1)"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir1 ".gemini/hooks/secret-scanner-wrapper.py"))) { Write-Host "FAIL: secret-scanner-wrapper.py missing (specs/058 US2 Wave 1)"; exit 1 }
           $settings = Get-Content (Join-Path $dir1 ".gemini/settings.json") -Raw
           if ($settings -notmatch '"BeforeTool"') { Write-Host "FAIL: BeforeTool hook missing"; exit 1 }
+          if ($settings -notmatch 'secret-scanner-wrapper.py') { Write-Host "FAIL: secret-scanner-wrapper.py not wired"; exit 1 }
           $null = $settings | ConvertFrom-Json
           $hookContent = Get-Content (Join-Path $dir1 ".gemini/hooks/dangerous-command-guard.ps1") -Raw
           if ($hookContent -match 'hookSpecificOutput') { Write-Host "FAIL: script still uses Claude Code's own output shape"; exit 1 }
           if ($hookContent -notmatch '"decision"') { Write-Host "FAIL: translated decision/reason output shape missing"; exit 1 }
-          Write-Host "OK: gemini-cli hook translated, not copied"
+          $pushContent = Get-Content (Join-Path $dir1 ".gemini/hooks/prevent-direct-push.py") -Raw
+          if ($pushContent -notmatch '"decision": "deny"') { Write-Host "FAIL: prevent-direct-push.py translated decision shape missing"; exit 1 }
+          Write-Host "OK: gemini-cli hooks translated, not copied"
       - name: antigravity install produces a translated hook in its own confirmed settings location
         shell: pwsh
         run: |
           $dir2 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
           ./scripts/install.ps1 -TargetDir $dir2 -Harness antigravity | Out-Null
           if (-not (Test-Path (Join-Path $dir2 ".agents/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir2 ".agents/hooks/secret-scanner-wrapper.py"))) { Write-Host "FAIL: secret-scanner-wrapper.py missing (specs/058 US2 Wave 1)"; exit 1 }
           $hooks = Get-Content (Join-Path $dir2 ".agents/hooks.json") -Raw
           if ($hooks -notmatch '"BeforeTool"') { Write-Host "FAIL: BeforeTool hook missing"; exit 1 }
+          if ($hooks -notmatch 'secret-scanner-wrapper.py') { Write-Host "FAIL: secret-scanner-wrapper.py not wired"; exit 1 }
           $null = $hooks | ConvertFrom-Json
           Write-Host "OK: antigravity hooks.json present and valid"
       - name: codex-cli install produces hooks.json and tells the user to run /hooks to trust it
@@ -1730,10 +1750,13 @@ jobs:
           $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
           $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness codex-cli 6>&1
           if (-not (Test-Path (Join-Path $dir3 ".codex/hooks/dangerous-command-guard.ps1"))) { Write-Host "FAIL: dangerous-command-guard.ps1 missing"; exit 1 }
+          if (-not (Test-Path (Join-Path $dir3 ".codex/hooks/secret-scanner.py"))) { Write-Host "FAIL: secret-scanner.py missing (specs/058 US2 Wave 1)"; exit 1 }
           $hooks = Get-Content (Join-Path $dir3 ".codex/hooks.json") -Raw
           if ($hooks -notmatch '"PreToolUse"') { Write-Host "FAIL: PreToolUse hook missing"; exit 1 }
+          if ($hooks -notmatch 'secret-scanner.py') { Write-Host "FAIL: secret-scanner.py not wired"; exit 1 }
           $null = $hooks | ConvertFrom-Json
           if (($out -join "`n") -notmatch '/hooks') { Write-Host "FAIL: trust-workflow message missing"; exit 1 }
+          if (($out -join "`n") -notmatch 'prevent-direct-push.py secret-scanner.py before they actually run') { Write-Host "FAIL: trust-workflow message doesn't name both hooks"; exit 1 }
           Write-Host "OK: codex-cli hooks.json present, trust-workflow message shown"
 
   # specs/041-release-hooks-settings (User Story 2, Wave 2): permissions-

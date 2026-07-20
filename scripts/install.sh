@@ -992,6 +992,60 @@ ${permissions_block}"
 # Antigravity/OpenCode/Zed) needed the identical merge -- a real, repeated
 # pattern now, not a premature abstraction (plan.md's own "third/fourth
 # harness proves a pattern" reasoning for when to factor).
+# specs/061-install-merge-pretooluse: merges the given missing hook
+# filenames into an EXISTING target settings.json's hooks.PreToolUse
+# array, under the named matcher group (creating the group if absent).
+# Deliberate, scoped exception to this file's own general "never
+# round-trip parse settings.json" caution (see update_shared_settings's
+# neighboring comment) -- Python 3.7+ preserves dict insertion order, so
+# no content is lost or reordered by this json.load/json.dump round
+# trip; the only side effect is possible re-indentation to this
+# project's own 2-space convention (spec.md Clarifications, FR-008).
+# Requires python3 -- callers MUST gate on has_python3 first.
+merge_pretooluse_hooks() {
+  local target="$1" matcher="$2" hooks="$3"
+  python3 - "$target" "$matcher" $hooks <<'PYEOF'
+import json, sys
+
+target, matcher, *hook_files = sys.argv[1:]
+
+try:
+    with open(target) as f:
+        data = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"FAIL: {target} is not valid JSON ({e}) -- refusing to guess, fix it manually and re-run.")
+    sys.exit(1)
+
+def entry_for(hook_file):
+    if hook_file.endswith(".py"):
+        return {
+            "type": "command",
+            "command": f'python3 "${{CLAUDE_PROJECT_DIR}}/.claude/hooks/{hook_file}"'
+        }
+    return {
+        "type": "command",
+        "command": "bash",
+        "args": [f"${{CLAUDE_PROJECT_DIR}}/.claude/hooks/{hook_file}"]
+    }
+
+pretooluse = data.setdefault("hooks", {}).setdefault("PreToolUse", [])
+group = next((g for g in pretooluse if g.get("matcher") == matcher), None)
+if group is None:
+    group = {"matcher": matcher, "hooks": []}
+    pretooluse.append(group)
+
+existing = {json.dumps(h, sort_keys=True) for h in group["hooks"]}
+for hf in hook_files:
+    e = entry_for(hf)
+    if json.dumps(e, sort_keys=True) not in existing:
+        group["hooks"].append(e)
+
+with open(target, "w") as f:
+    json.dump(data, f, indent=2)
+    f.write("\n")
+PYEOF
+}
+
 merge_json_key() {
   local target="$1" key_check="$2" block="$3" ok_message="$4"
   mkdir -p "$(dirname "$target")"
@@ -1262,7 +1316,27 @@ if [ "$harness" = "claude-code" ] && [ "$install_shared_hooks" -eq 1 ]; then
 
   if [ -n "$missing_bash_hooks" ] || [ -n "$missing_read_hooks" ]; then
     if printf '%s' "$settings_content" | grep -q '"PreToolUse"'; then
-      echo "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically:$(for h in $missing_bash_hooks $missing_read_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
+      # specs/061-install-merge-pretooluse: python3 available -> merge
+      # directly into the existing array (FR-001/FR-002/FR-003); no
+      # python3 -> preserve today's exact manual-instruction fallback
+      # (FR-005), unchanged.
+      if has_python3; then
+        merge_ok=1
+        if [ -n "$missing_bash_hooks" ]; then
+          merge_pretooluse_hooks "$target_settings" "Bash" "$missing_bash_hooks" || merge_ok=0
+        fi
+        if [ "$merge_ok" -eq 1 ] && [ -n "$missing_read_hooks" ]; then
+          merge_pretooluse_hooks "$target_settings" "Read|Grep|Glob" "$missing_read_hooks" || merge_ok=0
+        fi
+        if [ "$merge_ok" -eq 1 ]; then
+          echo "  ✅ Merged$(for h in $missing_bash_hooks $missing_read_hooks; do printf ' %s' "$h"; done) into existing PreToolUse hooks array in $(basename "$target_settings")"
+        else
+          echo "FAIL: could not merge shareable hooks into $(basename "$target_settings")'s existing PreToolUse array (see error above) -- refusing to guess."
+          exit 1
+        fi
+      else
+        echo "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically:$(for h in $missing_bash_hooks $missing_read_hooks; do printf ' %s/%s' "$target_hooks_dir" "$h"; done)"
+      fi
     else
       settings_content="$(printf '%s' "$settings_content" | sed -e 's/[[:space:]]*$//')"
       body="${settings_content%\}}"

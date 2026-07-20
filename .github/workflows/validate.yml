@@ -1397,7 +1397,7 @@ jobs:
           grep -q '"SessionStart"' "$dir5/.claude/settings.json" || { echo "FAIL: pre-existing content was destroyed"; exit 1; }
           python3 -m json.tool "$dir5/.claude/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON after merge"; exit 1; }
           echo "OK: pre-existing settings.json content preserved"
-      - name: add-manually message names every new hook, not just dangerous-command-guard.sh (FR-006, T056)
+      - name: Every new hook (including opt-in conventional-commits.py) merges into an existing PreToolUse array, not just dangerous-command-guard.sh (FR-006, T056; updated by specs/061 -- python3-available now merges instead of printing an add-manually message)
         shell: bash
         run: |
           dir6=$(mktemp -d)
@@ -1409,13 +1409,23 @@ jobs:
             }
           }
           EOF
-          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/addmanually-out.txt 2>&1
-          msg="$(grep 'already has a PreToolUse hooks array' /tmp/addmanually-out.txt)"
-          [ -n "$msg" ] || { echo "FAIL: add-manually message missing"; exit 1; }
+          # specs/061-install-merge-pretooluse: forcing no-python3 here
+          # would be wrong -- prevent-direct-push.py/secret-scanner.py/
+          # conventional-commits.py are only even candidates for merging
+          # when python3 IS available (has_python3-gated at the copy
+          # step, not just the merge step), so this scenario (all 5
+          # hooks named) requires python3 available, which now takes the
+          # merge path instead of the old add-manually message (confirmed
+          # the hard way: forcing no-python3 here only ever produces a
+          # 2-hook message, dangerous-command-guard.sh + secret-file-
+          # guard.sh, never the python3-based ones).
+          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/merge-out.txt 2>&1
+          grep -q "Merged.*into existing PreToolUse hooks array" /tmp/merge-out.txt || { echo "FAIL: merge confirmation message missing"; cat /tmp/merge-out.txt; exit 1; }
           for h in dangerous-command-guard.sh prevent-direct-push.py secret-scanner.py secret-file-guard.sh conventional-commits.py; do
-            echo "$msg" | grep -q "$h" || { echo "FAIL: add-manually message doesn't name $h: $msg"; exit 1; }
+            grep -q "$h" "$dir6/.claude/settings.json" || { echo "FAIL: $h not merged into settings.json"; exit 1; }
           done
-          echo "OK: add-manually message names every new hook, not just dangerous-command-guard.sh"
+          grep -q "my-own-hook" "$dir6/.claude/settings.json" || { echo "FAIL: pre-existing hook lost"; exit 1; }
+          echo "OK: every new hook (including opt-in conventional-commits.py) merged, pre-existing hook survived"
 
   # Native PowerShell counterpart of install-test-shared-hooks, same
   # reasoning as install-test-windows-native.
@@ -1471,7 +1481,7 @@ jobs:
           if ($settings -notmatch '"SessionStart"') { Write-Host "FAIL: pre-existing content was destroyed"; exit 1 }
           $null = $settings | ConvertFrom-Json
           Write-Host "OK: pre-existing settings.json content preserved"
-      - name: add-manually message names every new hook, not just dangerous-command-guard.ps1 (FR-006, T056)
+      - name: Every new hook (including opt-in conventional-commits.ps1) merges into an existing PreToolUse array, not just dangerous-command-guard.ps1 (FR-006, T056; updated by specs/061 -- install.ps1 has no python3 gate, so this now merges unconditionally instead of printing an add-manually message)
         shell: pwsh
         run: |
           $env:SPECJEDI_TEST_FORCE_HOOKS_PROMPT = "1"
@@ -1484,12 +1494,13 @@ jobs:
           }' | Set-Content (Join-Path $dir6 ".claude/settings.json")
           $out = "`ny`n`n" | & pwsh -NoProfile -File ./scripts/install.ps1 -TargetDir $dir6 -Harness claude-code 2>&1
           $joined = $out -join "`n"
-          $msgLine = ($joined -split "`n" | Where-Object { $_ -match "already has a PreToolUse hooks array" })
-          if (-not $msgLine) { Write-Host "FAIL: add-manually message missing"; exit 1 }
+          if ($joined -notmatch "Merged.*into existing PreToolUse hooks array") { Write-Host "FAIL: merge confirmation message missing: $joined"; exit 1 }
+          $settingsJson = Get-Content (Join-Path $dir6 ".claude/settings.json") -Raw
           foreach ($h in @("dangerous-command-guard.ps1", "prevent-direct-push.py", "secret-scanner.py", "secret-file-guard.ps1", "conventional-commits.py")) {
-              if ($msgLine -notmatch [regex]::Escape($h)) { Write-Host "FAIL: add-manually message doesn't name $h`: $msgLine"; exit 1 }
+              if ($settingsJson -notmatch [regex]::Escape($h)) { Write-Host "FAIL: $h not merged into settings.json"; exit 1 }
           }
-          Write-Host "OK: add-manually message names every new hook, not just dangerous-command-guard.ps1"
+          if ($settingsJson -notmatch "my-own-hook") { Write-Host "FAIL: pre-existing hook lost"; exit 1 }
+          Write-Host "OK: every new hook (including opt-in conventional-commits.ps1) merged, pre-existing hook survived"
 
   # specs/042-skill-freshness-validation (User Story 1): proves
   # install.sh writes the installed-release marker correctly in both
@@ -2119,6 +2130,315 @@ jobs:
           $null = $content | ConvertFrom-Json
           Write-Host "OK: amazon-q custom agent JSON present and valid"
 
+  # specs/061-install-merge-pretooluse: exercises the new merge-into-
+  # existing-PreToolUse-array behavior -- distinct from every scenario in
+  # install-test-shared-hooks/wave1/wave2 above, which all start from a
+  # fresh target with no pre-existing settings.json.
+  install-test-shared-hooks-merge:
+    name: install-test-shared-hooks-merge (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Missing hooks merge into an existing PreToolUse array's matching group, or a new group is created (US1/US2)
+        shell: bash
+        run: |
+          dir1=$(mktemp -d)
+          mkdir -p "$dir1/.claude"
+          cat > "$dir1/.claude/settings.json" <<'EOF'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "bash",
+                      "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.sh"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          EOF
+          ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
+          # Path passed as a real argv element (sys.argv[1]), never
+          # string-interpolated into the python source -- Git Bash's
+          # MSYS layer only auto-translates Unix-style paths that are
+          # distinct argv elements to a Win32 program, not path-shaped
+          # substrings buried inside a larger string argument (confirmed
+          # the hard way: string-interpolation caused a real
+          # FileNotFoundError on windows-latest during this feature's own
+          # CI run).
+          python3 -c "
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          groups = d['hooks']['PreToolUse']
+          bash_group = next(g for g in groups if g['matcher'] == 'Bash')
+          read_group = next((g for g in groups if g['matcher'] == 'Read|Grep|Glob'), None)
+          assert any('my-custom-hook.sh' in str(h) for h in bash_group['hooks']), 'FAIL: pre-existing Bash hook lost'
+          assert any('dangerous-command-guard.sh' in str(h) for h in bash_group['hooks']), 'FAIL: dangerous-command-guard.sh not merged'
+          assert read_group is not None, 'FAIL: no Read|Grep|Glob group created'
+          assert any('secret-file-guard.sh' in str(h) for h in read_group['hooks']), 'FAIL: secret-file-guard.sh not merged into new group'
+          print('OK: pre-existing Bash hook survived, missing Bash hooks merged, new Read|Grep|Glob group created')
+          " "$dir1/.claude/settings.json"
+
+          dir2=$(mktemp -d)
+          mkdir -p "$dir2/.claude"
+          cat > "$dir2/.claude/settings.json" <<'EOF'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Read|Grep|Glob",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "bash",
+                      "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/other-read-hook.sh"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          EOF
+          ./scripts/install.sh "$dir2" --harness claude-code >/dev/null
+          python3 -c "
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          groups = d['hooks']['PreToolUse']
+          read_group = next(g for g in groups if g['matcher'] == 'Read|Grep|Glob')
+          bash_group = next((g for g in groups if g['matcher'] == 'Bash'), None)
+          assert any('other-read-hook.sh' in str(h) for h in read_group['hooks']), 'FAIL: pre-existing Read hook lost'
+          assert any('secret-file-guard.sh' in str(h) for h in read_group['hooks']), 'FAIL: secret-file-guard.sh not merged'
+          assert bash_group is not None, 'FAIL: no Bash group created'
+          assert any('dangerous-command-guard.sh' in str(h) for h in bash_group['hooks']), 'FAIL: Bash hooks not merged into new group'
+          print('OK: pre-existing Read hook survived, missing Read hooks merged, new Bash group created')
+          " "$dir2/.claude/settings.json"
+      - name: No-python3 fallback still prints today's exact manual-instruction message, unchanged (US3, FR-005)
+        shell: bash
+        run: |
+          dir3=$(mktemp -d)
+          mkdir -p "$dir3/.claude"
+          cat > "$dir3/.claude/settings.json" <<'EOF'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "bash",
+                      "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.sh"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          EOF
+          cp "$dir3/.claude/settings.json" /tmp/t009-before.json
+          out=$(SPECJEDI_TEST_FORCE_NO_PYTHON3=1 ./scripts/install.sh "$dir3" --harness claude-code)
+          echo "$out" | grep -q "add the following manually" || { echo "FAIL: manual-instruction message missing"; exit 1; }
+          python3 -c "
+          import json, sys
+          before = json.load(open(sys.argv[1]))
+          after = json.load(open(sys.argv[2]))
+          assert before['hooks']['PreToolUse'] == after['hooks']['PreToolUse'], 'FAIL: PreToolUse changed despite no python3'
+          print('OK: PreToolUse array unchanged when python3 unavailable, manual message shown')
+          " /tmp/t009-before.json "$dir3/.claude/settings.json"
+      - name: Malformed existing PreToolUse structure fails loudly, never a guessed insertion (FR-006)
+        shell: bash
+        run: |
+          dir4=$(mktemp -d)
+          mkdir -p "$dir4/.claude"
+          cat > "$dir4/.claude/settings.json" <<'EOF'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    { "type": "command", "command": "bash", },
+                  ]
+                }
+              ]
+            }
+          }
+          EOF
+          if ./scripts/install.sh "$dir4" --harness claude-code >/tmp/t010-out.txt 2>&1; then
+            echo "FAIL: install.sh should have exited non-zero on malformed JSON"
+            cat /tmp/t010-out.txt
+            exit 1
+          fi
+          grep -qi "not valid JSON" /tmp/t010-out.txt || { echo "FAIL: no clear JSON-invalid failure message"; cat /tmp/t010-out.txt; exit 1; }
+          echo "OK: malformed PreToolUse structure fails loudly with a clear message"
+      - name: Idempotent re-run after a merge produces byte-identical settings.json (SC-003)
+        shell: bash
+        run: |
+          dir5=$(mktemp -d)
+          mkdir -p "$dir5/.claude"
+          cat > "$dir5/.claude/settings.json" <<'EOF'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "bash",
+                      "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.sh"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          EOF
+          ./scripts/install.sh "$dir5" --harness claude-code >/dev/null
+          cp "$dir5/.claude/settings.json" /tmp/t012-before.json
+          ./scripts/install.sh "$dir5" --harness claude-code >/dev/null
+          diff /tmp/t012-before.json "$dir5/.claude/settings.json" || { echo "FAIL: settings.json changed on re-run"; exit 1; }
+          echo "OK: idempotent re-run after a merge, no duplicate entries"
+
+  # Native PowerShell counterpart of install-test-shared-hooks-merge, same
+  # reasoning as install-test-shared-hooks-windows-native.
+  install-test-shared-hooks-merge-windows-native:
+    name: install-test-shared-hooks-merge (windows-latest, native PowerShell)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Missing hooks merge into an existing PreToolUse array's matching group, or a new group is created (US1/US2)
+        shell: pwsh
+        run: |
+          $dir1 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir1 ".claude") | Out-Null
+          $seed1 = @'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "powershell",
+                      "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.ps1"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          '@
+          Set-Content -Path (Join-Path $dir1 ".claude/settings.json") -Value $seed1
+          ./scripts/install.ps1 -TargetDir $dir1 -Harness claude-code | Out-Null
+          $data = Get-Content (Join-Path $dir1 ".claude/settings.json") -Raw | ConvertFrom-Json
+          $bashGroup = $data.hooks.PreToolUse | Where-Object { $_.matcher -eq "Bash" }
+          $readGroup = $data.hooks.PreToolUse | Where-Object { $_.matcher -eq "Read|Grep|Glob" }
+          $bashJson = $bashGroup | ConvertTo-Json -Depth 10
+          if ($bashJson -notmatch "my-custom-hook") { Write-Host "FAIL: pre-existing Bash hook lost"; exit 1 }
+          if ($bashJson -notmatch "dangerous-command-guard") { Write-Host "FAIL: dangerous-command-guard.ps1 not merged"; exit 1 }
+          if (-not $readGroup) { Write-Host "FAIL: no Read|Grep|Glob group created"; exit 1 }
+          $readJson = $readGroup | ConvertTo-Json -Depth 10
+          if ($readJson -notmatch "secret-file-guard") { Write-Host "FAIL: secret-file-guard.ps1 not merged into new group"; exit 1 }
+          Write-Host "OK: pre-existing Bash hook survived, missing Bash hooks merged, new Read|Grep|Glob group created"
+
+          $dir2 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir2 ".claude") | Out-Null
+          $seed2 = @'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Read|Grep|Glob",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "powershell",
+                      "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/other-read-hook.ps1"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          '@
+          Set-Content -Path (Join-Path $dir2 ".claude/settings.json") -Value $seed2
+          ./scripts/install.ps1 -TargetDir $dir2 -Harness claude-code | Out-Null
+          $data2 = Get-Content (Join-Path $dir2 ".claude/settings.json") -Raw | ConvertFrom-Json
+          $readGroup2 = $data2.hooks.PreToolUse | Where-Object { $_.matcher -eq "Read|Grep|Glob" }
+          $bashGroup2 = $data2.hooks.PreToolUse | Where-Object { $_.matcher -eq "Bash" }
+          $readJson2 = $readGroup2 | ConvertTo-Json -Depth 10
+          if ($readJson2 -notmatch "other-read-hook") { Write-Host "FAIL: pre-existing Read hook lost"; exit 1 }
+          if ($readJson2 -notmatch "secret-file-guard") { Write-Host "FAIL: secret-file-guard.ps1 not merged"; exit 1 }
+          if (-not $bashGroup2) { Write-Host "FAIL: no Bash group created"; exit 1 }
+          $bashJson2 = $bashGroup2 | ConvertTo-Json -Depth 10
+          if ($bashJson2 -notmatch "dangerous-command-guard") { Write-Host "FAIL: Bash hooks not merged into new group"; exit 1 }
+          Write-Host "OK: pre-existing Read hook survived, missing Read hooks merged, new Bash group created"
+      - name: Malformed existing PreToolUse structure fails loudly, never a guessed insertion (FR-006)
+        shell: pwsh
+        run: |
+          # PowerShell's ConvertFrom-Json tolerates a trailing comma
+          # (confirmed by direct test, unlike Python's strict json module)
+          # -- unbalanced/truncated braces is the shape that reliably
+          # fails here, mirroring install.sh's own "unbalanced braces"
+          # malformed-JSON test case.
+          $dir3 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir3 ".claude") | Out-Null
+          $seed3 = '{ "hooks": { "PreToolUse": [ { "matcher": "Bash" '
+          Set-Content -Path (Join-Path $dir3 ".claude/settings.json") -Value $seed3
+          $out = ./scripts/install.ps1 -TargetDir $dir3 -Harness claude-code 6>&1
+          if ($LASTEXITCODE -eq 0) { Write-Host "FAIL: install.ps1 should have exited non-zero on malformed JSON"; exit 1 }
+          if (($out -join "`n") -notmatch "(?i)not valid JSON|invalid JSON|JSON") { Write-Host "FAIL: no clear JSON-invalid failure message"; exit 1 }
+          Write-Host "OK: malformed PreToolUse structure fails loudly with a clear message"
+          # GitHub Actions' pwsh shell wrapper (dot-sourcing via
+          # -Command) uses the LAST $LASTEXITCODE as this step's own
+          # process exit code -- confirmed the hard way: this test's own
+          # logic passed (the "OK" line above printed) but the step still
+          # reported failure, because install.ps1's own expected exit 1
+          # was still sitting in $LASTEXITCODE when the script ended.
+          # Reset it explicitly now that we've correctly consumed it.
+          exit 0
+      - name: Idempotent re-run after a merge produces byte-identical settings.json (SC-003)
+        shell: pwsh
+        run: |
+          $dir4 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir4 ".claude") | Out-Null
+          $seed4 = @'
+          {
+            "hooks": {
+              "PreToolUse": [
+                {
+                  "matcher": "Bash",
+                  "hooks": [
+                    {
+                      "type": "command",
+                      "command": "powershell",
+                      "args": ["-NoProfile", "-File", "${CLAUDE_PROJECT_DIR}/.claude/hooks/my-custom-hook.ps1"]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+          '@
+          Set-Content -Path (Join-Path $dir4 ".claude/settings.json") -Value $seed4
+          ./scripts/install.ps1 -TargetDir $dir4 -Harness claude-code | Out-Null
+          $before = Get-Content (Join-Path $dir4 ".claude/settings.json") -Raw
+          ./scripts/install.ps1 -TargetDir $dir4 -Harness claude-code | Out-Null
+          $after = Get-Content (Join-Path $dir4 ".claude/settings.json") -Raw
+          if ($before -ne $after) { Write-Host "FAIL: settings.json changed on re-run"; exit 1 }
+          Write-Host "OK: idempotent re-run after a merge, no duplicate entries"
+
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one
   # under ci-gate's `needs:` below. Branch protection only ever requires
@@ -2127,7 +2447,7 @@ jobs:
   ci-gate:
     name: ci-gate
     runs-on: ubuntu-latest
-    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, install-test-shared-hooks, install-test-shared-hooks-windows-native, install-test-release-marker, install-test-release-marker-windows-native, install-test-shared-hooks-wave1, install-test-shared-hooks-wave1-windows-native, install-test-shared-hooks-wave2, install-test-shared-hooks-wave2-windows-native, session-start-freshness-check, session-start-freshness-check-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, memory-file-injection, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
+    needs: [lint, lint-windows-native, install-test, install-test-windows-native, install-test-codex-cli, install-test-codex-cli-windows-native, install-test-trae, install-test-trae-windows-native, install-test-antigravity, install-test-antigravity-windows-native, install-test-bridge-harnesses, install-test-bridge-harnesses-windows-native, install-test-shared-hooks, install-test-shared-hooks-windows-native, install-test-release-marker, install-test-release-marker-windows-native, install-test-shared-hooks-wave1, install-test-shared-hooks-wave1-windows-native, install-test-shared-hooks-wave2, install-test-shared-hooks-wave2-windows-native, install-test-shared-hooks-merge, install-test-shared-hooks-merge-windows-native, session-start-freshness-check, session-start-freshness-check-windows-native, harness-auto-detect, harness-auto-detect-windows-native, opencode-compatibility, warp-compatibility, bootstrap-installer-smoke, package-content-completeness, memory-file-injection, owner-gate, tokencheck-detection, tokencheck-detection-windows-native]
     if: always()
     steps:
       - name: Require every battery job to have succeeded

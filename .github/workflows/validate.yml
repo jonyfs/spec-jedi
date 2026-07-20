@@ -1618,21 +1618,43 @@ jobs:
       - name: Stale marker surfaces the update line naming the real latest tag
         shell: bash
         run: |
+          # specs/058-expand-shareable-hooks (FR-010 follow-up, real CI
+          # failure observed 2026-07-20): session-start.sh's own live
+          # api.github.com call uses a deliberately tight 2s --max-time
+          # (comment at that call site) so every session start stays
+          # fast -- correct, intentional behavior that degrades silently
+          # on a slow/unavailable API rather than erroring. That means
+          # THIS test, which depends on that live call actually
+          # succeeding within 2s to prove anything, is inherently exposed
+          # to real, transient GitHub API latency spikes no code change
+          # in session-start.sh itself should paper over. Retried up to
+          # 3 times with a short backoff -- same reasoning as
+          # bootstrap-install.sh's own 3-attempt retry loop (specs/042
+          # research.md Decision 3) cited in session-start.sh's own
+          # comment -- since a single transient miss here is a CI
+          # environment flake, not a regression in the script under test.
           proj=$(mktemp -d)
           mkdir -p "$proj/scripts" "$proj/.specify"
           cp scripts/session-start.sh "$proj/scripts/session-start.sh"
           echo '{"installed_release": "v0.0.0-definitely-stale"}' > "$proj/.specify/release-marker.json"
-          out="$(bash "$proj/scripts/session-start.sh")"
-          if ! printf '%s' "$out" | grep -qF "v0.0.0-definitely-stale installed"; then
-            echo "FAIL: expected the stale tag named in the output, got:"; printf '%s\n' "$out"; exit 1
-          fi
-          if ! printf '%s' "$out" | grep -qF "scripts/bootstrap-install.sh/.ps1"; then
-            echo "FAIL: expected the update path named in the output, got:"; printf '%s\n' "$out"; exit 1
-          fi
-          if ! printf '%s' "$out" | grep -qF "ask whether to update"; then
-            echo "FAIL: expected the specs/055 interactive-ask trigger in the output, got:"; printf '%s\n' "$out"; exit 1
-          fi
-          echo "OK: stale marker produces a correctly-worded update line"
+
+          attempt=1
+          max_attempts=3
+          while :; do
+            out="$(bash "$proj/scripts/session-start.sh")"
+            if printf '%s' "$out" | grep -qF "v0.0.0-definitely-stale installed" \
+              && printf '%s' "$out" | grep -qF "scripts/bootstrap-install.sh/.ps1" \
+              && printf '%s' "$out" | grep -qF "ask whether to update"; then
+              echo "OK: stale marker produces a correctly-worded update line (attempt $attempt/$max_attempts)"
+              break
+            fi
+            if [ "$attempt" -ge "$max_attempts" ]; then
+              echo "FAIL: expected the stale-tag update line after $max_attempts attempts, got:"; printf '%s\n' "$out"; exit 1
+            fi
+            echo "Attempt $attempt/$max_attempts didn't get the expected update line (likely a transient api.github.com latency spike, matching session-start.sh's own deliberately tight 2s timeout) -- retrying in 5s..."
+            attempt=$((attempt + 1))
+            sleep 5
+          done
       - name: Current marker stays silent, blocked network degrades silently and fast
         shell: bash
         run: |
@@ -1709,16 +1731,37 @@ jobs:
       - name: Stale marker surfaces the update line naming the real latest tag
         shell: pwsh
         run: |
+          # specs/058-expand-shareable-hooks (FR-010 follow-up): same
+          # retry reasoning as the bash counterpart of this step -- this
+          # test depends on a live api.github.com call succeeding within
+          # session-start.ps1's own deliberately tight timeout, so a
+          # single transient miss is a CI environment flake, not a
+          # regression, and gets retried before failing.
           $proj = Join-Path $env:RUNNER_TEMP "freshness-stale"
           New-Item -ItemType Directory -Force -Path (Join-Path $proj "scripts") | Out-Null
           New-Item -ItemType Directory -Force -Path (Join-Path $proj ".specify") | Out-Null
           Copy-Item "scripts/session-start.ps1" (Join-Path $proj "scripts/session-start.ps1")
           '{"installed_release": "v0.0.0-definitely-stale"}' | Set-Content (Join-Path $proj ".specify/release-marker.json")
-          $out = & (Join-Path $proj "scripts/session-start.ps1") | Out-String
-          if ($out -notmatch [regex]::Escape("v0.0.0-definitely-stale installed")) { Write-Host "FAIL: expected the stale tag named in the output, got: $out"; exit 1 }
-          if ($out -notmatch [regex]::Escape("scripts/bootstrap-install.sh/.ps1")) { Write-Host "FAIL: expected the update path named in the output, got: $out"; exit 1 }
-          if ($out -notmatch [regex]::Escape("ask whether to update")) { Write-Host "FAIL: expected the specs/055 interactive-ask trigger in the output, got: $out"; exit 1 }
-          Write-Host "OK: stale marker produces a correctly-worded update line"
+
+          $maxAttempts = 3
+          $ok = $false
+          for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+              $out = & (Join-Path $proj "scripts/session-start.ps1") | Out-String
+              if (($out -match [regex]::Escape("v0.0.0-definitely-stale installed")) -and
+                  ($out -match [regex]::Escape("scripts/bootstrap-install.sh/.ps1")) -and
+                  ($out -match [regex]::Escape("ask whether to update"))) {
+                  Write-Host "OK: stale marker produces a correctly-worded update line (attempt $attempt/$maxAttempts)"
+                  $ok = $true
+                  break
+              }
+              if ($attempt -lt $maxAttempts) {
+                  Write-Host "Attempt $attempt/$maxAttempts didn't get the expected update line (likely a transient api.github.com latency spike) -- retrying in 5s..."
+                  Start-Sleep -Seconds 5
+              } else {
+                  Write-Host "FAIL: expected the stale-tag update line after $maxAttempts attempts, got: $out"
+              }
+          }
+          if (-not $ok) { exit 1 }
       - name: Blocked network degrades silently and fast
         shell: pwsh
         run: |

@@ -1397,7 +1397,7 @@ jobs:
           grep -q '"SessionStart"' "$dir5/.claude/settings.json" || { echo "FAIL: pre-existing content was destroyed"; exit 1; }
           python3 -m json.tool "$dir5/.claude/settings.json" >/dev/null || { echo "FAIL: settings.json not valid JSON after merge"; exit 1; }
           echo "OK: pre-existing settings.json content preserved"
-      - name: add-manually message names every new hook, not just dangerous-command-guard.sh (FR-006, T056)
+      - name: Every new hook (including opt-in conventional-commits.py) merges into an existing PreToolUse array, not just dangerous-command-guard.sh (FR-006, T056; updated by specs/061 -- python3-available now merges instead of printing an add-manually message)
         shell: bash
         run: |
           dir6=$(mktemp -d)
@@ -1409,19 +1409,23 @@ jobs:
             }
           }
           EOF
-          # specs/061-install-merge-pretooluse: the add-manually message
-          # is now the has_python3-unavailable fallback path (FR-005) --
-          # when python3 IS available, this exact scenario merges
-          # instead (verified separately by install-test-shared-hooks-
-          # merge), so this test must force no-python3 to keep exercising
-          # the manual-instruction message this test is actually about.
-          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 SPECJEDI_TEST_FORCE_NO_PYTHON3=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/addmanually-out.txt 2>&1
-          msg="$(grep 'already has a PreToolUse hooks array' /tmp/addmanually-out.txt)"
-          [ -n "$msg" ] || { echo "FAIL: add-manually message missing"; exit 1; }
+          # specs/061-install-merge-pretooluse: forcing no-python3 here
+          # would be wrong -- prevent-direct-push.py/secret-scanner.py/
+          # conventional-commits.py are only even candidates for merging
+          # when python3 IS available (has_python3-gated at the copy
+          # step, not just the merge step), so this scenario (all 5
+          # hooks named) requires python3 available, which now takes the
+          # merge path instead of the old add-manually message (confirmed
+          # the hard way: forcing no-python3 here only ever produces a
+          # 2-hook message, dangerous-command-guard.sh + secret-file-
+          # guard.sh, never the python3-based ones).
+          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/merge-out.txt 2>&1
+          grep -q "Merged.*into existing PreToolUse hooks array" /tmp/merge-out.txt || { echo "FAIL: merge confirmation message missing"; cat /tmp/merge-out.txt; exit 1; }
           for h in dangerous-command-guard.sh prevent-direct-push.py secret-scanner.py secret-file-guard.sh conventional-commits.py; do
-            echo "$msg" | grep -q "$h" || { echo "FAIL: add-manually message doesn't name $h: $msg"; exit 1; }
+            grep -q "$h" "$dir6/.claude/settings.json" || { echo "FAIL: $h not merged into settings.json"; exit 1; }
           done
-          echo "OK: add-manually message names every new hook, not just dangerous-command-guard.sh"
+          grep -q "my-own-hook" "$dir6/.claude/settings.json" || { echo "FAIL: pre-existing hook lost"; exit 1; }
+          echo "OK: every new hook (including opt-in conventional-commits.py) merged, pre-existing hook survived"
 
   # Native PowerShell counterpart of install-test-shared-hooks, same
   # reasoning as install-test-windows-native.
@@ -2396,6 +2400,14 @@ jobs:
           if ($LASTEXITCODE -eq 0) { Write-Host "FAIL: install.ps1 should have exited non-zero on malformed JSON"; exit 1 }
           if (($out -join "`n") -notmatch "(?i)not valid JSON|invalid JSON|JSON") { Write-Host "FAIL: no clear JSON-invalid failure message"; exit 1 }
           Write-Host "OK: malformed PreToolUse structure fails loudly with a clear message"
+          # GitHub Actions' pwsh shell wrapper (dot-sourcing via
+          # -Command) uses the LAST $LASTEXITCODE as this step's own
+          # process exit code -- confirmed the hard way: this test's own
+          # logic passed (the "OK" line above printed) but the step still
+          # reported failure, because install.ps1's own expected exit 1
+          # was still sitting in $LASTEXITCODE when the script ended.
+          # Reset it explicitly now that we've correctly consumed it.
+          exit 0
       - name: Idempotent re-run after a merge produces byte-identical settings.json (SC-003)
         shell: pwsh
         run: |

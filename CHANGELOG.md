@@ -9,6 +9,27 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **`specjedi-caveman-mode`** (#162) — a new, distributable skill
+  packaging the third-party `caveman` plugin's token-compression
+  behavior for Spec Jedi projects. Compresses chat output to tight,
+  caveman-speak phrasing (~65% fewer output tokens on average across six
+  levels: `lite`/`full`/`ultra`/`wenyan`) while keeping code, commands,
+  file paths, and error messages byte-exact. Activated per session via
+  `/caveman ultra`; documented in this project's own `CLAUDE.md`.
+- **`specjedi-plan` auto-invokes `specjedi-clarify`** (feature 059, #163)
+  — `specjedi-plan`'s Step 1 previously stopped and merely recommended
+  running `specjedi-clarify` when a `spec.md` still carried `NEEDS
+  CLARIFICATION` markers, requiring a separate manual command. Now
+  invokes `specjedi-clarify` automatically instead, mirroring
+  `specjedi-clarify`'s own already-documented proactive self-invocation
+  precedent from `specjedi-specify`. Bounded to once per `specjedi-plan`
+  run — if markers survive one auto-invocation, the run stops and names
+  the specific remaining question(s) rather than looping or silently
+  proceeding. A marker `specjedi-plan` itself writes into `plan.md`'s own
+  Technical Context stays out of scope, unaffected by this change.
+
 ## [v0.4.0] - 2026-07-19
 
 ### Added

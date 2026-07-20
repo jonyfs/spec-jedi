@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.6.0] - 2026-07-20
+
 ### Added
 
 - **`install.sh`/`.ps1` merge shareable hooks into an existing `PreToolUse` array** (feature 061, #167) — a target project's `settings.json` already having a `hooks.PreToolUse` array made the installer refuse to touch it, printing an "add manually" message instead of wiring the missing hooks. Now merges directly (python3 `json.load`/`json.dump` on `install.sh`, native `ConvertFrom-Json`/`ConvertTo-Json` on `install.ps1`) into the correct matcher group, creating it when absent — a deliberate, clarified exception to this project's general anti-round-trip caution for `settings.json`, justified because both preserve key order (nothing lost or reordered). No-python3 fallback and malformed-JSON fail-loud path preserved and verified unchanged.

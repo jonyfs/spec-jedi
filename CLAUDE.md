@@ -39,7 +39,7 @@ runs again next session, unchanged.
 
 ## Caveman Mode
 
-This project has caveman-mode skill installed (`.claude/skills/caveman-mode/SKILL.md`). Caveman compresses replies to ~65% fewer output tokens while keeping code, commands, and errors byte-exact.
+This project has caveman-mode skill installed (`.claude/skills/specjedi-caveman-mode/SKILL.md`). Caveman compresses replies to ~65% fewer output tokens while keeping code, commands, and errors byte-exact.
 
 **To activate for a session**, type:
 ```

@@ -143,13 +143,13 @@ the change per this project's own Trunk-Based workflow (Principle X).
   now-stale "stop and recommend `specjedi-clarify`" wording — re-run the
   same `grep -rl` check plan.md's Technical Context already performed,
   confirming it still returns exactly one match (the file just edited).
-- [ ] T009 Commit the three-file change set (`specs/059-plan-auto-
+- [x] T009 Commit the three-file change set (`specs/059-plan-auto-
   clarify/spec.md`, `plan.md`, `tasks.md`, and
   `.claude/skills/specjedi-plan/SKILL.md`, plus `CLAUDE.md`'s already-
   updated plan pointer) on the `059-plan-auto-clarify` branch and open a
   PR against `main` (Constitution Principle X) — never commit directly to
   `main`.
-- [ ] T010 Self-invoke `specjedi-govcheck` against the PR's diff before
+- [x] T010 Self-invoke `specjedi-govcheck` against the PR's diff before
   considering the PR complete (matching this session's own established
   practice for the caveman-mode-skill PR) — surface any finding, never
   block PR opening on it (CI `ci-gate` remains the actual merge gate).

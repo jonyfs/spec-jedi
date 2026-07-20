@@ -881,9 +881,23 @@ function Merge-JsonKeyArrayValue {
     $blockData = "{$Block}" | ConvertFrom-Json
     $existing = @($data.$KeyName)
     $newValue = @($blockData.$KeyName)
+    $beforeJson = ($existing | ConvertTo-Json -Depth 20 -Compress)
     $merged = @(Merge-JsonArrayValue -Existing $existing -NewValue $newValue)
-    $data.$KeyName = @($merged)
+    $afterJson = ($merged | ConvertTo-Json -Depth 20 -Compress)
 
+    # Only rewrite the file when something was actually appended --
+    # re-running against content that's already fully present must stay
+    # a true no-op (SC-003), never a reformat-only write. A prior
+    # version always wrote here regardless of whether anything changed,
+    # which silently reformatted the *entire* settings.json
+    # (ConvertTo-Json's own array style differs from the original file's
+    # formatting) on every re-run -- confirmed the hard way via a real
+    # CI idempotency-test failure.
+    if ($beforeJson -eq $afterJson) {
+        return $false
+    }
+
+    $data.$KeyName = @($merged)
     ($data | ConvertTo-Json -Depth 20) | Set-Content -Path $Target
     return $true
 }

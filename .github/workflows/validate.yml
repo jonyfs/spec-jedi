@@ -2548,7 +2548,7 @@ jobs:
           $dir7 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
           ./scripts/install.ps1 -TargetDir $dir7 -Harness opencode | Out-Null
           $before7 = Get-Content (Join-Path $dir7 "opencode.json") -Raw
-          $out7 = ./scripts/install.ps1 -TargetDir $dir7 -Harness opencode
+          $out7 = ./scripts/install.ps1 -TargetDir $dir7 -Harness opencode 6>&1
           if (($out7 -join "`n") -notmatch "already has this key") { Write-Host "FAIL: expected unchanged message for object-shaped permission key"; exit 1 }
           $after7 = Get-Content (Join-Path $dir7 "opencode.json") -Raw
           if ($before7 -ne $after7) { Write-Host "FAIL: opencode.json changed despite object-shaped key"; exit 1 }

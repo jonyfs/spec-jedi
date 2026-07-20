@@ -1105,25 +1105,40 @@ if isinstance(existing, list) and isinstance(new_value, list):
     # two same-matcher groups sitting side by side. A plain array of
     # standalone items (no matcher/hooks shape) falls back to whole-item
     # dedup-append.
+    changed = False
     if all(is_matcher_group(i) for i in existing + new_value):
         for new_group in new_value:
             match = next((g for g in existing if g.get("matcher") == new_group.get("matcher")), None)
             if match is None:
                 existing.append(new_group)
+                changed = True
                 continue
             seen = {json.dumps(h, sort_keys=True) for h in match["hooks"]}
             for h in new_group["hooks"]:
                 if json.dumps(h, sort_keys=True) not in seen:
                     match["hooks"].append(h)
+                    changed = True
     else:
         seen = {json.dumps(item, sort_keys=True) for item in existing}
         for item in new_value:
             if json.dumps(item, sort_keys=True) not in seen:
                 existing.append(item)
-    with open(target, "w") as f:
-        json.dump(data, f, indent=2)
-        f.write("\n")
-    print("MERGED")
+                changed = True
+    # Only rewrite the file when something was actually appended --
+    # re-running against content that's already fully present must stay
+    # a true no-op (SC-003), never a reformat-only write. A prior
+    # version always wrote+dumped here regardless of `changed`, which
+    # silently reformatted the *entire* settings.json (Python's own
+    # indent=2 array style differs from the bash-heredoc-produced
+    # compact single-line arrays elsewhere in the file) on every re-run
+    # -- confirmed the hard way via a real CI idempotency-test failure.
+    if changed:
+        with open(target, "w") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+        print("MERGED")
+    else:
+        print("SKIP")
 else:
     print("SKIP")
 PYEOF

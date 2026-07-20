@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.4.0] - 2026-07-19
+
 ### Added
 
 - **`specjedi-catalog-audit`** (feature 049, #142) — a new, strictly

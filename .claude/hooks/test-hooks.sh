@@ -295,6 +295,35 @@ if python3 -m json.tool "$target" >/dev/null 2>&1 && grep -q '"statusLine"' "$ta
 else
   fail "fresh file: invalid JSON or missing keys"
 fi
+
+# specs/058-expand-shareable-hooks (FR-010, closes a specjedi-analyze
+# finding): every prior check here only asserted the "permissions" KEY
+# exists -- never that its deny list is actually recursive (`Read(**/`,
+# not root-anchored `Read(./`) or that it carries the full FR-009
+# pattern set, not just the original four-entry list from specs/041.
+if ! grep -q 'Read(\./' "$target" \
+  && grep -q 'Read(\*\*/\.env)' "$target" \
+  && grep -q 'Read(\*\*/\.env\.\*)' "$target" \
+  && grep -q 'Read(\*\*/secrets/\*\*)' "$target" \
+  && grep -q 'Read(\*\*/config/credentials\.json)' "$target" \
+  && grep -q 'Read(\*\*/id_rsa)' "$target" \
+  && grep -q 'Read(\*\*/id_dsa)' "$target" \
+  && grep -q 'Read(\*\*/id_ecdsa)' "$target" \
+  && grep -q 'Read(\*\*/id_ed25519)' "$target" \
+  && grep -q 'Read(\*\*/\*\.pem)' "$target" \
+  && grep -q 'Read(\*\*/\*\.key)' "$target" \
+  && grep -q 'Read(\*\*/\*\.pfx)' "$target" \
+  && grep -q 'Read(\*\*/\*\.p12)' "$target" \
+  && grep -q 'Read(\*\*/\.npmrc)' "$target" \
+  && grep -q 'Read(\*\*/\.netrc)' "$target" \
+  && grep -q 'Read(\*\*/\.pgpass)' "$target" \
+  && grep -q 'Read(\*\*/\.git-credentials)' "$target" \
+  && grep -q 'Read(\*\*/\.aws/credentials)' "$target" \
+  && grep -q 'Read(\*\*/\.docker/config\.json)' "$target"; then
+  pass "permissions.deny is recursive (Read(**/...)) with the full FR-009/FR-010 pattern set"
+else
+  fail "permissions.deny is missing the recursive prefix or part of the FR-009/FR-010 pattern set"
+fi
 rm -rf "$tmpdir"
 
 tmpdir="$(mktemp -d)"

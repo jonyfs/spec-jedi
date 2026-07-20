@@ -224,6 +224,29 @@ if ($installPs1 -notmatch '(?s)(function Update-SharedSettings \{.*?\n\})') {
         } else {
             Test-Fail "fresh file: missing expected keys"
         }
+
+        # specs/058-expand-shareable-hooks (FR-010, closes a
+        # specjedi-analyze finding): every prior check here only
+        # asserted the "permissions" KEY exists -- never that its deny
+        # list is actually recursive (Read(**/, not root-anchored
+        # Read(./) or that it carries the full FR-009 pattern set.
+        $fr010Patterns = @(
+            'Read\(\*\*/\.env\)', 'Read\(\*\*/\.env\.\*\)',
+            'Read\(\*\*/secrets/\*\*\)', 'Read\(\*\*/config/credentials\.json\)',
+            'Read\(\*\*/id_rsa\)', 'Read\(\*\*/id_dsa\)', 'Read\(\*\*/id_ecdsa\)',
+            'Read\(\*\*/id_ed25519\)', 'Read\(\*\*/\*\.pem\)', 'Read\(\*\*/\*\.key\)',
+            'Read\(\*\*/\*\.pfx\)', 'Read\(\*\*/\*\.p12\)', 'Read\(\*\*/\.npmrc\)',
+            'Read\(\*\*/\.netrc\)', 'Read\(\*\*/\.pgpass\)',
+            'Read\(\*\*/\.git-credentials\)', 'Read\(\*\*/\.aws/credentials\)',
+            'Read\(\*\*/\.docker/config\.json\)'
+        )
+        $hasRootAnchored = $content -match 'Read\(\./'
+        $missingFr010 = $fr010Patterns | Where-Object { $content -notmatch $_ }
+        if (-not $hasRootAnchored -and $missingFr010.Count -eq 0) {
+            Test-Pass "permissions.deny is recursive (Read(**/...)) with the full FR-009/FR-010 pattern set"
+        } else {
+            Test-Fail "permissions.deny is missing the recursive prefix or part of the FR-009/FR-010 pattern set"
+        }
     } catch {
         Test-Fail "fresh file: invalid JSON"
     }

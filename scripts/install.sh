@@ -1062,6 +1062,97 @@ merge_json_key() {
 
   case "$content" in
     *"$key_check"*)
+      # specs/063-merge-json-key-array-merge: when python3 is available
+      # and the existing key's value is a JSON array, and the new
+      # block's own top-level value is also an array, merge the missing
+      # items in (content-deduplicated) instead of silently leaving the
+      # file untouched -- reusing the same parse/dedup/write technique
+      # merge_pretooluse_hooks() already proved (specs/061). Any other
+      # shape (object, scalar, mismatch) falls through to the original
+      # conservative message, unchanged.
+      if has_python3; then
+        local key_name merge_status merge_exit
+        key_name="${key_check#\"}"
+        key_name="${key_name%\"}"
+        merge_status="$(python3 - "$target" "$key_name" "$block" <<'PYEOF'
+import json, sys
+
+target, key_name, block = sys.argv[1], sys.argv[2], sys.argv[3]
+
+try:
+    with open(target) as f:
+        data = json.load(f)
+except json.JSONDecodeError as e:
+    print(f"FAIL: {target} is not valid JSON ({e}) -- refusing to guess, fix it manually and re-run.")
+    sys.exit(1)
+
+existing = data.get(key_name)
+try:
+    new_value = json.loads("{" + block + "}")[key_name]
+except (json.JSONDecodeError, KeyError):
+    print("SKIP")
+    sys.exit(0)
+
+def is_matcher_group(item):
+    return isinstance(item, dict) and "matcher" in item and "hooks" in item
+
+if isinstance(existing, list) and isinstance(new_value, list):
+    # specs/063: an array of {"matcher": ..., "hooks": [...]} groups (the
+    # same shape merge_pretooluse_hooks() already handles for
+    # PreToolUse, and "Stop"'s own real shape) needs group-aware
+    # merging -- a new group with the same matcher value merges into
+    # that existing group's own hooks array (deduplicated), rather than
+    # two same-matcher groups sitting side by side. A plain array of
+    # standalone items (no matcher/hooks shape) falls back to whole-item
+    # dedup-append.
+    changed = False
+    if all(is_matcher_group(i) for i in existing + new_value):
+        for new_group in new_value:
+            match = next((g for g in existing if g.get("matcher") == new_group.get("matcher")), None)
+            if match is None:
+                existing.append(new_group)
+                changed = True
+                continue
+            seen = {json.dumps(h, sort_keys=True) for h in match["hooks"]}
+            for h in new_group["hooks"]:
+                if json.dumps(h, sort_keys=True) not in seen:
+                    match["hooks"].append(h)
+                    changed = True
+    else:
+        seen = {json.dumps(item, sort_keys=True) for item in existing}
+        for item in new_value:
+            if json.dumps(item, sort_keys=True) not in seen:
+                existing.append(item)
+                changed = True
+    # Only rewrite the file when something was actually appended --
+    # re-running against content that's already fully present must stay
+    # a true no-op (SC-003), never a reformat-only write. A prior
+    # version always wrote+dumped here regardless of `changed`, which
+    # silently reformatted the *entire* settings.json (Python's own
+    # indent=2 array style differs from the bash-heredoc-produced
+    # compact single-line arrays elsewhere in the file) on every re-run
+    # -- confirmed the hard way via a real CI idempotency-test failure.
+    if changed:
+        with open(target, "w") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+        print("MERGED")
+    else:
+        print("SKIP")
+else:
+    print("SKIP")
+PYEOF
+)"
+        merge_exit=$?
+        if [ "$merge_exit" -ne 0 ]; then
+          echo "$merge_status"
+          exit 1
+        fi
+        if [ "$merge_status" = "MERGED" ]; then
+          echo "  ✅ $(basename "$target") updated ($ok_message)"
+          return
+        fi
+      fi
       echo "  ℹ️  $(basename "$target") already has this key — leaving as-is."
       return
       ;;

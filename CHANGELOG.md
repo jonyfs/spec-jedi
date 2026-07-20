@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.5.0] - 2026-07-20
+
 ### Added
 
 - **`specjedi-caveman-mode`** (#162) — a new, distributable skill

@@ -122,16 +122,16 @@ workflow (Principle X).
   merge` scenarios from specs/061 (the `PreToolUse`-array cases)
   regressed — `merge_json_key()`'s own new branch must not affect
   `merge_pretooluse_hooks()`'s separate, untouched code path.
-- [ ] T011 Commit the change set
+- [x] T011 Commit the change set
   (`specs/063-merge-json-key-array-merge/spec.md`, `plan.md`,
   `tasks.md`, `scripts/install.sh`, `scripts/install.ps1`,
   `.github/workflows/validate.yml`, plus `CLAUDE.md`'s already-updated
   plan pointer) on the `063-merge-json-key-array-merge` branch — never
   commit directly to `main`.
-- [ ] T012 Self-invoke `specjedi-govcheck` against the branch's diff
+- [x] T012 Self-invoke `specjedi-govcheck` against the branch's diff
   before opening the PR.
-- [ ] T013 Push and open a PR against `main`; request auto-merge.
-- [ ] T014 Monitor the PR's CI status to a terminal state, diagnosing
+- [x] T013 Push and open a PR against `main`; request auto-merge.
+- [x] T014 Monitor the PR's CI status to a terminal state, diagnosing
   any real failure from actual job logs before pushing a fix.
 
 **Checkpoint**: Feature complete, PR open, CI running or merged.

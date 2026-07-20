@@ -2378,6 +2378,31 @@ jobs:
           ./scripts/install.sh "$dir8" --harness claude-code >/dev/null
           diff /tmp/t063-before.json "$dir8/.claude/settings.json" || { echo "FAIL: settings.json changed on re-run after Stop-key merge"; exit 1; }
           echo "OK: idempotent re-run after a Stop-key merge, no duplicate entries"
+      - name: Malformed existing Stop-array JSON fails loudly via merge_json_key()'s own new branch (FR-004/SC-004, specs/063)
+        shell: bash
+        run: |
+          # specs/061's own malformed-JSON test only exercises
+          # merge_pretooluse_hooks() (a different function, for
+          # PreToolUse specifically) -- this confirms merge_json_key()'s
+          # own new array-detection branch (specs/063) independently
+          # fails loudly on malformed JSON for "Stop" rather than
+          # silently inheriting untested behavior.
+          dir9=$(mktemp -d)
+          mkdir -p "$dir9/.claude"
+          cat > "$dir9/.claude/settings.json" <<'EOF'
+          {
+            "Stop": [
+              { "matcher": "", "hooks": [ { "type": "command", "command": "echo x" }, ]
+            ]
+          }
+          EOF
+          if ./scripts/install.sh "$dir9" --harness claude-code >/tmp/t063-malformed-out.txt 2>&1; then
+            echo "FAIL: install.sh should have exited non-zero on malformed Stop JSON"
+            cat /tmp/t063-malformed-out.txt
+            exit 1
+          fi
+          grep -qi "not valid JSON" /tmp/t063-malformed-out.txt || { echo "FAIL: no clear JSON-invalid failure message"; cat /tmp/t063-malformed-out.txt; exit 1; }
+          echo "OK: malformed Stop-array JSON fails loudly with a clear message"
 
   # Native PowerShell counterpart of install-test-shared-hooks-merge, same
   # reasoning as install-test-shared-hooks-windows-native.
@@ -2580,6 +2605,24 @@ jobs:
           $after8 = Get-Content (Join-Path $dir8 ".claude/settings.json") -Raw
           if ($before8 -ne $after8) { Write-Host "FAIL: settings.json changed on re-run after Stop-key merge"; exit 1 }
           Write-Host "OK: idempotent re-run after a Stop-key merge, no duplicate entries"
+      - name: Malformed existing Stop-array JSON fails loudly via Merge-JsonKey's own new branch (FR-004/SC-004, specs/063)
+        shell: pwsh
+        run: |
+          # specs/061's own malformed-JSON test only exercises
+          # Merge-PreToolUseHooks (a different function, for PreToolUse
+          # specifically) -- this confirms Merge-JsonKey's own new
+          # array-detection branch (specs/063) independently fails
+          # loudly on malformed JSON for "Stop" rather than silently
+          # inheriting untested behavior.
+          $dir9 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir9 ".claude") | Out-Null
+          $seed9 = '{ "Stop": [ { "matcher": "" '
+          Set-Content -Path (Join-Path $dir9 ".claude/settings.json") -Value $seed9
+          $out = ./scripts/install.ps1 -TargetDir $dir9 -Harness claude-code 6>&1
+          if ($LASTEXITCODE -eq 0) { Write-Host "FAIL: install.ps1 should have exited non-zero on malformed Stop JSON"; exit 1 }
+          if (($out -join "`n") -notmatch "(?i)not valid JSON|invalid JSON|JSON") { Write-Host "FAIL: no clear JSON-invalid failure message"; exit 1 }
+          Write-Host "OK: malformed Stop-array JSON fails loudly with a clear message"
+          exit 0
 
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one

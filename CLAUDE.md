@@ -37,6 +37,17 @@ just mentioning the line and moving on. On a "yes," run
 say nothing further about it this session — the same freshness check
 runs again next session, unchanged.
 
+## Caveman Mode
+
+This project has caveman-mode skill installed (`.claude/skills/caveman-mode/SKILL.md`). Caveman compresses replies to ~65% fewer output tokens while keeping code, commands, and errors byte-exact.
+
+**To activate for a session**, type:
+```
+/caveman ultra
+```
+
+Level persists for the entire session. Run `/caveman [lite|full|ultra|wenyan]` anytime to change levels. Default `full` keeps normal verbosity if you prefer.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.

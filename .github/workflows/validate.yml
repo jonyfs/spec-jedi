@@ -2308,6 +2308,76 @@ jobs:
           ./scripts/install.sh "$dir5" --harness claude-code >/dev/null
           diff /tmp/t012-before.json "$dir5/.claude/settings.json" || { echo "FAIL: settings.json changed on re-run"; exit 1; }
           echo "OK: idempotent re-run after a merge, no duplicate entries"
+      - name: Missing content merges into an existing array-shaped Stop key (US1, specs/063)
+        shell: bash
+        run: |
+          dir6=$(mktemp -d)
+          mkdir -p "$dir6/.claude"
+          cat > "$dir6/.claude/settings.json" <<'EOF'
+          {
+            "Stop": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "echo my-custom-stop-hook"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          ./scripts/install.sh "$dir6" --harness claude-code >/dev/null
+          python3 -c "
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          stop = d['Stop']
+          assert len(stop) == 1, f'FAIL: expected 1 Stop group, got {len(stop)}'
+          hooks = stop[0]['hooks']
+          assert any('my-custom-stop-hook' in str(h) for h in hooks), 'FAIL: pre-existing Stop hook lost'
+          assert any('Response complete' in str(h) for h in hooks), 'FAIL: shareable notification hook not merged'
+          print('OK: pre-existing Stop hook survived, shareable notification hook merged in')
+          " "$dir6/.claude/settings.json"
+      - name: Object-shaped existing keys keep today's unchanged behavior (US2, specs/063 regression guard)
+        shell: bash
+        run: |
+          dir7=$(mktemp -d)
+          ./scripts/install.sh "$dir7" --harness opencode >/dev/null
+          cp "$dir7/opencode.json" /tmp/t063-permission-before.json
+          # Re-running against a target that already has "permission" must
+          # still print today's exact unchanged message and leave the file
+          # untouched -- merge_json_key()'s new array-detection branch must
+          # correctly fall through for this object-shaped case.
+          out=$(./scripts/install.sh "$dir7" --harness opencode)
+          echo "$out" | grep -q "already has this key" || { echo "FAIL: expected unchanged message for object-shaped permission key"; exit 1; }
+          diff /tmp/t063-permission-before.json "$dir7/opencode.json" || { echo "FAIL: opencode.json changed despite object-shaped key"; exit 1; }
+          echo "OK: object-shaped permission key unchanged, no merge attempted"
+      - name: Idempotent re-run after a Stop-key merge produces byte-identical settings.json (specs/063)
+        shell: bash
+        run: |
+          dir8=$(mktemp -d)
+          mkdir -p "$dir8/.claude"
+          cat > "$dir8/.claude/settings.json" <<'EOF'
+          {
+            "Stop": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "echo my-custom-stop-hook"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+          ./scripts/install.sh "$dir8" --harness claude-code >/dev/null
+          cp "$dir8/.claude/settings.json" /tmp/t063-before.json
+          ./scripts/install.sh "$dir8" --harness claude-code >/dev/null
+          diff /tmp/t063-before.json "$dir8/.claude/settings.json" || { echo "FAIL: settings.json changed on re-run after Stop-key merge"; exit 1; }
+          echo "OK: idempotent re-run after a Stop-key merge, no duplicate entries"
 
   # Native PowerShell counterpart of install-test-shared-hooks-merge, same
   # reasoning as install-test-shared-hooks-windows-native.
@@ -2438,6 +2508,78 @@ jobs:
           $after = Get-Content (Join-Path $dir4 ".claude/settings.json") -Raw
           if ($before -ne $after) { Write-Host "FAIL: settings.json changed on re-run"; exit 1 }
           Write-Host "OK: idempotent re-run after a merge, no duplicate entries"
+      - name: Missing content merges into an existing array-shaped Stop key (US1, specs/063)
+        shell: pwsh
+        run: |
+          $dir6 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir6 ".claude") | Out-Null
+          $seed6 = @'
+          {
+            "Stop": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "echo my-custom-stop-hook"
+                  }
+                ]
+              }
+            ]
+          }
+          '@
+          Set-Content -Path (Join-Path $dir6 ".claude/settings.json") -Value $seed6
+          ./scripts/install.ps1 -TargetDir $dir6 -Harness claude-code | Out-Null
+          $data6 = Get-Content (Join-Path $dir6 ".claude/settings.json") -Raw | ConvertFrom-Json
+          $stop = @($data6.Stop)
+          if ($stop.Count -ne 1) { Write-Host "FAIL: expected 1 Stop group, got $($stop.Count)"; exit 1 }
+          $hooksJson = $stop[0].hooks | ConvertTo-Json -Depth 10
+          if ($hooksJson -notmatch "my-custom-stop-hook") { Write-Host "FAIL: pre-existing Stop hook lost"; exit 1 }
+          if ($hooksJson -notmatch "Response complete") { Write-Host "FAIL: shareable notification hook not merged"; exit 1 }
+          Write-Host "OK: pre-existing Stop hook survived, shareable notification hook merged in"
+      - name: Object-shaped existing keys keep today's unchanged behavior (US2, specs/063 regression guard)
+        shell: pwsh
+        run: |
+          # opencode's "permission" key is confirmed present in
+          # install.ps1's own harness list (Merge-JsonKey call at the
+          # opencode.json wiring site) -- grounded against the real
+          # PowerShell harness list rather than assumed parity with
+          # bash's own opencode test.
+          $dir7 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          ./scripts/install.ps1 -TargetDir $dir7 -Harness opencode | Out-Null
+          $before7 = Get-Content (Join-Path $dir7 "opencode.json") -Raw
+          $out7 = ./scripts/install.ps1 -TargetDir $dir7 -Harness opencode
+          if (($out7 -join "`n") -notmatch "already has this key") { Write-Host "FAIL: expected unchanged message for object-shaped permission key"; exit 1 }
+          $after7 = Get-Content (Join-Path $dir7 "opencode.json") -Raw
+          if ($before7 -ne $after7) { Write-Host "FAIL: opencode.json changed despite object-shaped key"; exit 1 }
+          Write-Host "OK: object-shaped permission key unchanged, no merge attempted"
+      - name: Idempotent re-run after a Stop-key merge produces byte-identical settings.json (specs/063)
+        shell: pwsh
+        run: |
+          $dir8 = Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName())
+          New-Item -ItemType Directory -Force -Path (Join-Path $dir8 ".claude") | Out-Null
+          $seed8 = @'
+          {
+            "Stop": [
+              {
+                "matcher": "",
+                "hooks": [
+                  {
+                    "type": "command",
+                    "command": "echo my-custom-stop-hook"
+                  }
+                ]
+              }
+            ]
+          }
+          '@
+          Set-Content -Path (Join-Path $dir8 ".claude/settings.json") -Value $seed8
+          ./scripts/install.ps1 -TargetDir $dir8 -Harness claude-code | Out-Null
+          $before8 = Get-Content (Join-Path $dir8 ".claude/settings.json") -Raw
+          ./scripts/install.ps1 -TargetDir $dir8 -Harness claude-code | Out-Null
+          $after8 = Get-Content (Join-Path $dir8 ".claude/settings.json") -Raw
+          if ($before8 -ne $after8) { Write-Host "FAIL: settings.json changed on re-run after Stop-key merge"; exit 1 }
+          Write-Host "OK: idempotent re-run after a Stop-key merge, no duplicate entries"
 
   # Add new battery jobs here as the project grows (unit, integration,
   # e2e/Playwright, etc. — Constitution Principle IX) and list each one

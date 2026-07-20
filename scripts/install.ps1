@@ -806,6 +806,88 @@ function Merge-PreToolUseHooks {
     ($data | ConvertTo-Json -Depth 20) | Set-Content -Path $Target
 }
 
+# specs/063-merge-json-key-array-merge: reused by Merge-JsonKey's own
+# array-merge branch below. Every array value that crosses a function
+# boundary or gets assigned is explicitly `@()`-wrapped -- PowerShell
+# collapses a single-element array into a bare scalar at multiple points
+# (property access, ConvertTo-Json, and function return values all
+# independently exhibit this, confirmed via direct test before landing).
+function Test-IsMatcherGroupArray {
+    param([array]$Items)
+    foreach ($i in $Items) {
+        if (-not ($i.PSObject.Properties.Name -contains 'matcher' -and $i.PSObject.Properties.Name -contains 'hooks')) {
+            return $false
+        }
+    }
+    return $true
+}
+
+function Merge-JsonArrayValue {
+    param($Existing, $NewValue)
+    $existingArr = @($Existing)
+    $newArr = @($NewValue)
+    if ((Test-IsMatcherGroupArray $existingArr) -and (Test-IsMatcherGroupArray $newArr)) {
+        foreach ($newGroup in $newArr) {
+            $match = $existingArr | Where-Object { $_.matcher -eq $newGroup.matcher } | Select-Object -First 1
+            if (-not $match) {
+                $existingArr = @($existingArr) + $newGroup
+                continue
+            }
+            $seen = @($match.hooks) | ForEach-Object { $_ | ConvertTo-Json -Depth 10 -Compress }
+            foreach ($h in @($newGroup.hooks)) {
+                $hJson = $h | ConvertTo-Json -Depth 10 -Compress
+                if ($seen -notcontains $hJson) {
+                    $match.hooks = @($match.hooks) + $h
+                }
+            }
+        }
+    } else {
+        $seen = @($existingArr) | ForEach-Object { $_ | ConvertTo-Json -Depth 10 -Compress }
+        foreach ($item in $newArr) {
+            $itemJson = $item | ConvertTo-Json -Depth 10 -Compress
+            if ($seen -notcontains $itemJson) {
+                $existingArr = @($existingArr) + $item
+            }
+        }
+    }
+    return @($existingArr)
+}
+
+# specs/063-merge-json-key-array-merge: returns $true (and writes the
+# merge) only when both the existing key's value and the new block's own
+# value are JSON arrays. Uses System.Text.Json.JsonDocument for the
+# array-vs-object type check specifically -- ConvertFrom-Json's own
+# single-element-array collapse (same root cause as the Merge-Json*Value
+# functions above) makes a 1-element array indistinguishable from an
+# object via `-is [array]` alone (confirmed via direct test before
+# landing this).
+function Merge-JsonKeyArrayValue {
+    param([string]$Target, [string]$KeyName, [string]$Block)
+    $rawContent = Get-Content -Path $Target -Raw
+    try {
+        $doc = [System.Text.Json.JsonDocument]::Parse($rawContent)
+    } catch {
+        Write-Host "FAIL: $Target is not valid JSON ($($_.Exception.Message)) -- refusing to guess, fix it manually and re-run."
+        exit 1
+    }
+    $existingKind = $doc.RootElement.GetProperty($KeyName).ValueKind
+    $blockDoc = [System.Text.Json.JsonDocument]::Parse("{$Block}")
+    $newKind = $blockDoc.RootElement.GetProperty($KeyName).ValueKind
+    if ($existingKind -ne 'Array' -or $newKind -ne 'Array') {
+        return $false
+    }
+
+    $data = $rawContent | ConvertFrom-Json
+    $blockData = "{$Block}" | ConvertFrom-Json
+    $existing = @($data.$KeyName)
+    $newValue = @($blockData.$KeyName)
+    $merged = @(Merge-JsonArrayValue -Existing $existing -NewValue $newValue)
+    $data.$KeyName = @($merged)
+
+    ($data | ConvertTo-Json -Depth 20) | Set-Content -Path $Target
+    return $true
+}
+
 # specs/041-release-hooks-settings (User Story 2): native PowerShell
 # counterpart of merge_json_key() (install.sh) -- see that function for
 # the full rationale.
@@ -824,6 +906,20 @@ function Merge-JsonKey {
 
     $content = [System.IO.File]::ReadAllText($Target)
     if ($content.Contains($KeyCheck)) {
+        # specs/063-merge-json-key-array-merge: when the existing key's
+        # value is a JSON array and the new block's own top-level value
+        # is also an array, merge the missing items in instead of
+        # silently leaving the file untouched. Uses
+        # System.Text.Json.JsonDocument for the array-vs-object type
+        # check specifically -- ConvertFrom-Json/-is [array] collapses a
+        # single-element JSON array into a bare scalar, making it
+        # indistinguishable from an object (confirmed via direct test
+        # before landing this).
+        $keyName = $KeyCheck.Trim('"')
+        if (Merge-JsonKeyArrayValue -Target $Target -KeyName $keyName -Block $Block) {
+            Write-Host "  ✅ $(Split-Path -Leaf $Target) updated ($OkMessage)"
+            return
+        }
         Write-Host "  ℹ️  $(Split-Path -Leaf $Target) already has this key — leaving as-is."
         return
     }

@@ -759,6 +759,53 @@ function Update-SharedSettings {
     Write-Host "  ✅ $(Split-Path -Leaf $Target) updated (statusLine/permissions added)"
 }
 
+# specs/061-install-merge-pretooluse: merges the given missing hook
+# entry objects into an EXISTING target settings.json's hooks.PreToolUse
+# array, under the named matcher group (creating the group if absent).
+# Deliberate, scoped exception to Update-SharedSettings's own neighboring
+# comment against a ConvertFrom-Json/ConvertTo-Json round trip -- both
+# cmdlets preserve property order, so no content is lost or reordered;
+# the only side effect is possible re-indentation (spec.md Clarifications,
+# FR-008). Every array assignment is explicitly `@()`-wrapped to avoid
+# PowerShell's well-known single-element-collapse quirk in ConvertTo-Json
+# (verified against a real single-hook-group case before landing this).
+function Merge-PreToolUseHooks {
+    param([string]$Target, [string]$Matcher, [array]$Entries)
+    $raw = Get-Content -Path $Target -Raw
+    try {
+        $data = $raw | ConvertFrom-Json -ErrorAction Stop
+    } catch {
+        Write-Host "FAIL: $Target is not valid JSON ($($_.Exception.Message)) -- refusing to guess, fix it manually and re-run."
+        exit 1
+    }
+
+    if (-not $data.hooks) {
+        $data | Add-Member -MemberType NoteProperty -Name hooks -Value ([PSCustomObject]@{}) -Force
+    }
+    if (-not $data.hooks.PreToolUse) {
+        $data.hooks | Add-Member -MemberType NoteProperty -Name PreToolUse -Value @() -Force
+    }
+
+    $preToolUse = @($data.hooks.PreToolUse)
+    $group = $preToolUse | Where-Object { $_.matcher -eq $Matcher } | Select-Object -First 1
+
+    if (-not $group) {
+        $group = [PSCustomObject]@{ matcher = $Matcher; hooks = @() }
+        $preToolUse = @($preToolUse) + $group
+        $data.hooks.PreToolUse = @($preToolUse)
+    }
+
+    $existingHooks = @($group.hooks) | ForEach-Object { $_ | ConvertTo-Json -Depth 10 -Compress }
+    foreach ($entry in $Entries) {
+        $entryJson = $entry | ConvertTo-Json -Depth 10 -Compress
+        if ($existingHooks -notcontains $entryJson) {
+            $group.hooks = @($group.hooks) + $entry
+        }
+    }
+
+    ($data | ConvertTo-Json -Depth 20) | Set-Content -Path $Target
+}
+
 # specs/041-release-hooks-settings (User Story 2): native PowerShell
 # counterpart of merge_json_key() (install.sh) -- see that function for
 # the full rationale.
@@ -988,8 +1035,33 @@ if ($Harness -eq "claude-code" -and $installSharedHooks) {
 
     if ($missingBashHooks.Count -gt 0 -or $missingReadHooks.Count -gt 0) {
         if ($settingsContent -match '"PreToolUse"') {
-            $missingPaths = (($missingBashHooks + $missingReadHooks) | ForEach-Object { Join-Path $targetHooksDir $_ }) -join ' '
-            Write-Host "  ℹ️  Target already has a PreToolUse hooks array — add the following manually, not overwritten automatically: $missingPaths"
+            # specs/061-install-merge-pretooluse: merge directly into the
+            # existing array -- no python3 gate needed here, unlike
+            # install.sh, since ConvertFrom-Json/ConvertTo-Json are
+            # native to every PowerShell version this project targets.
+            function New-HookEntry([string]$HookFile) {
+                if ($HookFile -like "*.ps1") {
+                    return [PSCustomObject]@{
+                        type    = "command"
+                        command = "powershell"
+                        args    = @("-NoProfile", "-File", "`${CLAUDE_PROJECT_DIR}/.claude/hooks/$HookFile")
+                    }
+                }
+                return [PSCustomObject]@{
+                    type    = "command"
+                    command = "python3 `"`${CLAUDE_PROJECT_DIR}/.claude/hooks/$HookFile`""
+                }
+            }
+            if ($missingBashHooks.Count -gt 0) {
+                $bashEntries = @($missingBashHooks | ForEach-Object { New-HookEntry $_ })
+                Merge-PreToolUseHooks -Target $targetSettings -Matcher "Bash" -Entries $bashEntries
+            }
+            if ($missingReadHooks.Count -gt 0) {
+                $readEntries = @($missingReadHooks | ForEach-Object { New-HookEntry $_ })
+                Merge-PreToolUseHooks -Target $targetSettings -Matcher "Read|Grep|Glob" -Entries $readEntries
+            }
+            $mergedNames = ($missingBashHooks + $missingReadHooks) -join ' '
+            Write-Host "  ✅ Merged $mergedNames into existing PreToolUse hooks array in $(Split-Path -Leaf $targetSettings)"
         } else {
             $trimmed = $settingsContent.TrimEnd()
             $body = $trimmed.Substring(0, $trimmed.Length - 1).TrimEnd()

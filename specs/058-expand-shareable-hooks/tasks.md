@@ -289,6 +289,20 @@ proceed unblocked (spec.md US5 Acceptance Scenarios, SC-005/SC-006).
 - [x] T033 [P] [US5] Broadened `update_shared_settings()`'s
   `permissions_block` in `scripts/install.sh` identically.
 - [x] T034 [P] [US5] Identical broadening in `scripts/install.ps1`.
+  **Test-coverage gap found and closed post-merge (2026-07-19,
+  `specjedi-analyze` re-run against the completed feature)**: every
+  existing `test-hooks.sh`/`.ps1` assertion only checked that the
+  `"permissions"` *key* exists after `update_shared_settings()` runs —
+  never that its deny list is actually recursive (`Read(**/...)`, not
+  root-anchored `Read(./...)`) or carries the full FR-009/FR-010
+  pattern set (FR-010 was Unverified, not incorrect — direct source
+  inspection confirmed `install.sh:908-925`/`install.ps1:692-709` were
+  already correct). Added a dedicated assertion to both test scripts'
+  "fresh file" case checking all 18 pattern entries plus the absence of
+  any remaining `Read(./` root-anchored form; confirmed the new
+  assertion genuinely fails when the pattern regresses (verified by
+  temporarily reverting one entry to root-anchored form on the bash
+  side, observing the expected FAIL, then restoring) before landing it.
 - [x] T035 [P] [US5] Extended `scripts/install.sh`'s claude-code block:
   copies `secret-file-guard.sh` unconditionally (no `has_python3` gate)
   and wires it into a new `PreToolUse` `Read|Grep|Glob` matcher array,

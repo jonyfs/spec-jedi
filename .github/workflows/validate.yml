@@ -1409,7 +1409,13 @@ jobs:
             }
           }
           EOF
-          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/addmanually-out.txt 2>&1
+          # specs/061-install-merge-pretooluse: the add-manually message
+          # is now the has_python3-unavailable fallback path (FR-005) --
+          # when python3 IS available, this exact scenario merges
+          # instead (verified separately by install-test-shared-hooks-
+          # merge), so this test must force no-python3 to keep exercising
+          # the manual-instruction message this test is actually about.
+          printf '\ny\n\n' | SPECJEDI_TEST_FORCE_HOOKS_PROMPT=1 SPECJEDI_TEST_FORCE_NO_PYTHON3=1 ./scripts/install.sh "$dir6" --harness claude-code > /tmp/addmanually-out.txt 2>&1
           msg="$(grep 'already has a PreToolUse hooks array' /tmp/addmanually-out.txt)"
           [ -n "$msg" ] || { echo "FAIL: add-manually message missing"; exit 1; }
           for h in dangerous-command-guard.sh prevent-direct-push.py secret-scanner.py secret-file-guard.sh conventional-commits.py; do
@@ -1471,7 +1477,7 @@ jobs:
           if ($settings -notmatch '"SessionStart"') { Write-Host "FAIL: pre-existing content was destroyed"; exit 1 }
           $null = $settings | ConvertFrom-Json
           Write-Host "OK: pre-existing settings.json content preserved"
-      - name: add-manually message names every new hook, not just dangerous-command-guard.ps1 (FR-006, T056)
+      - name: Every new hook (including opt-in conventional-commits.ps1) merges into an existing PreToolUse array, not just dangerous-command-guard.ps1 (FR-006, T056; updated by specs/061 -- install.ps1 has no python3 gate, so this now merges unconditionally instead of printing an add-manually message)
         shell: pwsh
         run: |
           $env:SPECJEDI_TEST_FORCE_HOOKS_PROMPT = "1"
@@ -1484,12 +1490,13 @@ jobs:
           }' | Set-Content (Join-Path $dir6 ".claude/settings.json")
           $out = "`ny`n`n" | & pwsh -NoProfile -File ./scripts/install.ps1 -TargetDir $dir6 -Harness claude-code 2>&1
           $joined = $out -join "`n"
-          $msgLine = ($joined -split "`n" | Where-Object { $_ -match "already has a PreToolUse hooks array" })
-          if (-not $msgLine) { Write-Host "FAIL: add-manually message missing"; exit 1 }
+          if ($joined -notmatch "Merged.*into existing PreToolUse hooks array") { Write-Host "FAIL: merge confirmation message missing: $joined"; exit 1 }
+          $settingsJson = Get-Content (Join-Path $dir6 ".claude/settings.json") -Raw
           foreach ($h in @("dangerous-command-guard.ps1", "prevent-direct-push.py", "secret-scanner.py", "secret-file-guard.ps1", "conventional-commits.py")) {
-              if ($msgLine -notmatch [regex]::Escape($h)) { Write-Host "FAIL: add-manually message doesn't name $h`: $msgLine"; exit 1 }
+              if ($settingsJson -notmatch [regex]::Escape($h)) { Write-Host "FAIL: $h not merged into settings.json"; exit 1 }
           }
-          Write-Host "OK: add-manually message names every new hook, not just dangerous-command-guard.ps1"
+          if ($settingsJson -notmatch "my-own-hook") { Write-Host "FAIL: pre-existing hook lost"; exit 1 }
+          Write-Host "OK: every new hook (including opt-in conventional-commits.ps1) merged, pre-existing hook survived"
 
   # specs/042-skill-freshness-validation (User Story 1): proves
   # install.sh writes the installed-release marker correctly in both
@@ -2156,9 +2163,17 @@ jobs:
           }
           EOF
           ./scripts/install.sh "$dir1" --harness claude-code >/dev/null
+          # Path passed as a real argv element (sys.argv[1]), never
+          # string-interpolated into the python source -- Git Bash's
+          # MSYS layer only auto-translates Unix-style paths that are
+          # distinct argv elements to a Win32 program, not path-shaped
+          # substrings buried inside a larger string argument (confirmed
+          # the hard way: string-interpolation caused a real
+          # FileNotFoundError on windows-latest during this feature's own
+          # CI run).
           python3 -c "
-          import json
-          d = json.load(open('$dir1/.claude/settings.json'))
+          import json, sys
+          d = json.load(open(sys.argv[1]))
           groups = d['hooks']['PreToolUse']
           bash_group = next(g for g in groups if g['matcher'] == 'Bash')
           read_group = next((g for g in groups if g['matcher'] == 'Read|Grep|Glob'), None)
@@ -2167,7 +2182,7 @@ jobs:
           assert read_group is not None, 'FAIL: no Read|Grep|Glob group created'
           assert any('secret-file-guard.sh' in str(h) for h in read_group['hooks']), 'FAIL: secret-file-guard.sh not merged into new group'
           print('OK: pre-existing Bash hook survived, missing Bash hooks merged, new Read|Grep|Glob group created')
-          "
+          " "$dir1/.claude/settings.json"
 
           dir2=$(mktemp -d)
           mkdir -p "$dir2/.claude"
@@ -2191,8 +2206,8 @@ jobs:
           EOF
           ./scripts/install.sh "$dir2" --harness claude-code >/dev/null
           python3 -c "
-          import json
-          d = json.load(open('$dir2/.claude/settings.json'))
+          import json, sys
+          d = json.load(open(sys.argv[1]))
           groups = d['hooks']['PreToolUse']
           read_group = next(g for g in groups if g['matcher'] == 'Read|Grep|Glob')
           bash_group = next((g for g in groups if g['matcher'] == 'Bash'), None)
@@ -2201,7 +2216,7 @@ jobs:
           assert bash_group is not None, 'FAIL: no Bash group created'
           assert any('dangerous-command-guard.sh' in str(h) for h in bash_group['hooks']), 'FAIL: Bash hooks not merged into new group'
           print('OK: pre-existing Read hook survived, missing Read hooks merged, new Bash group created')
-          "
+          " "$dir2/.claude/settings.json"
       - name: No-python3 fallback still prints today's exact manual-instruction message, unchanged (US3, FR-005)
         shell: bash
         run: |
@@ -2229,12 +2244,12 @@ jobs:
           out=$(SPECJEDI_TEST_FORCE_NO_PYTHON3=1 ./scripts/install.sh "$dir3" --harness claude-code)
           echo "$out" | grep -q "add the following manually" || { echo "FAIL: manual-instruction message missing"; exit 1; }
           python3 -c "
-          import json
-          before = json.load(open('/tmp/t009-before.json'))
-          after = json.load(open('$dir3/.claude/settings.json'))
+          import json, sys
+          before = json.load(open(sys.argv[1]))
+          after = json.load(open(sys.argv[2]))
           assert before['hooks']['PreToolUse'] == after['hooks']['PreToolUse'], 'FAIL: PreToolUse changed despite no python3'
           print('OK: PreToolUse array unchanged when python3 unavailable, manual message shown')
-          "
+          " /tmp/t009-before.json "$dir3/.claude/settings.json"
       - name: Malformed existing PreToolUse structure fails loudly, never a guessed insertion (FR-006)
         shell: bash
         run: |

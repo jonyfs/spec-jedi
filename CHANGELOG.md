@@ -9,6 +9,11 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **`install.sh`/`.ps1` merge shareable hooks into an existing `PreToolUse` array** (feature 061, #167) — a target project's `settings.json` already having a `hooks.PreToolUse` array made the installer refuse to touch it, printing an "add manually" message instead of wiring the missing hooks. Now merges directly (python3 `json.load`/`json.dump` on `install.sh`, native `ConvertFrom-Json`/`ConvertTo-Json` on `install.ps1`) into the correct matcher group, creating it when absent — a deliberate, clarified exception to this project's general anti-round-trip caution for `settings.json`, justified because both preserve key order (nothing lost or reordered). No-python3 fallback and malformed-JSON fail-loud path preserved and verified unchanged.
+- **`specjedi-govcheck` prints only findings, auto-proceeds when clean** (feature 062, #168) — always printed a full ~22-row per-principle table even when every row was N/A or Compliant, directly observed across three real runs this session. Internal per-principle reasoning stays complete on every run; the printed report now collapses to one summary line when clean, or only the Non-Compliant/CRITICAL rows when not — the full, unconditional table remains available on request.
+
 ## [v0.5.0] - 2026-07-20
 
 ### Added

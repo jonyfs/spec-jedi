@@ -160,19 +160,19 @@ workflow (Principle X).
   features this session).
 - [x] T010 Confirm the edited file's word/token count stays well under
   Principle XIX's ~5,000-token ceiling (`wc -w`).
-- [ ] T011 Commit the change set (`specs/062-govcheck-condensed-output/
+- [x] T011 Commit the change set (`specs/062-govcheck-condensed-output/
   spec.md`, `plan.md`, `tasks.md`, `.claude/skills/specjedi-govcheck/
   SKILL.md`, plus `CLAUDE.md`'s already-updated plan pointer) on the
   `062-govcheck-condensed-output` branch — never commit directly to
   `main`.
-- [ ] T012 Self-invoke `specjedi-govcheck` against the branch's diff
+- [x] T012 Self-invoke `specjedi-govcheck` against the branch's diff
   before opening the PR — using *today's* full-report behavior, since
   this run predates the condensed-output change taking effect on itself
   (a real, small irony worth noting in the PR narration: the last
   full-table govcheck run this session, checking the very change that
   ends full-table runs).
-- [ ] T013 Push and open a PR against `main`; request auto-merge.
-- [ ] T014 Monitor the PR's CI status to a terminal state, diagnosing any
+- [x] T013 Push and open a PR against `main`; request auto-merge.
+- [x] T014 Monitor the PR's CI status to a terminal state, diagnosing any
   real failure from actual job logs before pushing a fix.
 
 **Checkpoint**: Feature complete, PR open, CI running or merged.

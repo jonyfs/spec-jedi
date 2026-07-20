@@ -45,13 +45,26 @@ CRITICAL, and report — never edit anything.
 4. **Any confirmed constitution conflict is CRITICAL, unconditionally** —
    no severity downgrade for "the violation seems minor," mirroring
    `specjedi-analyze`'s existing rule exactly.
-5. **Build the report table** (see Format). Most principles being Not
-   Applicable on a small, targeted diff is the expected, healthy outcome
-   — resist the urge to force every row into Compliant/Non-Compliant.
+5. **Determine the printed form — condensed by default.** Most
+   principles being Not Applicable on a small, targeted diff is the
+   expected, healthy outcome — resist the urge to force every row into
+   Compliant/Non-Compliant. Once every principle/section has a real
+   status (Step 3, never shortened — see Always/Never), print one of
+   two condensed forms: all N/A/Compliant prints one summary line
+   ("⚖️ Governance check: `<branch/PR>` — CLEAN (22/22 reasoned, 0
+   findings)."), no table at all; any Non-Compliant/CRITICAL prints a
+   table containing *only* those rows, led by the same summary-line
+   shape naming the finding count (e.g. "2 Non-Compliant (1
+   CRITICAL)"). Either way, move directly into Step 6's next-step
+   bullets — no separate pause between the summary and the bullets.
 6. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV; see `references/next-step-interaction.md`) —
    typically: fix any Non-Compliant/CRITICAL finding
-   before opening (or merging) the PR, or proceed if the report is clean.
+   before opening (or merging) the PR, or proceed if the report is
+   clean. If the user asks for the full report, present the complete,
+   unconditional per-principle table instead (Format's "on request"
+   variant) — condensation is a default, never a removal of that
+   option.
 
 If a finding needs domain expertise nothing installed covers to even
 evaluate, name that explicitly and self-invoke `specjedi-find-skills`
@@ -69,6 +82,28 @@ CI battery (`ci-gate`) remains the actual merge-blocking mechanism
 (Principle X). This skill informs, it does not gate.
 
 ## Format
+
+**(a) Condensed CLEAN** (all 22 reasoned to N/A or Compliant — the
+default when nothing needs attention):
+
+```markdown
+⚖️ Governance check: <branch or PR #> — CLEAN (22/22 reasoned, 0 findings).
+```
+
+**(b) Condensed findings-only** (default when something needs
+attention — only Non-Compliant/CRITICAL rows print):
+
+```markdown
+⚖️ Governance check: <branch or PR #> — N Non-Compliant (M CRITICAL).
+
+| # | Principle | Status | Evidence / mechanism |
+|---|---|---|---|
+| <only the Non-Compliant/CRITICAL rows> | ... | ... | ... |
+```
+
+**(c) Full report — on request only** (every principle, every status;
+identical in shape to what this skill always printed before this
+condensation existed):
 
 ```markdown
 ## Governance check: <branch or PR #>
@@ -89,20 +124,28 @@ calibration applies only to the skill's own narration around it.
 
 ## Example (input → output)
 
-**Input**: a scratch branch adding `scripts/example-new-tool.sh` with no
-`.ps1` counterpart, and no other changes.
+**Example 1 — condensed CLEAN**: a scratch branch making a small,
+well-formed doc-only edit that touches nothing any principle flags.
 
 **Agent writes**:
 ```markdown
-## Governance check: chore/example-scratch
+⚖️ Governance check: chore/docs-typo-fix — CLEAN (22/22 reasoned, 0 findings).
+
+**Next step:**
+- Proceed — nothing blocking.
+```
+
+**Example 2 — condensed findings-only**: a scratch branch adding
+`scripts/example-new-tool.sh` with no `.ps1` counterpart, and no other
+changes.
+
+**Agent writes**:
+```markdown
+⚖️ Governance check: chore/example-scratch — 1 Non-Compliant (0 CRITICAL).
 
 | # | Principle | Status | Evidence / mechanism |
 |---|---|---|---|
 | XIII | Cross-Platform Support: Linux, macOS, Windows | Non-Compliant | `scripts/example-new-tool.sh` added with no `scripts/example-new-tool.ps1` counterpart — Principle XIII requires both in the same change set. |
-| IX | Mandatory Skill Validation & Testing | N/A | No `SKILL.md` or CI-relevant file touched. |
-| *(remaining 18 principles + 2 sections)* | N/A | Diff only touches one new script file. |
-
-Overall: 1 Non-Compliant (0 CRITICAL).
 ```
 
 **Agent's chat narration** (Principle XII voice — the table stays plain):
@@ -113,8 +156,9 @@ Overall: 1 Non-Compliant (0 CRITICAL).
 > - Add `scripts/example-new-tool.ps1` before opening the PR.
 
 **Not this**: marking all 20 principles Compliant because nothing looked
-obviously wrong, or silently adding the missing `.ps1` file — this skill
-reports, it never edits.
+obviously wrong, silently adding the missing `.ps1` file (this skill
+reports, it never edits), or printing all 22 rows — including the 21
+clean ones — when only 1 needs attention.
 
 ## `--auto` mode
 
@@ -140,15 +184,31 @@ relaxes the read-only constraint.
 - **Never** block a PR from opening when self-invoked by
   `specjedi-implement` — surface CRITICAL findings, don't gate on them;
   the CI battery is the enforcement mechanism (Principle X).
+- **Always** reason through all 20 principles + 2 sections internally on
+  every run, even when most rows never print.
+- **Never** omit a row from the *internal* reasoning pass to save
+  tokens — only the *printed* output condenses; a principle skipped
+  internally is a correctness gap, not an efficiency win.
+- **Always** offer the full report on request, unchanged from the
+  existing table shape — condensation is a default, never a removal.
 
 ## Verifiable success criteria
 
 - The run modifies zero files — checkable via `git status` showing no
   changes after the skill completes.
-- Every one of the 20 principles plus the 2 cross-cutting sections
-  appears in the report with an explicit status — none silently omitted.
+- Every one of the 20 principles plus the 2 cross-cutting sections is
+  reasoned about internally on every run, with an explicit status
+  assigned — none silently skipped. The *printed* report shows only
+  Non-Compliant/CRITICAL rows by default (or one summary line when
+  clean), with the complete set always available via the full-report
+  request.
+- A condensed clean report is under 10 printed lines; a condensed
+  findings report's table row count equals exactly the finding count —
+  checkable by counting.
 - A documentation-only diff produces a report where the clear majority of
-  rows are Not Applicable, not a forced Compliant/Non-Compliant split.
+  reasoned rows are Not Applicable, not a forced Compliant/Non-Compliant
+  split — checkable via the full-report request even though the default
+  condensed output won't show those N/A rows directly.
 
 ## Validation Coverage (Principle IX)
 

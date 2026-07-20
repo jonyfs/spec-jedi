@@ -186,16 +186,16 @@ per Trunk-Based workflow (Principle X).
   `PreToolUse`) regressed — these exercise the unchanged
   `PreToolUse`-doesn't-exist branch, which this feature's changes don't
   touch; spot-check by re-reading the diff against those call sites.
-- [ ] T017 Commit the change set
+- [x] T017 Commit the change set
   (`specs/061-install-merge-pretooluse/spec.md`, `plan.md`, `tasks.md`,
   `scripts/install.sh`, `scripts/install.ps1`,
   `.github/workflows/validate.yml`, plus `CLAUDE.md`'s already-updated
   plan pointer) on the `061-install-merge-pretooluse` branch — never
   commit directly to `main`.
-- [ ] T018 Self-invoke `specjedi-govcheck` against the branch's diff
+- [x] T018 Self-invoke `specjedi-govcheck` against the branch's diff
   before opening the PR.
-- [ ] T019 Push and open a PR against `main`; request auto-merge.
-- [ ] T020 Monitor the PR's CI status to a terminal state, diagnosing any
+- [x] T019 Push and open a PR against `main`; request auto-merge.
+- [x] T020 Monitor the PR's CI status to a terminal state, diagnosing any
   real failure from actual job logs before pushing a fix.
 
 **Checkpoint**: Feature complete, PR open, CI running or merged.

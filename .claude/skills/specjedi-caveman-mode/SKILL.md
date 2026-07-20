@@ -1,5 +1,5 @@
 ---
-name: caveman-mode
+name: specjedi-caveman-mode
 description: Compress every reply to tight caveman-speak, dropping filler, keeping code/commands/errors exact. 65% fewer output tokens per session. Six levels—lite, full, ultra, wenyan—pick at any time.
 compatibility: Requires caveman plugin (JuliusBrussee/caveman) installed globally in ~/.claude/. This skill configures SessionStart hook to auto-activate level ultra on session start. Does not install caveman itself—assumes global install complete.
 ---
@@ -15,8 +15,10 @@ Configures this project to speak in caveman-speak (ultra level) every session. O
 ## How It Works
 
 1. **Caveman global install** (already present): `~/.claude/plugins/cache/caveman/caveman/`
-2. **This skill**: wires `.claude/settings.json` SessionStart hook to run `/caveman ultra` on session start
-3. **Result**: every session begins at ultra compression level; persists for the entire session
+2. **This skill**: documents the activation step in this project's `CLAUDE.md` so every session's first turn knows to run `/caveman ultra`
+3. **Result**: level persists for the entire session once activated; change anytime with `/caveman [level]`
+
+Hooks cannot invoke slash commands — `SessionStart` only runs shell commands — so activation is a documented manual step, not an automatic one.
 
 ## Levels
 
@@ -49,13 +51,14 @@ Before this skill activates:
   irm https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.ps1 | iex
   ```
 
-## SessionStart Hook
+## Always / Never
 
-This skill configures `.claude/settings.json` to include a SessionStart hook that sends `/caveman ultra` at the moment your session begins. The hook:
-- Runs once per session start
-- Does not block if caveman is unavailable (graceful degradation)
-- Level persists for the entire session; change anytime with `/caveman [level]`
-- Survives across multiple messages in the same session
+- **Always** verify caveman is installed globally (`~/.claude/plugins/cache/caveman/caveman/`) before telling a user activation failed — a missing global install, not a broken skill, is the usual cause.
+- **Always** keep code, commands, file paths, and error messages byte-exact under any level — only narrative phrasing compresses, never technical content.
+- **Always** preserve the user's language when compressing (Portuguese in, Portuguese caveman out) — the one exception is `wenyan` mode, which is an intentional translation to classical Chinese, not a bug.
+- **Never** claim caveman reduces input or reasoning tokens — it only shrinks output tokens; overselling this in the pitch to a user is a correctness error, not marketing.
+- **Never** treat `/caveman` as auto-wired to `SessionStart` — hooks cannot invoke slash commands, so activation is always a manual `/caveman ultra` at the start of a session, documented in `CLAUDE.md`, not an automatic hook action.
+- **Never** silently drop caveman mid-session on your own judgment — level changes only on explicit user request (`/caveman <level>` or "normal mode").
 
 ## Honest Numbers
 

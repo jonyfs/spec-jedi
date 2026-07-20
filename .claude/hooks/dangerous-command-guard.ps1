@@ -87,11 +87,25 @@ if ($hasGit -and $hasPush -and $hasForceFlag -and $hasMainOrMaster) {
 
 if ($readCmd) {
     foreach ($w in $words) {
+        # Compound (directory/file) patterns -- matched against the
+        # whole token, never the bare basename (specs/058, mirrors
+        # secret-file-guard.ps1's own reasoning). Pattern set widened
+        # to match secret-file-guard's FR-009 list for Wave 1 parity.
+        $normalizedW = $w -replace '\\', '/'
+        if ($normalizedW -match '(^|/)\.aws/credentials$') {
+            Deny "Blocked: reading what looks like a real secret/credential file (.aws/credentials)."
+        }
+        if ($normalizedW -match '(^|/)\.docker/config\.json$') {
+            Deny "Blocked: reading what looks like a real secret/credential file (.docker/config.json)."
+        }
         $base = Split-Path $w -Leaf -ErrorAction SilentlyContinue
         if (-not $base) { $base = $w }
         if ($base -in @('.env.example', '.env.sample', '.env.template')) { continue }
-        if ($base -in @('.env', 'id_rsa', 'id_ed25519') -or $base -like '*.pem') {
+        if ($base -eq '.env' -or $base -like '.env.*' -or $base -in @('id_rsa', 'id_dsa', 'id_ecdsa', 'id_ed25519') -or $base -like '*.pem' -or $base -like '*.key' -or $base -like '*.pfx' -or $base -like '*.p12') {
             Deny "Blocked: reading what looks like a real secret/credential file. If this is actually a template (.env.example etc.), rename or rephrase the command."
+        }
+        if ($base -in @('.npmrc', '.netrc', '.pgpass', '.git-credentials')) {
+            Deny "Blocked: reading what looks like a real credential file."
         }
     }
 }

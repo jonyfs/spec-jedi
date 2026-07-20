@@ -84,14 +84,33 @@ fi
 
 if [ "$read_cmd" -eq 1 ]; then
   for w in "${words[@]}"; do
+    # Compound (directory/file) patterns -- matched against the whole
+    # token, never the bare basename (specs/058-expand-shareable-hooks:
+    # a basename match on "credentials"/"config.json" alone would be
+    # dangerously overbroad for an ordinary project). Full pattern set
+    # widened here to match secret-file-guard.sh's own FR-009 list, so
+    # every Wave 1 harness relying on this same check for Read-equivalent
+    # coverage (Gemini CLI/Antigravity/Codex CLI have no confirmed hook
+    # surface distinct from Bash) gets the identical protection.
+    case "$w" in
+      */.aws/credentials|.aws/credentials)
+        deny "Blocked: reading what looks like a real secret/credential file (.aws/credentials)."
+        ;;
+      */.docker/config.json|.docker/config.json)
+        deny "Blocked: reading what looks like a real secret/credential file (.docker/config.json)."
+        ;;
+    esac
     base="$(basename "$w" 2>/dev/null || printf '%s' "$w")"
     case "$base" in
       .env.example|.env.sample|.env.template) continue ;;
-      .env|id_rsa|id_ed25519)
+      .env|.env.*|id_rsa|id_dsa|id_ecdsa|id_ed25519)
         deny "Blocked: reading what looks like a real secret/credential file. If this is actually a template (.env.example etc.), rename or rephrase the command."
         ;;
-      *.pem)
+      *.pem|*.key|*.pfx|*.p12)
         deny "Blocked: reading what looks like a real secret/credential file. If this is actually a template (.env.example etc.), rename or rephrase the command."
+        ;;
+      .npmrc|.netrc|.pgpass|.git-credentials)
+        deny "Blocked: reading what looks like a real credential file."
         ;;
     esac
   done

@@ -1,7 +1,7 @@
 <!-- SPEC-JEDI:PLAN:START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/055-safe-skill-update-hook/plan.md
+at specs/058-expand-shareable-hooks/plan.md
 <!-- SPEC-JEDI:PLAN:END -->
 
 ## Session-start orientation (Constitution Principle XXI)

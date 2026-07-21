@@ -9,6 +9,10 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **`merge_json_key()`/`Merge-JsonKey` merge into an existing array-shaped key** (feature 063, #171, #172) — a target project's `"Stop"` key (or any other array-shaped key among the function's five real call sites) already existing made the installer refuse to touch it, printing "already has this key — leaving as-is" even when the array was missing the exact entry it would have added. Now detects array-vs-not via real JSON parsing and merges missing items in (matcher-group-aware for hook-array shapes, content-dedup otherwise), reusing the same parse/dedup/write technique feature 061 proved for `PreToolUse`. The four object-shaped call sites (opencode `"permission"`, zed `"agent"`, gemini-cli/antigravity `"hooks"`) keep today's exact conservative behavior, confirmed via regression-guard tests. A follow-up fix (#172) closed a real idempotency regression the array-merge branch introduced — re-running against already-merged content was reformatting the entire `settings.json` file — and added dedicated malformed-JSON coverage for this specific branch.
+
 ## [v0.6.0] - 2026-07-20
 
 ### Added

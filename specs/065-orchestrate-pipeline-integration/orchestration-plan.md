@@ -121,3 +121,71 @@ above states explicitly: every dispatched instance opens its own feature
 branch + PR, never commits directly to `main` — matching this project's
 own trunk-protected, PR-only discipline exactly, including under
 concurrent team-mode dispatch (feature 065 FR-003b, FR-006).
+
+## Skill-to-Agent Mapping (feature 066)
+
+Extends the 7-stage pipeline mapping above to all 32 installed
+`specjedi-*` skills. Every skill gets exactly one disposition: an
+existing agent above, a new agent below, or explicit "No dedicated
+agent" with reasoning — none silently omitted (spec 066 FR-001/SC-001).
+
+### Already mapped (feature 065, 7-stage pipeline — 10 skills)
+
+| Skill | Agent |
+|---|---|
+| specjedi-specify, specjedi-clarify, specjedi-plan | Planner |
+| specjedi-tasks | Task Decomposer |
+| specjedi-implement | Implementer |
+| specjedi-govcheck, specjedi-analyze | Governance & Consistency Reviewer |
+| specjedi-docs | Documentarian |
+| specjedi-retro, specjedi-release | Retrospective & Release Narrator |
+
+### Assigned to an existing agent (6 skills)
+
+| Skill | Agent | Reasoning |
+|---|---|---|
+| specjedi-checklist | Documentarian | Drafts a generated artifact (checklist) grounded in an existing feature's own spec.md/plan.md — same "grounded transcription from already-decided content" pattern as README/CHANGELOG drafting. |
+| specjedi-diagram | Documentarian | Drafts a generated artifact (Mermaid diagram) grounded in spec/plan content; its render-verify retry loop is a unique behavior no other skill shares (no 2+ cluster), so it stays on the nearest existing role rather than getting its own agent. |
+| specjedi-converge | Task Decomposer | Detects drift and *appends new tasks* to tasks.md — the same "reason about tasks.md's own shape, write to it" behavior as the Decomposer's [P]-marking judgment. |
+| specjedi-parallel | Task Decomposer | Reasons about genuine cross-feature independence (safe-to-parallelize) before dispatching `specjedi-worktree` — the same "reason explicitly about independence before acting on it" judgment as [P]-marking. |
+| specjedi-quick | Planner | Combines spec+plan+light-task judgment into one artifact for a small feature — closest to the Planner's priority/scope judgment, applied at a smaller scale. |
+| specjedi-status | Retrospective & Release Narrator | Pure read + report, non-interactive, one-shot — the same "gather state, narrate faithfully" pattern as retro/release, not a judgment-heavy review. |
+
+### New agents (3, each grounded in a genuine 2+-skill cluster — FR-003)
+
+**`orchestrate-auditor`** — whole-*project* (not per-diff) read-only audit, a materially different scope than the Governance & Consistency Reviewer's per-PR-diff check:
+- `specjedi-constitution-audit` — whole-project governance coverage audit against all 22 principles.
+- `specjedi-catalog-audit` — whole-catalog audit of every shipped skill against the SDD 7-phase sequence.
+- `specjedi-skill-review` — single-skill audit against the Skill Authoring Standard, same whole-artifact (not diff) scope.
+- Model tier: strongest available (same reasoning as the pre-PR Reviewer — a missed finding here is costly, and these audits are less time-bounded so favor thoroughness).
+
+**`orchestrate-scout`** — external-catalog research + confirm-gated proposal, a materially different behavior than any pipeline-writing role:
+- `specjedi-find-skills` — searches for one specific skill to close a recognized gap, confirms before installing.
+- `specjedi-master` — proactively researches aitmpl.com broadly, suggests skills/agents/hooks, always confirms before installing/configuring.
+- Model tier: strongest available — judging whether an external skill genuinely fits this project (vs. a superficial name match) is exactly the kind of reasoning call this project's own Principle II research discipline requires.
+
+**`orchestrate-operator`** — single mechanical repo/file operation, no `tasks.md` decomposition or test-first loop (distinct from the Implementer's task-group-execution pattern):
+- `specjedi-migrate` — rewrites `/speckit-*` references to `specjedi-*` equivalents in existing files.
+- `specjedi-new-skill` — scaffolds a new skill's file structure, placeholders only.
+- `specjedi-worktree` — creates/removes a real git worktree via native tool or `git worktree` fallback.
+- Model tier: cheapest capable — mechanical, well-bounded single operations, same reasoning as the Implementer's own tier.
+
+### No dedicated agent (7 skills)
+
+| Skill | Reasoning |
+|---|---|
+| specjedi-caveman-mode | Pure session-modifier (output-style toggle) — nothing about it benefits from delegation. |
+| specjedi-chain | Itself a meta-orchestrator invoking other skills sequentially in `--auto` mode — belongs in the main session coordinating dispatches, not as a dispatched task itself. |
+| specjedi-constitution | Structured, opinionated elicitation (Principle IV) — interactive back-and-forth with the user; delegating it would break the conversational loop it depends on. |
+| specjedi-explain | One-shot, audience-calibrated conversational answer — no artifact to hand off, no value in delegation. |
+| specjedi-onboard | First-run guided ideation, one-question-at-a-time — same interactive-loop reasoning as `specjedi-constitution`. |
+| specjedi-security | Self-invoked mid-`specjedi-plan` as a lightweight, proactive prompt — meant to run inline in that conversation, not as a separate dispatched task. |
+| specjedi-tokencheck | Narrow, one-shot tool-presence check with a confirm-gated install offer — too small in scope to be worth a delegation round-trip. |
+
+### Excluded (1 skill)
+
+| Skill | Reasoning |
+|---|---|
+| specjedi-orchestrate | The mechanism producing this entire mapping — not a pipeline stage being assigned an agent (spec 066 Assumptions/Edge Cases). |
+
+**Total**: 10 + 6 + 8 (3 new-agent clusters) + 7 + 1 = 32/32 (spec 066 SC-001).

@@ -1,7 +1,7 @@
 <!-- SPEC-JEDI:PLAN:START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/066-agent-mapping-all-skills/plan.md
+at specs/067-ship-agents-in-release-package/plan.md
 <!-- SPEC-JEDI:PLAN:END -->
 
 ## Session-start orientation (Constitution Principle XXI)

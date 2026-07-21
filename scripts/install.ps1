@@ -435,6 +435,26 @@ if ($installed -eq 0) {
     exit 1
 }
 
+# specs/067-ship-agents-in-release-package: the project-local
+# .claude/agents/orchestrate-*.md definitions are Claude-Code-specific
+# (Agent/Workflow tool definitions, per feature 065's own scoping) --
+# only copy them for a claude-code target, and never create an empty
+# .claude/agents/ directory for any other harness.
+if ($Harness -eq "claude-code") {
+    $agentsSrc = Join-Path $repoRoot ".claude/agents"
+    $agentsDst = Join-Path $TargetDir ".claude/agents"
+    if (Test-Path $agentsSrc) {
+        New-Item -ItemType Directory -Force -Path $agentsDst | Out-Null
+        Get-ChildItem -Path $agentsSrc -File -Filter "*.md" | ForEach-Object {
+            $agentName = $_.Name
+            $dstPath = Join-Path $agentsDst $agentName
+            Backup-IfDiffers -Src $_.FullName -Dst $dstPath
+            Copy-Item -Path $_.FullName -Destination $dstPath -Force
+            Write-Host "  ✅ .claude/agents/$agentName"
+        }
+    }
+}
+
 Write-Host ""
 Write-Host "📚 Installing runtime template dependencies..."
 $templatesDst = Join-Path $TargetDir ".specify/templates"

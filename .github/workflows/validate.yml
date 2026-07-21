@@ -816,6 +816,14 @@ jobs:
               fail=1
             fi
           done
+          # specs/067-ship-agents-in-release-package: at least one
+          # .claude/agents/*.md file must survive packaging -- a pattern
+          # match, not an exact path, since the agent count grows over
+          # time (currently 9, never hardcoded here).
+          if ! printf '%s\n' "$listing" | grep -qE "spec-jedi-v0.0.0-ci-check/\.claude/agents/.*\.md$"; then
+            echo "FAIL: expected at least one .claude/agents/*.md file to be present in the release package, but none were found"
+            fail=1
+          fi
           # Must be absent -- this project's own spec-authoring history
           # and internal skill-authoring/governance reference docs never
           # ship to users.
@@ -889,6 +897,10 @@ jobs:
               Write-Host "FAIL: expected $path to be present in the release package, but it wasn't"
               $fail = $true
             }
+          }
+          if ($listing -notmatch "spec-jedi-v0\.0\.0-ci-check/\.claude/agents/.*\.md") {
+            Write-Host "FAIL: expected at least one .claude/agents/*.md file to be present in the release package, but none were found"
+            $fail = $true
           }
           if ($listing -match "spec-jedi-v0.0.0-ci-check/specs/") {
             Write-Host "FAIL: specs/ leaked into the release package"

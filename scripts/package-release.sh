@@ -13,14 +13,14 @@ Usage: package-release.sh VERSION OUTPUT_DIR
   VERSION       Version string used in the artifact filename (e.g. v0.1.0).
   OUTPUT_DIR    Directory to write spec-jedi-VERSION.tar.gz into.
 
-Produces a tarball containing .claude/skills/specjedi-*/, the four
-.specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,
-scripts/session-start.sh, scripts/session-start.ps1,
-.claude/hooks/dangerous-command-guard.sh/.ps1, a RELEASE_VERSION stamp
-file, README.md, four user-facing references/*.md files
-(quickstart-guide.md, what-is-sdd.md, specjedi-and-sdd.md,
-session-start-hook-guide.md), and LICENSE -- never specs/,
-CONTRIBUTING.md, or this project's own internal skill-authoring/
+Produces a tarball containing .claude/skills/specjedi-*/,
+.claude/agents/*.md, the four .specify/templates/*.md files,
+scripts/install.sh, scripts/install.ps1, scripts/session-start.sh,
+scripts/session-start.ps1, .claude/hooks/dangerous-command-guard.sh/.ps1,
+a RELEASE_VERSION stamp file, README.md, four user-facing
+references/*.md files (quickstart-guide.md, what-is-sdd.md,
+specjedi-and-sdd.md, session-start-hook-guide.md), and LICENSE -- never
+specs/, CONTRIBUTING.md, or this project's own internal skill-authoring/
 governance reference docs (specs/038-expand-release-package).
 EOF
 }
@@ -49,6 +49,20 @@ for skill_path in "$repo_root/.claude/skills"/specjedi-*/; do
   skill_name="$(basename "$skill_path")"
   cp -R "$skill_path" "$skills_dst/$skill_name"
   echo "  ✅ .claude/skills/$skill_name"
+done
+
+# specs/067-ship-agents-in-release-package: the project-local
+# .claude/agents/orchestrate-*.md definitions (specjedi-orchestrate's own
+# deliverable, specs/065-066) must ship alongside the skills that
+# reference them -- unconditional here, same as the skills loop above;
+# install.sh/.ps1 handle harness-gating at install time (FR-001/FR-002).
+agents_dst="$stage_root/.claude/agents"
+mkdir -p "$agents_dst"
+for agent_path in "$repo_root/.claude/agents"/*.md; do
+  [ -e "$agent_path" ] || continue
+  agent_name="$(basename "$agent_path")"
+  cp "$agent_path" "$agents_dst/$agent_name"
+  echo "  ✅ .claude/agents/$agent_name"
 done
 
 templates_dst="$stage_root/.specify/templates"

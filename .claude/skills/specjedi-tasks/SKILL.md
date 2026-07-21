@@ -81,11 +81,23 @@ nothing about the rest of this skill changes.
    format, but with post-execution labels (**Optional Hook**/
    **Automatic Hook**, no "Pre"). Stay silent when nothing is
    registered.
+6.6. **Check whether this plan is "team-shaped"** (feature 065): count
+   `[P]`-marked tasks per user-story phase in the `tasks.md` just
+   written. If 2 or more distinct phases each contain at least one `[P]`
+   task, this feature has genuine cross-story parallelism — flag it for
+   Step 7's next-step list. A single story with internal `[P]` tasks, or
+   no `[P]` tasks at all, does not meet this bar — within-story
+   parallelism alone doesn't justify proposing a multi-agent team plan
+   over just running the tasks in order.
 7. **Report, then offer the next step(s) as a short bulleted list**
    (Principle XIV; see `references/next-step-interaction.md`):
    `specjedi-implement` once ready, plus
    `specjedi-analyze` first if the task breakdown itself feels worth a
-   consistency check before building.
+   consistency check before building. When Step 6.6 flagged this feature
+   team-shaped, also offer `specjedi-orchestrate` with a one-line reason
+   ("this plan has genuinely parallel work across stories") — omit it
+   entirely when Step 6.6 didn't flag the feature, rather than offering
+   it as generic noise on every run.
 
 If a task clearly needs domain expertise nothing installed covers, self-
 invoke `specjedi-find-skills` before finishing that story's task group
@@ -147,6 +159,20 @@ above stays plain; this is what the skill actually says around it):
 pattern reference, no test-first sequencing; not a task, a restatement of
 the requirement.
 
+**Edge case — team-shaped feature (Step 6.6)**: a `tasks.md` with `[P]`
+tasks in both `## Phase 3: User Story 1` and `## Phase 4: User Story 2`
+meets the 2-phase bar. **Agent's narration** in this case adds a third
+next-step bullet:
+> **Next step:**
+> - Run `specjedi-implement` once ready.
+> - Or `specjedi-analyze` first, for a consistency check.
+> - Or `specjedi-orchestrate` — this plan has genuinely parallel work
+>   across stories, worth a team plan before diving in.
+
+A `tasks.md` with `[P]` tasks only inside a single story's own phase
+does not meet the bar — no `specjedi-orchestrate` bullet appears, since
+offering it there would be noise, not a real option.
+
 ## `--auto` mode
 
 Proceed through story grouping, sequencing, and `[P]` marking without
@@ -189,6 +215,10 @@ Per `references/skill-validation-testing-framework.md`:
 - **Out-of-Bounds / Malformed Input Handling**: Applicable —
   cross-referenced by Step 1's own documented case: "If `plan.md`'s
   Constitution Check hasn't passed... stop and recommend fixing the plan
-  first" already handles a not-ready/malformed plan.
+  first" already handles a not-ready/malformed plan. Step 6.6's 2-vs-1-
+  story threshold is itself a documented boundary condition — a
+  `tasks.md` with `[P]` tasks confined to one story phase is a clean,
+  well-handled "not team-shaped" case, not an edge case that fails or
+  guesses.
 - **External-Call Resilience**: Not Applicable — no external service
   call.

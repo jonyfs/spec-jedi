@@ -1,5 +1,55 @@
 <!--
 Sync Impact Report
+- Version change: 1.30.0 → 1.31.0
+- Modified principles: XIV. Guided Next-Step Suggestion — MINOR bump,
+  materially expanded guidance (no renaming, no removal).
+  - Directly requested by the maintainer, verification-first: audited
+    all 32 specjedi-* skills before drafting (31/32 have an --auto mode
+    section; specjedi-caveman-mode correctly exempt as a session
+    modifier, not a pipeline skill). Confirmed the real gap: --auto mode
+    today only skips a skill's own internal pauses, never self-invokes
+    the next pipeline skill its own closing Next-Step names — pipeline
+    continuation stayed fully manual even under --auto.
+  - New clause: when a skill's run carries --auto, or the user's request
+    otherwise explicitly signals autonomous pipeline continuation
+    ("continue running the next steps until everything is implemented"),
+    that same autonomy now carries past the skill's own Next-Step list —
+    a single named next skill self-invokes directly instead of stopping
+    to present the list for a manual pick. A genuine multi-option
+    Next-Step still resolves via Principle IV's existing
+    Recommended-option auto-select rule, not a silent guess.
+  - Explicitly does not loosen any skill's own hard confirm-first
+    boundaries (specjedi-release's never-auto-trigger-a-release rule,
+    specjedi-orchestrate's never-auto-install rule) — named directly in
+    the new clause to prevent this amendment being misread as relaxing
+    those.
+  - Not a MAJOR bump: existing Next-Step Suggestion behavior (offer a
+    bulleted list) is unchanged for any non---auto, non-continuation-
+    signaled run — this only adds behavior under an explicit autonomy
+    signal that didn't exist before.
+
+- Version change: 1.29.0 → 1.30.0
+- Added principle: XXIII. Post-Implementation Documentation Freshness
+  Check — MINOR bump, new principle added.
+  - Directly requested by the maintainer: after any specjedi-* skill
+    executes or implements a real change, check whether project
+    documentation (README skill table, CHANGELOG.md Unreleased,
+    CLAUDE.md pointers, any doc a shipped feature's own plan.md named
+    in-scope) still reflects what was just built.
+  - Reuses the existing specjedi-docs drafting step and
+    specjedi-release's own "self-invoke specjedi-docs when Unreleased is
+    empty" precedent — no new mechanism invented, no new skill created.
+  - Advisory, not blocking, same posture as Principle XXII's own
+    freshness check: surfaced in the implementing skill's closing
+    report, never gates PR opening or merging (Principle X's CI battery
+    remains the actual gate). specjedi-docs' own confirm-before-write
+    rule for CHANGELOG.md is explicitly preserved, unchanged.
+  - Not a MAJOR bump: nothing existing is redefined or removed; every
+    specjedi-* skill's current behavior is unchanged until it's the
+    specific one updated to add this self-invocation, per this
+    principle's own "MUST check" applying going forward to skills that
+    implement real changes.
+
 - Version change: 1.28.0 → 1.29.0
 - Modified principles: XXII. Skill Freshness Validation & Update
   Awareness — MINOR bump, materially expanded guidance (no renaming, no
@@ -1607,6 +1657,36 @@ bulleted list above remains the complete, unchanged requirement. Full
 mechanism detail lives in `references/next-step-interaction.md`, cited
 here rather than restated per-skill.
 
+**`--auto` MUST also mean "keep going across the pipeline," not just
+"skip pauses within this one skill."** As of this amendment
+(grounded in a real audit: 31 of 32 `specjedi-*` skills define an
+`--auto` mode section, `specjedi-caveman-mode` correctly exempt as a
+session-modifier, not a pipeline skill; none of the audited skills'
+`--auto` mode sections self-invoke the next pipeline skill their own
+closing Next-Step names), `--auto` mode removed only a skill's *internal*
+pauses — the closing Next-Step list still just named the next skill
+without acting on it, leaving pipeline continuation entirely manual even
+in `--auto` runs. Going forward: when a skill's own run was invoked with
+`--auto` (the flag literally present in the request), or the user's
+request otherwise explicitly signals continuing the pipeline
+autonomously (e.g. "continue running the next steps until everything is
+implemented," "keep going through the pipeline") — that same
+autonomy MUST carry forward past this skill's own Next-Step list: if
+exactly one next skill is named as the primary option, self-invoke it
+directly rather than stopping to present the list for a manual pick.
+This does not relax any skill's own hard confirm-first
+boundaries (e.g. `specjedi-release` never auto-triggers a real release;
+`specjedi-orchestrate` never auto-installs a drafted artifact) — those
+gates are a different kind of pause than "which pipeline skill runs
+next," and this clause MUST NOT be read as loosening them. When the
+Next-Step list offers a genuine choice between two or more materially
+different paths (not just "the pipeline's next stage vs. an optional
+side-check"), `--auto`/continuation intent resolves it the same way
+Principle IV already requires: auto-select the Recommended option and
+proceed, recording the choice in whatever audit trail the run already
+produces — never silently guessing among options with no stated
+preference.
+
 ### XV. `specjedi-` Skill Naming Convention
 
 Every skill authored as part of this project's own product surface (as
@@ -2011,6 +2091,48 @@ installer) and the other half is a genuine, previously-undocumented gap
 (nothing records what was installed) that the implementing feature MUST
 close before the check can mean anything.
 
+### XXIII. Post-Implementation Documentation Freshness Check
+
+Every `specjedi-*` skill that executes or implements a real change
+(`specjedi-implement` above all, but also any skill whose own Step-by-step
+writes code, config, or a shipped artifact — e.g. `specjedi-orchestrate`'s
+Step 9 artifact drafting) MUST check, before considering that run
+complete, whether this project's own documentation — `README.md`'s skill
+table, `CHANGELOG.md`'s `## Unreleased` section, `CLAUDE.md`'s
+plan-pointer and skill listing, and any doc a completed feature's own
+`plan.md` explicitly named as in-scope — still describes what was just
+built, not what existed before it.
+
+**One mechanism, not a new one**: this check self-invokes
+`specjedi-docs`'s own existing drafting step (README row, Quickstart
+step, `CHANGELOG.md` entry) exactly as `specjedi-release` already does
+when `## Unreleased` is empty — never a second, competing
+freshness-check implementation. `specjedi-docs`'s own
+confirm-before-write discipline for `CHANGELOG.md` applies unchanged:
+this principle requires the *check and draft* to happen, never a silent
+write.
+
+**Advisory, not blocking — same posture as Principle XXII's freshness
+check**: a stale-documentation finding is surfaced in the implementing
+skill's own closing report (Principle XIV next-step territory) alongside
+whatever else it reports (e.g. `specjedi-implement`'s existing
+`specjedi-govcheck`/`specjedi-analyze` self-invocations at Step 6.5/6.6);
+it MUST NOT block a PR from opening or merging — the CI battery remains
+the actual gate (Principle X), this principle only ensures the gap gets
+named rather than silently accumulating across features the way
+`CHANGELOG.md`'s `## Unreleased` section twice went stale enough to break
+`release.yml` before Principle XI's own tooling closed that specific gap
+(specs/060). This principle generalizes that lesson from one file
+(`CHANGELOG.md`) to every doc a shipped feature actually touches.
+
+**Rationale**: Directly requested — code and docs drift apart silently
+unless something checks after every implementation, not just at release
+time. `specjedi-docs` already knows how to draft every doc type this
+project maintains; what was missing was a rule requiring that drafting
+step to be *offered* automatically once a feature ships, rather than
+depending on a contributor remembering to run `specjedi-docs` on their
+own.
+
 ## Distribution & Ecosystem Standards
 
 Every skill package in this repository MUST include: a `SKILL.md` with
@@ -2160,4 +2282,4 @@ again after Phase 1 design. Unresolved violations MUST be recorded in that
 plan's Complexity Tracking table with an explicit justification, or the plan
 MUST be simplified until it complies.
 
-**Version**: 1.29.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-18
+**Version**: 1.31.0 | **Ratified**: 2026-07-10 | **Last Amended**: 2026-07-21

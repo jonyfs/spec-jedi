@@ -584,6 +584,26 @@ if [ "$installed" -eq 0 ]; then
   exit 1
 fi
 
+# specs/067-ship-agents-in-release-package: the project-local
+# .claude/agents/orchestrate-*.md definitions are Claude-Code-specific
+# (Agent/Workflow tool definitions, per feature 065's own scoping) --
+# only copy them for a claude-code target, and never create an empty
+# .claude/agents/ directory for any other harness.
+if [ "$harness" = "claude-code" ]; then
+  agents_src="$repo_root/.claude/agents"
+  agents_dst="$target_dir/.claude/agents"
+  if [ -d "$agents_src" ]; then
+    mkdir -p "$agents_dst"
+    for agent_path in "$agents_src"/*.md; do
+      [ -e "$agent_path" ] || continue
+      agent_name="$(basename "$agent_path")"
+      backup_if_differs "$agent_path" "$agents_dst/$agent_name"
+      cp "$agent_path" "$agents_dst/$agent_name"
+      echo "  ✅ .claude/agents/$agent_name"
+    done
+  fi
+fi
+
 echo
 echo "📚 Installing runtime template dependencies..."
 templates_dst="$target_dir/.specify/templates"

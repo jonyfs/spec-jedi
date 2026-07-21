@@ -23,7 +23,8 @@ if ($Help -or -not $Version -or -not $OutputDir) {
     Write-Host "  VERSION       Version string used in the artifact filename (e.g. v0.1.0)."
     Write-Host "  OUTPUT_DIR    Directory to write spec-jedi-VERSION.tar.gz into."
     Write-Host ""
-    Write-Host "Produces a tarball containing .claude/skills/specjedi-*/, the four"
+    Write-Host "Produces a tarball containing .claude/skills/specjedi-*/,"
+    Write-Host ".claude/agents/*.md, the four"
     Write-Host ".specify/templates/*.md files, scripts/install.sh, scripts/install.ps1,"
     Write-Host "scripts/session-start.sh, scripts/session-start.ps1,"
     Write-Host ".claude/hooks/dangerous-command-guard.sh/.ps1, a RELEASE_VERSION stamp"
@@ -52,6 +53,21 @@ try {
         $skillName = $_.Name
         Copy-Item -Recurse -Path $_.FullName -Destination (Join-Path $skillsDst $skillName)
         Write-Host "  ✅ .claude/skills/$skillName"
+    }
+
+    # specs/067-ship-agents-in-release-package: ship .claude/agents/
+    # alongside the skills that reference them -- unconditional here,
+    # same as the skills loop above; install.sh/.ps1 handle harness
+    # gating at install time.
+    $agentsDst = Join-Path $stageRoot ".claude/agents"
+    New-Item -ItemType Directory -Force -Path $agentsDst | Out-Null
+    $agentsSrc = Join-Path $repoRoot ".claude/agents"
+    if (Test-Path $agentsSrc) {
+        Get-ChildItem -Path $agentsSrc -File -Filter "*.md" | ForEach-Object {
+            $agentName = $_.Name
+            Copy-Item -Path $_.FullName -Destination (Join-Path $agentsDst $agentName)
+            Write-Host "  ✅ .claude/agents/$agentName"
+        }
     }
 
     $templatesDst = Join-Path $stageRoot ".specify/templates"

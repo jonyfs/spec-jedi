@@ -7,6 +7,8 @@ what actually shipped versus what each feature's `plan.md` predicted.
 
 - 2026-07-19: 058-expand-shareable-hooks — 3 deviations, all grounded (see
   full retrospective below).
+- 2026-07-21: 064-multi-agent-orchestration-skill — no deviations
+  (658e996).
 
 ## Retrospective: 058-expand-shareable-hooks
 
@@ -61,3 +63,17 @@ it (US1 prevent-direct-push, US2 secret-scanner, US3 conventional-commits
 opt-in, US4 Stop notification, US5 secret-file-guard), across two PRs
 (#158 MVP, #159 US3+US4+Polish), both fully green on first CI attempt
 after the fixes above landed.
+
+## Retrospective: 064-multi-agent-orchestration-skill
+
+Matched the plan, no deviations. Shipped as a single squash commit
+(658e996, PR #175, merged 2026-07-21T02:56:15Z) containing exactly the
+four files `plan.md`'s Project Structure named:
+`.claude/skills/specjedi-orchestrate/SKILL.md`,
+`references/multi-agent-capability-notes.md`, and the
+`specs/064-multi-agent-orchestration-skill/` documentation set
+(spec.md/plan.md/research.md/tasks.md) — no additional files, no dropped
+scope. `tasks.md` finished at 20/20 `[x]`. `specjedi-govcheck` reported
+CLEAN (22/22 reasoned, 0 findings) and `specjedi-analyze` traced all 9
+functional requirements to Verified with zero orphaned files, both
+pre-merge — no post-hoc fixes were needed on this branch.

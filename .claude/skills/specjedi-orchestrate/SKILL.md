@@ -132,6 +132,15 @@ nothing about the rest of this skill changes.
    review. Make no change beyond that draft location until the user
    explicitly confirms (spec.md FR-005) — declining leaves zero files
    created or modified beyond the draft.
+9.5. **When Step 9's confirmation lands and a new agent file is
+   actually written**, self-invoke `specjedi-docs`'s drafting step
+   (Constitution Principle XXIII) — check whether that new agent should
+   also appear in README's skill table or `CLAUDE.md`'s own skill/agent
+   listing. Surface the finding, never block on it, never write
+   `CHANGELOG.md`/README without a separate explicit confirmation
+   (same advisory, confirm-before-write posture as every other
+   Principle XXIII self-invocation). Skip entirely when Step 9 wasn't
+   invoked or was declined — nothing to check freshness against.
 
 If a proposed domain role needs expertise this project's installed skill
 set doesn't cover (e.g. a highly specialized regulatory-domain reviewer
@@ -291,6 +300,9 @@ Per `references/skill-validation-testing-framework.md`:
   `multi-agent-capability-notes.md` row is "Unclear / not researched this
   pass," is treated exactly like a confirmed-"No" row (Step 5's fallback
   branch) rather than causing an error or an invented capability claim.
+  Step 9.5's doc-freshness self-invocation (Principle XXIII) is itself
+  advisory — skipped cleanly when Step 9 wasn't invoked, never blocking
+  the primary artifact-drafting action.
 - **External-Call Resilience**: Not Applicable — no external service call
   at run time; `references/multi-agent-capability-notes.md`'s research
   was a one-time authoring-time WebSearch activity (documented with

@@ -9,6 +9,15 @@ this file directly.
 
 ## Unreleased
 
+### Added
+
+- **`specjedi-orchestrate`** (feature 064, #175) — a new skill that, given a feature's `spec.md`/`plan.md` (and the project's `constitution.md`), detects the current harness, proposes a domain-grounded multi-agent team (plan/implement/test/document/review plus any domain-specific role the project's own content actually supports), recommends a model tier per role (strongest available for planning/architecture/adversarial-review, cheapest capable for mechanical execution), and writes the result as a durable `orchestration-plan.md` artifact — never installing, executing, or committing anything without explicit confirmation. Grounded by a new `references/multi-agent-capability-notes.md`, citation-backed research on sub-agent/parallel-task and model-tier support across 20+ harnesses (Claude Code, Codex CLI, Cursor, Windsurf, Zed, OpenCode, Antigravity, Amazon Q, JetBrains, Warp, Cline, Aider, Sourcegraph Cody, plus five flagged honestly as unresearched rather than guessed).
+- **`specjedi-tasks`/`specjedi-implement` wire in `specjedi-orchestrate`** (feature 065, #178) — `specjedi-tasks` now offers `specjedi-orchestrate` as a next-step whenever a generated `tasks.md` has genuine cross-story `[P]` parallelism (2+ user stories), silent otherwise. `specjedi-implement` detects a sibling `orchestration-plan.md`, asks which execution mode to use, and on team-mode dispatches each task group to its assigned role via the current harness's real `Agent`/`Workflow` mechanism at its assigned model tier — falling back to single-agent per role when a mechanism isn't confirmed in `references/multi-agent-capability-notes.md`, never bypassing the project's own branch/PR (Principle X) or test-first (Principle VI) discipline under dispatch. Ships alongside a real `orchestration-plan.md` for this project's own SDD pipeline.
+
+### Changed
+
+- **Constitution v1.31.0** — adds Principle XXIII (Post-Implementation Documentation Freshness Check: any skill that implements a real change checks whether project docs still reflect it, reusing `specjedi-docs`'s existing drafting step, advisory only) and amends Principle XIV (`--auto`, or an explicit continuation request, now carries autonomy past a skill's own closing Next-Step list — a single named next skill self-invokes directly instead of stopping for a manual pick; hard confirm-first boundaries like `specjedi-release`'s and `specjedi-orchestrate`'s are explicitly unaffected).
+
 ## [v0.7.0] - 2026-07-21
 
 ### Added

@@ -1,7 +1,7 @@
 <!-- SPEC-JEDI:PLAN:START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
-at specs/063-merge-json-key-array-merge/plan.md
+at specs/064-multi-agent-orchestration-skill/plan.md
 <!-- SPEC-JEDI:PLAN:END -->
 
 ## Session-start orientation (Constitution Principle XXI)

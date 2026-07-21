@@ -9,6 +9,8 @@ this file directly.
 
 ## Unreleased
 
+## [v0.8.0] - 2026-07-21
+
 ### Added
 
 - **`specjedi-orchestrate`** (feature 064, #175) — a new skill that, given a feature's `spec.md`/`plan.md` (and the project's `constitution.md`), detects the current harness, proposes a domain-grounded multi-agent team (plan/implement/test/document/review plus any domain-specific role the project's own content actually supports), recommends a model tier per role (strongest available for planning/architecture/adversarial-review, cheapest capable for mechanical execution), and writes the result as a durable `orchestration-plan.md` artifact — never installing, executing, or committing anything without explicit confirmation. Grounded by a new `references/multi-agent-capability-notes.md`, citation-backed research on sub-agent/parallel-task and model-tier support across 20+ harnesses (Claude Code, Codex CLI, Cursor, Windsurf, Zed, OpenCode, Antigravity, Amazon Q, JetBrains, Warp, Cline, Aider, Sourcegraph Cody, plus five flagged honestly as unresearched rather than guessed).
